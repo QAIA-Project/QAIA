@@ -90,6 +90,16 @@ jobs:
           # omission happens rather than accumulating a backlog nobody reconciles.
           python eval/tools/check_decision_register.py
 
+      - name: JSON Schema of the output contract matches the validator
+        run: |
+          set -e
+          # Le contrat existe en trois formes : la prose, ce schema, et validate_manifest.py --
+          # le seul que la CI executait. Une revue du 2026-08-08 a trouve trois divergences :
+          # 6 valeurs d'enum au lieu de 10, le bloc `structural` totalement absent, et un gate
+          # partiel interdit alors que le validateur l'autorise. Aucun job ne comparait les deux.
+          # Et en les realignant, un enum voisin a ete casse. D'ou ce controle.
+          python eval/tools/check_schema_matches_validator.py
+
       - name: Skill counts claimed in the docs match the repository
         run: |
           set -e
