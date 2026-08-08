@@ -2,10 +2,33 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { listSkills, getSkillContent, getOutputContract } from '../src/skills.js';
 import { scoreFeature, validateManifest } from '../src/tools.js';
+import { readdirSync, existsSync } from 'node:fs';
 
-test('list_skills finds all 29 shipped skills, each with a name and description', async () => {
+// The count is READ FROM DISK, never hard-coded. The previous version asserted
+// `length >= 29` under a title claiming "all 29" — the repository had 35 by then, so the
+// test passed while its title lied, and it would still have passed if the bridge had
+// silently dropped six skills. `length >= N` is a one-sided assertion, and it is the exact
+// defect class `qaia-score:automation-score` exists to flag in generated suites.
+function countShippedSkills() {
+  const root = new URL('../../plugins/', import.meta.url);
+  let n = 0;
+  for (const plugin of readdirSync(root, { withFileTypes: true })) {
+    if (!plugin.isDirectory()) continue;
+    const skillsDir = new URL(`${plugin.name}/skills/`, root);
+    if (!existsSync(skillsDir)) continue;
+    for (const skill of readdirSync(skillsDir, { withFileTypes: true })) {
+      if (skill.isDirectory() && existsSync(new URL(`${plugin.name}/skills/${skill.name}/SKILL.md`, root))) n += 1;
+    }
+  }
+  return n;
+}
+
+test('list_skills exposes every shipped skill, each with a name and description', async () => {
   const skills = await listSkills();
-  assert.ok(skills.length >= 29, `expected >= 29 skills, got ${skills.length}`);
+  const onDisk = countShippedSkills();
+  assert.ok(onDisk > 0, 'no SKILL.md found on disk — the test cannot prove anything');
+  assert.equal(skills.length, onDisk,
+    `the bridge exposes ${skills.length} skills but ${onDisk} SKILL.md files exist`);
   for (const s of skills) {
     assert.ok(s.id.includes('/'), `id should be "plugin/skill-dir": ${s.id}`);
     assert.ok(s.name, `skill ${s.id} has no name`);

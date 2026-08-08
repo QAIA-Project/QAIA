@@ -90,6 +90,18 @@ jobs:
           # omission happens rather than accumulating a backlog nobody reconciles.
           python eval/tools/check_decision_register.py
 
+      - name: MCP bridge tests (the answer to "Claude Code only", never run until now)
+        run: |
+          set -e
+          # `mcp-bridge/` est un serveur MCP opt-in ecrit pour Cursor et GitHub Copilot. Il a du
+          # code, des tests, un README -- et AUCUN job ne les executait. Une revue du 2026-08-08 a
+          # trouve le dossier ; trois relectures externes l'avaient manque, dont deux qui nommaient
+          # l'exclusivite a Claude Code comme bloqueur numero un.
+          # A l'execution : `npm test` etait casse (Node 24 refuse `node --test test/`), et le test
+          # de recensement assertait `length >= 29` sous un titre disant « all 29 » alors que le
+          # depot en compte 35 -- il serait passe avec six skills perdues. Les deux corriges.
+          cd mcp-bridge && npm ci --no-audit --no-fund && npm test
+
       - name: JSON Schema of the output contract matches the validator
         run: |
           set -e
