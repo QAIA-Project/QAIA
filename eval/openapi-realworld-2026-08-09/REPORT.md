@@ -1,6 +1,6 @@
 # `openapi-ingest` on a second real specification — RealWorld API
 
-**Date** 2026-08-09 · **Source** `gothinkster/realworld` `specs/api/openapi.yml` at commit `98f29fb3` ·
+**Date** 2026-08-09 · **Source** `realworld-apps/realworld` `specs/api/openapi.yml` at commit `98f29fb3` ·
 **sha256** (LF-normalised) `227d6983874850d35a883f4486b455cedbb272a0c103008595873c94ae1600ac` ·
 24 935 bytes, 922 lines
 

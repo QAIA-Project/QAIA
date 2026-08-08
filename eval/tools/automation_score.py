@@ -220,7 +220,7 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
     Three of the four budget lines encode QAIA's own conventions: POM-as-fixtures and tag
     traceability are mandated by `automate` SKILL.md, and the selector rule assumes CSS
     locators are incidental. A mature third-party suite fails all three for reasons that are
-    not defects. Measured on `gothinkster/realworld` (2026-08-09): 428 findings, of which 279
+    not defects. Measured on `realworld-apps/realworld` (2026-08-09): 428 findings, of which 279
     flagged selectors that the project *publishes as a contract* every implementation must
     provide (`specs/e2e/SELECTORS.md`), 128 flagged tests as untraceable to a test book that
     does not exist, and 1 demanded a `pages/` directory. One finding out of 428 was real.

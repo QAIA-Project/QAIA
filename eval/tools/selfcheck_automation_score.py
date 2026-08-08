@@ -74,7 +74,7 @@ check("a non-empty literal array is left to the other operators",
 
 # --- 4. the tool must survive having no test book, and must not judge a foreign suite -------
 # Both found on 2026-08-09 the first time the tool was pointed at a suite QAIA did not write
-# (`gothinkster/realworld`, 128 tests). It had only ever scored its own output, so neither
+# (`realworld-apps/realworld`, 128 tests). It had only ever scored its own output, so neither
 # path had ever been taken.
 
 # `--testbook` is documented as optional, but this early return yielded ONE value while the

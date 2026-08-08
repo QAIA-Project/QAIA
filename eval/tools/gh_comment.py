@@ -26,6 +26,10 @@ Le second point est le plus important : c'est la regle que ce depot applique par
 
     python eval/tools/gh_comment.py --file corps.md --issue 88
     python eval/tools/gh_comment.py --file corps.md --comment-id 5228083941
+    python eval/tools/gh_comment.py --file corps.md --new-issue --title "..." --repo owner/nom
+
+`--repo` vise un depot tiers. La verification apres coup compte double la-bas : une issue ouverte
+chez quelqu'un d'autre ne se corrige pas discretement, elle arrive deja dans sa boite mail.
 
 Exit 0 publie et verifie, 1 le contenu publie differe du fichier, 2 erreur d'appel ou d'API.
 """
@@ -73,7 +77,15 @@ def main():
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument("--issue", type=int, help="numero d'issue : cree un commentaire")
     g.add_argument("--comment-id", type=int, help="identifiant de commentaire : le remplace")
+    g.add_argument("--new-issue", action="store_true", help="cree une issue (exige --title)")
+    ap.add_argument("--title", help="titre, obligatoire avec --new-issue")
+    ap.add_argument("--repo", help="depot cible owner/nom (defaut : QAIA-Project/QAIA)")
     args = ap.parse_args()
+
+    api = "https://api.github.com/repos/" + (args.repo or REPO)
+    if args.new_issue and not args.title:
+        print("BROKEN: --new-issue exige --title.")
+        return 2
 
     if not os.path.isfile(args.file):
         print("BROKEN: fichier introuvable : %s" % args.file)
@@ -83,13 +95,18 @@ def main():
         print("BROKEN: le fichier est vide.")
         return 2
 
-    if args.issue:
-        r = call("%s/issues/%d/comments" % (API, args.issue), {"body": body})
+    if args.new_issue:
+        r = call("%s/issues" % api, {"title": args.title, "body": body})
+        check = call("%s/issues/%d" % (api, r["number"]))
+        if check.get("title") != args.title:
+            print("TITRE PUBLIE DIFFERENT : %r != %r" % (check.get("title"), args.title))
+            return 1
+    elif args.issue:
+        r = call("%s/issues/%d/comments" % (api, args.issue), {"body": body})
+        check = call("%s/issues/comments/%d" % (api, r["id"]))
     else:
-        r = call("%s/issues/comments/%d" % (API, args.comment_id), {"body": body}, "PATCH")
-
-    # --- la verification : relire ce qui est REELLEMENT en ligne -----------------------
-    check = call("%s/issues/comments/%d" % (API, r["id"]))
+        r = call("%s/issues/comments/%d" % (api, args.comment_id), {"body": body}, "PATCH")
+        check = call("%s/issues/comments/%d" % (api, r["id"]))
     if norm(check["body"]) != norm(body):
         print("PUBLIE DIFFERENT DU FICHIER : %s" % check["html_url"])
         print("  fichier : %d caracteres | publie : %d" % (len(norm(body)), len(norm(check["body"]))))

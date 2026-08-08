@@ -1,6 +1,6 @@
-# QAIA pointed at a suite it did not write — `gothinkster/realworld`
+# QAIA pointed at a suite it did not write — `realworld-apps/realworld`
 
-**Date** 2026-08-09 · **Target** [`gothinkster/realworld`](https://github.com/gothinkster/realworld) `specs/e2e` (13 spec files, 128 tests, 84k stars) · **Tool** `eval/tools/automation_score.py`, static track only
+**Date** 2026-08-09 · **Target** [`realworld-apps/realworld`](https://github.com/realworld-apps/realworld) `specs/e2e` (13 spec files, 128 tests, 84k stars) · **Tool** `eval/tools/automation_score.py`, static track only
 
 ## Why this target
 
@@ -110,7 +110,9 @@ Both defects are locked by assertions in `eval/tools/selfcheck_automation_score.
 
 - **Static track only.** The mutation track needs the application running; RealWorld's suite targets
   a local frontend+backend pair that was not stood up.
-- **`openapi-ingest` was not exercised.** `specs/api/openapi.yml` (24.9 KB) remains the obvious next
-  target and would be the first external test of a skill written on 2026-08-08 and never used since.
-- **The confirmed defect was not reported upstream.** Opening an issue on a third-party repository is
-  the founder's call, not this tool's.
+- **`openapi-ingest` was exercised separately**, on the same project's `specs/api/openapi.yml`:
+  `eval/openapi-realworld-2026-08-09/`. Its contradiction pass found **nothing**, where all four of
+  its classes had fired on the Swagger Petstore the day before.
+- **The confirmed defect was reported upstream on the founder's instruction**: https://github.com/realworld-apps/realworld/issues/1718. The
+  repository has since been renamed `gothinkster/realworld` → `realworld-apps/realworld`; the GitHub
+  API answers `307 Moved Permanently` on the old name, which is what surfaced it.

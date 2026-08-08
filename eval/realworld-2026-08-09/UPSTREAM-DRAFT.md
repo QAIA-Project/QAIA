@@ -1,9 +1,10 @@
-# Draft issue for `gothinkster/realworld` — NOT PUBLISHED
+# Issue filed with `realworld-apps/realworld` — PUBLISHED
 
-Publishing to a third-party repository is the founder's call. This file is the text, ready to send,
-and nothing has been posted.
+Published on 2026-08-09 on the founder's explicit instruction, after being held back one turn for
+that decision. The text below is what went out, verified against the live issue by
+`eval/tools/gh_comment.py`, which re-reads from the API after posting.
 
-**Target** https://github.com/gothinkster/realworld/issues/new
+**Filed as** https://github.com/realworld-apps/realworld/issues/1718
 **Title** `e2e: "setting then clearing bio" asserts only what the bio is not, never what it is`
 
 ---
