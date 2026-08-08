@@ -213,7 +213,26 @@ def split_tests(text):
     return blocks
 
 
-def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=frozenset()):
+def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=frozenset(),
+                 third_party=False):
+    """`third_party=True` scores a suite QAIA did not generate.
+
+    Three of the four budget lines encode QAIA's own conventions: POM-as-fixtures and tag
+    traceability are mandated by `automate` SKILL.md, and the selector rule assumes CSS
+    locators are incidental. A mature third-party suite fails all three for reasons that are
+    not defects. Measured on `gothinkster/realworld` (2026-08-09): 428 findings, of which 279
+    flagged selectors that the project *publishes as a contract* every implementation must
+    provide (`specs/e2e/SELECTORS.md`), 128 flagged tests as untraceable to a test book that
+    does not exist, and 1 demanded a `pages/` directory. One finding out of 428 was real.
+
+    So the score was 30.0/100 for a suite that had earned 30.0 out of the 30 points it could
+    possibly earn. A number that low says "this is not QAIA-shaped", not "this is bad", and
+    reporting it as a quality score would be a straightforward lie about someone else's work.
+
+    This mode rescales the budget onto the dimensions that transfer, and demotes the three
+    convention rules to advisory — same idiom already used below when no selector is found:
+    not applicable, not penalised, and *said out loud* rather than silently dropped.
+    """
     findings = []
     tests_total = 0
     tests_with_real_assertion = 0
@@ -273,8 +292,9 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
                                  "detail": weak, "blocking": False})
             if RAW_SELECTOR.search(line) or XPATH_SELECTOR.search(line):
                 selector_raw += 1
-                findings.append({"kind": "fragile-selector", "file": rel, "line": i,
-                                 "detail": line.strip()[:160], "blocking": False})
+                if not third_party:
+                    findings.append({"kind": "fragile-selector", "file": rel, "line": i,
+                                     "detail": line.strip()[:160], "blocking": False})
             if ROLE_SELECTOR.search(line):
                 selector_role += 1
 
@@ -314,7 +334,7 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
                                                "carries no trace of it: a red here is "
                                                "indistinguishable from a regression",
                                      "blocking": True})
-            else:
+            elif not third_party:
                 findings.append({"kind": "untraceable-test", "file": rel, "line": start,
                                  "detail": "no @QAIA-<ID> in the test title: " + title[:120],
                                  "blocking": False})
@@ -346,12 +366,13 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
                                  "detail": wait, "blocking": False})
             if RAW_SELECTOR.search(line) or XPATH_SELECTOR.search(line):
                 selector_raw += 1
-                findings.append({"kind": "fragile-selector", "file": rel, "line": i,
-                                 "detail": line.strip()[:160], "blocking": False})
+                if not third_party:
+                    findings.append({"kind": "fragile-selector", "file": rel, "line": i,
+                                     "detail": line.strip()[:160], "blocking": False})
             if ROLE_SELECTOR.search(line):
                 selector_role += 1
 
-    if not has_pages_dir or not fixtures_path:
+    if (not has_pages_dir or not fixtures_path) and not third_party:
         findings.append({"kind": "pom-missing", "file": ".", "line": 0,
                          "detail": "automate SKILL.md mandates POM-as-fixtures (pages/ + fixtures.js); "
                                    + ("pages/ missing" if not has_pages_dir else "fixtures file missing"),
@@ -378,12 +399,26 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
     else:
         robust_selectors = round(25 * pct(selector_role, selectors_total), 1)
 
-    budget = {
-        "substantive_assertions": round(30 * pct(tests_with_real_assertion, tests_total), 1),
-        "robust_selectors": robust_selectors,
-        "pom_as_fixtures": 20.0 if (has_pages_dir and fixtures_path) else 0.0,
-        "traceability": round(25 * pct(tagged_tests, tests_total), 1),
-    }
+    if third_party:
+        # Only the dimensions that transfer. Assertion substance is 30 of the 100-point budget;
+        # rescaling it to 100 keeps the number comparable ACROSS third-party suites while making
+        # it plainly incomparable with a QAIA score — which it must be, since it answers a
+        # narrower question. The three dropped lines are reported as excluded, never as zeros:
+        # a zero would read as a failing grade for declining to adopt our conventions.
+        budget = {"substantive_assertions": round(100 * pct(tests_with_real_assertion, tests_total), 1)}
+        findings.append({"kind": "third-party-mode", "file": ".", "line": 0,
+                         "detail": "third-party suite: pom_as_fixtures, traceability and "
+                                   "robust_selectors are QAIA conventions and were EXCLUDED from "
+                                   "the budget, not scored zero. This score judges assertion "
+                                   "substance only and is not comparable with a QAIA score.",
+                         "blocking": False})
+    else:
+        budget = {
+            "substantive_assertions": round(30 * pct(tests_with_real_assertion, tests_total), 1),
+            "robust_selectors": robust_selectors,
+            "pom_as_fixtures": 20.0 if (has_pages_dir and fixtures_path) else 0.0,
+            "traceability": round(25 * pct(tagged_tests, tests_total), 1),
+        }
     score = round(sum(budget.values()), 1)
 
     return {
@@ -619,7 +654,11 @@ def mutation_track(spec_files, tests_dir, run_cwd, base_cmd, max_mutations, time
 def collect_feature_ids(testbook):
     ids = set()
     if not testbook:
-        return ids
+        # Two values, like every other exit: `--testbook` is optional, and this early return
+        # once yielded a bare `ids`, so the caller's two-way unpack crashed on any run without
+        # a test book. Never caught because the tool had only ever scored QAIA-generated
+        # suites, which always carry one — the first third-party suite hit it immediately.
+        return ids, set()
     paths = []
     if os.path.isfile(testbook):
         paths = [testbook]
@@ -655,6 +694,9 @@ def main():
     ap.add_argument("--max-mutations", type=int, default=25, help="cap on mutations (0 = no cap)")
     ap.add_argument("--timeout", type=int, default=300, help="per-run timeout in seconds")
     ap.add_argument("--skip-mutation", action="store_true", help="static track only")
+    ap.add_argument("--third-party", action="store_true",
+                    help="score a suite QAIA did not generate: QAIA-convention rules are excluded "
+                         "from the budget rather than scored zero (see static_track docstring)")
     ap.add_argument("--out", help="write JSON here instead of stdout")
     args = ap.parse_args()
 
@@ -676,7 +718,8 @@ def main():
                           if p not in support_files]
 
     feature_ids, flagged_ids = collect_feature_ids(args.testbook)
-    static = static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids)
+    static = static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids,
+                          third_party=args.third_party)
 
     if args.skip_mutation:
         mutation = {"status": "skipped", "blocker": "--skip-mutation requested",

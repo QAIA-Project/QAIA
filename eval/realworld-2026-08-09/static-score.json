@@ -1,0 +1,187 @@
+{
+  "tool": "automation_score.py",
+  "version": 1,
+  "inputs": {
+    "tests_dir": "C:\\Users\\MORETT~1\\AppData\\Local\\Temp\\claude\\C--Users-Moretti-C-dric-Documents-Claude-QAIA\\128d3429-ee68-4b06-a2bd-75924ef46080\\scratchpad\\realworld\\specs\\e2e",
+    "testbook": null,
+    "run_cmd": "npx playwright test"
+  },
+  "static": {
+    "score": 100.0,
+    "budget": {
+      "substantive_assertions": 100.0
+    },
+    "counts": {
+      "spec_files": 12,
+      "tests": 128,
+      "tests_with_real_assertion": 128,
+      "role_selectors": 0,
+      "raw_selectors": 279,
+      "tagged_tests": 0,
+      "testbook_scenarios": 0,
+      "scenarios_without_test": 0
+    },
+    "findings": [
+      {
+        "kind": "forbidden-wait",
+        "file": "articles.spec.ts",
+        "line": 253,
+        "detail": "waitForTimeout",
+        "blocking": false
+      },
+      {
+        "kind": "weak-assertion",
+        "file": "health.spec.ts",
+        "line": 18,
+        "detail": "toBeTruthy() — asserts existence, not a value",
+        "blocking": false
+      },
+      {
+        "kind": "single-sided-evidence",
+        "file": "null-fields.spec.ts",
+        "line": 117,
+        "detail": "every assertion in this test is one-sided (not.toBe(...) -- asserts what it is not, not what it is): it cannot distinguish the refusal under test from any other refusal, nor from the forbidden behaviour returning a different value",
+        "blocking": false
+      },
+      {
+        "kind": "weak-assertion",
+        "file": "settings.spec.ts",
+        "line": 52,
+        "detail": "not.toBeNull() — asserts existence, not a value",
+        "blocking": false
+      },
+      {
+        "kind": "weak-assertion",
+        "file": "settings.spec.ts",
+        "line": 56,
+        "detail": "not.toBeNull() — asserts existence, not a value",
+        "blocking": false
+      },
+      {
+        "kind": "weak-assertion",
+        "file": "settings.spec.ts",
+        "line": 94,
+        "detail": "not.toBeNull() — asserts existence, not a value",
+        "blocking": false
+      },
+      {
+        "kind": "weak-assertion",
+        "file": "settings.spec.ts",
+        "line": 97,
+        "detail": "not.toBeNull() — asserts existence, not a value",
+        "blocking": false
+      },
+      {
+        "kind": "weak-assertion",
+        "file": "settings.spec.ts",
+        "line": 136,
+        "detail": "not.toBeNull() — asserts existence, not a value",
+        "blocking": false
+      },
+      {
+        "kind": "weak-assertion",
+        "file": "url-navigation.spec.ts",
+        "line": 44,
+        "detail": "toBeTruthy() — asserts existence, not a value",
+        "blocking": false
+      },
+      {
+        "kind": "forbidden-wait",
+        "file": "url-navigation.spec.ts",
+        "line": 265,
+        "detail": "waitForTimeout",
+        "blocking": false
+      },
+      {
+        "kind": "weak-assertion",
+        "file": "user-fetch-errors.spec.ts",
+        "line": 135,
+        "detail": "not.toBeNull() — asserts existence, not a value",
+        "blocking": false
+      },
+      {
+        "kind": "weak-assertion",
+        "file": "user-fetch-errors.spec.ts",
+        "line": 193,
+        "detail": "not.toBeNull() — asserts existence, not a value",
+        "blocking": false
+      },
+      {
+        "kind": "weak-assertion",
+        "file": "user-fetch-errors.spec.ts",
+        "line": 210,
+        "detail": "not.toBeNull() — asserts existence, not a value",
+        "blocking": false
+      },
+      {
+        "kind": "weak-assertion",
+        "file": "user-fetch-errors.spec.ts",
+        "line": 248,
+        "detail": "not.toBeNull() — asserts existence, not a value",
+        "blocking": false
+      },
+      {
+        "kind": "forbidden-wait",
+        "file": "xss-security.spec.ts",
+        "line": 133,
+        "detail": "waitForTimeout",
+        "blocking": false
+      },
+      {
+        "kind": "forbidden-wait",
+        "file": "xss-security.spec.ts",
+        "line": 157,
+        "detail": "waitForTimeout",
+        "blocking": false
+      },
+      {
+        "kind": "forbidden-wait",
+        "file": "xss-security.spec.ts",
+        "line": 159,
+        "detail": "waitForTimeout",
+        "blocking": false
+      },
+      {
+        "kind": "forbidden-wait",
+        "file": "xss-security.spec.ts",
+        "line": 186,
+        "detail": "waitForTimeout",
+        "blocking": false
+      },
+      {
+        "kind": "forbidden-wait",
+        "file": "xss-security.spec.ts",
+        "line": 222,
+        "detail": "waitForTimeout",
+        "blocking": false
+      },
+      {
+        "kind": "forbidden-wait",
+        "file": "xss-security.spec.ts",
+        "line": 259,
+        "detail": "waitForTimeout",
+        "blocking": false
+      },
+      {
+        "kind": "third-party-mode",
+        "file": ".",
+        "line": 0,
+        "detail": "third-party suite: pom_as_fixtures, traceability and robust_selectors are QAIA conventions and were EXCLUDED from the budget, not scored zero. This score judges assertion substance only and is not comparable with a QAIA score.",
+        "blocking": false
+      }
+    ]
+  },
+  "mutation": {
+    "status": "skipped",
+    "blocker": "--skip-mutation requested",
+    "total": 0,
+    "killed": 0,
+    "survived": []
+  },
+  "blocking": {
+    "failed": false,
+    "reasons": []
+  },
+  "llm_rubric": null,
+  "note": "static score and the LLM rubric score are never summed — see eval/RUBRIC.md, case US 676266. A blocking failure stands regardless of either score."
+}

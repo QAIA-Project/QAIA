@@ -11,7 +11,15 @@ QAIA and [BMAD](https://github.com/bmad-code-org/BMAD-METHOD) are complementary:
 | Phase 4 — QA / code review | `testbook-validate` | Scored audit + PASS/CONCERNS/FAIL gate on any existing `.feature` set — including books QAIA didn't generate |
 | Retrospective | `feedback` + `rag-build` | Corrections promoted (validated) into a git-versioned team knowledge base reused by the next generation |
 
-Practical setup: install both (BMAD via its installer, QAIA via `/plugin marketplace add QAIA-Project/QAIA`). Point `us-ingest` at the BMAD story file (`story-*.md`) — its AC section is exactly the input QAIA expects. QAIA writes to `.qaia/`, BMAD to `_bmad/`: no collision.
+Practical setup: install both (BMAD via its installer, QAIA via `/plugin marketplace add QAIA-Project/QAIA`).
+
+**Checked against BMAD-METHOD v6.10.0 on 2026-08-09** — the two claims this paragraph used to make were both wrong, so here is what the source actually says:
+
+- **Story files are not named `story-*.md`.** `bmad-create-story` builds the name from the story key, `{epic}-{story}-{title}.md` — e.g. `1-2-user-authentication.md`. The earlier instruction to glob `story-*.md` would have matched nothing. The location is configurable, so point `us-ingest` at the path your install actually uses.
+- **BMAD writes its outputs to `_bmad-output/`**, not `_bmad/` — the latter is where the framework and its config live. The no-collision conclusion still holds (`.qaia/` touches neither), but for a different reason than previously stated.
+- **The AC section is compatible, the rest of the file is not.** The template's `## Acceptance Criteria` is a numbered list, which is what QAIA wants. But the same file also carries `## Tasks / Subtasks`, `## Dev Notes` and `## Dev Agent Record` — implementation record, not requirement. `us-ingest` captures the designated source *whole* and by design adds nothing; it will therefore ingest those sections too. Extract the story statement and AC block into the source you hand it, or expect the downstream book to treat dev notes as requirement.
+
+Not verified: no end-to-end run of BMAD-then-QAIA on a real project. The points above are read from BMAD's own skill definitions and template, not from a completed cycle.
 
 ## Differences to keep in mind
 

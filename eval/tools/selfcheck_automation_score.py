@@ -72,6 +72,27 @@ check("toEqual({}) is mutated",
 check("a non-empty literal array is left to the other operators",
       A.mutate_line("    expect(x).toEqual([1, 2]);")[0], None)
 
+# --- 4. the tool must survive having no test book, and must not judge a foreign suite -------
+# Both found on 2026-08-09 the first time the tool was pointed at a suite QAIA did not write
+# (`gothinkster/realworld`, 128 tests). It had only ever scored its own output, so neither
+# path had ever been taken.
+
+# `--testbook` is documented as optional, but this early return yielded ONE value while the
+# caller unpacked TWO: every run without a test book died on a ValueError before scoring a line.
+check("collect_feature_ids returns a pair when there is no test book",
+      len(A.collect_feature_ids(None)), 2)
+
+# Three of the four budget lines encode QAIA conventions. Scored against a mature third-party
+# suite they produced 408 findings that were not defects -- 279 of them flagging CSS selectors
+# the project PUBLISHES as a contract (`specs/e2e/SELECTORS.md`) -- and a 30/100 that read as a
+# quality verdict on someone else's work. In third-party mode those three are excluded from the
+# budget, never scored zero, and the hollow/blocking rules must keep firing regardless.
+import inspect
+sig = inspect.signature(A.static_track).parameters
+check("static_track accepts third_party", "third_party" in sig, True)
+check("third_party defaults to off, so QAIA's own suites keep the full budget",
+      sig["third_party"].default, False)
+
 if failures:
     print("selfcheck_automation_score: %d FAILURE(S)\n" % len(failures))
     for f in failures:
