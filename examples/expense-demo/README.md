@@ -21,7 +21,13 @@ cd app && node server.js          # http://localhost:4500
 
 # 2. in another shell, run the automation
 cd tests && npm install
-npx playwright test               # 40 tests: e2e, api, a11y
+npx playwright test --project=api --project=e2e-desktop --project=a11y   # 50 tests
+
+# The `visual` project is excluded above on purpose. Its 6 baselines are committed for
+# **win32 only** (`*-visual-win32.png`): Playwright snapshots are platform-specific, so
+# `npx playwright test` with no filter fails on macOS and Linux with 6 missing snapshots.
+# To include it, regenerate the baselines on your platform first:
+#     npx playwright test --project=visual --update-snapshots
 ```
 
 ## Static demo (GitHub Pages)

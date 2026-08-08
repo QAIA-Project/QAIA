@@ -39,6 +39,13 @@ import os
 import re
 import sys
 
+# Le README de CHAQUE plugin annonce sa propre version et son nombre de skills. Le controle
+# de CI qui verifie le README principal ne les couvrait pas : le 2026-08-08 une revue les a
+# trouves perimes de 6 a 20 versions correctifs -- 0.2.14 pour 0.2.34, 0.1.8 pour 0.1.27.
+# Un README de plugin est LIVRE a l'utilisateur : il est plus visible que le README racine.
+PLUGIN_README = "plugins/%s/README.md"
+PLUGIN_STATUS = re.compile(r"\*\*Status:\s*([0-9]+\.[0-9]+\.[0-9]+),\s*(\d{1,3})\s+skills\.\*\*")
+
 TOTAL_SCANNED = [
     "README.md",
     "docs/TEST-COVERAGE-MAP.md",
@@ -110,11 +117,34 @@ def main():
                     if claimed != per_plugin[plugin]:
                         stale.append((path, i, plugin, m.group(0).strip()[:70], per_plugin[plugin]))
 
+    # --- les README de plugin : version ET nombre de skills -------------------------
+    import json as _json
+    for p, n in per_plugin.items():
+        path = PLUGIN_README % p
+        if not os.path.isfile(path):
+            continue
+        manifest = os.path.join("plugins", p, ".claude-plugin", "plugin.json")
+        if not os.path.isfile(manifest):
+            continue
+        ver = _json.load(io.open(manifest, encoding="utf-8"))["version"]
+        body = io.open(path, encoding="utf-8", errors="replace").read()
+        m = PLUGIN_STATUS.search(body)
+        checked += 1
+        if not m:
+            stale.append((path, 0, p, "aucune ligne **Status: <version>, <n> skills.**",
+                          "%s / %d" % (ver, n)))
+        elif m.group(1) != ver or int(m.group(2)) != n:
+            stale.append((path, body[:m.start()].count(chr(10)) + 1, p,
+                          m.group(0), "%s / %d skills" % (ver, n)))
+
     if stale:
         print("STALE SKILL COUNT -- the repository has %d skills (%s).\n"
               % (total, ", ".join("%s %d" % (k, v) for k, v in per_plugin.items())))
         for path, i, what, claim, real in stale:
-            print("  %s:%d  claims \"%s\"  ->  %s is %d" % (path, i, claim, what, real))
+            # `real` est un entier pour un compte, une chaine pour un README de plugin
+            # (« 0.2.34 / 17 skills »). La premiere version de ce message plantait sur le
+            # second cas : le controle detectait la derive et s ecrasait en la rapportant.
+            print("  %s:%s  claims \"%s\"  ->  %s is %s" % (path, i or "?", claim, what, real))
         print("\nUpdate the claim, or -- if the number is deliberately historical -- rewrite it so it")
         print("carries its date (\"30 le matin du 2026-08-08\") instead of reading as current.")
         return 1

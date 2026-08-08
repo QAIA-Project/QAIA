@@ -117,7 +117,7 @@ test book — that is the part worth judging first.
 /plugin install qaia-core@qaia
 ```
 
-Then `/hello` checks the install, and describing what you want in plain language — *"work with
+Then `/qaia-core:hello` checks the install, and describing what you want in plain language — *"work with
 QAIA on this user story"* — is enough: the `qaia` meta-skill routes to the right step and stops
 wherever a human has to decide.
 
@@ -326,7 +326,7 @@ Ajoutez le reste seulement quand vous en avez besoin :
 
 **Quelle skill pour quoi ?** [`plugins/qaia-core/CATALOGUE.md`](plugins/qaia-core/CATALOGUE.md) est une carte d'une page « je veux faire X → utilise Y » des 35 skills — dont les quatre qui sondent une app en marche, rangées par **ce que chacune prend pour oracle**, la seule chose qui les distingue vraiment.
 
-Puis, dans n'importe quel projet, `/hello` vérifie l'installation et liste ce qui est disponible.
+Puis, dans n'importe quel projet, `/qaia-core:hello` vérifie l'installation et liste ce qui est disponible.
 
 `qaia-core` seul suffit pour aller d'une user story à un cahier Gherkin. Ajoutez
 `qaia-playwright` pour des tests exécutables. Pour démarrer, décrivez votre besoin en langage

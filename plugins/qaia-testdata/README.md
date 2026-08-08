@@ -6,7 +6,7 @@ boundary/edge cases the acceptance criteria demand, in a format directly injecta
 Playwright fixture. Separate plugin by design (decision D16): `qaia-core` only ever produces
 small inline examples inside a scenario; this plugin is the standalone dataset producer.
 
-**Status: 0.1.0.** One skill, portable Markdown only — nothing in this plugin auto-executes on install: no hooks, no agents, no MCP server, and the CI fails if any appear. The `fixture/` directory does contain a Playwright spec and config; they are the recorded proof that the skill was exercised, never run by the plugin itself (ADR
+**Status: 0.1.3, 1 skills.** One skill, portable Markdown only — nothing in this plugin auto-executes on install: no hooks, no agents, no MCP server, and the CI fails if any appear. The `fixture/` directory does contain a Playwright spec and config; they are the recorded proof that the skill was exercised, never run by the plugin itself (ADR
 0002/D42). The only files it writes are the dataset file(s), a traceability `dataset-map.md`,
 and — optionally — the `producers[]`/`artifacts[]` entries of the standard run manifest
 (`./OUTPUT-CONTRACT.md`, D39); it never edits `.feature` files or another producer's section.

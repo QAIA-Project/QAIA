@@ -2,7 +2,7 @@
 
 QAIA core plugin: from user story to prioritized, traceable, atomic Gherkin test books.
 
-**Status: 0.2.14.** Proven end-to-end on two independent domains (medical — `examples/medibook/` — and non-medical — `examples/expense-demo/`), plus a 24-case multi-model robustness corpus ([`eval/baselines/corpus-24-depth.md`](https://github.com/QAIA-Project/QAIA/blob/main/eval/baselines/corpus-24-depth.md)). See `eval/` at the repo root for the full evaluation trail.
+**Status: 0.2.34, 17 skills.** Proven end-to-end on two independent domains (medical — `examples/medibook/` — and non-medical — `examples/expense-demo/`), plus a 24-case multi-model robustness corpus ([`eval/baselines/corpus-24-depth.md`](https://github.com/QAIA-Project/QAIA/blob/main/eval/baselines/corpus-24-depth.md)). See `eval/` at the repo root for the full evaluation trail.
 
 ## Install
 
@@ -36,7 +36,7 @@ From Claude Code:
 
 ## Token budget — orders of magnitude
 
-**Version 0.2.15 — measured 2026-07-25. Fully instrumented.** All 14 commands in the table below
+**Version 0.2.34 — measured 2026-07-25. Fully instrumented.** All 14 commands in the table below
 carry a real measurement, taken by the method described here.
 
 **How they were measured.** Each command was applied faithfully, start to finish, by a dedicated
