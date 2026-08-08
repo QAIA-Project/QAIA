@@ -93,6 +93,58 @@ check("static_track accepts third_party", "third_party" in sig, True)
 check("third_party defaults to off, so QAIA's own suites keep the full budget",
       sig["third_party"].default, False)
 
+# --- 5. multi-line expect chains, and suites that are not Playwright at all ------------------
+# Found 2026-08-09 by scanning nine third-party Playwright suites (271 tests). Twenty
+# high-precision findings came back; every single one was false, and two were the tool's fault.
+
+# `expect.poll()` written as a chain over several lines left `expect` alone on its line, so the
+# line-by-line detector saw no assertion and declared the test assertion-less -- BLOCKING in
+# default mode. 12 tests across openplayerjs and drumhaus were wrongly reported this way.
+POLL = "\n".join([
+    "test('polls until the src becomes a blob', async ({ page }) => {",
+    "  await expect",
+    "    .poll(() => page.evaluate(() => document.querySelector('#p').src), { timeout: 15000 })",
+    "    .toMatch(/^blob:/);",
+    "});",
+])
+joined = A.join_chains(POLL)
+check("a split expect.poll chain is seen as one assertion",
+      any(A.EXPECT_CALL.search(ln) and ".toMatch" in ln for ln in joined), True)
+check("join_chains preserves the line count, so reported line numbers stay true",
+      len(joined), len(POLL.split("\n")))
+check("expect.poll on a single line is still matched",
+      bool(A.EXPECT_CALL.search("await expect.poll(() => x()).toBe(1);")), True)
+check("an import line is not mistaken for an assertion",
+      bool(A.EXPECT_CALL.search("import { expect, test } from '@playwright/test';")), False)
+
+# `.spec.ts` is not a Playwright marker -- Vitest and Jest use it too, and every rule here is
+# Playwright-specific. Scoring `valhalla/web-app` produced 7 hollow-assertion findings against
+# Vitest unit tests, where `toBeDefined()` on a plain object is a real check, not a hollow one.
+check("a Vitest import is recognised as a foreign runner",
+      bool(A.FOREIGN_RUNNER.search("import { describe, it, expect } from 'vitest';")), True)
+check("a Playwright import is not treated as foreign",
+      bool(A.FOREIGN_RUNNER.search("import { expect, test } from '@playwright/test';")), False)
+# Asserting the return SHAPE is not enough: the first version of this check passed while the
+# skip branch was disabled outright. It has to exercise the behaviour on real files.
+import shutil
+import tempfile
+_tmp = tempfile.mkdtemp(prefix="qaia-selfcheck-")
+try:
+    io_pairs = [
+        ("pw.spec.ts", "import { expect, test } from '@playwright/test';\ntest('a', async () => {});\n"),
+        ("unit.spec.ts", "import { describe, it, expect } from 'vitest';\nit('b', () => {});\n"),
+        ("jest.spec.js", "const { expect } = require('jest');\ntest('c', () => {});\n"),
+    ]
+    for fname, src in io_pairs:
+        with open(os.path.join(_tmp, fname), "w", encoding="utf-8") as fh:
+            fh.write(src)
+    kept, skipped = A.find_spec_files(_tmp)
+    check("the Playwright spec is kept", [os.path.basename(p) for p in kept], ["pw.spec.ts"])
+    check("both foreign-runner specs are skipped",
+          sorted(os.path.basename(p) for p in skipped), ["jest.spec.js", "unit.spec.ts"])
+finally:
+    shutil.rmtree(_tmp, ignore_errors=True)
+
 if failures:
     print("selfcheck_automation_score: %d FAILURE(S)\n" % len(failures))
     for f in failures:

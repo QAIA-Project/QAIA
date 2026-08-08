@@ -123,7 +123,48 @@ XPATH_SELECTOR = re.compile(r"['\"`]\s*(//|xpath=)")
 ROLE_SELECTOR = re.compile(r"\.\s*(getByRole|getByTestId|getByLabel|getByPlaceholder|getByText|getByTitle|getByAltText)\s*\(")
 
 NL = chr(10)
-EXPECT_CALL = re.compile(r"\bexpect\s*\(")
+EXPECT_CALL = re.compile(r"\bexpect\s*[(.]")
+
+# `expect.poll()` and `expect.soft()` are mainstream Playwright, and both are habitually written
+# as a chain broken over several lines:
+#
+#     await expect
+#       .poll(() => page.evaluate(...), { timeout: 15_000 })
+#       .toMatch(/^blob:/);
+#
+# The detector reads one line at a time, so `expect` sat alone on its line and matched nothing:
+# the test was reported as having NO assertion at all. Found on 2026-08-09 across
+# `openplayerjs/openplayerjs` and `mxfng/drumhaus` — 12 tests declared assertion-less while every
+# one of them asserted. `test-without-assertion` is BLOCKING in default mode, so this would have
+# failed a QAIA-generated suite for using a documented Playwright idiom.
+#
+# Rejoining the chain before analysis fixes the count *and* keeps the one-sided check honest,
+# which reading the pieces separately could not.
+CHAIN_HEAD = re.compile(r"\bexpect\s*$")
+CHAIN_TAIL = re.compile(r"^\s*\.")
+
+
+def join_chains(body):
+    """Merge `expect` chains split across lines, keeping one entry per original line.
+
+    The merged text lands on the line where the chain STARTS, and each continuation line is
+    replaced by an empty placeholder so that reported line numbers stay true. The anchor is
+    tracked by index rather than by `out[-1]`: a first version appended the placeholder and then
+    tried to extend it, so a three-line chain kept only its first two parts and the selfcheck
+    caught it.
+    """
+    out = []
+    anchor = None
+    for raw in body.split(NL):
+        cont = anchor is not None and (CHAIN_TAIL.match(raw) or CHAIN_HEAD.search(out[anchor]))
+        if cont:
+            out[anchor] = out[anchor].rstrip() + " " + raw.strip()
+            out.append("")
+            continue
+        out.append(raw)
+        # A chain may start either as `await expect` (head) or `expect(x)` continued by `.not`.
+        anchor = len(out) - 1 if EXPECT_CALL.search(raw) or CHAIN_HEAD.search(raw) else None
+    return out
 # `test(...)`, `test.only(...)`, `test.fixme(...)` — but never `test.describe(...)`, which is a
 # grouping block, not a test. Counting describe blocks as tests reported every suite as having a
 # "test without assertion" (found by running the tool on US-EVAL-001, not by reading it).
@@ -170,8 +211,30 @@ def _walk(tests_dir):
             yield os.path.join(root, f)
 
 
+# `.spec.ts` is not a Playwright marker: Vitest and Jest claim the same suffix. Every rule in this
+# tool is Playwright-specific — "toBeDefined() (a locator handle always exists)" is sound about a
+# locator and plain wrong about an object, where `toBeDefined()` genuinely checks a key exists.
+# Found on 2026-08-09: `valhalla/web-app` was scored with 13 of its 15 `.spec.ts` files being
+# Vitest unit tests, producing 7 hollow-assertion findings that were all false.
+FOREIGN_RUNNER = re.compile(r"""from\s+['"](vitest|@jest/globals|jest|mocha|node:test)['"]|"""
+                            r"""require\(\s*['"](vitest|jest|mocha|node:test)['"]""")
+PLAYWRIGHT_IMPORT = re.compile(r"""['"]@playwright/test['"]""")
+
+
 def find_spec_files(tests_dir):
-    return [p for p in _walk(tests_dir) if SPEC_GLOB.search(os.path.basename(p))]
+    """Playwright specs only. A file that imports another runner is skipped, never scored."""
+    out, skipped = [], []
+    for p in _walk(tests_dir):
+        if not SPEC_GLOB.search(os.path.basename(p)):
+            continue
+        head = read(p)[:4000]
+        if PLAYWRIGHT_IMPORT.search(head):
+            out.append(p)
+        elif FOREIGN_RUNNER.search(head):
+            skipped.append(p)
+        else:
+            out.append(p)     # no import found either way: judged, as before
+    return out, skipped
 
 
 def find_support_files(tests_dir, spec_files):
@@ -301,8 +364,9 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
         for title, start, end in blocks:
             tests_total += 1
             body = "\n".join(lines[start - 1:end - 1])
+            body_lines = join_chains(body)
             real_assertions = len([
-                1 for ln in body.split("\n")
+                1 for ln in body_lines
                 if EXPECT_CALL.search(code_of(ln)) and not any(rx.search(code_of(ln)) for rx, _ in HOLLOW_ASSERTIONS)
             ])
             if real_assertions:
@@ -312,7 +376,7 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
                                  "detail": title[:160], "blocking": True})
             # Whole-evidence check: fires only when EVERY assertion in the test is one-sided.
             # A test that asserts `not.toBe(200)` and then reads the error body is fine.
-            assertion_lines = [ln for ln in body.split(NL) if EXPECT_CALL.search(code_of(ln))]
+            assertion_lines = [ln for ln in body_lines if EXPECT_CALL.search(code_of(ln))]
             if assertion_lines and all(first_match(SINGLE_SIDED, ln) for ln in assertion_lines):
                 findings.append({"kind": "single-sided-evidence", "file": rel, "line": start,
                                  "detail": "every assertion in this test is one-sided ("
@@ -704,9 +768,14 @@ def main():
     if not os.path.isdir(tests_dir):
         print("error: --tests-dir does not exist: %s" % tests_dir, file=sys.stderr)
         return 2
-    spec_files = find_spec_files(tests_dir)
+    spec_files, foreign_runner_files = find_spec_files(tests_dir)
+    if foreign_runner_files:
+        print("note: %d .spec file(s) skipped — they import Vitest/Jest/Mocha, and every rule here "
+              "is Playwright-specific:" % len(foreign_runner_files), file=sys.stderr)
+        for p in foreign_runner_files[:10]:
+            print("        " + os.path.relpath(p, tests_dir), file=sys.stderr)
     if not spec_files:
-        print("error: no .spec.* files under %s" % tests_dir, file=sys.stderr)
+        print("error: no Playwright .spec.* files under %s" % tests_dir, file=sys.stderr)
         return 2
 
     support_files = find_support_files(tests_dir, spec_files)
