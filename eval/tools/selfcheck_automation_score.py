@@ -145,6 +145,78 @@ try:
 finally:
     shutil.rmtree(_tmp, ignore_errors=True)
 
+# --- 6. three rules narrowed or added by the second third-party batch (863 more tests) --------
+
+# `toBeDefined()` is hollow on a LOCATOR (the handle always exists) and a real check on anything
+# else. Unqualified, it fired 7 times on valhalla/web-app and 17 on Jokimbe/ComfyUI-DrawThings —
+# all wrong, all blocking.
+def _hollow(line):
+    return any(rx.search(line) for rx, _ in A.HOLLOW_ASSERTIONS)
+
+
+check("toBeDefined on a locator is still hollow",
+      _hollow("await expect(page.locator('#x')).toBeDefined();"), True)
+check("toBeDefined on a getBy* locator is still hollow",
+      _hollow("expect(page.getByRole('button')).toBeDefined();"), True)
+check("toBeDefined on a plain value is NOT hollow",
+      _hollow("expect(await comfy.getNodeRef('Sampler')).toBeDefined();"), False)
+
+# Verification held by a throwing wait or by a page object still fails the test, which is all
+# `test-without-assertion` is entitled to claim. POM-as-fixtures is what `automate` MANDATES, so
+# the unqualified rule penalised the exact pattern this project requires.
+check("a page-object assertion counts",
+      bool(A.INDIRECT_ASSERTION.search("await markdownEditorPage.expectVisible();")), True)
+check("waitForURL counts", bool(A.INDIRECT_ASSERTION.search("await page.waitForURL(/login/);")), True)
+check("waitForSelector counts",
+      bool(A.INDIRECT_ASSERTION.search("await page.waitForSelector('span:has-text(\"done\")');")), True)
+check("an ordinary action does not count",
+      bool(A.INDIRECT_ASSERTION.search("await page.click('#submit');")), False)
+check("waitForTimeout is NOT a verification — it asserts nothing",
+      bool(A.INDIRECT_ASSERTION.search("await page.waitForTimeout(1000);")), False)
+
+# A body with no executable statement runs, does nothing, and reports PASS.
+check("closing punctuation is not a statement", bool(A.EMPTY_BODY_NOISE.match("  });")), True)
+check("a real statement is not noise", bool(A.EMPTY_BODY_NOISE.match("  await page.goto('/');")), False)
+
+# Matching the patterns is not the same as acting on them: the first version of the two checks
+# above passed with `real_assertions += 0` and with the empty-body finding renamed away. Both
+# have to be exercised through static_track on real files.
+_tmp2 = tempfile.mkdtemp(prefix="qaia-selfcheck-behaviour-")
+try:
+    # Kept in two files so each assertion answers one question: the empty test SHOULD also raise
+    # test-without-assertion, and mixing them made the first version of this check fail for the
+    # right reason at the wrong place.
+    with open(os.path.join(_tmp2, "pom.spec.ts"), "w", encoding="utf-8") as fh:
+        fh.write("\n".join([
+            "import { test, expect } from '@playwright/test';",
+            "test('verification lives in the page object', async ({ loginPage }) => {",
+            "  await loginPage.signIn('a', 'b');",
+            "  await loginPage.expectDashboardVisible();",
+            "});",
+        ]))
+    specs, _ = A.find_spec_files(_tmp2)
+    kinds = [f["kind"] for f in A.static_track(specs, [], _tmp2, set(), third_party=True)["findings"]]
+    check("a page-object assertion prevents test-without-assertion",
+          kinds.count("test-without-assertion"), 0)
+    check("a page-object assertion is not mistaken for an empty body",
+          kinds.count("empty-test-body"), 0)
+
+    os.remove(os.path.join(_tmp2, "pom.spec.ts"))
+    with open(os.path.join(_tmp2, "empty.spec.ts"), "w", encoding="utf-8") as fh:
+        fh.write("\n".join([
+            "import { test, expect } from '@playwright/test';",
+            "test('this one is empty', async ({ page }) => { });",
+            "test('this one is only comments', async ({ page }) => {",
+            "  // load the workflow",
+            "  // assert the node is green",
+            "});",
+        ]))
+    specs, _ = A.find_spec_files(_tmp2)
+    kinds = [f["kind"] for f in A.static_track(specs, [], _tmp2, set(), third_party=True)["findings"]]
+    check("both empty bodies are reported", kinds.count("empty-test-body"), 2)
+finally:
+    shutil.rmtree(_tmp2, ignore_errors=True)
+
 if failures:
     print("selfcheck_automation_score: %d FAILURE(S)\n" % len(failures))
     for f in failures:

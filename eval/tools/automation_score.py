@@ -65,7 +65,16 @@ HOLLOW_ASSERTIONS = [
     (re.compile(r"expect\s*\(\s*true\s*\)\s*\.\s*toBe\s*\(\s*true\s*\)"), "expect(true).toBe(true)"),
     (re.compile(r"expect\s*\(\s*1\s*\)\s*\.\s*toBe\s*\(\s*1\s*\)"), "expect(1).toBe(1)"),
     (re.compile(r"expect\s*\(\s*\)\s*\."), "expect() with no subject"),
-    (re.compile(r"\.\s*toBeDefined\s*\(\s*\)"), "toBeDefined() (a locator handle always exists)"),
+    # `toBeDefined()` is hollow ONLY on a locator: `page.locator('x')` returns a handle whether or
+    # not the element exists, so the assertion cannot fail. On any other value it is a real check
+    # — `expect(await getNodeRef(...)).toBeDefined()` fails when the lookup returns undefined, and
+    # the code right after it uses `node?.`, which is the author saying so.
+    # The unqualified rule fired on `valhalla/web-app` (7 times, all wrong) and on
+    # `Jokimbe/ComfyUI-DrawThings-gRPC` (17 times, all wrong) before this was narrowed on
+    # 2026-08-09. A hollow-assertion finding is BLOCKING, so a false one is expensive.
+    (re.compile(r"(?:page\s*\.\s*locator|\.\s*locator\s*\(|getBy(?:Role|TestId|Label|Text|"
+                r"Placeholder|Title|AltText))[^;]*\.\s*toBeDefined\s*\(\s*\)"),
+     "toBeDefined() on a locator (the handle always exists, so this cannot fail)"),
 ]
 
 # Assertions that CAN fail but carry little information. Reported, never blocking — the
@@ -142,6 +151,23 @@ EXPECT_CALL = re.compile(r"\bexpect\s*[(.]")
 # which reading the pieces separately could not.
 CHAIN_HEAD = re.compile(r"\bexpect\s*$")
 CHAIN_TAIL = re.compile(r"^\s*\.")
+
+# Closing punctuation and nothing else: the tail of the test declaration, not a statement.
+EMPTY_BODY_NOISE = re.compile(r"^\s*[})\];,]*\s*$")
+
+# Verification that is real but carries no literal `expect`. Both forms FAIL the test when the
+# condition does not hold, which is the only thing `test-without-assertion` is entitled to claim.
+#
+#   - `page.waitForURL(/login/)`, `waitForSelector`, `waitForResponse` — throw on timeout.
+#   - `await loginPage.expectVisible()` — a page object holding the assertion.
+#
+# The second one matters most: POM-as-fixtures is what `automate` SKILL.md MANDATES, so the
+# unqualified rule penalised the exact pattern this project requires. Found 2026-08-09 on
+# `antdigital-ai/agentic-ui` (8 tests, all delegating to a page object) and
+# `th3cyb3rhub/TheCyberHub` (11, mostly `waitForURL`). `test-without-assertion` is blocking.
+INDIRECT_ASSERTION = re.compile(
+    r"\.\s*waitFor(?:URL|Selector|Response|Request|Event|Function|LoadState)\s*\(|"
+    r"\.\s*(?:expect|assert|verify|should|check)[A-Z_]\w*\s*\(")
 
 
 def join_chains(body):
@@ -365,10 +391,25 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
             tests_total += 1
             body = "\n".join(lines[start - 1:end - 1])
             body_lines = join_chains(body)
+
+            # A test whose body holds no executable statement at all — empty braces, or nothing
+            # but comments describing what someone meant to write. It runs, does nothing, and
+            # reports PASS, so a dashboard shows green for a feature with no coverage. Playwright
+            # has `test.fixme()` for exactly this, and it reports as skipped instead.
+            # Found 2026-08-09 on `Jokimbe/ComfyUI-DrawThings-gRPC`: nine such tests, no
+            # `test.fixme`/`test.skip` anywhere in the repository. Blocking — a green that means
+            # nothing is worse than a red.
+            if not [ln for ln in body_lines[1:]
+                    if code_of(ln).strip() and not EMPTY_BODY_NOISE.match(code_of(ln))]:
+                findings.append({"kind": "empty-test-body", "file": rel, "line": start,
+                                 "detail": "no executable statement: " + title[:120],
+                                 "blocking": True})
             real_assertions = len([
                 1 for ln in body_lines
                 if EXPECT_CALL.search(code_of(ln)) and not any(rx.search(code_of(ln)) for rx, _ in HOLLOW_ASSERTIONS)
             ])
+            # Verification held by a throwing wait or by a page object counts: it fails the test.
+            real_assertions += len([1 for ln in body_lines if INDIRECT_ASSERTION.search(code_of(ln))])
             if real_assertions:
                 tests_with_real_assertion += 1
             else:
