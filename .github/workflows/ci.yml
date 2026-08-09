@@ -186,6 +186,18 @@ jobs:
           # refusals. What cannot be settled is printed as not covered rather than passed over.
           python eval/tools/check_oracle_library.py
 
+      - name: opt-in agents tier stays opt-in
+        run: |
+          set -e
+          # Three promises in agents-tier/README.md, all of the kind that erodes on the first
+          # rewrite: the tier stays OUT of plugins/ (the supply-chain guard was written against
+          # auto-executed shell, and an agent widens the tool surface even without carrying any);
+          # the judges are READ-ONLY, because a judge that can edit what it grades is not one and
+          # rule 3 only holds if the tooling enforces it; and no agent presents itself as a human,
+          # because a quality verdict signed with a person's name on a regulated product would
+          # read as a signature. Six injected faults, six refusals.
+          python eval/tools/check_agents_tier.py
+
       - name: README version claims match the plugin manifests
         run: |
           set -e
