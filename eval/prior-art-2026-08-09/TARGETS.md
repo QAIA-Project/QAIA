@@ -4,7 +4,20 @@ Issu d'une recherche en profondeur (GitHub, GitLab, Codeberg, SourceHut) le 2026
 
 ## Impasses, dites en premier
 
-- **GitLab** : la recherche de code exige Advanced Search, non exposée sans compte. La recherche par nom plafonne à 17 étoiles. Inutilisable pour la découverte.
+- **GitLab** : la recherche de **code** exige Advanced Search, fermée sans compte — mais ce n'est pas la seule porte, et la conclusion « inutilisable » était trop rapide.
+
+  **Un chemin de découverte fonctionne en anonyme**, testé le 2026-08-09 : `GET /projects?topic=<sujet>` puis `GET /projects/<id>/repository/tree?path=<dir>`. On cherche par **sujet et par arborescence** au lieu de chercher par contenu.
+
+  Résultat après avoir balayé les sujets `playwright`, `cypress`, `test-automation`, `e2e-testing`, `testing` — **101 projets distincts** :
+
+  | | |
+  |---|---|
+  | suites Playwright substantielles | **aucune** |
+  | ce qu'on trouve à la place | des outils de test Python, Ruby, Crystal (`expliot`, `spectator`, `plom`, `fabrication`) |
+  | la seule cible réelle | `gitlab-org/gitlab-ui` — `cypress/e2e` confirmé dans l'arborescence, 232★ |
+  | `gitlab-org/gitlab` lui-même | `qa/` est Ruby (`gems`, `knapsack`, `allure`) — Capybara, hors de portée de l'outil |
+
+  **Donc : la porte s'ouvre, et la pièce est vide.** C'est une conclusion plus forte que « inutilisable », parce qu'elle a été vérifiée au lieu d'être déduite d'un 401.
 - **Codeberg** : renvoie du texte généré aux agents, avec la bannière *« si vous êtes un scraper IA, arrêtez de visiter Codeberg »*.
 - **SourceHut** : aucun point d'entrée de recherche de code.
 - **SourceForge** : testé le 2026-08-09 en réponse à la question directe. La recherche fonctionne et la population n'y est pas — **zéro projet** sur `playwright`, un seul sur « end-to-end testing », et les langages dominants sont Java, Python et C++. SourceForge héberge une autre époque du logiciel ; les suites e2e JavaScript modernes n'y sont pas.
