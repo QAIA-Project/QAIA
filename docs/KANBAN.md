@@ -6,6 +6,30 @@ Le développement se déroule en **sprints courts** exécutés en sessions agent
 
 ---
 
+## Sprint 34 — huit agents exercés, onze défauts, et un critère qui explique les campagnes (2026-08-09, D172-D196) 🔵 OUVERT
+
+Ouvert sur une campagne externe, **retourné trois fois dans la journée** par ce qu'elle a trouvé.
+
+**Livré** : `spec-suite-drift` et `signal-ingest` (37 skills) · le tier `agents-tier/` (8 agents,
+opt-in, hors des plugins) · les 4 boucles de retour fermées et gardées · `make check` de 8 à 12
+contrôles · 408 fichiers d'`eval/` archivés, réversibles.
+
+**Premier effet externe du projet** : `realworld-apps/realworld#1718`, corrigé par le mainteneur.
+
+**Épiques ouvertes** — #89 charger la poutre *(attend un testeur, pas du code)* · #90 rendre le
+dépôt installable · #91 rendre le backlog directeur · #92 distribution *(propriétaire : le
+fondateur)*.
+
+**Backlog** : 12 → 7 issues. #30, #61 et #73 fermées en constatant que **le travail était déjà
+fait** — trois fois le même motif, consigné dans #91 : *un backlog qu'on ne relit pas est un
+journal.*
+
+**Ce que le sprint a appris et qui dépasse le sprint** : une règle qui encode une norme externe se
+transporte, une règle qui encode une préférence maison ne se transporte pas. Mesuré sur trois
+campagnes — 2 %, 26 %, 83 % de précision selon la nature de la règle, pas la qualité du code.
+
+---
+
 ## Sprint 33 — la revue d'architecture retourne le sprint, et trois P0 apparaissent (2026-08-08, D165-D169) 🔵 OUVERT
 
 Ouvert sur deux arbitrages ([ADR 0005](adr/0005-scope-discovery-and-run.md),

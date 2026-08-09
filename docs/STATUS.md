@@ -1092,3 +1092,48 @@ compter sur le connecteur GitHub MCP (`plugin:github:github`).
 Le gold set IATS confidentiel (~88 US) reste abandonné pour de bon (D49) ; ne pas relancer de
 nouveaux lots du corpus élargi 24 cas sans demande explicite (D58-D64, plan épuisé).
 ```
+
+---
+
+## État au 2026-08-09 (fin de session, D172 → D196)
+
+**Produit** — 37 skills sur 4 plugins, **8 agents** dans un tier opt-in (`agents-tier/`, hors des
+plugins), **12 contrôles** dans `make check`, CI verte.
+
+**Nouveau ce jour** : `qaia-score:spec-suite-drift` (la spécification confrontée à la suite qui
+prétend la couvrir — pur texte), `qaia-core:signal-ingest` (une preuve de production attachée à une
+question ouverte, sans jamais la refermer).
+
+**La première validation externe du projet.** `realworld-apps/realworld#1718` — un défaut trouvé par
+notre outillage dans un dépôt à 84 000 étoiles, signalé, **accepté et corrigé par le mainteneur en
+quelques heures**. Correctif vérifié dans la source, pas sur parole.
+
+**Quatre boucles de retour fermées**, gardées par `check_loop_wiring.py` — qui a attrapé deux
+décâblages dans l'heure même où il était écrit.
+
+### Ce que les campagnes externes ont réellement mesuré
+
+| campagne | matériau | précision |
+|---|---|---:|
+| `automation_score` | 62 suites Playwright, 3 234 tests | **~2 %** |
+| `structural_score` | 244 cahiers Gherkin, 15 dépôts | ~26 % avant correction |
+| `lint_skills` | 159 `SKILL.md` tierces, 12 dépôts | **83 %** |
+
+**Le critère qui explique l'écart, et qui vaut pour toute règle future :** une règle qui encode une
+**norme externe** se transporte ; une règle qui encode une **préférence maison** ne se transporte
+pas. Se vérifie en une question — *un tiers qui ignore QAIA est-il quand même soumis à cette
+règle ?*
+
+### Art antérieur, découvert par accident
+
+`mskelton/eslint-plugin-playwright` publie **59 règles maintenues, dont huit des douze nôtres**.
+Ce qui reste réellement à nous : la piste de **mutation** (ESLint est statique et ne peut pas
+inverser une assertion puis exiger le rouge) et la **traçabilité vers un cahier de test**.
+Voir `eval/prior-art-2026-08-09/`.
+
+### Ce qui n'a pas bougé
+
+**0 étoile, 12 visiteurs uniques.** Sept issues ouvertes, dont quatre épiques (#89 à #92), et
+**aucune ne demande une ligne de code**. #89 — prouver le parcours avec un tiers — attend une
+personne, pas un développement.
+

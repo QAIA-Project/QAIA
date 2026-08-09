@@ -170,6 +170,27 @@ And the honest counterweight: QAIA is younger and far less used than the project
 
 Proven twice end-to-end, on two unrelated domains (see [`examples/`](examples/)) — not just measured in the abstract.
 
+## Agents — an opt-in tier, and what it is not
+
+`agents-tier/` ships **eight named agents**, one per SDLC phase plus an adversarial refuter. It is
+**not installed by any plugin** and is never a prerequisite: copy the files into `.claude/agents/`
+if you decide to, or ignore it entirely — the 37 skills work without it.
+
+**Only two of the eight earn their own context window.** The design criterion is a *delegation
+boundary*, not importance: `camille-judge` and `elian-refuter` need a context the producer never
+touched, because this project's rule 3 says a producer never grades its own output. The other six
+group a phase behind one name — real ergonomics, **no new capability**, and the tier's README says
+so in its own opening paragraph.
+
+Two things worth reading before you install:
+
+- **`tools:` is a request to the harness, not a capability boundary.** The first agent ever launched
+  from this tier ran as a read-only judge and executed shell commands. The README documents this
+  rather than hiding it.
+- **A delegated agent runs the skills' validation checkpoints with nobody in the room.** Two agents
+  independently reported that they had substituted written disclaimers for a human decision. Use
+  the agents to explore; use the skills interactively when the output will be trusted.
+
 ## Repository map
 
 | Path | Content |
