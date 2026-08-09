@@ -52,3 +52,36 @@ de distribution. On peut en ajouter librement.
 - On ne met **pas** de hook/MCP/agent dans `plugins/qaia-*` (CI continue de le bloquer).
 - On ne rend **pas** le déterminisme dépendant d'un binaire installé — il est généré en session.
 - On ne construit pas le tier opt-in **avant** le pilote du cœur (sinon on répète la leçon #2).
+
+## Amendement du 2026-08-09 — les scoreurs sont livrés
+
+**Ce qui change.** `plugins/qaia-score/scripts/` contient désormais `structural_score.py`,
+`automation_score.py` et `spec_suite_drift.py`. La formule « 100 % Markdown » ne s'applique plus
+à ce plugin, et a été retirée du README.
+
+**Pourquoi.** Une revue « développeur » indépendante a établi le 2026-08-09 que les trois skills
+de notation demandaient au modèle de **matérialiser l'algorithme en session** depuis leur propre
+prose — environ 300 lignes d'expressions régulières re-dérivées à chaque invocation. La promesse
+mise en avant partout par le projet, « une note déterministe, pas une auto-notation par un LLM »,
+tenait donc à l'intérieur du dépôt, où `eval/tools/*.py` sont figés et exécutés par une CI, et
+s'amollissait exactement à la frontière de livraison. Deux passages sur le même fichier pouvaient
+légitimement diverger. **Une note qui n'est pas reproductible n'est pas une note.**
+
+**Ce qui ne change pas — et c'est l'essentiel.** La décision d'origine visait le code
+**auto-exécuté** : hooks, agents, serveurs MCP, scripts d'installation. Rien de tout cela
+n'arrive ici. Ces fichiers sont lus et lancés par Claude quand l'utilisateur invoque la skill,
+avec ses droits, dans sa session — exactement ce qui se passait avant. La seule différence est
+que le code est figé et lisible au lieu d'être réécrit de mémoire. **Du point de vue de la chaîne
+d'approvisionnement c'est une surface plus petite, pas plus grande** : un fichier qu'on peut
+diffier et épingler vaut mieux qu'un programme qu'un modèle réécrit à chaque fois.
+
+**Ce qui reste interdit sous `plugins/` :** `hooks/`, `agents/`, `.mcp.json`, et les champs
+`hooks`/`mcpServers`/`agents` d'un `plugin.json`. `eval/tools/check_repo_structure.py` le vérifie
+mécaniquement à chaque passage de la CI, et rien de cet amendement ne l'assouplit.
+
+**Le risque assumé : la copie.** Les fichiers livrés sont des copies des originaux de
+`eval/tools/`. Une copie sans surveillance cesse silencieusement de correspondre — c'est la faute
+corrigée quatre fois dans la journée même de cette décision. Elle part donc avec son garde-fou :
+`check_repo_structure.py` compare les octets et la CI échoue à la moindre divergence ;
+`python eval/tools/ship_scorers.py` refait la copie et **constitue le point de décision** — la
+lancer veut dire « j'ai regardé ce qui change pour l'utilisateur du plugin, et je l'assume ».

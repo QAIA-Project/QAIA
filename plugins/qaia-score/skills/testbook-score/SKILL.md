@@ -3,13 +3,15 @@ name: testbook-score
 description: Score a QAIA test book against its source US with the ISTQB-grounded 10-dimension rubric (0/1/2 per dimension, /20) plus a top-3 fixes list, and record the score in the standardized run manifest. Read-only over test content - it judges, it never edits. Use to review a generated test book or gate a release candidate.
 ---
 
-> **Ce que cette skill ne peut pas promettre.** L'algorithme ci-dessous est **rejoue par le
-> modele a chaque invocation**, pas charge depuis un fichier fige : deux passages sur le meme
-> fichier peuvent diverger, et la note n'est pas comparable d'une semaine a l'autre. C'est le
-> prix de l'ADR 0002 (aucun code livre dans les plugins), et il est assume -- mais il doit etre
-> dit ici, pas seulement dans le depot. **Pour une note reellement deterministe et diffable,
-> lancez l'outil fige du depot QAIA** plutot que cette skill. Releve par une revue
-> « developpeur » independante le 2026-08-09.
+> **Ce que cette skill promet, et depuis quand.** La note vient d'un **programme fige, livre
+> avec le plugin** (`scripts/`), pas d'un algorithme rejoue de memoire : deux passages sur le
+> meme fichier donnent le meme resultat, et la note est comparable d'une semaine a l'autre.
+>
+> Ce n'etait pas vrai avant le 2026-08-09. La skill demandait alors de materialiser l'algorithme
+> en session depuis sa propre prose -- ~300 lignes d'expressions regulieres re-derivees a chaque
+> invocation. Une revue independante l'a releve ; le prix a d'abord ete ecrit, puis supprime.
+> **Rien ne s'execute tout seul pour autant** : le fichier est lu et lance par Claude quand vous
+> invoquez la skill, avec vos droits, et vous pouvez le diffier, l'epingler ou refuser.
 
 # testbook-score — the quality scorecard
 
@@ -33,9 +35,15 @@ in `../README.md`. It is the LLM-judge of the project, packaged as an installabl
    assert nothing (the founding project measured one at 100/100 by machine and 58/100 by a human
    reviewer). So this pass is a **gate** that can force a FAIL, not a vanity number, and it is
    kept **separate** from the LLM rubric (two numbers, never conflated).
-   - **In Claude Code**: materialize a throwaway script implementing the algorithm below and **run
-     it** on the `.feature` files for true determinism (the script is generated in-session, never
-     shipped — QAIA stays 100% skill). Reference implementation and proof it discriminates:
+   - **In Claude Code**: run the shipped scorer, do not re-implement it —
+     `python "${CLAUDE_PLUGIN_ROOT}/scripts/structural_score.py" --batch <folder of .feature files>`
+     (standard library only; JSON on stdout). It ships inside the plugin as of 2026-08-09; before
+     that this skill asked you to materialise the algorithm in session, so two runs on the same
+     file could legitimately disagree. **The algorithm below documents what the scorer does; it is
+> Si `${CLAUDE_PLUGIN_ROOT}` n'est pas defini dans votre environnement, le fichier se
+> trouve a cote de cette skill : `../../scripts/` depuis le dossier du SKILL.md.
+
+     not a specification to re-implement.** Proof it discriminates:
      [`eval/tools/structural_score.py`](https://github.com/QAIA-Project/QAIA/blob/main/eval/tools/structural_score.py) + [`eval/baselines/structural-score.md`](https://github.com/QAIA-Project/QAIA/blob/main/eval/baselines/structural-score.md). **Those two paths
      live in the QAIA source repository, not in the installed plugin** — do not send a user
      looking for them in their own project. They exist so a maintainer can check this algorithm

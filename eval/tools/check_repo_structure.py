@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Cinq controles de structure que la CI faisait et que `make check` ne faisait pas.
+"""Six controles de structure que la CI faisait et que `make check` ne faisait pas.
 
 `make check` se decrivait comme « tous les controles que la CI lance » et en omettait sept.
 Un nouveau venu le lancait, le voyait vert, poussait, et decouvrait la CI rouge -- une cible
 qui ment sur sa couverture est pire qu'une cible absente. Releve par la revue « developpeur »
 du 2026-08-09.
 
-Les cinq portes ci-dessous etaient ecrites en shell dans `ci.yml`. Les recopier en shell dans
+Les portes ci-dessous etaient ecrites en shell dans `ci.yml`. Les recopier en shell dans
 une recette de Makefile aurait cree une deuxieme copie a maintenir -- exactement la faute qu'on
 venait de corriger sur le perimetre Gherkin. Elles sont donc ici, en Python, appelees des deux
 endroits, et eprouvables sur la machine ou elles sont ecrites (ce que `make` ne permet pas :
@@ -125,6 +125,48 @@ def no_manifest_declares_an_executable_tier():
     print("  ok : %d manifeste(s) sans champ executable" % n)
 
 
+# Scoreurs livres dans le plugin `qaia-score` (decision du 2026-08-09). Ce sont des COPIES des
+# originaux de `eval/tools/`, ou une CI les eprouve par injection de faute a chaque commit.
+SHIPPED_SCORERS = ("structural_score.py", "automation_score.py", "spec_suite_drift.py")
+
+
+def shipped_scorers_match_their_source():
+    """Une copie sans rien qui la surveille cesse silencieusement de correspondre.
+
+    C'est la faute corrigee quatre fois le 2026-08-09 -- perimetre Gherkin en double, blocs de
+    detection en double, expressions regulieres recopiees a la main, contrat de sortie copie dans
+    chaque plugin. Livrer les scoreurs cree une cinquieme copie : elle part avec sa surveillance,
+    sinon la decision de les livrer aurait reintroduit par la porte de service exactement ce que
+    la journee a passe son temps a fermer.
+
+    Refaire la copie apres un changement voulu :  python eval/tools/ship_scorers.py
+    """
+    src_dir = os.path.join(ROOT, "eval", "tools")
+    dst_dir = os.path.join(ROOT, "plugins", "qaia-score", "scripts")
+    if not os.path.isdir(dst_dir):
+        return fail("plugins/qaia-score/scripts/ est absent -- les scoreurs livres ont disparu")
+    n = 0
+    for name in SHIPPED_SCORERS:
+        src = os.path.join(src_dir, name)
+        dst = os.path.join(dst_dir, name)
+        if not os.path.isfile(dst):
+            fail("le scoreur livre %s est absent de plugins/qaia-score/scripts/" % name)
+            continue
+        if not os.path.isfile(src):
+            fail("l'original %s est absent de eval/tools/" % name)
+            continue
+        a = io.open(src, encoding="utf-8", newline="").read()
+        b = io.open(dst, encoding="utf-8", newline="").read()
+        # Comparaison sur le contenu, pas sur les fins de ligne : git les normalise sous Windows.
+        if a.replace("\r\n", "\n") != b.replace("\r\n", "\n"):
+            fail("plugins/qaia-score/scripts/%s a derive de eval/tools/%s "
+                 "-- refaire la copie avec `python eval/tools/ship_scorers.py`" % (name, name))
+            continue
+        n += 1
+    if n:
+        print("  ok : %d scoreur(s) livre(s), identiques a leur original" % n)
+
+
 def main():
     print("check_repo_structure :")
     marketplace_sources_are_relative()
@@ -132,6 +174,7 @@ def main():
     plugins_carry_no_executable_tier()
     no_manifest_declares_an_executable_tier()
     output_contract_is_identical_everywhere()
+    shipped_scorers_match_their_source()
     if failures:
         print("::error::%d controle(s) de structure en echec." % len(failures))
         return 1

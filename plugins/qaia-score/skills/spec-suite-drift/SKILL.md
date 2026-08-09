@@ -3,13 +3,15 @@ name: spec-suite-drift
 description: Compare an OpenAPI specification against the test suite that claims to cover it - pure text, no running application. Reports status codes the suite uses that the spec never declares, error codes the spec promises that no test exercises, and endpoints the suite calls that the spec does not describe. Use when a project has both a formal API spec and an automated suite, and nobody has ever checked that they agree.
 ---
 
-> **Ce que cette skill ne peut pas promettre.** L'algorithme ci-dessous est **rejoue par le
-> modele a chaque invocation**, pas charge depuis un fichier fige : deux passages sur le meme
-> fichier peuvent diverger, et la note n'est pas comparable d'une semaine a l'autre. C'est le
-> prix de l'ADR 0002 (aucun code livre dans les plugins), et il est assume -- mais il doit etre
-> dit ici, pas seulement dans le depot. **Pour une note reellement deterministe et diffable,
-> lancez l'outil fige du depot QAIA** plutot que cette skill. Releve par une revue
-> « developpeur » independante le 2026-08-09.
+> **Ce que cette skill promet, et depuis quand.** La note vient d'un **programme fige, livre
+> avec le plugin** (`scripts/`), pas d'un algorithme rejoue de memoire : deux passages sur le
+> meme fichier donnent le meme resultat, et la note est comparable d'une semaine a l'autre.
+>
+> Ce n'etait pas vrai avant le 2026-08-09. La skill demandait alors de materialiser l'algorithme
+> en session depuis sa propre prose -- ~300 lignes d'expressions regulieres re-derivees a chaque
+> invocation. Une revue independante l'a releve ; le prix a d'abord ete ecrit, puis supprime.
+> **Rien ne s'execute tout seul pour autant** : le fichier est lu et lance par Claude quand vous
+> invoquez la skill, avec vos droits, et vous pouvez le diffier, l'epingler ou refuser.
 
 # spec-suite-drift — the specification against the suite
 
@@ -53,12 +55,23 @@ ever writing `200`.
    the suite. If the project has only one of the two, say so and stop — this skill has nothing to
    compare and must not improvise the missing half.
 
-2. **Materialise the comparison in session and run it.** QAIA ships no executable code: a skill
-   writes a throwaway script into your session, runs it with your permissions and under your eyes,
-   then discards it. Nothing is installed and nothing auto-executes. The reference
-   implementation is [`spec_suite_drift.py`](https://github.com/QAIA-Project/QAIA/blob/main/eval/tools/spec_suite_drift.py); reproduce its three rules exactly rather
-   than approximating them by reading — an LLM judging status codes by eye is the failure mode this
-   deterministic pass exists to remove.
+2. **Run the shipped comparator. Do not re-implement it.**
+
+   ```bash
+   python "${CLAUDE_PLUGIN_ROOT}/scripts/spec_suite_drift.py" --spec <openapi.yml> --tests-dir <suite>
+   ```
+
+   **Requires PyYAML** (`pip install pyyaml`) — it is the only third-party dependency in anything
+
+> Si `${CLAUDE_PLUGIN_ROOT}` n'est pas defini dans votre environnement, le fichier se
+> trouve a cote de cette skill : `../../scripts/` depuis le dossier du SKILL.md.
+
+   QAIA ships. Without it the tool prints `BROKEN` and exits 2 rather than guessing.
+
+   Nothing auto-executes: this is a pinned, readable file that Claude runs with your permissions
+   when you invoke the skill. Until 2026-08-09 this skill instead asked you to reproduce its three
+   rules in session — an LLM re-deriving a comparator from prose is the failure mode the
+   deterministic pass exists to remove, and doing it from memory reintroduced exactly that.
 
    ```
    python <script> --spec <spec> --tests-dir <suite> --json drift.json
