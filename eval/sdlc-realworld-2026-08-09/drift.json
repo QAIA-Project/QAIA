@@ -1,0 +1,88 @@
+{
+  "tool": "spec_suite_drift",
+  "version": 1,
+  "inputs": {
+    "spec": "eval/openapi-realworld-2026-08-09/sources/openapi.yml",
+    "tests_dir": "C:/Users/MORETT~1/AppData/Local/Temp/claude/C--Users-Moretti-C-dric-Documents-Claude-QAIA/128d3429-ee68-4b06-a2bd-75924ef46080/scratchpad/realworld/specs/e2e"
+  },
+  "counts": {
+    "spec_paths": 12,
+    "path_status_pairs_in_suite": 10,
+    "distinct_status_in_suite": 7,
+    "findings": 8
+  },
+  "findings": [
+    {
+      "rule": "undeclared-status",
+      "path": "/users/login",
+      "status": "400",
+      "file": "error-handling.spec.ts",
+      "line": 37,
+      "test": "should handle 400 on login with validation errors",
+      "detail": "la suite utilise 400 sur /users/login ; la specification y declare 200, 401, 422"
+    },
+    {
+      "rule": "undeclared-status",
+      "path": "/users",
+      "status": "400",
+      "file": "error-handling.spec.ts",
+      "line": 51,
+      "test": "should handle 400 on registration with validation errors",
+      "detail": "la suite utilise 400 sur /users ; la specification y declare 201, 409, 422"
+    },
+    {
+      "rule": "undeclared-status",
+      "path": "/articles",
+      "status": "500",
+      "file": "error-handling.spec.ts",
+      "line": 380,
+      "test": "should handle 500 on articles feed load",
+      "detail": "la suite utilise 500 sur /articles ; la specification y declare 200, 201, 401, 409, 422"
+    },
+    {
+      "rule": "undeclared-status",
+      "path": "/tags",
+      "status": "500",
+      "file": "error-handling.spec.ts",
+      "line": 399,
+      "test": "should handle 500 on tags load",
+      "detail": "la suite utilise 500 sur /tags ; la specification y declare 200, 422"
+    },
+    {
+      "rule": "undeclared-status",
+      "path": "/profiles/{}",
+      "status": "500",
+      "file": "error-handling.spec.ts",
+      "line": 430,
+      "test": "should handle 500 on user profile load",
+      "detail": "la suite utilise 500 sur /profiles/{} ; la specification y declare 200, 401, 404, 422"
+    },
+    {
+      "rule": "undeclared-status",
+      "path": "/articles/{}",
+      "status": "500",
+      "file": "error-handling.spec.ts",
+      "line": 452,
+      "test": "should handle 500 on article detail load",
+      "detail": "la suite utilise 500 sur /articles/some-article (/articles/{}) ; la specification y declare 200, 204, 401, 403, 404, 422"
+    },
+    {
+      "rule": "unexercised-status",
+      "path": "/articles, /users",
+      "status": "409",
+      "file": "<suite>",
+      "line": 0,
+      "test": "",
+      "detail": "la specification promet 409 sur 2 chemin(s) -- /articles, /users -- ; aucun test ne mentionne ce code"
+    },
+    {
+      "rule": "unexercised-status",
+      "path": "/articles, /articles/feed, /articles/{}, /articles/{}/comments, /articles/{}/comments/{}, /articles/{}/favorite, /profiles/{}, /profiles/{}/follow, /tags, /user, /users, /users/login",
+      "status": "422",
+      "file": "<suite>",
+      "line": 0,
+      "test": "",
+      "detail": "la specification promet 422 sur 12 chemin(s) -- /articles, /articles/feed, /articles/{}, /articles/{}/comments, /articles/{}/comments/{}, /articles/{}/favorite, /profiles/{}, /profiles/{}/follow, /tags, /user, /users, /users/login -- ; aucun test ne mentionne ce code"
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 
 QAIA scoring plugin: **read-only** quality scoring and release-readiness gating of a QAIA test book or run. Applies the ISTQB-grounded 10-dimension rubric and a PASS/CONCERNS/FAIL/WAIVED aptitude gate over the standardized run manifest (`./OUTPUT-CONTRACT.md`, D39). Scores only — never generates or edits test content (no producer scores itself, rule 3).
 
-**Status: 0.2.3, 3 skills.** Read-only over content: the only file these skills write is `.qaia/reports/<US-ID>/manifest.json`, and only its `gate` block.
+**Status: 0.2.4, 4 skills.** Read-only over content: the only file these skills write is `.qaia/reports/<US-ID>/manifest.json`, and only its `gate` block.
 
 ## Install
 

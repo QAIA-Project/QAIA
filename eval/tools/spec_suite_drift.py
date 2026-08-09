@@ -1,0 +1,293 @@
+#!/usr/bin/env python3
+"""Compare a specification against the test suite that claims to cover it. Pure text.
+
+## Pourquoi ce fichier existe
+
+Le 2026-08-09, en marchant les phases du SDLC sur `realworld-apps/realworld`, un constat est
+apparu qu'aucune des deux sources ne montre seule :
+
+- `specs/api/openapi.yml` promet un **409 Conflict** sur `POST /users` et `POST /articles` ;
+- `specs/e2e/error-handling.spec.ts:50` mocke ce cas exact -- `email: ['is already taken']` --
+  en **400** ;
+- et **aucun** des 150 comportements de la suite n'exerce le 409.
+
+Pour un projet dont le but est que N implementations respectent un contrat, les deux ne peuvent
+pas avoir raison. Chaque moitie est pourtant coherente vue de l'interieur : c'est exactement la
+classe de defaut qu'un scan de la couche automatisation ne peut pas produire.
+
+`contract-probe` compare une **application** a sa documentation. Il manquait l'autre moitie :
+comparer la **suite** a la documentation. C'est du texte contre du texte -- ni application qui
+tourne, ni credential, ni reseau -- donc c'est executable a chaque commit.
+
+C'est la **boucle B** de `eval/sdlc-realworld-2026-08-09/REPORT.md`, et la raison de la batir
+avant les trois autres : elle est la seule dont le retour soit mecanique. Les boucles qui passent
+par un jugement humain sont toutes a l'arret depuis qu'elles existent.
+
+## Ce qui est verifie
+
+- **R1 `undeclared-status`** -- la suite simule ou attend un code que la specification **ne
+  declare pas** pour ce chemin. La suite teste une promesse qui n'existe pas, ou la
+  specification a oublie un cas reel.
+- **R2 `unexercised-status`** -- la specification declare un code d'erreur qu'**aucun** test ne
+  mentionne nulle part. Une promesse non eprouvee.
+- **R3 `path-not-in-spec`** -- la suite appelle un chemin d'API absent de la specification.
+
+## Ce qui n'est PAS verifie, et pourquoi
+
+La correspondance chemin -> code est une **heuristique de proximite** : dans un bloc de test, les
+codes sont apparies au chemin cite dans ce meme bloc, et **uniquement quand le bloc n'en cite
+qu'un seul**. Un bloc citant deux chemins est laisse de cote plutot que devine -- 490 constats
+faux ont ete produits en deux jours par des regles qui preferaient repondre a se taire.
+
+Les codes 2xx ne declenchent jamais R2 : un test nominal exerce le chemin heureux sans jamais
+ecrire `200`.
+
+Run:
+  python eval/tools/spec_suite_drift.py --spec openapi.yml --tests-dir specs/e2e [--json out.json]
+
+Exit 0 aucun ecart, 1 ecart trouve, 2 entree illisible.
+"""
+import argparse
+import io
+import json
+import os
+import re
+import sys
+
+NL = chr(10)
+METHODS = ("get", "post", "put", "delete", "patch", "head", "options")
+
+# Un chemin d'API cite dans le code de test : '/users', "/api/articles/{slug}", `/articles/${x}`
+SUITE_PATH = re.compile(r"""['"`](/(?:api/)?[a-zA-Z][a-zA-Z0-9_\-/]*(?:\$\{[^}]*\}|\{[^}]*\}|\*)?[a-zA-Z0-9_\-/*]*)['"`]""")
+# `page.goto('/settings')` designe une page, pas un point d'entree d'API. Sans cette distinction
+# l'outil reprochait a la suite d'appeler `/editor` et `/settings` -- six constats faux -- et,
+# plus grave, **etouffait son constat le plus fort** : le bloc qui mocke `/users` en 400 fait
+# aussi `page.goto('/register')`, donc il citait deux chemins et l'appariement prudent le
+# laissait de cote. Retirer les routes de navigation rend le bloc univoque et la contradiction
+# 400-contre-422 apparait.
+NAVIGATION = re.compile(r"""\.\s*(?:goto|waitForURL|toHaveURL)\s*\(\s*(?:new\s+RegExp\s*\(\s*)?['"`/]""")
+# Un code HTTP ecrit comme une valeur, jamais comme un fragment de nombre plus long.
+SUITE_STATUS = re.compile(r"(?<![\w.])(?:status\s*[:=]\s*|toBe\s*\(\s*|toEqual\s*\(\s*|,\s*)([1-5]\d{2})(?![\w.])")
+TEST_DECL = re.compile(r"^\s*(?:test|it)\s*(?:\.\s*\w+\s*)?\(\s*(['\"`])((?:\\.|(?!\1).)*)\1")
+SPEC_GLOB = re.compile(r"\.(spec|test|e2e)\.(js|ts|mjs|cjs)$")
+
+
+def norm(p):
+    """`/api/articles/{slug}` et `/articles/${slug}` designent le meme chemin specifie."""
+    p = p.split("?")[0]
+    p = re.sub(r"^/api", "", p)
+    p = re.sub(r"\$\{[^}]*\}|\{[^}]*\}|:[a-zA-Z_]\w*", "{}", p)
+    # Un joker est un SEGMENT, pas son absence : `/profiles/*` instancie `/profiles/{username}`.
+    # Le raboter donnait `/profiles`, qui ne correspond a aucun gabarit -- un constat faux.
+    p = re.sub(r"(?<=/)\*+(?=/|$)", "{}", p)
+    p = re.sub(r"\*+", "", p)
+    p = re.sub(r"/+", "/", p).rstrip("/")
+    return p or "/"
+
+
+def resolve(path, declared):
+    """Ramene un chemin concret au gabarit qu'il instancie.
+
+    Un test ecrit `/articles/some-article` la ou la specification declare `/articles/{slug}`.
+    Sans cette resolution l'outil signalait quatre chemins « absents de la specification » qui y
+    sont, et comparait leurs codes a rien. On n'apparie que si le nombre de segments concorde et
+    si chaque segment litteral du gabarit est identique -- un `{}` absorbe n'importe quoi.
+    """
+    if path in declared:
+        return path
+    parts = path.strip("/").split("/")
+    for template in declared:
+        tparts = template.strip("/").split("/")
+        if len(tparts) != len(parts):
+            continue
+        if all(t == "{}" or t == p for t, p in zip(tparts, parts)):
+            return template
+    return None
+
+
+def read(path):
+    try:
+        return io.open(path, encoding="utf-8", errors="replace").read()
+    except (IOError, OSError):
+        return ""
+
+
+def load_spec(path):
+    try:
+        import yaml
+    except ImportError:
+        print("BROKEN: PyYAML absent -- pip install pyyaml", file=sys.stderr)
+        return None
+    try:
+        if path.endswith(".json"):
+            d = json.loads(read(path))
+        else:
+            d = yaml.safe_load(read(path))
+    except Exception as e:
+        print("BROKEN: specification illisible (%s)" % e, file=sys.stderr)
+        return None
+    if not isinstance(d, dict) or "paths" not in d:
+        print("BROKEN: pas de bloc `paths` -- est-ce bien une specification OpenAPI ?", file=sys.stderr)
+        return None
+    declared = {}
+    for raw_path, item in (d.get("paths") or {}).items():
+        key = norm(raw_path)
+        for method, op in (item or {}).items():
+            if method not in METHODS or not isinstance(op, dict):
+                continue
+            for code in (op.get("responses") or {}):
+                declared.setdefault(key, set()).add(str(code))
+    return declared
+
+
+def collect_blocks(text):
+    """[(titre, debut, fin)] -- 1-indexe, fin exclue. Meme decoupage grossier qu'ailleurs."""
+    lines = text.split(NL)
+    starts = [(i + 1, m.group(2)) for i, line in enumerate(lines)
+              for m in [TEST_DECL.match(line)] if m]
+    out = []
+    for idx, (ln, title) in enumerate(starts):
+        end = starts[idx + 1][0] if idx + 1 < len(starts) else len(lines) + 1
+        out.append((title, ln, end))
+    return out
+
+
+def scan_suite(tests_dir):
+    """Retourne (paires, chemins_vus). Une paire est (chemin, code, fichier, ligne, titre)."""
+    pairs, seen_paths, all_status = [], set(), set()
+    for root, dirs, files in os.walk(tests_dir):
+        dirs[:] = [d for d in dirs if d not in ("node_modules", ".git")]
+        for f in sorted(files):
+            if not SPEC_GLOB.search(f):
+                continue
+            path = os.path.join(root, f)
+            text = read(path)
+            lines = text.split(NL)
+            rel = os.path.relpath(path, tests_dir)
+            for title, start, end in collect_blocks(text):
+                body = lines[start - 1:end - 1]
+                here_paths, here_status = set(), []
+                for offset, line in enumerate(body):
+                    code_only = line.split("//")[0]
+                    if NAVIGATION.search(code_only):
+                        continue          # route de page, pas point d'entree d'API
+                    for m in SUITE_PATH.finditer(code_only):
+                        p = norm(m.group(1))
+                        if p != "/" and not p.startswith("/http"):
+                            here_paths.add(p)
+                    for m in SUITE_STATUS.finditer(code_only):
+                        here_status.append((m.group(1), start + offset))
+                seen_paths |= here_paths
+                all_status |= {s for s, _ in here_status}
+                # Apparier UNIQUEMENT quand le bloc ne cite qu'un chemin : deviner ferait plus
+                # de bruit que de constats, et c'est la lecon des 490 faux positifs.
+                if len(here_paths) == 1:
+                    only = next(iter(here_paths))
+                    for status, ln in here_status:
+                        pairs.append((only, status, rel, ln, title))
+    return pairs, seen_paths, all_status
+
+
+def compare(declared, pairs, seen_paths, all_status):
+    findings = []
+
+    for path, status, rel, ln, title in pairs:
+        template = resolve(path, declared)
+        if template and status not in declared[template]:
+            shown = path if path == template else "%s (%s)" % (path, template)
+            findings.append({
+                "rule": "undeclared-status", "path": template, "status": status,
+                "file": rel, "line": ln, "test": title[:110],
+                "detail": "la suite utilise %s sur %s ; la specification y declare %s"
+                          % (status, shown, ", ".join(sorted(declared[template]))),
+            })
+
+    # Groupe par CODE et non par chemin : « 422 promis sur 11 chemins, jamais mentionne » est un
+    # seul fait. Le rapporter onze fois donnait onze lignes disant la meme chose, ce qui noie le
+    # 409 -- le constat pour lequel cet outil existe.
+    missing = {}
+    for path, codes in sorted(declared.items()):
+        for status in sorted(codes):
+            if status.startswith("2") or not status.isdigit() or status in all_status:
+                continue
+            missing.setdefault(status, []).append(path)
+    for status, paths in sorted(missing.items()):
+        findings.append({
+            "rule": "unexercised-status", "path": ", ".join(paths), "status": status,
+            "file": "<suite>", "line": 0, "test": "",
+            "detail": "la specification promet %s sur %d chemin(s) -- %s -- ; aucun test ne "
+                      "mentionne ce code" % (status, len(paths), ", ".join(paths)),
+        })
+
+    for path in sorted(seen_paths):
+        if resolve(path, declared) is None and any(path == p for p, _, _, _, _ in pairs):
+            findings.append({
+                "rule": "path-not-in-spec", "path": path, "status": "",
+                "file": "<suite>", "line": 0, "test": "",
+                "detail": "la suite appelle %s ; la specification ne le declare pas" % path,
+            })
+
+    # Dedupliquer : un meme couple (regle, chemin, code) rapporte une fois.
+    out, keys = [], set()
+    for f in findings:
+        k = (f["rule"], f["path"], f["status"])
+        if k in keys:
+            continue
+        keys.add(k)
+        out.append(f)
+    return out
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__.split(NL)[0],
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--spec", required=True, help="OpenAPI/Swagger, .yml ou .json")
+    ap.add_argument("--tests-dir", required=True, help="repertoire de la suite de tests")
+    ap.add_argument("--json", help="ecrit le resultat ici au lieu de la sortie standard")
+    args = ap.parse_args()
+
+    if not os.path.isfile(args.spec):
+        print("BROKEN: specification introuvable : %s" % args.spec, file=sys.stderr)
+        return 2
+    if not os.path.isdir(args.tests_dir):
+        print("BROKEN: repertoire de tests introuvable : %s" % args.tests_dir, file=sys.stderr)
+        return 2
+
+    declared = load_spec(args.spec)
+    if declared is None:
+        return 2
+    pairs, seen_paths, all_status = scan_suite(args.tests_dir)
+    findings = compare(declared, pairs, seen_paths, all_status)
+
+    result = {
+        "tool": "spec_suite_drift", "version": 1,
+        "inputs": {"spec": args.spec, "tests_dir": args.tests_dir},
+        "counts": {
+            "spec_paths": len(declared),
+            "path_status_pairs_in_suite": len(pairs),
+            "distinct_status_in_suite": len(all_status),
+            "findings": len(findings),
+        },
+        "findings": findings,
+    }
+
+    if args.json:
+        io.open(args.json, "w", encoding="utf-8", newline=NL).write(
+            json.dumps(result, indent=2, ensure_ascii=False) + NL)
+        print("written: %s" % args.json)
+    else:
+        print(json.dumps(result, indent=2, ensure_ascii=False))
+
+    if findings:
+        print(NL + "%d ecart(s) entre la specification et la suite :" % len(findings), file=sys.stderr)
+        for f in findings:
+            where = "%s:%s" % (f["file"], f["line"]) if f["line"] else f["file"]
+            print("  %-20s %-28s %s" % (f["rule"], where, f["detail"]), file=sys.stderr)
+        return 1
+    print(NL + "aucun ecart : chaque code declare est exerce, chaque code utilise est declare.",
+          file=sys.stderr)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

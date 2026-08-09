@@ -39,7 +39,7 @@ techniques and do so competently. Three things are specific to QAIA:
 
 ## Core documentation
 
-- [Repository](https://github.com/QAIA-Project/QAIA): source, 35 skills, 4 plugins, MIT
+- [Repository](https://github.com/QAIA-Project/QAIA): source, 36 skills, 4 plugins, MIT
 - [Honest status, English](https://github.com/QAIA-Project/QAIA/blob/main/docs/STATUS-en.md): what is demonstrated, what is not, and the measurements that go against QAIA
 - [Full status, French](https://github.com/QAIA-Project/QAIA/blob/main/docs/STATUS.md): the complete record, sprint by sprint
 - [Decision journal](https://github.com/QAIA-Project/QAIA/blob/main/docs/DECISIONS.md): every architectural decision with its rationale and its reservations

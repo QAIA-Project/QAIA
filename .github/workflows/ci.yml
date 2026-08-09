@@ -152,6 +152,18 @@ jobs:
           # invariants that would have caught them.
           python eval/tools/selfcheck_automation_score.py
 
+      - name: spec_suite_drift self-check (the specification against the suite)
+        run: |
+          set -e
+          # Loop B of eval/sdlc-realworld-2026-08-09: contract-probe compares a running app to its
+          # documentation; this compares the SUITE to that same documentation. Both halves are
+          # usually self-consistent read alone, which is why nobody notices they disagree — the
+          # founding case had a spec promising 409 while the suite mocked that exact case as 400.
+          # Pure text, so unlike every other check here it costs nothing to run on every commit.
+          # Two fixtures: one drifting where each rule must fire exactly once, one agreeing where
+          # nothing may fire.
+          python eval/tools/selfcheck_spec_suite_drift.py
+
       - name: README version claims match the plugin manifests
         run: |
           set -e
