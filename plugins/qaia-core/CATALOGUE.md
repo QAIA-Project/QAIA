@@ -1,6 +1,6 @@
 # QAIA catalogue — I want to X, which skill?
 
-36 skills across 4 plugins.
+37 skills across 4 plugins.
 
 **Out of scope, deliberately** ([ADR 0004](../../docs/adr/0004-test-level-boundary.md)): unit and component tests, integration between internal components, and coverage-driven white-box testing. QAIA starts from a promise observable from the outside — a test written against a function is written against the implementation, which is the oracle it exists to avoid. This page exists because a cold read by four business personas found
 the boundary between three shift-right skills unreadable *without reading all three* — and a

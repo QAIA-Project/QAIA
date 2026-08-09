@@ -7,6 +7,8 @@ description: Analyze a validated user story extraction - reformulate the need, d
 
 Follow the shared contract in `../README.md`. Prerequisite: `01-extraction.md` (else offer `us-review`). Load relevant knowledge via `knowledge/index.md` — project rules may already answer some questions.
 
+The open questions this skill raises are the ones a human later has to arbitrate, often blind. When production data for the same feature exists, `signal-ingest` attaches observed evidence to those questions — it never answers them, but it stops the arbitration from being a guess. Raise the question here regardless: a question that waits for evidence is still a question, and one never written down is never informed.
+
 ## Steps
 
 0. **Nothing-to-understand check.** If `01-extraction.md` has no capability/behavior to test (a design doc, an RFC process, an empty template, a title with no ACs), do not fabricate requirements: say what the source actually is, and either ask the user for the missing acceptance criteria or stop. A reformulation of nothing is a defect.

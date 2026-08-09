@@ -15,7 +15,7 @@ Follow the shared contract in `../README.md`. The knowledge base is shared by th
 ## Steps
 
 1. **Initialize** (first use): create `knowledge/` with `index.md` and offer the four starter files — `glossary.md`, `business-rules.md`, `application-map.md`, `anomaly-history.md` — asking the user 2-3 seed questions for each they accept.
-2. **Enrich** (routine): given a candidate rule/term (from the user or handed over by `need-understanding` / `feedback`):
+2. **Enrich** (routine): given a candidate rule/term (from the user or handed over by `need-understanding` / `feedback` / `confirm-fix`, whose closed defects land in `anomaly-history.md` as the missing test condition rather than as the bug):
    - check the index for the right target file; check the file for duplicates or **contradictions** with existing content;
    - on contradiction: show both statements, ⚠ VALIDATION — the user arbitrates which is true (loser is removed or marked superseded, never both kept);
    - write the entry with its provenance (US-ID, date, decided-by);

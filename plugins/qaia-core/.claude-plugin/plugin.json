@@ -1,6 +1,6 @@
 {
   "name": "qaia-core",
-  "version": "0.2.34",
+  "version": "0.2.35",
   "description": "QAIA core: US ingestion, need understanding, team knowledge base, ISTQB test design, prioritized atomic Gherkin test books with stable IDs and coverage matrix.",
   "author": {
     "name": "Cédric Moretti and QAIA contributors",

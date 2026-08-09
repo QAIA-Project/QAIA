@@ -164,6 +164,17 @@ jobs:
           # nothing may fire.
           python eval/tools/selfcheck_spec_suite_drift.py
 
+      - name: feedback loops still name both of their ends
+        run: |
+          set -e
+          # `feedback` and `rag-build` were both written, complete and tested long before the loop
+          # between them ran: neither named the other, so nothing triggered it. Same shape as
+          # mcp-bridge/ — it existed, its tests passed, and nothing executed them for weeks.
+          # A loop's wiring lives in prose, in two files nobody reads together. This does not prove
+          # a loop works; it proves it is still declared at both ends, which is the necessary
+          # condition and the one that drifts silently during a rewrite.
+          python eval/tools/check_loop_wiring.py
+
       - name: README version claims match the plugin manifests
         run: |
           set -e

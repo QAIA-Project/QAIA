@@ -71,6 +71,23 @@ run into noise, and the noise reads like a regression.
 4. **Run the full suite** on both versions and compare test by test.
 5. **State the verdict**, one of the three, with the transitions that support it.
 6. **Report every collateral by name.** A count is not a finding.
+7. **Hand the closed defect to `rag-build`** — this step is the one people skip, and skipping it is
+   why the same defect class comes back.
+
+   A defect that reached production is evidence that a **test condition was missing**, not merely
+   that a line of code was wrong. Ask the single question that generalises it: *what class of input
+   or state would have caught this before?* — a boundary nobody bounded, a partition nobody
+   enumerated, an interaction between two acceptance criteria nobody crossed.
+
+   Hand that answer over as a candidate entry for `knowledge/anomaly-history.md`, carrying the
+   scenario ID, the US-ID and the date. `rag-build` arbitrates duplicates and contradictions; the
+   user validates promotion, as always.
+
+   **Only on verdict *closed* or *closed with collateral*.** A defect that is still open has taught
+   nothing yet, and writing it down as a lesson would be recording a guess.
+
+   If no generalisable class can be named, say so and write nothing. *"This one was a typo"* is an
+   honest outcome; inventing a rule to have something to store is not.
 
 ## What this skill must refuse
 

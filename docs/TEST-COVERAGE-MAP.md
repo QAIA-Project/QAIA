@@ -153,7 +153,7 @@ de raisonnement dans `automate`, pas une 36ᵉ entrée au catalogue.
 ## 5. Ce que cette carte ne dit pas
 
 Elle mesure la **présence** d'une skill, pas sa **qualité**. Une case verte veut dire « le sujet
-est porté », pas « c'est bien fait ». Sur les 36 skills, **cinq** ont été exercées sur un logiciel
+est porté », pas « c'est bien fait ». Sur les 37 skills, **cinq** ont été exercées sur un logiciel
 ou un document que nous n'avons pas écrit — `automate`, `defect-report` et `confirm-fix` sur
 json-server, `openapi-ingest` sur la spécification Petstore, `test-plan-and-closure` sur le bilan
 de la campagne — et **aucune n'a jamais été utilisée par un humain dans son travail réel**. C'est
