@@ -1,0 +1,55 @@
+{
+ "_protocol": "Conditions derivees du seul `problem_statement` NETTOYE (extraits de reproduction retires, comme Otter arXiv 2502.05368). Ecrites et figees AVANT toute lecture de `test_patch` ou de `fail_to_pass` -- l'ordre est le seul garde-fou disponible ici, et il est declare plutot que prouve.",
+ "_limitation_the_reader_must_weigh": "Le producteur des conditions est aussi celui qui les confronte a l'oracle. La regle 3 du projet (« un producteur ne note jamais sa propre sortie ») est donc ENFREINTE. C'est assume pour un pilote de 3 cas dont le but est de decider si la campagne vaut d'etre lancee -- ce n'en est pas une, et aucun chiffre publie ici ne doit etre presente comme un score de QAIA.",
+ "_grading": "La confrontation est MECANIQUE : les identifiants et valeurs sur lesquels le test-oracle assure sont extraits de `test_patch`, puis cherches dans les conditions. Un humain n'arbitre pas.",
+ "instances": [
+  {
+   "instance_id": "psf__requests-1963",
+   "reformulated_need": "resolve_redirects doit poursuivre une chaine de redirections en partant de la requete la PLUS RECENTE, et non en recopiant a chaque tour la requete d'origine ; sinon une methode deja transformee par un saut precedent est perdue.",
+   "technique": "transitions d'etat (la methode est l'etat, chaque code de redirection est une transition)",
+   "conditions": [
+    "POST -> 303 -> 307 : la methode finale doit etre GET (le 303 a converti, le 307 doit preserver)",
+    "POST -> 307 : la methode est preservee en POST",
+    "POST -> 302 : la methode devient GET",
+    "POST -> 301 : la methode devient GET",
+    "chaine a 3 sauts ou plus : chaque tour part de la requete precedente, jamais de l'originale",
+    "le corps et les en-tetes suivent la meme regle que la methode"
+   ],
+   "open_questions": [
+    "Q1 le 308 doit-il preserver la methode comme le 307 ? l'enonce ne le dit pas",
+    "Q2 que devient le corps apres une conversion POST -> GET ?"
+   ]
+  },
+  {
+   "instance_id": "django__django-11039",
+   "reformulated_need": "sqlmigrate ne doit encadrer sa sortie de BEGIN/COMMIT que si la migration est atomique ET si la base sait annuler du DDL. Aujourd'hui seule l'atomicite est consideree.",
+   "technique": "table de decision (deux conditions booleennes -> quatre combinaisons, aucune omise)",
+   "conditions": [
+    "migration atomique ET can_rollback_ddl vrai -> sortie encadree de BEGIN/COMMIT",
+    "migration atomique ET can_rollback_ddl FAUX -> AUCUN BEGIN/COMMIT (le defaut)",
+    "migration non atomique ET can_rollback_ddl vrai -> aucun encadrement",
+    "migration non atomique ET can_rollback_ddl faux -> aucun encadrement"
+   ],
+   "open_questions": [
+    "Q1 le comportement doit-il dependre du moteur reel ou d'un can_rollback_ddl simule ?"
+   ]
+  },
+  {
+   "instance_id": "pytest-dev__pytest-5221",
+   "reformulated_need": "`pytest --fixtures` doit afficher la portee de chaque fixture, aujourd'hui invisible sans lire la doc ou le code.",
+   "technique": "partitions d'equivalence sur la portee (une classe par valeur possible) + une limite d'affichage",
+   "conditions": [
+    "une fixture de portee function : la portee apparait dans la sortie de --fixtures",
+    "une fixture de portee module : idem",
+    "une fixture de portee class : idem",
+    "une fixture de portee session : idem",
+    "une fixture de portee package : idem",
+    "sortie verbeuse et non verbeuse : la portee est presente dans les deux"
+   ],
+   "open_questions": [
+    "Q1 la portee par defaut (function) est-elle affichee ou omise pour alleger la sortie ?",
+    "Q2 --fixtures-per-test doit-il l'afficher aussi ?"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,70 @@
+{
+ "_limitation": "Le producteur des conditions est aussi celui qui les confronte a l'oracle. La regle 3 du projet (« un producteur ne note jamais sa propre sortie ») est donc ENFREINTE. C'est assume pour un pilote de 3 cas dont le but est de decider si la campagne vaut d'etre lancee -- ce n'en est pas une, et aucun chiffre publie ici ne doit etre presente comme un score de QAIA.",
+ "results": [
+  {
+   "instance_id": "psf__requests-1963",
+   "oracle_tests": [
+    "test_requests.py::RequestsTestCase::test_DIGESTAUTH_QUOTES_QOP_VALUE",
+    "test_requests.py::RequestsTestCase::test_DIGESTAUTH_WRONG_HTTP_401_GET",
+    "test_requests.py::RequestsTestCase::test_DIGEST_AUTH_RETURNS_COOKIE",
+    "test_requests.py::RequestsTestCase::test_DIGEST_HTTP_200_OK_GET",
+    "test_requests.py::RequestsTestCase::test_POSTBIN_GET_POST_FILES_WITH_DATA",
+    "test_requests.py::RequestsTestCase::test_param_cookiejar_works",
+    "test_requests.py::TestRedirects::test_requests_are_updated_each_time"
+   ],
+   "conditions_derived": 6,
+   "key_tokens": 9,
+   "matched": [
+    "method",
+    "redirects",
+    "resolve_redirects"
+   ],
+   "missed_sample": [
+    "Location",
+    "Request",
+    "TestRedirects",
+    "request",
+    "requests",
+    "session"
+   ]
+  },
+  {
+   "instance_id": "django__django-11039",
+   "oracle_tests": [
+    "test_sqlmigrate_for_non_transactional_databases (migrations.test_commands.MigrateTests)"
+   ],
+   "conditions_derived": 4,
+   "key_tokens": 12,
+   "matched": [
+    "can_rollback_ddl",
+    "sqlmigrate"
+   ],
+   "missed_sample": [
+    "MIGRATION_MODULES",
+    "Transaction",
+    "connection",
+    "databases",
+    "description",
+    "features",
+    "migrations",
+    "output",
+    "support",
+    "transactional"
+   ]
+  },
+  {
+   "instance_id": "pytest-dev__pytest-5221",
+   "oracle_tests": [
+    "testing/python/fixtures.py::TestShowFixtures::test_show_fixtures",
+    "testing/python/fixtures.py::TestShowFixtures::test_show_fixtures_verbose"
+   ],
+   "conditions_derived": 6,
+   "key_tokens": 2,
+   "matched": [],
+   "missed_sample": [
+    ",\n                ",
+    "scope"
+   ]
+  }
+ ]
+}

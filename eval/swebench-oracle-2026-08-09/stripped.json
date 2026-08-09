@@ -1,0 +1,306 @@
+{
+ "_protocol": "extraits de reproduction retires, comme Otter (arXiv 2502.05368)",
+ "_source_extract_sha_prefix": "f487b762f0954f235d152c84",
+ "rows": [
+  {
+   "instance_id": "pytest-dev__pytest-7490",
+   "repo": "pytest-dev/pytest",
+   "chars_raw": 22778,
+   "chars_clean": 606,
+   "pct_code": 97.3,
+   "words_clean": 77,
+   "oracle_tests": 2,
+   "clean": "Pytest 6: Dynamically adding xfail marker in test no longer ignores failure\n<!--\r\nThanks for submitting an issue!\r\n\r\nHere's a quick checklist for what to provide:\r\n-->\r\n\r\n## Description\r\n\r\nWith pytest 5.x, we can dynamically add an xfail to a test `request` object using `request.node.add_marker(mark)` (see example below). In 5.x this treated the failing test like a a test marked statically with an `xfail`. With 6.0.0rc0 it raises. \r\n\r\n## Versions\r\n\r\n<details>\r\n\r\n \r\n\r\n</details>\r\n\r\n- [ ] pytest and operating system versions\r\n\r\nPytest 6.0.1rc0 and MacOS 10.14.5\r\n\r\n \r\n\r\nWith 5.4.3\r\n\r\n \r\n\r\nWith 6.0.0rc0"
+  },
+  {
+   "instance_id": "sympy__sympy-13895",
+   "repo": "sympy/sympy",
+   "chars_raw": 545,
+   "chars_clean": 64,
+   "pct_code": 88.3,
+   "words_clean": 5,
+   "oracle_tests": 2,
+   "clean": "(-x/4 - S(1)/12)**x - 1 simplifies to an inequivalent expression"
+  },
+  {
+   "instance_id": "sympy__sympy-22714",
+   "repo": "sympy/sympy",
+   "chars_raw": 1660,
+   "chars_clean": 260,
+   "pct_code": 84.3,
+   "words_clean": 32,
+   "oracle_tests": 1,
+   "clean": "simpify gives `Imaginary coordinates are not permitted.` with evaluate(False)\n## Issue\r\n`with evaluate(False)` crashes unexpectedly with `Point2D`\r\n\r\n## Code\r\n \r\n\r\n## Error\r\n \r\n\r\nHowever, it works without `with evaluate(False)`. Both of following commands work"
+  },
+  {
+   "instance_id": "scikit-learn__scikit-learn-13142",
+   "repo": "scikit-learn/scikit-learn",
+   "chars_raw": 2314,
+   "chars_clean": 418,
+   "pct_code": 81.9,
+   "words_clean": 53,
+   "oracle_tests": 2,
+   "clean": "GaussianMixture predict and fit_predict disagree when n_init>1\n#### Description\r\nWhen `n_init` is specified in GaussianMixture, the results of fit_predict(X) and predict(X) are often different. The `test_gaussian_mixture_fit_predict` unit test doesn't catch this because it does not set `n_init`.\r\n\r\n#### Steps/Code to Reproduce\r\n \r\n\r\n#### Expected Results\r\n \r\nNo exceptions.\r\n\r\n#### Actual Results\r\n \r\n\r\n#### Versions"
+  },
+  {
+   "instance_id": "django__django-14238",
+   "repo": "django/django",
+   "chars_raw": 2590,
+   "chars_clean": 546,
+   "pct_code": 78.9,
+   "words_clean": 71,
+   "oracle_tests": 2,
+   "clean": "DEFAULT_AUTO_FIELD subclass check fails for subclasses of BigAutoField and SmallAutoField.\nDescription\n Set DEFAULT_AUTO_FIELD = \"example.core.models.MyBigAutoField\" , with contents of example.core.models:\n\nclass MyBigAutoField(models.BigAutoField):\n class MyModel(models.Model):\n Django then crashes with:\n ValueError: Primary key 'example.core.models.MyBigAutoField' referred by DEFAULT_AUTO_FIELD must subclass AutoField.\nThis can be fixed in AutoFieldMeta.__subclasscheck__ by allowing subclasses of those classes in the _subclasses property."
+  },
+  {
+   "instance_id": "matplotlib__matplotlib-25498",
+   "repo": "matplotlib/matplotlib",
+   "chars_raw": 1474,
+   "chars_clean": 326,
+   "pct_code": 77.9,
+   "words_clean": 42,
+   "oracle_tests": 1,
+   "clean": "Update colorbar after changing mappable.norm\nHow can I update a colorbar, after I changed the norm instance of the colorbar?\n\n`colorbar.update_normal(mappable)` has now effect and `colorbar.update_bruteforce(mappable)` throws a `ZeroDivsionError`-Exception.\n\nConsider this example:\n\n \n\nOutput for `cb.update_bruteforce(plot)`:"
+  },
+  {
+   "instance_id": "scikit-learn__scikit-learn-14983",
+   "repo": "scikit-learn/scikit-learn",
+   "chars_raw": 1297,
+   "chars_clean": 296,
+   "pct_code": 77.2,
+   "words_clean": 28,
+   "oracle_tests": 2,
+   "clean": "RepeatedKFold and RepeatedStratifiedKFold do not show correct __repr__ string\n#### Description\r\n\r\n`RepeatedKFold` and `RepeatedStratifiedKFold` do not show correct \\_\\_repr\\_\\_ string.\r\n\r\n#### Steps/Code to Reproduce\r\n\r\n \r\n\r\n#### Expected Results\r\n\r\n \r\n\r\n#### Actual Results\r\n\r\n \r\n\r\n#### Versions"
+  },
+  {
+   "instance_id": "django__django-13660",
+   "repo": "django/django",
+   "chars_raw": 2305,
+   "chars_clean": 619,
+   "pct_code": 73.1,
+   "words_clean": 93,
+   "oracle_tests": 2,
+   "clean": "shell command crashes when passing (with -c) the python code with functions.\nDescription\n The examples below use Python 3.7 and Django 2.2.16, but I checked that the code is the same on master and works the same in Python 3.8.\nHere's how ​python -c works:\n\ndef f():\n f()\"\nEOF\n2.2.16\nHere's how ​python -m django shell -c works (paths shortened for clarify):\n\ndef f():\n f()\"\nEOF\n NameError: name 'django' is not defined\nThe problem is in the ​usage of ​exec:\n exec should be passed a dictionary containing a minimal set of globals. This can be done by just passing a new, empty dictionary as the second argument of exec."
+  },
+  {
+   "instance_id": "sphinx-doc__sphinx-8713",
+   "repo": "sphinx-doc/sphinx",
+   "chars_raw": 1868,
+   "chars_clean": 766,
+   "pct_code": 59.0,
+   "words_clean": 97,
+   "oracle_tests": 1,
+   "clean": "napoleon_use_param should also affect \"other parameters\" section\nSubject: napoleon_use_param should also affect \"other parameters\" section\r\n\r\n### Problem\r\nCurrently, napoleon always renders the Other parameters section as if napoleon_use_param was False, see source\r\n \r\nwhereas it would make sense that this section should follow the same formatting rules as the Parameters section.\r\n\r\n#### Procedure to reproduce the problem\r\n \r\n\r\nNote the difference in rendering.\r\n\r\n#### Error logs / results\r\nSee above.\r\n\r\n#### Expected results\r\n \r\n\r\nAlternatively another separate config value could be introduced, but that seems a bit overkill.\r\n\r\n### Reproducible project / your project\r\nN/A\r\n\r\n### Environment info\r\n- OS: Linux\r\n- Python version: 3.7\r\n- Sphinx version: 1.8.1"
+  },
+  {
+   "instance_id": "astropy__astropy-12907",
+   "repo": "astropy/astropy",
+   "chars_raw": 1246,
+   "chars_clean": 546,
+   "pct_code": 56.2,
+   "words_clean": 78,
+   "oracle_tests": 2,
+   "clean": "Modeling's `separability_matrix` does not compute separability correctly for nested CompoundModels\nConsider the following model:\r\n\r\n \r\n\r\nIt's separability matrix as you might expect is a diagonal:\r\n\r\n \r\n\r\nIf I make the model more complex:\r\n \r\n\r\nThe output matrix is again, as expected, the outputs and inputs to the linear models are separable and independent of each other.\r\n\r\nIf however, I nest these compound models:\r\n \r\nSuddenly the inputs and outputs are no longer separable?\r\n\r\nThis feels like a bug to me, but I might be missing something?"
+  },
+  {
+   "instance_id": "django__django-16400",
+   "repo": "django/django",
+   "chars_raw": 2354,
+   "chars_clean": 1131,
+   "pct_code": 52.0,
+   "words_clean": 160,
+   "oracle_tests": 1,
+   "clean": "migrate management command does not respect database parameter when adding Permissions.\nDescription\n When invoking migrate with a database parameter, the migration runs successfully. However, there seems to be a DB read request that runs after the migration. This call does not respect the db param and invokes the db router .\nWhen naming the db as a parameter, all DB calls in the context of the migrate command are expected to use the database specified.\nI came across this as I am currently using a thread-local variable to get the active DB with a custom DB router for a multi-tenant service .\nMinimal example \nSetup the custom middleware and custom DB Router as show below. Then run any DB migration. We see that \"read {}\" is being printed before the exception message.\nIdeally none of this code must be called as the DB was specified during management command.\n\nclass InvalidTenantException(Exception):\n class TenantSubdomainMiddleware:\n class TenantDatabaseRouter:\n ## settings.py\nMIDDLEWARE = [\n ]\nTENANT_MAP = {\"localhost\":\"default\", \"tenant_1\":\"default\"}\nDATABASE_ROUTERS = [\"utils.tenant_db_router.TenantDatabaseRouter\"]"
+  },
+  {
+   "instance_id": "sympy__sympy-18698",
+   "repo": "sympy/sympy",
+   "chars_raw": 458,
+   "chars_clean": 220,
+   "pct_code": 52.0,
+   "words_clean": 33,
+   "oracle_tests": 1,
+   "clean": "sqf and sqf_list output is not consistant\nThe example below is wrong in the sense that we should have (x*_2 - 5_x + 6, 3) and not 2 factors of multiplicity 3.\n\n \n\nwhereas below is correct --- one factor of multiplicity 2"
+  },
+  {
+   "instance_id": "sympy__sympy-20590",
+   "repo": "sympy/sympy",
+   "chars_raw": 758,
+   "chars_clean": 371,
+   "pct_code": 51.1,
+   "words_clean": 50,
+   "oracle_tests": 1,
+   "clean": "Symbol instances have __dict__ since 1.7?\nIn version 1.6.2 Symbol instances had no `__dict__` attribute\r\n \r\n\r\nThis changes in 1.7 where `sympy.Symbol('s').__dict__` now exists (and returns an empty dict)\r\nI may misinterpret this, but given the purpose of `__slots__`, I assume this is a bug, introduced because some parent class accidentally stopped defining `__slots__`."
+  },
+  {
+   "instance_id": "sphinx-doc__sphinx-7686",
+   "repo": "sphinx-doc/sphinx",
+   "chars_raw": 1327,
+   "chars_clean": 674,
+   "pct_code": 49.2,
+   "words_clean": 79,
+   "oracle_tests": 2,
+   "clean": "autosummary: The members variable for module template contains imported members\n**Describe the bug**\r\nautosummary: The members variable for module template contains imported members even if autosummary_imported_members is False.\r\n\r\n**To Reproduce**\r\n\r\n \r\n \r\n \r\n \r\n\r\nAs a result, I got following output:\r\n \r\n\r\n**Expected behavior**\r\nThe template variable `members` should not contain imported members when `autosummary_imported_members` is False.\r\n\r\n**Your project**\r\nNo\r\n\r\n**Screenshots**\r\nNo\r\n\r\n**Environment info**\r\n- OS: Mac\r\n- Python version: 3.8.2\r\n- Sphinx version: 3.1.0dev\r\n- Sphinx extensions: sphinx.ext.autosummary\r\n- Extra tools: No\r\n\r\n**Additional context**\r\nNo"
+  },
+  {
+   "instance_id": "django__django-14787",
+   "repo": "django/django",
+   "chars_raw": 745,
+   "chars_clean": 422,
+   "pct_code": 43.4,
+   "words_clean": 58,
+   "oracle_tests": 1,
+   "clean": "method_decorator() should preserve wrapper assignments\nDescription\n the function that is passed to the decorator is a partial object and does not have any of the attributes expected from a function i.e. __name__, __module__ etc...\nconsider the following case\ndef logger(func):\n class Test:\n Test().test_method()\nThis results in the following exception\nAttributeError: 'functools.partial' object has no attribute '__name__'"
+  },
+  {
+   "instance_id": "sympy__sympy-17022",
+   "repo": "sympy/sympy",
+   "chars_raw": 965,
+   "chars_clean": 578,
+   "pct_code": 40.1,
+   "words_clean": 80,
+   "oracle_tests": 1,
+   "clean": "Lambdify misinterprets some matrix expressions\nUsing lambdify on an expression containing an identity matrix gives us an unexpected result:\r\n\r\n \r\n\r\nInstead, the output should be `array([[2, 2], [3, 5]])`, since we're adding an identity matrix to the array. Inspecting the globals and source code of `f` shows us why we get the result:\r\n\r\n \r\n\r\nThe code printer prints `I`, which is currently being interpreted as a Python built-in complex number. The printer should support printing identity matrices, and signal an error for unsupported expressions that might be misinterpreted."
+  },
+  {
+   "instance_id": "django__django-12125",
+   "repo": "django/django",
+   "chars_raw": 1589,
+   "chars_clean": 990,
+   "pct_code": 37.7,
+   "words_clean": 152,
+   "oracle_tests": 2,
+   "clean": "makemigrations produces incorrect path for inner classes\nDescription\n When you define a subclass from django.db.models.Field as an inner class of some other class, and use this field inside a django.db.models.Model class, then when you run manage.py makemigrations, a migrations file is created which refers to the inner class as if it were a top-level class of the module it is in.\nTo reproduce, create the following as your model:\nclass Outer(object):\n class A(models.Model):\n After running manage.py makemigrations, the generated migrations file contains the following:\nmigrations.CreateModel(\n ),\nNote the test1.models.Inner, which should have been test1.models.Outer.Inner.\nThe real life case involved an EnumField from django-enumfields, defined as an inner class of a Django Model class, similar to this:\n\nclass Thing(models.Model):\n This results in the following migrations code:\nmigrations.CreateModel(\n ),\nThis refers to test1.models.State, instead of to test1.models.Thing.State."
+  },
+  {
+   "instance_id": "django__django-15347",
+   "repo": "django/django",
+   "chars_raw": 1413,
+   "chars_clean": 892,
+   "pct_code": 36.9,
+   "words_clean": 145,
+   "oracle_tests": 1,
+   "clean": "Messages framework incorrectly serializes/deserializes extra_tags when it's an empty string\nDescription\n When a message is serialised and then deserialised with any of the built in storage backends, then extra_tags==\"\" is converted to extra_tags==None. This is because MessageEncoder checks for the truthyness of extra_tags rather than checking it is not None.\nTo replicate this bug\n\nTrue\n\nTrue\nEffect of the bug in application behaviour\nThis error occurred in the wild with a template tag similar to the following:\n{% if x not in message.extra_tags %}\nWhen the message was displayed as part of a redirect, it had been serialised and deserialized which meant that extra_tags was None instead of the empty string. This caused an error.\nIt's important to note that this bug affects all of the standard API (messages.debug, messages.info etc. all have a default value of extra_tags equal to \"\")."
+  },
+  {
+   "instance_id": "psf__requests-1963",
+   "repo": "psf/requests",
+   "chars_raw": 673,
+   "chars_clean": 425,
+   "pct_code": 36.8,
+   "words_clean": 58,
+   "oracle_tests": 7,
+   "clean": "`Session.resolve_redirects` copies the original request for all subsequent requests, can cause incorrect method selection\nConsider the following redirection chain:\n\n \n\nThe intermediate 303 See Other has caused the POST to be converted to\na GET. The subsequent 307 should preserve the GET. However, because\n`Session.resolve_redirects` starts each iteration by copying the _original_\nrequest object, Requests will issue a POST!"
+  },
+  {
+   "instance_id": "sympy__sympy-15308",
+   "repo": "sympy/sympy",
+   "chars_raw": 294,
+   "chars_clean": 211,
+   "pct_code": 28.2,
+   "words_clean": 34,
+   "oracle_tests": 1,
+   "clean": "LaTeX printing for Matrix Expression\n \r\n\r\nThe bad part is not only is Trace not recognized, but whatever printer is being used doesn't fallback to the LaTeX printer for the inner expression (it should be `A^2`)."
+  },
+  {
+   "instance_id": "matplotlib__matplotlib-23987",
+   "repo": "matplotlib/matplotlib",
+   "chars_raw": 1291,
+   "chars_clean": 1029,
+   "pct_code": 20.3,
+   "words_clean": 124,
+   "oracle_tests": 1,
+   "clean": "[Bug]: Constrained layout UserWarning even when False\n### Bug summary\r\n\r\nWhen using layout settings such as `plt.subplots_adjust` or `bbox_inches='tight`, a UserWarning is produced due to incompatibility with constrained_layout, even if constrained_layout = False. This was not the case in previous versions.\r\n\r\n### Code for reproduction\r\n\r\n \r\n\r\n\r\n### Actual outcome\r\n\r\nThe plot works fine but the warning is generated\r\n\r\n`/var/folders/ss/pfgdfm2x7_s4cyw2v0b_t7q80000gn/T/ipykernel_76923/4170965423.py:7: UserWarning: This figure was using a layout engine that is incompatible with subplots_adjust and/or tight_layout; not calling subplots_adjust.\r\n plt.subplots_adjust(wspace=0)`\r\n\r\n### Expected outcome\r\n\r\nno warning\r\n\r\n### Additional information\r\n\r\nWarning disappears when constrained_layout=False is removed\r\n\r\n### Operating system\r\n\r\nOS/X\r\n\r\n### Matplotlib Version\r\n\r\n3.6.0\r\n\r\n### Matplotlib Backend\r\n\r\n_No response_\r\n\r\n### Python version\r\n\r\n_No response_\r\n\r\n### Jupyter version\r\n\r\n_No response_\r\n\r\n### Installation\r\n\r\nconda"
+  },
+  {
+   "instance_id": "pydata__xarray-5131",
+   "repo": "pydata/xarray",
+   "chars_raw": 2321,
+   "chars_clean": 1895,
+   "pct_code": 18.4,
+   "words_clean": 287,
+   "oracle_tests": 10,
+   "clean": "Trailing whitespace in DatasetGroupBy text representation\nWhen displaying a DatasetGroupBy in an interactive Python session, the first line of output contains a trailing whitespace. The first example in the documentation demonstrate this:\r\n\r\n \r\n\r\nThere is a trailing whitespace in the first line of output which is \"DatasetGroupBy, grouped over 'letters' \". This can be seen more clearly by converting the object to a string (note the whitespace before `\\n`):\r\n\r\n \r\n\r\n\r\nWhile this isn't a problem in itself, it causes an issue for us because we use flake8 in continuous integration to verify that our code is correctly formatted and we also have doctests that rely on DatasetGroupBy textual representation. Flake8 reports a violation on the trailing whitespaces in our docstrings. If we remove the trailing whitespaces, our doctests fail because the expected output doesn't match the actual output. So we have conflicting constraints coming from our tools which both seem reasonable. Trailing whitespaces are forbidden by flake8 because, among other reasons, they lead to noisy git diffs. Doctest want the expected output to be exactly the same as the actual output and considers a trailing whitespace to be a significant difference. We could configure flake8 to ignore this particular violation for the files in which we have these doctests, but this may cause other trailing whitespaces to creep in our code, which we don't want. Unfortunately it's not possible to just add `# NoQA` comments to get flake8 to ignore the violation only for specific lines because that creates a difference between expected and actual output from doctest point of view. Flake8 doesn't allow to disable checks for blocks of code either.\r\n\r\nIs there a reason for having this trailing whitespace in DatasetGroupBy representation? Whould it be OK to remove it? If so please let me know and I can make a pull request."
+  },
+  {
+   "instance_id": "django__django-11039",
+   "repo": "django/django",
+   "chars_raw": 879,
+   "chars_clean": 837,
+   "pct_code": 4.8,
+   "words_clean": 127,
+   "oracle_tests": 1,
+   "clean": "sqlmigrate wraps it's outpout in BEGIN/COMMIT even if the database doesn't support transactional DDL\nDescription\n The migration executor only adds the outer BEGIN/COMMIT ​if the migration is atomic and ​the schema editor can rollback DDL but the current sqlmigrate logic only takes migration.atomic into consideration.\nThe issue can be addressed by\nChanging sqlmigrate ​assignment of self.output_transaction to consider connection.features.can_rollback_ddl as well.\nAdding a test in tests/migrations/test_commands.py based on ​an existing test for non-atomic migrations that mocks connection.features.can_rollback_ddl to False instead of overdidding MIGRATION_MODULES to point to a non-atomic migration.\nI marked the ticket as easy picking because I included the above guidelines but feel free to uncheck it if you deem it inappropriate."
+  },
+  {
+   "instance_id": "sympy__sympy-12481",
+   "repo": "sympy/sympy",
+   "chars_raw": 407,
+   "chars_clean": 404,
+   "pct_code": 0.7,
+   "words_clean": 52,
+   "oracle_tests": 1,
+   "clean": "`Permutation` constructor fails with non-disjoint cycles\nCalling `Permutation([[0,1],[0,1]])` raises a `ValueError` instead of constructing the identity permutation. If the cycles passed in are non-disjoint, they should be applied in left-to-right order and the resulting permutation should be returned.\r\n\r\nThis should be easy to compute. I don't see a reason why non-disjoint cycles should be forbidden."
+  },
+  {
+   "instance_id": "django__django-13230",
+   "repo": "django/django",
+   "chars_raw": 342,
+   "chars_clean": 340,
+   "pct_code": 0.6,
+   "words_clean": 52,
+   "oracle_tests": 1,
+   "clean": "Add support for item_comments to syndication framework\nDescription\n Add comments argument to feed.add_item() in syndication.views so that item_comments can be defined directly without having to take the detour via item_extra_kwargs .\nAdditionally, comments is already explicitly mentioned in the feedparser, but not implemented in the view."
+  },
+  {
+   "instance_id": "django__django-15819",
+   "repo": "django/django",
+   "chars_raw": 544,
+   "chars_clean": 542,
+   "pct_code": 0.4,
+   "words_clean": 82,
+   "oracle_tests": 1,
+   "clean": "inspectdb should generate related_name on same relation links.\nDescription\n Hi!\nAfter models generation with inspectdb command we have issue with relations to same enities\nmodule.Model.field1: (fields.E304) Reverse accessor for 'module.Model.field1' clashes with reverse accessor for 'module.Model.field2'.\nHINT: Add or change a related_name argument to the definition for 'module.Model.field1' or 'module.Model.field2'.\n*\nMaybe we can autogenerate\nrelated_name='attribute_name'\nto all fields in model if related Model was used for this table"
+  },
+  {
+   "instance_id": "pytest-dev__pytest-5221",
+   "repo": "pytest-dev/pytest",
+   "chars_raw": 239,
+   "chars_clean": 238,
+   "pct_code": 0.4,
+   "words_clean": 41,
+   "oracle_tests": 2,
+   "clean": "Display fixture scope with `pytest --fixtures`\nIt would be useful to show fixture scopes with `pytest --fixtures`; currently the only way to learn the scope of a fixture is look at the docs (when that is documented) or at the source code."
+  },
+  {
+   "instance_id": "django__django-11630",
+   "repo": "django/django",
+   "chars_raw": 660,
+   "chars_clean": 658,
+   "pct_code": 0.3,
+   "words_clean": 109,
+   "oracle_tests": 2,
+   "clean": "Django throws error when different apps with different models have the same name table name.\nDescription\n Error message:\ntable_name: (models.E028) db_table 'table_name' is used by multiple models: base.ModelName, app2.ModelName.\nWe have a Base app that points to a central database and that has its own tables. We then have multiple Apps that talk to their own databases. Some share the same table names.\nWe have used this setup for a while, but after upgrading to Django 2.2 we're getting an error saying we're not allowed 2 apps, with 2 different models to have the same table names. \nIs this correct behavior? We've had to roll back to Django 2.0 for now."
+  },
+  {
+   "instance_id": "matplotlib__matplotlib-18869",
+   "repo": "matplotlib/matplotlib",
+   "chars_raw": 1717,
+   "chars_clean": 1711,
+   "pct_code": 0.3,
+   "words_clean": 231,
+   "oracle_tests": 4,
+   "clean": "Add easily comparable version info to toplevel\n<!--\r\nWelcome! Thanks for thinking of a way to improve Matplotlib.\r\n\r\n\r\nBefore creating a new feature request please search the issues for relevant feature requests.\r\n-->\r\n\r\n### Problem\r\n\r\nCurrently matplotlib only exposes `__version__`. For quick version checks, exposing either a `version_info` tuple (which can be compared with other tuples) or a `LooseVersion` instance (which can be properly compared with other strings) would be a small usability improvement.\r\n\r\n(In practice I guess boring string comparisons will work just fine until we hit mpl 3.10 or 4.10 which is unlikely to happen soon, but that feels quite dirty :))\r\n<!--\r\nProvide a clear and concise description of the problem this feature will solve. \r\n\r\nFor example:\r\n* I'm always frustrated when [...] because [...]\r\n* I would like it if [...] happened when I [...] because [...]\r\n* Here is a sample image of what I am asking for [...]\r\n-->\r\n\r\n### Proposed Solution\r\n\r\nI guess I slightly prefer `LooseVersion`, but exposing just a `version_info` tuple is much more common in other packages (and perhaps simpler to understand). The hardest(?) part is probably just bikeshedding this point :-)\r\n<!-- Provide a clear and concise description of a way to accomplish what you want. For example:\r\n\r\n* Add an option so that when [...] [...] will happen\r\n -->\r\n\r\n### Additional context and prior art\r\n\r\n`version_info` is a pretty common thing (citation needed).\r\n<!-- Add any other context or screenshots about the feature request here. You can also include links to examples of other programs that have something similar to your request. For example:\r\n\r\n* Another project [...] solved this by [...]\r\n-->"
+  },
+  {
+   "instance_id": "django__django-12708",
+   "repo": "django/django",
+   "chars_raw": 959,
+   "chars_clean": 957,
+   "pct_code": 0.2,
+   "words_clean": 155,
+   "oracle_tests": 1,
+   "clean": "Migration crashes deleting an index_together if there is a unique_together on the same fields\nDescription\n Happens with Django 1.11.10\nSteps to reproduce:\n1) Create models with 2 fields, add 2 same fields to unique_together and to index_together\n2) Delete index_together -> Fail\nIt will fail at django/db/backends/base/schema.py, line 378, in _delete_composed_index(), ValueError: Found wrong number (2) of constraints for as this one will find two constraints, the _uniq and the _idx one. No way to get out of this...\nThe worst in my case is that happened as I wanted to refactor my code to use the \"new\" (Dj 1.11) Options.indexes feature. I am actually not deleting the index, just the way it is declared in my code.\nI think there are 2 different points here:\n1) The deletion of index_together should be possible alone or made coherent (migrations side?) with unique_together\n2) Moving the declaration of an index should not result in an index re-creation"
+  }
+ ]
+}
