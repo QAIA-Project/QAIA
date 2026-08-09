@@ -1,8 +1,0 @@
-
-Running 3 tests using 1 worker
-
-  ok 1 visual.saucedemo.spec.js:19:1 › @QAIA-VIS-001 login screen container is visually stable (407ms)
-  ok 2 visual.saucedemo.spec.js:27:1 › @QAIA-VIS-002 inventory list is visually stable (443ms)
-  ok 3 visual.saucedemo.spec.js:36:1 › @QAIA-VIS-003 footer (dynamic year masked) is visually stable (428ms)
-
-  3 passed (1.6s)

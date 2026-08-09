@@ -1,9 +1,0 @@
-$ git status --porcelain eval/skill-eval-campaign-2026-07-29/US-EVAL-009-octoperf-petstore/
-(no output — working tree clean, i.e. no human edit to the test book since it was generated)
-
-$ git log --oneline -1 -- eval/skill-eval-campaign-2026-07-29/US-EVAL-009-octoperf-petstore/testbooks/octoperf-petstore-cart.feature
-9555153 Campagne d'evaluation continue des skills, suite 3 (D122-D124) : etape 8 sur les 11 cibles, 4 nouvelles cibles, CI Gherkin fixee
-
-Consequence for `feedback` step 1 branch B: the .feature is byte-identical to the generated
-version, so at least one of the 7 hash normalizations probed in snapshot_hash_probe.py should
-have reproduced a digest from state/generated.snapshot.md. None did (0/56).

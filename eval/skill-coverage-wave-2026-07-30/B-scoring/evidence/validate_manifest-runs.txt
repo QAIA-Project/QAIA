@@ -1,9 +1,0 @@
-FAIL manifest.copy.testbook-score-only.json (4 error(s))
-  - gate: missing required field 'verdict'
-  - gate: missing required field 'reasons'
-  - gate: missing required field 'waiver'
-  - gate.verdict: expected one of ['CONCERNS', 'FAIL', 'PASS', 'WAIVED'], got None
-PASS manifest.copy.json
-PASS flakiness-probe-A.manifest.json
-PASS flakiness-probe-B.manifest.json
-PASS evidence/waiver-selfgrant-probe.manifest.json

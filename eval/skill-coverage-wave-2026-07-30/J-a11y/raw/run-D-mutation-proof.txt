@@ -1,9 +1,0 @@
-
-Running 2 tests using 1 worker
-
-MUT-1 before: ["color-contrast(serious)","image-alt(critical)"] -> after: []
-  ok 1 tests\a11y.mutation-proof.spec.js:21:1 › MUT-1 — repair the two real defects in-page: the SAME assertion must go GREEN (1.4s)
-MUT-2 after: ["color-contrast(serious)","image-alt(critical)","link-name(serious)"]
-  ok 2 tests\a11y.mutation-proof.spec.js:44:1 › MUT-2 — inject an extra critical defect: the SAME assertion must name it (661ms)
-
-  2 passed (2.5s)

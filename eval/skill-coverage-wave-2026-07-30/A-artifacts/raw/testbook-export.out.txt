@@ -1,6 +1,0 @@
-re-parse OK  xray      rows=8 cols=8 -> C:\Users\Moretti Cédric\Documents\Claude\QAIA\.claude\worktrees\wf_f6e3c739-d44-1\eval\skill-coverage-wave-2026-07-30\A-artifacts\testbook-export\export\xray\US-EVAL-009-xray.csv
-re-parse OK  testrail  rows=8 cols=8 -> C:\Users\Moretti Cédric\Documents\Claude\QAIA\.claude\worktrees\wf_f6e3c739-d44-1\eval\skill-coverage-wave-2026-07-30\A-artifacts\testbook-export\export\testrail\US-EVAL-009-testrail.csv
-re-parse OK  xlsx      sheets=Scenarios,Coverage matrix,Decisions & assumptions scenarioRows=8 -> C:\Users\Moretti Cédric\Documents\Claude\QAIA\.claude\worktrees\wf_f6e3c739-d44-1\eval\skill-coverage-wave-2026-07-30\A-artifacts\testbook-export\export\xlsx\US-EVAL-009-testbook.xlsx
-background steps flattened into every row: 0 (none in this book)
-outlines exploded: 0
-TestRail rows with an EMPTY Steps field (connector caveat): none

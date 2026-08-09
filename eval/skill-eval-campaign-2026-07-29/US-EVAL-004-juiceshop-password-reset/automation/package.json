@@ -1,8 +1,0 @@
-{
-  "name": "qaia-us-eval-004-juiceshop-automation",
-  "version": "1.0.0",
-  "private": true,
-  "devDependencies": {
-    "@playwright/test": "^1.62.0"
-  }
-}

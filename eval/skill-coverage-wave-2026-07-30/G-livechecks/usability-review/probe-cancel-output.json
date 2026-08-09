@@ -1,9 +1,0 @@
-{
-  "appointmentsBeforeClick": "Dr. Ada Reed — 31/07/2026 03:45:04 — booked\nCancel",
-  "nativeDialogSeen": null,
-  "after": {
-    "appointments": "Dr. Ada Reed — 31/07/2026 03:45:04 — booked\nCancel",
-    "message": "cancellation refused: less than 4 hours before start",
-    "modalsInDom": 0
-  }
-}

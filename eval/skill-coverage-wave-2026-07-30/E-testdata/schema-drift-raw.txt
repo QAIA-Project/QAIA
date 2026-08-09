@@ -1,8 +1,0 @@
-worked-example top keys : _meta, drugs, physicians, patients, intakes, cases
-this-run    top keys    : _meta, products, shoppers, cartItems, carts, apiResponses, orderForms, cases
-worked-example _meta keys: usId, title, sourceFile, generatedBy, generatedAt, domain, disclaimer, assumptions
-this-run     _meta keys : usId, title, sourceFile, testbookFile, designFile, generatedBy, generatedAt, domain, disclaimer, productNamingNote, assumptions
-worked-example case fields: assumptionRefs, coversAC, cumulativeCheck, description, expectedResult, id, intakeRefs, overrideJustification, renalReducedMaxSafeDosePerIntake
-this-run      case fields: alternateOrderFormId, apiResponseId, assumptionRefs, cartId, cartItemId, coversAC, coversCondition, description, expectedResult, expectedTotalAfterDelete, id, orderFormId, productId, scenarioId, shopperId
-worked-example has expectedResult.status values: pass | warning | blocked | [open]
-this-run      expectedResult.status values: pass | blocked-with-alert | [open]

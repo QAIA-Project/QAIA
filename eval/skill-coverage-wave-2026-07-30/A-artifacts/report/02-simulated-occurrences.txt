@@ -1,9 +1,0 @@
-state/01-extraction.md:69:| 01-review | done — ⚠ VALIDATION: `simulated: accepted-as-is` (non-interactive campaign run, no human reviewer at this micro-step; only the pre-automation gate is a hard human stop per the campaign prompt) |
-state/02-understanding.md:136:| 02-understanding | done — ⚠ VALIDATION: `simulated: accepted-as-is` (non-interactive campaign run) |
-state/03-design.md:114:| 03-design | done — ⚠ VALIDATION: `simulated: accepted-as-is` (non-interactive campaign run) |
-state/04-priorities.md:23:⚠ VALIDATION: `simulated: accepted-as-is` (non-interactive campaign run) — no human override
-state/journey.md:6:| 01-review | done | ⚠ simulated: accepted-as-is |
-state/journey.md:7:| 02-understanding | done | ⚠ simulated: accepted-as-is — Q1/Q2/Q4/Q5/Q6 assumption, Q3/Q7 open |
-state/journey.md:8:| 03-design | done | ⚠ simulated: accepted-as-is |
-state/journey.md:15:prompt), per `docs/SKILL-EVAL-CAMPAIGN-PROMPT.md`. Not simulated, not automated. Awaiting the
-reports/testbook-validate-report.md:3:## Deterministic structural pass (real script execution, not simulated)

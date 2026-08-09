@@ -1,9 +1,0 @@
-=== security-surface — US-EVAL-004 (Juice Shop, public demo, real run) ===
-Step 0 -- Asset & threat identification: see security/asset-threat-ranking.md
-
-[setup] registering two throwaway accounts (A, B)...
-FATAL: Error: 503
-    at withRetry (C:\Users\Moretti Cédric\Documents\Claude\QAIA\.claude\worktrees\agent-a08449e63a9a307c8\eval\skill-eval-campaign-2026-07-29\US-EVAL-004-juiceshop-password-reset\automation\security\run-security-surface.js:20:43)
-    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
-    at async registerAccount (C:\Users\Moretti Cédric\Documents\Claude\QAIA\.claude\worktrees\agent-a08449e63a9a307c8\eval\skill-eval-campaign-2026-07-29\US-EVAL-004-juiceshop-password-reset\automation\security\run-security-surface.js:31:18)
-    at async main (C:\Users\Moretti Cédric\Documents\Claude\QAIA\.claude\worktrees\agent-a08449e63a9a307c8\eval\skill-eval-campaign-2026-07-29\US-EVAL-004-juiceshop-password-reset\automation\security\run-security-surface.js:55:13)

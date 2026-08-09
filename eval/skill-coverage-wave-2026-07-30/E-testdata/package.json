@@ -1,9 +1,0 @@
-{
-  "name": "qaia-eval-testdata-us-eval-008",
-  "private": true,
-  "version": "0.0.0",
-  "description": "Real validation run of the dataset produced by qaia-testdata/dataset-generate for US-EVAL-008",
-  "devDependencies": {
-    "@playwright/test": "^1.49.0"
-  }
-}

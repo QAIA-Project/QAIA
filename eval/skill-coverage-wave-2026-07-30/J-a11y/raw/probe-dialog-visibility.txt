@@ -1,4 +1,0 @@
-{ vis: 'visible', disp: 'block', op: '1', rect: [ 0, 0 ] }
-pw dialog visible: false
-pw heading visible: true
-pw ingredients group visible: true

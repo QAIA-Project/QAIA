@@ -1,7 +1,0 @@
-
-Running 1 test using 1 worker
-
-FALSE-GREEN: violations = 0 | passes = 3 | DOM elements under #app = 257
-  ok 1 tests\a11y.falsegreen.spec.js:13:1 › FALSE-GREEN — literal skill recipe, audit before the SPA renders, PASSES vacuously (447ms)
-
-  1 passed (879ms)
