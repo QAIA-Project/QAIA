@@ -439,6 +439,19 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
             real_assertions += len([1 for ln in body_lines if INDIRECT_ASSERTION.search(code_of(ln))])
             if real_assertions:
                 tests_with_real_assertion += 1
+            elif declared_placeholder:
+                # `test.fixme(...)` reports as SKIPPED, not passed. It has no assertion by
+                # design and reproaching it is reproaching the remedy.
+                #
+                # This exemption was added to `empty-test-body` and NOT to its twin, which kept
+                # firing on the same repositories, the same lines, for the same reason — 24
+                # findings across `solidcouch/solidcouch` and `Studio-Saelix/sencho`, still live
+                # a batch after the campaign reported the defect as fixed.
+                #
+                # "Fixed for the case in front of me rather than for the class": batch 3 named
+                # the pattern, batch 4 committed it again, and nobody re-ran the earlier batches
+                # to notice. Found by an adversarial triage pass that did re-run them.
+                pass
             else:
                 findings.append({"kind": "test-without-assertion", "file": rel, "line": start,
                                  "detail": title[:160], "blocking": True})

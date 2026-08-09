@@ -193,7 +193,7 @@ next generation. **The loop is built; what is missing is the trigger** — nothi
 
 ### Loop D — Scan → Tool *(the only one running, and it is this session's actual result)*
 
-Pointing the tool at code it did not write produced **8 defects in the tool and 506 false findings**
+Pointing the tool at code it did not write produced **9 defects in the tool and 91 campaign-attributable false findings**
 across 62 repositories, against 2 confirmed findings spanning 19 tests — the "490 against 19" first published mixed a
 findings count with a test count. Each fix was locked by a selfcheck assertion and verified by re-breaking it.
 

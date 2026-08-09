@@ -52,15 +52,37 @@ a wrong issue would have been filed against a project for following the advice t
 | 7 | Angular/Karma specs judged because they import no runner | 1 |
 | **8** | **`empty-test-body` fired on `test.fixme()`** | **16** |
 
-**506 false findings against 2 confirmed findings**, spanning 19 tests, across 62 repositories.
+**91 constats faux imputables a la campagne, contre 2 constats confirmes** portant sur 19 tests, sur 62 depots et 3 234 tests.
 
-The ratio published earlier as "490 against 19" was wrong twice: it omitted batch 4's 16, and its
-denominator was a **test** count standing in for a **findings** count. Both corrected here.
+Ce chiffre a ete faux **trois fois**, et le detail vaut plus que le total :
 
-## What this batch says that the first three did not
+| Publie | Erreur |
+|---|---|
+| « 490 contre 19 » | **19 etait un compte de TESTS** mis pour un compte de constats, et le lot 4 manquait |
+| « 506 contre 2 » | **melange deux populations** : les 408 de RealWorld sont au numerateur, mais RealWorld n'est pas l'un des 62 depots, ses 128 tests ne sont pas dans les 3 234, et son 1 constat confirme est exclu du denominateur |
+| **91 contre 2** | 506 − 408 (RealWorld, autre population) − 7 (les 7 de `valhalla/web-app` comptes au defaut 3 **et** dans les 24 du defaut 5) |
 
-Batch 1 found 20 candidates in 271 tests. Batch 4 found 40 in 1 011 — and **all 40 were false**,
-16 of them from a rule written the previous day.
+**Un nombre qui s'est trompe trois fois ne doit pas servir d'exemple de rigueur.** Trouve en recomputant, jamais en relisant.
+
+## Ce que ce lot dit et que les trois premiers ne disaient pas
+
+Le lot 1 trouvait 20 candidats sur 271 tests. Le lot 4 en trouvait 40 sur 1 011, et les 40 etaient
+faux — 16 d'une regle ecrite la veille.
+
+**Mais « 40 » n'est pas reproductible, et c'est la trouvaille la plus severe de la relecture.** En
+rejouant les tranches du lot 4 avec l'outil corrige : **~73 candidats en premiere passe**, pas 40.
+Ce rapport ne discutait que les 16 `fixme`, puis affirmait que « les 40 etaient faux ». Les ~41
+autres — `bmatge/dsfr-data` 19, `solidcouch` 13, `Studio-Saelix/sencho` 11 — **n'ont jamais ete lus
+a l'oeil et n'apparaissent dans aucun rapport**.
+
+**Et un neuvieme defaut etait vivant jusqu'a sa decouverte.** Le correctif du defaut 8 a ete
+applique a `empty-test-body` et **pas a sa jumelle** `test-without-assertion`, egalement bloquante,
+qui continuait de tirer sur les memes `test.fixme`, dans les memes depots, aux memes lignes :
+**24 constats**, un lot entier apres que la campagne ait declare le defaut corrige.
+
+« Corrige pour le cas devant moi plutot que pour la classe » : le lot 3 avait nomme le motif, le
+lot 4 l'a commis de nouveau, **et personne n'a rejoue les lots precedents pour s'en apercevoir**.
+Rejouer chaque lot apres chaque correctif coute trois minutes. Ce n'a jamais ete fait.
 
 **A new rule is at its most dangerous on the day it is written**, when it has just been validated
 on the one case it was built from and has not yet met a project that solves the problem differently.
