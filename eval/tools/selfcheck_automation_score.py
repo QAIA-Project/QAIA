@@ -115,6 +115,19 @@ for _line, _want in [
 ]:
     check("tautologie detectee dans %r" % _line, bool(A.TAUTOLOGICAL.search(_line)), _want)
 
+# B14 : la penalite de tracabilite melangeait deux unites. `tagged_tests` compte des TESTS,
+# `dangling` comptait des IDENTIFIANTS distincts -- dix tests partageant un meme identifiant
+# pendant n'etaient donc penalises qu'une fois. Garde-fou sur le calcul lui-meme, la mesure
+# de bout en bout etant faite dans la campagne (26,7 avant, 6,7 apres, sur 5 tests dont 4 pendants).
+def _traceability(tagged, dangling_tests, total):
+    return round(25 * (max(0, tagged - dangling_tests) / float(total)), 1)
+
+
+check("quatre tests pendants coutent quatre, pas un",
+      _traceability(5, 4, 5), 5.0)
+check("un seul test pendant coute un",
+      _traceability(5, 1, 5), 20.0)
+
 # --- 3. "nothing was found" assertions must be mutable ---------------------------------------
 # `expect(violations).toEqual([])` is the entire a11y idiom. No operator covered it, so those
 # assertions were absent from the mutation corpus without any field saying so -- the same class of

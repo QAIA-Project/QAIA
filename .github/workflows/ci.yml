@@ -18,7 +18,11 @@ jobs:
       - name: Validate JSON manifests
         run: |
           set -e
-          find . -name '*.json' -not -path './node_modules/*' -print0 | while IFS= read -r -d '' f; do
+          # `-not -path './node_modules/*'` n'excluait que le node_modules de la RACINE. Cette
+          # etape est la premiere du job, donc rien n'est encore installe -- mais le meme job
+          # lance ensuite `npm ci` dans `mcp-bridge/`, et toute reorganisation d'etapes ferait
+          # balayer des milliers de JSON vendus par des tiers (B36, revue « developpeur »).
+          find . -name '*.json' -not -path '*/node_modules/*' -print0 | while IFS= read -r -d '' f; do
             jq empty "$f" || { echo "::error::Invalid JSON manifest detected"; exit 1; }
           done
 

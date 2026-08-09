@@ -368,6 +368,7 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
     selector_role = 0
     selector_raw = 0
     tagged_tests = 0
+    ids_per_test = []
     seen_ids = set()
 
     # A suite is laid out either as `tests/{pages,fixtures.js,*.spec.js}` or as
@@ -519,6 +520,9 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
                 tagged_tests += 1
                 sid = tag.group(0).lstrip("@")
                 seen_ids.add(sid)
+                # Un identifiant par TEST : `seen_ids` est un ensemble et perd la multiplicite,
+                # dont la penalite de tracabilite a besoin (B14).
+                ids_per_test.append(sid)
                 if sid in flagged_ids and not FLAG_IN_CODE.search(body):
                     findings.append({"kind": "flag-dropped", "file": rel, "line": start,
                                      "detail": sid + " rests on an open question in the test book "
@@ -591,6 +595,11 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
     book_namespaces = {namespace(s) for s in feature_ids}
     dangling = sorted(s for s in (seen_ids - feature_ids)
                       if namespace(s) in book_namespaces) if feature_ids else []
+    # Combien de TESTS portent un de ces identifiants -- pas combien d'identifiants distincts
+    # sont pendants. Dix tests partageant un meme identifiant pendant n'etaient penalises
+    # qu'une fois, parce que `seen_ids` est un ensemble et perd la multiplicite (B14).
+    _dangling = set(dangling)
+    tests_with_dangling_id = sum(1 for sid in ids_per_test if sid in _dangling)
     for sid in dangling:
         findings.append({"kind": "test-without-scenario", "file": "<suite>", "line": 0,
                          "detail": sid + " — aucun scenario de ce nom dans le cahier de test",
@@ -643,7 +652,11 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
             "pom_as_fixtures": (10.0 if (has_pages_dir and fixtures_path) else 0.0)
                                + (10.0 if pom_has_locators else 0.0),
             # Un test dont le tag ne resout aucun scenario ne compte plus comme trace.
-            "traceability": round(25 * pct(max(0, tagged_tests - len(dangling)), tests_total), 1),
+            # `tagged_tests` compte des TESTS, `dangling` comptait des IDENTIFIANTS
+            # distincts : dix tests partageant un meme identifiant pendant n'etaient
+            # penalises qu'une fois. On penalise les tests concernes (B14).
+            "traceability": round(25 * pct(max(0, tagged_tests - tests_with_dangling_id),
+                                           tests_total), 1),
         }
     if not third_party and not selectors_applicable:
         # `robust_selectors` pesait 25 des 100 points. On renormalise les trois dimensions
