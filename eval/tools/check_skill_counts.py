@@ -36,6 +36,7 @@ Exit 0 all claims current, 1 at least one is stale, 2 nothing to count.
 import io
 import json
 import os
+import glob
 import re
 import sys
 
@@ -85,6 +86,36 @@ def count_skills(root):
         dirnames[:] = [d for d in dirnames if d != "node_modules"]
         n += sum(1 for f in files if f == "SKILL.md")
     return n
+
+
+def unlisted_skills():
+    """Les skills absentes de la table du README de leur propre plugin.
+
+    Trouve par un audit INDEPENDANT le 2026-08-09, et c'est le constat le plus severe qu'on
+    puisse faire a ce fichier : les README annoncaient le bon NOMBRE -- ce controle le
+    verifiait, et passait -- pendant que leur table en listait moins.
+
+    **Neuf skills etaient invisibles dans leur propre documentation**, dont `qaia`, la
+    meta-skill que le README racine dit d'utiliser en premier, absente depuis son ajout.
+
+    Autrement dit : le controle certifiait l'affirmation et ignorait le contenu -- exactement
+    le mode d'echec qu'il avait ete ecrit pour empecher un etage plus haut. Un compte juste
+    au-dessus d'une table fausse est pire qu'un compte faux : il porte une garantie.
+    """
+    out = []
+    for plugin_dir in sorted(glob.glob(os.path.join("plugins", "*"))):
+        if not os.path.isdir(os.path.join(plugin_dir, "skills")):
+            continue
+        readme = os.path.join(plugin_dir, "README.md")
+        if not os.path.isfile(readme):
+            continue
+        text = io.open(readme, encoding="utf-8").read()
+        listed = set(re.findall(r"`([a-z][a-z0-9-]+)`", text))
+        for d in sorted(glob.glob(os.path.join(plugin_dir, "skills", "*"))):
+            name = os.path.basename(d)
+            if os.path.isdir(d) and name not in listed:
+                out.append((readme, name))
+    return out
 
 
 def main():
@@ -137,6 +168,15 @@ def main():
             stale.append((path, body[:m.start()].count(chr(10)) + 1, p,
                           m.group(0), "%s / %d skills" % (ver, n)))
 
+    missing = unlisted_skills()
+    if missing:
+        print("SKILL ABSENTE DE LA TABLE DE SON PROPRE README -- %d cas.\n" % len(missing))
+        for readme, name in missing:
+            print("  %-34s ne liste pas `%s`" % (readme, name))
+        print("\nUn compte juste au-dessus d'une table fausse est pire qu'un compte faux :")
+        print("il porte une garantie. Ajouter la ligne, ou retirer la skill.")
+        return 1
+
     if stale:
         print("STALE SKILL COUNT -- the repository has %d skills (%s).\n"
               % (total, ", ".join("%s %d" % (k, v) for k, v in per_plugin.items())))
@@ -149,7 +189,8 @@ def main():
         print("carries its date (\"30 le matin du 2026-08-08\") instead of reading as current.")
         return 1
 
-    print("OK: %d skill-count claim(s) match the repository (%d skills; %s)."
+    print("OK: %d skill-count claim(s) match the repository, et chaque skill figure dans la "
+          "table de son README (%d skills; %s)."
           % (checked, total, ", ".join("%s %d" % (k, v) for k, v in per_plugin.items())))
     return 0
 

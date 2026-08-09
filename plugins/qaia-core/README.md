@@ -21,6 +21,10 @@ From Claude Code:
 | `/qaia-core:hello` | Installation check (read-only) | minimal (< 1k) |
 | `qaia-help` | "What now?" — journey status per US + recommended next step (read-only) | small |
 | `testbook-validate` | Audit any Gherkin test book (even non-QAIA) → scored report + PASS/CONCERNS/FAIL gate | medium |
+| `qaia` | The Test Architect — one conversational agent carrying the whole journey, step by step, with the human validating each one | varies |
+| `openapi-ingest` | Ingest an OpenAPI/Swagger spec as the requirement — derives partitions, boundaries, refusal paths and the four contradictions a spec carries | medium |
+| `signal-ingest` | Attach exported production evidence to the open questions a test book already carries — informs them, never answers them | small |
+| `test-plan-and-closure` | The two artefacts a test manager signs — plan derived from what the run will actually cover, and closure report | medium |
 | `us-ingest` | 1. Capture and validate the source | small |
 | `us-review` | 2. Extraction check, AC numbering | small |
 | `need-understanding` | 3. Ambiguity hunt, Q&A, assumptions | medium |

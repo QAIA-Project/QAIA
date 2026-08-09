@@ -17,6 +17,8 @@ QAIA scoring plugin: **read-only** quality scoring and release-readiness gating 
 | Skill | Purpose |
 |---|---|
 | `testbook-score` | ISTQB 10-dimension rubric, /20, + top-3 fixes — plus a deterministic structural pass (step 0) separate from the LLM judge |
+| `automation-score` | Deterministic score for Playwright code — a static track (hollow assertions, fragile selectors, POM compliance) and a mutation track that inverts each assertion and requires the test to go red |
+| `spec-suite-drift` | The specification against the suite that claims to cover it — pure text, no running app: statuses used but never declared, error codes promised but never exercised |
 | `aptitude-gate` | Release readiness verdict — PASS / CONCERNS / FAIL / WAIVED over the score + hard gates |
 
 See [`skills/README.md`](skills/README.md) for the full shared guardrails (read-only, evidence-not-vibes, default-low, human-owns-WAIVED, portability).

@@ -26,6 +26,9 @@ QAIA automation plugin: turn a Gherkin test book into **native Playwright tests*
 | `run-report` | JUnit XML + Cucumber JSON + HTML, with traceability |
 | `flaky-detect` | Detect pass/fail verdict variance across N ≥ 3 runs of the same code — flag with evidence only, never auto-retry/fix |
 | `locator-repair` | Diagnose a test failing on a broken `getByRole`/`getByTestId` locator and propose a candidate fix as a reviewable diff — never applied automatically |
+| `defect-report` | Turn a failing test into a report a developer can act on — minimal reproduction, expected value with its source, observed value |
+| `confirm-fix` | Close the loop on a defect — re-run the proving test on both versions, one of three verdicts, every collateral named, and the missing test condition handed to `rag-build` |
+| `impact-select` | From a diff and an existing suite, decide what to re-run, what to skip, and say out loud what was deliberately skipped |
 | `traffic-replay` | Derive non-regression conditions (status, response shape, headers, timing) from a user-provided HAR file — PII/secrets masked before any write, never a live capture |
 
 ## Design commitments
