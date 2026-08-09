@@ -1,0 +1,15 @@
+date,method,path,status,count,max_limit_param,client_ip,user_email
+2026-07-01,GET,/api/articles,200,18422,20,203.0.113.14,alice@example.invalid
+2026-07-01,GET,/api/articles,422,6,500,203.0.113.14,alice@example.invalid
+2026-07-02,GET,/api/articles,200,17998,20,198.51.100.7,bob@example.invalid
+2026-07-05,GET,/api/articles,200,19140,100,198.51.100.201,carol@example.invalid
+2026-07-08,GET,/api/articles,422,2,1000,203.0.113.99,dave@example.invalid
+2026-07-11,GET,/api/articles/feed,200,4210,20,192.0.2.33,erin@example.invalid
+2026-07-14,POST,/api/users,201,331,,192.0.2.71,frank@example.invalid
+2026-07-14,POST,/api/users,422,58,,192.0.2.71,frank@example.invalid
+2026-07-19,POST,/api/users,400,12,,203.0.113.5,grace@example.invalid
+2026-07-22,GET,/api/articles,200,18877,50,198.51.100.44,heidi@example.invalid
+2026-07-25,POST,/api/articles,201,902,,192.0.2.150,ivan@example.invalid
+2026-07-25,POST,/api/articles,422,41,,192.0.2.150,ivan@example.invalid
+2026-07-28,GET,/api/profiles/judy,200,2044,,203.0.113.61,judy@example.invalid
+2026-07-30,GET,/api/articles,200,19003,20,198.51.100.88,ken@example.invalid

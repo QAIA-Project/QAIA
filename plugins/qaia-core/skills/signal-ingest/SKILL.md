@@ -60,11 +60,17 @@ Three ways an observation misleads, to be stated whenever they apply:
    questions, no work** — say so and stop. This skill informs existing questions; it does not
    invent new ones from data, which would be reading tea leaves.
 
-3. **Match evidence to questions, conservatively.** A signal attaches to a question only when it
+3. **Aggregate by operation, never by path alone.** `GET /articles` and `POST /articles` are two
+   different promises sharing a string. The first run of this skill collapsed them and reported a
+   single 422 count that was in fact two unrelated findings — eight rejections of an oversized
+   `limit` on the read, and forty-one body-validation failures on the write. Method, path and
+   status together, always.
+
+4. **Match evidence to questions, conservatively.** A signal attaches to a question only when it
    speaks to the same endpoint, field or status. When it does not, leave the question untouched:
    an unrelated fact attached to a question makes the question harder to answer, not easier.
 
-4. **Write the evidence next to the question, never in place of it.** The question stays `# open`.
+5. **Write the evidence next to the question, never in place of it.** The question stays `# open`.
 
    ```
    # open: Q3 — is `limit` bounded above?
@@ -73,11 +79,11 @@ Three ways an observation misleads, to be stated whenever they apply:
    #     Observed only — does not establish the specified bound.
    ```
 
-5. **Report what the evidence did NOT reach.** List the open questions no signal informed. That
+6. **Report what the evidence did NOT reach.** List the open questions no signal informed. That
    list is the real output: it is the set of things production cannot tell you, and it is where
    human arbitration is genuinely required.
 
-6. **Hand durable findings to `rag-build`.** A recurring observed behaviour is a candidate entry
+7. **Hand durable findings to `rag-build`.** A recurring observed behaviour is a candidate entry
    for `knowledge/application-map.md`, with its provenance and its period. One-offs stay in the
    run.
 
