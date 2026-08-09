@@ -223,10 +223,15 @@ try:
             "  // load the workflow",
             "  // assert the node is green",
             "});",
+            # DECLARED placeholders: Playwright reports these as skipped, which is the very fix
+            # the rule recommends. Flagging them would have had this project file an issue
+            # against solidcouch/solidcouch for doing the right thing.
+            "test.fixme('declared as unfinished', async ({ page }) => {});",
+            "test.skip('declared as skipped', async ({ page }) => {});",
         ]))
     specs, _ = A.find_spec_files(_tmp2)
     kinds = [f["kind"] for f in A.static_track(specs, [], _tmp2, set(), third_party=True)["findings"]]
-    check("both empty bodies are reported", kinds.count("empty-test-body"), 2)
+    check("both undeclared empty bodies are reported", kinds.count("empty-test-body"), 2)
 finally:
     shutil.rmtree(_tmp2, ignore_errors=True)
 

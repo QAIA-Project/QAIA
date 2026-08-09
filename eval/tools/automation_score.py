@@ -204,7 +204,14 @@ def join_chains(body):
 # grouping block, not a test. Counting describe blocks as tests reported every suite as having a
 # "test without assertion" (found by running the tool on US-EVAL-001, not by reading it).
 TEST_DECL = re.compile(
-    r"^\s*test\s*(?:\.\s*(?:only|skip|fixme|fail|slow)\s*)?\(\s*(['\"`])(?P<title>(?:\\.|(?!\1).)*)\1")
+    r"^\s*test\s*(?:\.\s*(?P<modifier>only|skip|fixme|fail|slow)\s*)?\(\s*(['\"`])(?P<title>(?:\\.|(?!\2).)*)\2")
+
+# `test.fixme('x', () => {})` and `test.skip(...)` are DECLARED placeholders: Playwright reports
+# them as skipped, not passed, which is exactly the remedy `empty-test-body` recommends. Firing on
+# them would have had this project file an issue against `solidcouch/solidcouch` for doing the
+# right thing — 10 of its 16 flagged bodies were `test.fixme`, found 2026-08-09 by reading the
+# source before filing rather than after.
+DECLARED_PLACEHOLDER = ("skip", "fixme", "fail")
 QAIA_TAG = re.compile(r"@?\bQAIA[-A-Za-z0-9_]*-\d+\b")
 FEATURE_TAG = re.compile(r"@(QAIA[-A-Za-z0-9_]*-\d+)\b")
 
@@ -416,7 +423,10 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
             # Found 2026-08-09 on `Jokimbe/ComfyUI-DrawThings-gRPC`: nine such tests, no
             # `test.fixme`/`test.skip` anywhere in the repository. Blocking — a green that means
             # nothing is worse than a red.
-            if not [ln for ln in body_lines[1:]
+            decl = TEST_DECL.match(lines[start - 1])
+            declared_placeholder = bool(decl) and decl.group("modifier") in DECLARED_PLACEHOLDER
+            if not declared_placeholder and not [
+                    ln for ln in body_lines[1:]
                     if code_of(ln).strip() and not EMPTY_BODY_NOISE.match(code_of(ln))]:
                 findings.append({"kind": "empty-test-body", "file": rel, "line": start,
                                  "detail": "no executable statement: " + title[:120],
