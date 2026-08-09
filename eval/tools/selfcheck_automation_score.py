@@ -134,14 +134,18 @@ try:
         ("pw.spec.ts", "import { expect, test } from '@playwright/test';\ntest('a', async () => {});\n"),
         ("unit.spec.ts", "import { describe, it, expect } from 'vitest';\nit('b', () => {});\n"),
         ("jest.spec.js", "const { expect } = require('jest');\ntest('c', () => {});\n"),
+        # Angular/Karma: Jasmine injects describe/it as globals, so there is no import at all.
+        ("ng.component.spec.ts", "describe('', () => {\n  it('', () => {\n"
+                                 "    expect(true).toBe(true);\n  })\n})\n"),
     ]
     for fname, src in io_pairs:
         with open(os.path.join(_tmp, fname), "w", encoding="utf-8") as fh:
             fh.write(src)
     kept, skipped = A.find_spec_files(_tmp)
     check("the Playwright spec is kept", [os.path.basename(p) for p in kept], ["pw.spec.ts"])
-    check("both foreign-runner specs are skipped",
-          sorted(os.path.basename(p) for p in skipped), ["jest.spec.js", "unit.spec.ts"])
+    check("every foreign-runner spec is skipped, including the import-less Jasmine one",
+          sorted(os.path.basename(p) for p in skipped),
+          ["jest.spec.js", "ng.component.spec.ts", "unit.spec.ts"])
 finally:
     shutil.rmtree(_tmp, ignore_errors=True)
 
@@ -173,6 +177,15 @@ check("an ordinary action does not count",
       bool(A.INDIRECT_ASSERTION.search("await page.click('#submit');")), False)
 check("waitForTimeout is NOT a verification — it asserts nothing",
       bool(A.INDIRECT_ASSERTION.search("await page.waitForTimeout(1000);")), False)
+# The helper is as often a free function as a method (batch 3: EDDI-Manager 17, chicio-blog 5).
+check("a free helper starting with the intent counts",
+      bool(A.INDIRECT_ASSERTION.search("await expectHeading(page, /audit/i);")), True)
+check("a free helper carrying the intent in camelCase counts",
+      bool(A.INDIRECT_ASSERTION.search('await openAndAssertHeading(page, "open art", /art/, "Art");')), True)
+check("a lowercase lookalike does not count",
+      bool(A.INDIRECT_ASSERTION.search("await checkbox(page);")), False)
+check("navigation is still not a verification",
+      bool(A.INDIRECT_ASSERTION.search("await gotoApp(page);")), False)
 
 # A body with no executable statement runs, does nothing, and reports PASS.
 check("closing punctuation is not a statement", bool(A.EMPTY_BODY_NOISE.match("  });")), True)

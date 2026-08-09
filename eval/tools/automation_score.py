@@ -165,9 +165,18 @@ EMPTY_BODY_NOISE = re.compile(r"^\s*[})\];,]*\s*$")
 # unqualified rule penalised the exact pattern this project requires. Found 2026-08-09 on
 # `antdigital-ai/agentic-ui` (8 tests, all delegating to a page object) and
 # `th3cyb3rhub/TheCyberHub` (11, mostly `waitForURL`). `test-without-assertion` is blocking.
+# The helper is as often a free function as a method — `expectHeading(page, /audit/i)` and
+# `openAndAssertHeading(page, ...)`, both found on 2026-08-09 in `labsai/EDDI-Manager` (17 tests)
+# and `chicio/chicio-blog` (5). Requiring a dot in front missed every one of them, which is the
+# same defect as the page-object case one shape over.
+#
+# Two forms are accepted, and both demand a capital so that `checkbox(` and `should(` do not
+# qualify: a name that STARTS with the intent (`expectHeading`), and one that CONTAINS it in
+# camelCase (`openAndAssertHeading`).
 INDIRECT_ASSERTION = re.compile(
     r"\.\s*waitFor(?:URL|Selector|Response|Request|Event|Function|LoadState)\s*\(|"
-    r"\.\s*(?:expect|assert|verify|should|check)[A-Z_]\w*\s*\(")
+    r"\b(?:expect|assert|verify|should|check)[A-Z_]\w*\s*\(|"
+    r"\b\w+(?:Assert|Expect|Verify)[A-Z_]?\w*\s*\(")
 
 
 def join_chains(body):
@@ -246,6 +255,14 @@ FOREIGN_RUNNER = re.compile(r"""from\s+['"](vitest|@jest/globals|jest|mocha|node
                             r"""require\(\s*['"](vitest|jest|mocha|node:test)['"]""")
 PLAYWRIGHT_IMPORT = re.compile(r"""['"]@playwright/test['"]""")
 
+# Angular and Karma specs declare nothing: `describe`/`it` are globals injected by Jasmine, so
+# there is no import to recognise and the "no runner found, judge it anyway" branch let them in.
+# `scaljeri/oh-my-mock` was scored on `src/app/app.component.spec.ts` this way (2026-08-09).
+# Playwright's block is `test(`, never `it(` — a file built from `it(` with no Playwright import
+# is somebody else's runner. Files that import a local fixtures module keep passing: they use
+# `test(`, which this does not match.
+JASMINE_STYLE = re.compile(r"^\s*(?:it|fit|xit)\s*\(", re.M)
+
 
 def find_spec_files(tests_dir):
     """Playwright specs only. A file that imports another runner is skipped, never scored."""
@@ -256,10 +273,10 @@ def find_spec_files(tests_dir):
         head = read(p)[:4000]
         if PLAYWRIGHT_IMPORT.search(head):
             out.append(p)
-        elif FOREIGN_RUNNER.search(head):
+        elif FOREIGN_RUNNER.search(head) or JASMINE_STYLE.search(read(p)):
             skipped.append(p)
         else:
-            out.append(p)     # no import found either way: judged, as before
+            out.append(p)     # no runner signal either way: judged, as before
     return out, skipped
 
 
