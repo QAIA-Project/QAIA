@@ -21,12 +21,12 @@ check: ## Lance tous les controles que la CI lance (skills, provenance, outillag
 	python eval/tools/check_loop_wiring.py
 	python eval/tools/check_oracle_library.py
 	python eval/tools/check_agents_tier.py
-	# La CI balaie `find plugins eval -name 'manifest*.json'`. La ligne `--batch plugins`
-	# ne trouve rien aujourd'hui -- il n'existe aucun manifest*.json sous plugins/ -- et les
-	# deux perimetres etaient donc equivalents en pratique. Elle est gardee pour qu'ils le
-	# restent le jour ou un manifeste y apparait, plutot que de le decouvrir en CI.
+	# La CI balaie `find plugins eval -name 'manifest*.json'` ; il n'existe aucun
+	# manifest*.json sous `plugins/`, donc les deux perimetres sont equivalents en pratique.
+	# J'y avais ajoute `--batch plugins` « pour qu'ils le restent » : l'outil sort 2 sur un
+	# ensemble vide et la CI est passee au rouge. Je l'avais cru inoffensif parce que j'avais
+	# lu `$?` APRES un pipe -- donc le code de `tail`, pas celui de l'outil.
 	python eval/tools/validate_manifest.py --batch eval
-	python eval/tools/validate_manifest.py --batch plugins
 	# Ce qui suit manquait vraiment : la cible se disait « tous les controles que la CI lance »
 	# et en omettait la moitie. Un nouveau venu la voyait verte, poussait, et decouvrait la CI
 	# rouge -- ce qui est pire que pas de cible du tout.
