@@ -74,6 +74,47 @@ _pat = A.grep_pattern(_HOSTILE)
 check("un titre hostile reste une donnee : rien n'est ajoute pour le refermer",
       ('"' in _pat) and ("`" in _pat) and ("\\\"" not in _pat), True)
 
+# --- garde-fous de la revue « developpeur » du 2026-08-09 ------------------------------------
+
+# B11 : `CHAIN_HEAD` etait cherche dans la ligne BRUTE, si bien qu'un commentaire finissant par
+# le mot « expect » absorbait l'assertion suivante -- que `code_of()` supprimait ensuite comme
+# commentaire. Le test etait alors declare SANS ASSERTION, en bloquant. Un faux bloquant est la
+# faute la plus chere qu'un outil de mesure puisse commettre.
+_SRC_B11 = A.NL.join([
+    "test('deux assertions', async ({ page }) => {",
+    "  // this is what we expect",
+    "  expect(a).toBe(1);",
+    "  expect(b).toBe(2);",
+    "});",
+])
+_joined = A.join_chains(_SRC_B11)
+check("un commentaire finissant par « expect » n'avale pas l'assertion suivante",
+      sum(1 for ln in _joined if A.EXPECT_CALL.search(A.code_of(ln))), 2)
+
+# Une chaine reellement coupee en fin de ligne doit toujours etre recollee.
+_SRC_CHAIN = A.NL.join([
+    "test('chaine coupee', async ({ page }) => {",
+    "  await expect",
+    "    .poll(() => page.title())",
+    "    .toBe('ok');",
+    "});",
+])
+check("une vraie chaine coupee est toujours recollee",
+      any(".toBe('ok')" in ln and "expect" in ln for ln in A.join_chains(_SRC_CHAIN)), True)
+
+# Assertion dont le SUJET est un litteral : sa valeur est connue a l'ecriture, le SUT n'y
+# participe pas, elle ne peut pas echouer. La revue avait trouve le cas a la main dans la suite
+# vitrine ; l'outil, lui, le classait « faible », ce qui n'ote rien.
+for _line, _want in [
+    ("expect(true).toBeTruthy();", True),
+    ("expect('1234567890'.length).toBe(10);", True),
+    ("expect(3).toBe(3);", True),
+    ("expect(r.status()).toBe(200);", False),
+    ("expect(total).toBe(42);", False),
+    ("expect(page.locator('x')).toBeVisible();", False),
+]:
+    check("tautologie detectee dans %r" % _line, bool(A.TAUTOLOGICAL.search(_line)), _want)
+
 # --- 3. "nothing was found" assertions must be mutable ---------------------------------------
 # `expect(violations).toEqual([])` is the entire a11y idiom. No operator covered it, so those
 # assertions were absent from the mutation corpus without any field saying so -- the same class of

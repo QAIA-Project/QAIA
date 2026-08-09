@@ -64,6 +64,16 @@ FORBIDDEN_WAITS = [
 ]
 
 # Assertions that can never fail, whatever the app does. Blocking.
+# Une assertion dont le SUJET est un litteral -- `expect(true)`, `expect(3)`, `expect('abc')`,
+# ou une propriete d'un litteral comme `expect('1234567890'.length)` -- ne peut pas echouer :
+# sa valeur est connue a l'ecriture et le SUT n'y participe pas. Trouve le 2026-08-09 en
+# prouvant une autre correction : la revue « developpeur » avait releve une telle assertion a
+# la main dans la suite vitrine (`expect(comment.length).toBe(10)` sur le litteral defini deux
+# lignes plus haut), et cet outil, qui existe pour les attraper, la classait « faible ».
+TAUTOLOGICAL = re.compile(
+    r"\bexpect\s*\(\s*(?:true|false|null|undefined|-?\d+(?:\.\d+)?|"
+    r"(['\"`])(?:\\.|(?!\1).)*\1)\s*(?:\.\s*\w+\s*)?\)")
+
 HOLLOW_ASSERTIONS = [
     (re.compile(r"expect\s*\(\s*true\s*\)\s*\.\s*toBe\s*\(\s*true\s*\)"), "expect(true).toBe(true)"),
     (re.compile(r"expect\s*\(\s*1\s*\)\s*\.\s*toBe\s*\(\s*1\s*\)"), "expect(1).toBe(1)"),
@@ -194,7 +204,10 @@ def join_chains(body):
     out = []
     anchor = None
     for raw in body.split(NL):
-        cont = anchor is not None and (CHAIN_TAIL.match(raw) or CHAIN_HEAD.search(out[anchor]))
+        # `code_of` sur les DEUX bouts : une chaine coupee en fin de ligne est du code, et
+        # un commentaire qui finit par le mot « expect » n'en est pas (B11).
+        cont = anchor is not None and (CHAIN_TAIL.match(code_of(raw))
+                                       or CHAIN_HEAD.search(code_of(out[anchor])))
         if cont:
             out[anchor] = out[anchor].rstrip() + " " + raw.strip()
             out.append("")
@@ -376,6 +389,23 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
         if fixtures_path:
             break
 
+    # Un `pages/` peut exister et ne rien contenir : la dimension `pom_as_fixtures` creditait
+    # l'existence de deux chemins, donc 20 points qu'aucune suite ne pouvait perdre. On regarde
+    # ce qu'il y a dedans -- au moins un localisateur dans au moins un objet de page (B12).
+    pom_has_locators = False
+    if pom_root:
+        pages_dir = os.path.join(pom_root, "pages")
+        for dirpath, _dirs, files in os.walk(pages_dir):
+            for name in files:
+                if not name.endswith((".js", ".ts", ".mjs", ".cjs")):
+                    continue
+                body = read(os.path.join(dirpath, name))
+                if ROLE_SELECTOR.search(body) or RAW_SELECTOR.search(body):
+                    pom_has_locators = True
+                    break
+            if pom_has_locators:
+                break
+
     for path in spec_files:
         text = read(path)
         lines = text.split("\n")
@@ -394,10 +424,19 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
                                                "evidence offered that cannot be inspected",
                                      "blocking": False})
 
-            wait = first_match(FORBIDDEN_WAITS, line)
+            # `code_of` comme les detecteurs d'assertions dix lignes plus bas : la meme
+            # boucle lisait la ligne brute ici et le code seul la-bas, si bien que du code mis
+            # en commentaire etait signale comme attente interdite (B16).
+            wait = first_match(FORBIDDEN_WAITS, code_of(line))
             if wait:
                 findings.append({"kind": "forbidden-wait", "file": rel, "line": i,
                                  "detail": wait, "blocking": False})
+            if TAUTOLOGICAL.search(code_of(line)):
+                findings.append({"kind": "tautological-assertion", "file": rel, "line": i,
+                                 "detail": "le sujet de cette assertion est un litteral : sa "
+                                           "valeur est connue a l'ecriture et le SUT n'y "
+                                           "participe pas -- elle ne peut pas echouer",
+                                 "blocking": True})
             hollow = first_match(HOLLOW_ASSERTIONS, code_of(line))
             if hollow:
                 findings.append({"kind": "hollow-assertion", "file": rel, "line": i,
@@ -436,7 +475,12 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
                                  "blocking": True})
             real_assertions = len([
                 1 for ln in body_lines
-                if EXPECT_CALL.search(code_of(ln)) and not any(rx.search(code_of(ln)) for rx, _ in HOLLOW_ASSERTIONS)
+                # Les tautologiques sortent du compte au meme titre que les creuses : elles
+                # etaient signalees comme bloquantes ET creditees au budget, ce qui revenait a
+                # payer pour une assertion qu'on venait de declarer sans valeur.
+                if EXPECT_CALL.search(code_of(ln))
+                and not any(rx.search(code_of(ln)) for rx, _ in HOLLOW_ASSERTIONS)
+                and not TAUTOLOGICAL.search(code_of(ln))
             ])
             # Verification held by a throwing wait or by a page object counts: it fails the test.
             real_assertions += len([1 for ln in body_lines if INDIRECT_ASSERTION.search(code_of(ln))])
@@ -561,10 +605,13 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
         return 0.0 if den == 0 else num / den
 
     selectors_total = selector_role + selector_raw
+    selectors_applicable = selectors_total > 0
     if selectors_total == 0:
-        # Nothing to judge rather than "all bad" — but say so out loud instead of quietly
-        # awarding full marks for an absence.
-        robust_selectors = 25.0
+        # Ni punir ni recompenser : la dimension sort du budget et le reste est renormalise
+        # (meme traitement que le mode tiers, cinquante lignes plus bas). Elle valait 25 points
+        # pleins, si bien qu'une suite sans aucun localisateur encaissait la note maximale sur
+        # une dimension qu'elle n'exerce pas -- « non applicable » note comme « parfait » (B13).
+        robust_selectors = 0.0
         findings.append({"kind": "no-selector-detected", "file": ".", "line": 0,
                          "detail": "no locator call found in specs or page objects; the selector "
                                    "dimension is not applicable and was not penalised",
@@ -589,10 +636,23 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
         budget = {
             "substantive_assertions": round(30 * pct(tests_with_real_assertion, tests_total), 1),
             "robust_selectors": robust_selectors,
-            "pom_as_fixtures": 20.0 if (has_pages_dir and fixtures_path) else 0.0,
+            # Credite sur le CONTENU, pas sur l'existence de deux chemins : un `pages/`
+            # vide et un `fixtures.js` vide encaissaient les 20 points pleins. Moitie pour la
+            # structure presente, moitie pour des objets de page qui portent effectivement des
+            # localisateurs -- c'est ce que la dimension pretend mesurer (B12).
+            "pom_as_fixtures": (10.0 if (has_pages_dir and fixtures_path) else 0.0)
+                               + (10.0 if pom_has_locators else 0.0),
             # Un test dont le tag ne resout aucun scenario ne compte plus comme trace.
             "traceability": round(25 * pct(max(0, tagged_tests - len(dangling)), tests_total), 1),
         }
+    if not third_party and not selectors_applicable:
+        # `robust_selectors` pesait 25 des 100 points. On renormalise les trois dimensions
+        # restantes sur 100 pour que la note reste comparable, et on le DIT -- une note
+        # renormalisee en silence serait exactement le genre de chiffre que ce projet refuse.
+        del budget["robust_selectors"]
+        remaining = 75.0
+        budget = dict((k, round(v * 100.0 / remaining, 1)) for k, v in budget.items())
+
     score = round(sum(budget.values()), 1)
 
     return {
