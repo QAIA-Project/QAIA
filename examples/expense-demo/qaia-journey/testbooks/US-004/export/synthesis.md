@@ -41,6 +41,15 @@ lastSaved: 2026-07-25
 9. **Q9** [assumption] — does draft-creation count as a recorded AC8 transition? → default:
    yes, recorded (purely additive, no `@low-confidence` scenario needed — doesn't change
    accept/refuse behavior, verified in the audit-trail scenario 034's `create_draft` event).
+10. **Q10** [assumption] — **no acceptance criterion states an HTTP status code for any
+    refusal.** AC4, AC5, AC7 and AC8 promise that an action is *refused*; none says with
+    which code. → default: assert the refusal, not the code. The status our SUT answers is
+    recorded in each scenario's condition comment as an observation, never as an
+    expectation — an implementation refusing with a different 4xx conforms to the same
+    criteria. No `@low-confidence` scenario is needed (same reasoning as Q9: this does not
+    change accept/refuse behaviour). Found on 2026-08-08 when a competitor's agent was run
+    on the same story and two blind judges flagged the codes as invented expectations —
+    the defect had survived because this project also wrote the application under test.
 
 ## Ratio explainer
 

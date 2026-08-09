@@ -27,13 +27,13 @@ Given the ExpenseFlow SUT is reset to its seed state
 And the roles ""manager"" < ""finance"" < ""director"" form a fixed approval hierarchy
 Given a submitted report ""R"" by ""employee@demo"" totalling exactly 5000.01 EUR
 When ""finance@demo"" attempts to approve report ""R"" before the manager has
-Then the attempt is refused with a 403 status","QAIA-US-004-012 P1 decision-table","Highest","condition: AC2-C5 [req-neg] — priority P1"
+Then the attempt is refused","QAIA-US-004-012 P1 decision-table","Highest","condition: AC2-C5 [req-neg] — Q10: the AC states refusal, not a status; the status observed on the SUT is not asserted — priority P1"
 "Test","Automated[Cucumber]","Scenario","An approver cannot decide on their own report","Scenario: An approver cannot decide on their own report
 Given the ExpenseFlow SUT is reset to its seed state
 And the roles ""manager"" < ""finance"" < ""director"" form a fixed approval hierarchy
 Given a submitted report ""R"" by ""manager@demo"" totalling exactly 499.99 EUR
 When ""manager@demo"" attempts to approve report ""R""
-Then the attempt is refused with a 403 status","QAIA-US-004-013 P1 decision-table","Highest","condition: AC3-C1 [req-neg] — priority P1"
+Then the attempt is refused","QAIA-US-004-013 P1 decision-table","Highest","condition: AC3-C1 [req-neg] — Q10: the AC states refusal, not a status; the status observed on the SUT is not asserted — priority P1"
 "Test","Automated[Cucumber]","Scenario","A manager's own small report escalates directly to finance","Scenario: A manager's own small report escalates directly to finance
 Given the ExpenseFlow SUT is reset to its seed state
 And the roles ""manager"" < ""finance"" < ""director"" form a fixed approval hierarchy
@@ -63,7 +63,7 @@ Given the ExpenseFlow SUT is reset to its seed state
 And the roles ""manager"" < ""finance"" < ""director"" form a fixed approval hierarchy
 Given ""employee@demo"" has a draft report in ""CHF"" with one line ""hotel"" of 100.00 dated 2026-07-21, receipt attached
 When ""employee@demo"" submits the report
-Then the attempt is refused with a 422 status","QAIA-US-004-025 P1 error-guessing","Highest","condition: AC6-C2 [req-neg] — priority P1 — open: Q4 (rate source undefined; no resolvable rate for an unsupported currency is refused at submission) [low confidence (Q4)]"
+Then the attempt is refused","QAIA-US-004-025 P1 error-guessing","Highest","condition: AC6-C2 [req-neg] — Q10: the AC states refusal, not a status; the status observed on the SUT is not asserted — priority P1 — open: Q4 (rate source undefined; no resolvable rate for an unsupported currency is refused at submission) [low confidence (Q4)]"
 "Test","Automated[Cucumber]","Scenario","An expense dated in a weekend rate gap uses the last available rate","Scenario: An expense dated in a weekend rate gap uses the last available rate
 Given the ExpenseFlow SUT is reset to its seed state
 And the roles ""manager"" < ""finance"" < ""director"" form a fixed approval hierarchy
@@ -82,12 +82,12 @@ And the report awaits approval from ""finance"" only","QAIA-US-004-027 P1 decisi
 Given the ExpenseFlow SUT is reset to its seed state
 Given a submitted report ""R"" by ""employee@demo"" awaiting manager approval
 When ""manager@demo"" attempts to reject report ""R"" with comment ""too short""
-Then the attempt is refused with a 422 status","QAIA-US-004-030 P2 boundary","Medium","condition: AC8-C1 [req-neg] — priority P2"
+Then the attempt is refused","QAIA-US-004-030 P2 boundary","Medium","condition: AC8-C1 [req-neg] — Q10: the AC states refusal, not a status; the status observed on the SUT is not asserted — priority P2"
 "Test","Automated[Cucumber]","Scenario","Requesting changes without a sufficient comment is refused","Scenario: Requesting changes without a sufficient comment is refused
 Given the ExpenseFlow SUT is reset to its seed state
 Given a submitted report ""R"" by ""employee@demo"" awaiting manager approval
 When ""manager@demo"" attempts to request changes on report ""R"" with comment ""too short""
-Then the attempt is refused with a 422 status","QAIA-US-004-031 P2 boundary","Medium","condition: AC8-C2 [req-neg] — priority P2"
+Then the attempt is refused","QAIA-US-004-031 P2 boundary","Medium","condition: AC8-C2 [req-neg] — Q10: the AC states refusal, not a status; the status observed on the SUT is not asserted — priority P2"
 "Test","Automated[Cucumber]","Scenario","A comment of exactly 10 characters is accepted","Scenario: A comment of exactly 10 characters is accepted
 Given the ExpenseFlow SUT is reset to its seed state
 Given a submitted report ""R"" by ""employee@demo"" awaiting manager approval
@@ -106,17 +106,17 @@ Then the audit trail contains a ""submit"" event by ""employee@demo"" and an ""a
 "Test","Automated[Cucumber]","Scenario","Creating a report without authentication is refused","Scenario: Creating a report without authentication is refused
 Given the ExpenseFlow SUT is reset to its seed state
 When an unauthenticated request attempts to create a report
-Then the attempt is refused with a 401 status","QAIA-US-004-035 P2 error-guessing","Medium","condition: AC-auth-C1 [req-neg] — priority P2"
+Then the attempt is refused","QAIA-US-004-035 P2 error-guessing","Medium","condition: AC-auth-C1 [req-neg] — Q10: the AC states refusal, not a status; the status observed on the SUT is not asserted — priority P2"
 "Test","Automated[Cucumber]","Scenario","Deciding on a report without authentication is refused","Scenario: Deciding on a report without authentication is refused
 Given the ExpenseFlow SUT is reset to its seed state
 Given a submitted report ""R"" by ""employee@demo"" awaiting manager approval
 When an unauthenticated request attempts to approve report ""R""
-Then the attempt is refused with a 401 status","QAIA-US-004-036 P2 error-guessing","Medium","condition: AC-auth-C2 [req-neg] — priority P2"
+Then the attempt is refused","QAIA-US-004-036 P2 error-guessing","Medium","condition: AC-auth-C2 [req-neg] — Q10: the AC states refusal, not a status; the status observed on the SUT is not asserted — priority P2"
 "Test","Automated[Cucumber]","Scenario","An employee cannot edit another employee's draft report","Scenario: An employee cannot edit another employee's draft report
 Given the ExpenseFlow SUT is reset to its seed state
 Given ""manager@demo"" has a draft report of their own, ""M""
 When ""employee@demo"" attempts to edit report ""M""
-Then the attempt is refused with a 404 status","QAIA-US-004-037 P1 error-guessing","Highest","condition: AC-auth-C3 [req-neg] — priority P1"
+Then the attempt is refused","QAIA-US-004-037 P1 error-guessing","Highest","condition: AC-auth-C3 [req-neg] — Q10: the AC states refusal, not a status; the status observed on the SUT is not asserted — priority P1"
 "Test","Automated[Cucumber]","Scenario","An employee with no reports sees an empty ""My reports"" list","Scenario: An employee with no reports sees an empty ""My reports"" list
 Given the ExpenseFlow SUT is reset to its seed state
 Given ""employee@demo"" is signed in with no reports of their own
@@ -127,7 +127,7 @@ Given the ExpenseFlow SUT is reset to its seed state
 And ""employee@demo"" is signed in
 Given ""employee@demo"" has a draft report with one incomplete line missing its category
 When ""employee@demo"" submits the report
-Then the attempt is refused with a 422 status","QAIA-US-004-017 P3 ep","Low","condition: AC4-C1 [req-neg] — priority P3"
+Then the attempt is refused","QAIA-US-004-017 P3 ep","Low","condition: AC4-C1 [req-neg] — Q10: the AC states refusal, not a status; the status observed on the SUT is not asserted — priority P3"
 "Test","Automated[Cucumber]","Scenario","A line dated exactly 90 days ago is accepted","Scenario: A line dated exactly 90 days ago is accepted
 Given the ExpenseFlow SUT is reset to its seed state
 And ""employee@demo"" is signed in
@@ -139,7 +139,7 @@ Given the ExpenseFlow SUT is reset to its seed state
 And ""employee@demo"" is signed in
 Given ""employee@demo"" has a draft report with one EUR line ""supplies"" of 10.00 dated 91 days ago, receipt attached
 When ""employee@demo"" submits the report
-Then the attempt is refused with a 422 status and a message mentioning ""90 days""","QAIA-US-004-019 P2 boundary","Medium","condition: AC4-C3 [req-neg] — priority P2"
+Then the attempt is refused and a message mentioning ""90 days""","QAIA-US-004-019 P2 boundary","Medium","condition: AC4-C3 [req-neg] — Q10: the AC states refusal, not a status; the status observed on the SUT is not asserted — priority P2"
 "Test","Automated[Cucumber]","Scenario","A line just under the receipt threshold needs no receipt","Scenario: A line just under the receipt threshold needs no receipt
 Given the ExpenseFlow SUT is reset to its seed state
 And ""employee@demo"" is signed in
@@ -151,7 +151,7 @@ Given the ExpenseFlow SUT is reset to its seed state
 And ""employee@demo"" is signed in
 Given ""employee@demo"" has a draft report with one EUR line ""gear"" of 25.00 dated today, no receipt attached
 When ""employee@demo"" submits the report
-Then the attempt is refused with a 422 status and a message mentioning ""receipt""","QAIA-US-004-021 P1 boundary","Highest","condition: AC5-C2 [req-neg] — priority P1"
+Then the attempt is refused and a message mentioning ""receipt""","QAIA-US-004-021 P1 boundary","Highest","condition: AC5-C2 [req-neg] — Q10: the AC states refusal, not a status; the status observed on the SUT is not asserted — priority P1"
 "Test","Automated[Cucumber]","Scenario","A line at or above the receipt threshold with a receipt is accepted","Scenario: A line at or above the receipt threshold with a receipt is accepted
 Given the ExpenseFlow SUT is reset to its seed state
 And ""employee@demo"" is signed in
@@ -163,7 +163,7 @@ Given the ExpenseFlow SUT is reset to its seed state
 And ""employee@demo"" is signed in
 Given ""employee@demo"" has a draft report in ""USD"" with one line ""gear"" of 30.00 dated 2026-07-21, no receipt attached
 When ""employee@demo"" submits the report
-Then the attempt is refused with a 422 status and a message mentioning ""receipt""","QAIA-US-004-023 P1 boundary","Highest","condition: AC5-C4 [req-neg] — priority P1 — open: Q6 (the receipt threshold is compared on the EUR-converted amount, not the face value: a 30 USD line converts to roughly 27.6 EUR and crosses the threshold even though its face value alone would not obviously read as ""≥ 25"" to a naive currency-unaware check) [low confidence (Q6)]"
+Then the attempt is refused and a message mentioning ""receipt""","QAIA-US-004-023 P1 boundary","Highest","condition: AC5-C4 [req-neg] — Q10: the AC states refusal, not a status; the status observed on the SUT is not asserted — priority P1 — open: Q6 (the receipt threshold is compared on the EUR-converted amount, not the face value: a 30 USD line converts to roughly 27.6 EUR and crosses the threshold even though its face value alone would not obviously read as ""≥ 25"" to a naive currency-unaware check) [low confidence (Q6)]"
 "Test","Automated[Cucumber]","Scenario","End-to-end journey — draft to first approval on a small report","Scenario: End-to-end journey — draft to first approval on a small report
 Given the ExpenseFlow SUT is reset to its seed state
 And ""employee@demo"" is an employee whose direct manager is ""manager@demo""
@@ -194,28 +194,28 @@ Given the ExpenseFlow SUT is reset to its seed state
 And ""employee@demo"" is an employee whose direct manager is ""manager@demo""
 Given a submitted report ""R"" by ""employee@demo"" awaiting manager approval
 When ""employee@demo"" attempts to submit report ""R"" again
-Then the attempt is refused with a 409 status","QAIA-US-004-005 P2 state-transition","Medium","condition: AC1-C4 [req-neg] — priority P2"
+Then the attempt is refused","QAIA-US-004-005 P2 state-transition","Medium","condition: AC1-C4 [req-neg] — Q10: the AC states refusal, not a status; the status observed on the SUT is not asserted — priority P2"
 "Test","Automated[Cucumber]","Scenario","Editing a submitted (non-draft) report is refused","Scenario: Editing a submitted (non-draft) report is refused
 Given the ExpenseFlow SUT is reset to its seed state
 And ""employee@demo"" is an employee whose direct manager is ""manager@demo""
 Given a submitted report ""R"" by ""employee@demo"" awaiting manager approval
 When ""employee@demo"" attempts to edit report ""R""
-Then the attempt is refused with a 409 status","QAIA-US-004-006 P2 state-transition","Medium","condition: AC1-C5 [req-neg] — priority P2"
+Then the attempt is refused","QAIA-US-004-006 P2 state-transition","Medium","condition: AC1-C5 [req-neg] — Q10: the AC states refusal, not a status; the status observed on the SUT is not asserted — priority P2"
 "Test","Automated[Cucumber]","Scenario","A draft reached via changes-requested cannot be rejected directly","Scenario: A draft reached via changes-requested cannot be rejected directly
 Given the ExpenseFlow SUT is reset to its seed state
 And ""employee@demo"" is an employee whose direct manager is ""manager@demo""
 Given report ""R"" was returned to draft via changes-requested with comment ""please add a receipt scan""
 When ""manager@demo"" attempts to reject report ""R"" with comment ""not acceptable at all""
-Then the attempt is refused with a 409 status","QAIA-US-004-007 P1 state-transition","Highest","condition: AC1-C6 [req-neg] — priority P1 — open: Q3 (reject only from `submitted`, not from a `changes-requested`-turned-`draft` report; safe default per the standard state-machine convention that undeclared transitions are forbidden) [low confidence (Q3)]"
+Then the attempt is refused","QAIA-US-004-007 P1 state-transition","Highest","condition: AC1-C6 [req-neg] — Q10: the AC states refusal, not a status; the status observed on the SUT is not asserted — priority P1 — open: Q3 (reject only from `submitted`, not from a `changes-requested`-turned-`draft` report; safe default per the standard state-machine convention that undeclared transitions are forbidden) [low confidence (Q3)]"
 "Test","Automated[Cucumber]","Scenario","A rejected report cannot be edited","Scenario: A rejected report cannot be edited
 Given the ExpenseFlow SUT is reset to its seed state
 And ""employee@demo"" is an employee whose direct manager is ""manager@demo""
 Given a report ""R"" by ""employee@demo"" that was rejected by its manager with comment ""not a business expense""
 When ""employee@demo"" attempts to edit report ""R""
-Then the attempt is refused with a 409 status","QAIA-US-004-028 P2 state-transition","Medium","condition: AC7-C1 [req-neg] — priority P2"
+Then the attempt is refused","QAIA-US-004-028 P2 state-transition","Medium","condition: AC7-C1 [req-neg] — Q10: the AC states refusal, not a status; the status observed on the SUT is not asserted — priority P2"
 "Test","Automated[Cucumber]","Scenario","A rejected report cannot be re-submitted","Scenario: A rejected report cannot be re-submitted
 Given the ExpenseFlow SUT is reset to its seed state
 And ""employee@demo"" is an employee whose direct manager is ""manager@demo""
 Given a report ""R"" by ""employee@demo"" that was rejected by its manager with comment ""not a business expense""
 When ""employee@demo"" attempts to submit report ""R""
-Then the attempt is refused with a 409 status","QAIA-US-004-029 P2 state-transition","Medium","condition: AC7-C2 [req-neg] — priority P2"
+Then the attempt is refused","QAIA-US-004-029 P2 state-transition","Medium","condition: AC7-C2 [req-neg] — Q10: the AC states refusal, not a status; the status observed on the SUT is not asserted — priority P2"

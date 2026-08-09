@@ -134,6 +134,20 @@ Say both plainly when someone asks for them, rather than treating them as gaps t
 - **A pattern with no mention at all is a defect, not a non-event.** A reviewer cannot tell
   silence from forgetting after the fact — and the pattern a story triggers most directly is the
   easiest to skip, precisely because it feels obvious.
+- **Prose in a `description` or a `summary` is a hint for a human reader, never an assertion.** A
+  specification that is *silent* on a rule is the easy case: the gap is visibly a gap. The hard
+  case is a specification that is **chatty in the wrong field** — the rule is written down, in
+  English, somewhere no machine reads it. A condition derived from it looks contract-grounded and
+  is not.
+
+  Measured on a public API specification (12 paths, 19 operations): applying this rule surfaced
+  that the `Authorization` header's *value format* existed only in a `description`, which blocks
+  **22 high-priority conditions** from being executable at all — and reordered the entire priority
+  list. Without the rule, the design asserts a header shape and an error status that were never
+  promised, and both read as derivations.
+
+  The same applies to `default:` — it documents what a client library sends, not what the server
+  does when the field is absent.
 - **Derivation attention follows shape, not substance.** Measured on a real composite rule: a
   paragraph containing seven sub-facts yielded only the **two shaped like boundaries** on an
   unguided pass. The five flat ones were dropped — not because they mattered less, but because

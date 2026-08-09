@@ -48,7 +48,7 @@ not stay only in internal state).
 **Coverage**: all 8 AC have ≥ 2 scenarios each; all `[req-neg]` conditions from `03-design.md`
 have a covering `@negative` scenario (17/17 — gate satisfied, ADR 0001); every P1/P2 condition
 covered; all 4 P3 conditions also covered (full-breadth scope decision, `04-priorities.md`).
-Negative ratio: 17/37 = **45.9 %** (reported signal only — since ADR 0001 the ratio is a happy-path-bias indicator, not a gate). 9 scenarios carry `@low-confidence`
+Negative ratio: 17/37 = **45.9 %** (reported signal only — since ADR 0001 the ratio is a happy-path-bias indicator, not a gate). 11 scenarios carry `@low-confidence`
 (Q1, Q2×2, Q3, Q4×2, Q5, Q6, Q7, Q8 — one scenario each except Q1 and Q2 which each anchor two
 boundary scenarios).
 

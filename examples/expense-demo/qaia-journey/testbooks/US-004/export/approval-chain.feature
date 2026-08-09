@@ -36,18 +36,18 @@ Feature: Approval chain routing
     Then report "R" status is "approved"
 
   @QAIA-US-004-012 @AC2 @P1 @negative @decision-table
-  # condition: AC2-C5 [req-neg] — priority P1
+  # condition: AC2-C5 [req-neg] — priority P1 — Q10: the AC states refusal, not a status; SUT answers 403
   Scenario: An approver acting out of chain order is refused
     Given a submitted report "R" by "employee@demo" totalling exactly 5000.01 EUR
     When "finance@demo" attempts to approve report "R" before the manager has
-    Then the attempt is refused with a 403 status
+    Then the attempt is refused
 
   @QAIA-US-004-013 @AC3 @P1 @negative @decision-table
-  # condition: AC3-C1 [req-neg] — priority P1
+  # condition: AC3-C1 [req-neg] — priority P1 — Q10: the AC states refusal, not a status; SUT answers 403
   Scenario: An approver cannot decide on their own report
     Given a submitted report "R" by "manager@demo" totalling exactly 499.99 EUR
     When "manager@demo" attempts to approve report "R"
-    Then the attempt is refused with a 403 status
+    Then the attempt is refused
 
   @QAIA-US-004-014 @AC3 @P1 @decision-table @low-confidence
   # condition: AC3-C2 — priority P1 — open: Q2 (a manager's own <€500 report escalates
@@ -85,12 +85,12 @@ Feature: Approval chain routing
     Then the report awaits approval from "manager" and "finance"
 
   @QAIA-US-004-025 @AC6 @P1 @negative @error-guessing @low-confidence
-  # condition: AC6-C2 [req-neg] — priority P1 — open: Q4 (rate source undefined; no
+  # condition: AC6-C2 [req-neg] — priority P1 — open: Q4 (rate source undefined; no — Q10: the AC states refusal, not a status; SUT answers 422
   # resolvable rate for an unsupported currency is refused at submission)
   Scenario: Submitting in a currency with no resolvable rate is refused
     Given "employee@demo" has a draft report in "CHF" with one line "hotel" of 100.00 dated 2026-07-21, receipt attached
     When "employee@demo" submits the report
-    Then the attempt is refused with a 422 status
+    Then the attempt is refused
 
   @QAIA-US-004-026 @AC6 @P1 @error-guessing @low-confidence
   # condition: AC6-C3 — priority P1 — open: Q4 (fallback: an expense date in a

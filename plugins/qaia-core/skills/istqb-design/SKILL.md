@@ -117,6 +117,20 @@ what was considered and excluded: `references/technique-notes.md`.
 
 - **Every technique choice cites its justification.** An unjustified technique is a rubric defect
   (dim. 4).
+- **Prose in a `description` or a `summary` is a hint for a human reader, never an assertion.** A
+  specification that is *silent* on a rule is easy to handle — the gap becomes `# open: Qn`. The
+  hard case is a specification that is **chatty in the wrong field**: the rule is written down, in
+  English, somewhere no machine reads it. Deriving a condition from it produces a test that looks
+  contract-grounded and is not.
+
+  Measured on the RealWorld API (12 paths, 19 operations): applying this rule surfaced that the
+  `Authorization` header's *value format* exists only in a `description`, which blocks **22 P1
+  conditions** from being executable at all — a finding that reordered the whole priority list.
+  Without the rule, the design asserts `Token <jwt>` and asserts `PUT /user {}` → 422, and both are
+  fabrications dressed as derivations.
+
+  The same applies to `default:` — it documents what a client library sends, not what the server
+  does when the field is absent.
 - **A sub-step of 3c with no mention at all in `03-design.md` is a defect, not a non-event.** A
   sub-step that genuinely does not apply costs one line to record as such; silence is
   indistinguishable from having forgotten it, and a reviewer cannot tell the two apart after the

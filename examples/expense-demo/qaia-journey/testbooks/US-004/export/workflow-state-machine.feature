@@ -36,38 +36,38 @@ Feature: Expense report lifecycle
     Then report "R" status is "submitted"
 
   @QAIA-US-004-005 @AC1 @P2 @negative @state-transition
-  # condition: AC1-C4 [req-neg] — priority P2
+  # condition: AC1-C4 [req-neg] — priority P2 — Q10: the AC states refusal, not a status; SUT answers 409
   Scenario: Submitting an already-submitted report is refused
     Given a submitted report "R" by "employee@demo" awaiting manager approval
     When "employee@demo" attempts to submit report "R" again
-    Then the attempt is refused with a 409 status
+    Then the attempt is refused
 
   @QAIA-US-004-006 @AC1 @P2 @negative @state-transition
-  # condition: AC1-C5 [req-neg] — priority P2
+  # condition: AC1-C5 [req-neg] — priority P2 — Q10: the AC states refusal, not a status; SUT answers 409
   Scenario: Editing a submitted (non-draft) report is refused
     Given a submitted report "R" by "employee@demo" awaiting manager approval
     When "employee@demo" attempts to edit report "R"
-    Then the attempt is refused with a 409 status
+    Then the attempt is refused
 
   @QAIA-US-004-007 @AC1 @AC7 @P1 @negative @state-transition @low-confidence
-  # condition: AC1-C6 [req-neg] — priority P1 — open: Q3 (reject only from `submitted`,
+  # condition: AC1-C6 [req-neg] — priority P1 — open: Q3 (reject only from `submitted`, — Q10: the AC states refusal, not a status; SUT answers 409
   # not from a `changes-requested`-turned-`draft` report; safe default per the standard
   # state-machine convention that undeclared transitions are forbidden)
   Scenario: A draft reached via changes-requested cannot be rejected directly
     Given report "R" was returned to draft via changes-requested with comment "please add a receipt scan"
     When "manager@demo" attempts to reject report "R" with comment "not acceptable at all"
-    Then the attempt is refused with a 409 status
+    Then the attempt is refused
 
   @QAIA-US-004-028 @AC7 @P2 @negative @state-transition
-  # condition: AC7-C1 [req-neg] — priority P2
+  # condition: AC7-C1 [req-neg] — priority P2 — Q10: the AC states refusal, not a status; SUT answers 409
   Scenario: A rejected report cannot be edited
     Given a report "R" by "employee@demo" that was rejected by its manager with comment "not a business expense"
     When "employee@demo" attempts to edit report "R"
-    Then the attempt is refused with a 409 status
+    Then the attempt is refused
 
   @QAIA-US-004-029 @AC7 @P2 @negative @state-transition
-  # condition: AC7-C2 [req-neg] — priority P2
+  # condition: AC7-C2 [req-neg] — priority P2 — Q10: the AC states refusal, not a status; SUT answers 409
   Scenario: A rejected report cannot be re-submitted
     Given a report "R" by "employee@demo" that was rejected by its manager with comment "not a business expense"
     When "employee@demo" attempts to submit report "R"
-    Then the attempt is refused with a 409 status
+    Then the attempt is refused

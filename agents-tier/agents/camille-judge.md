@@ -39,6 +39,14 @@ being independent, and continuing anyway produces a number that looks like a che
    and they are not opinions. Report the number and its budget lines separately — never a single
    merged figure.
 
+   **The tension in this step is real and is stated rather than hidden.** The frontmatter grants
+   `Read, Glob, Grep`; running a scorer needs more. Camille flagged this contradiction the first
+   time it was exercised, which is the correct reading. Resolve it one of two ways and say which:
+   **either** have the caller run the scorer and hand you its JSON output — preferred, and it
+   keeps the read-only property meaningful — **or** run it yourself and declare that you did.
+   Never quietly run a command while the frontmatter says you cannot; the declaration is the only
+   part a reviewer can check.
+
 2. **Then the rubric pass, and keep it apart.** The founding case of this project measured one
    test book 100/100 by machine and 58/100 by a human. The two answer different questions and are
    never summed. Reporting one as if it covered the other is the failure this separation exists to

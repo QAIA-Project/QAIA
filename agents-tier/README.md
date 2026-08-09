@@ -29,6 +29,26 @@ context window. By that test:
   behind one name so you can say "ask Naïma" instead of remembering four skill names. That is a
   real ergonomic gain and it is *not* new capability. Said here so nobody discovers it later.
 
+### And the convenience costs something — measured, not supposed
+
+`theo-design` was the first phase agent exercised, on a real specification. Asked afterwards
+whether its own "convenience layer" label was accurate, it confirmed it and went further:
+
+> Every skill in the phase mandates a **⚠ VALIDATION checkpoint** — `oracle-generate` asks the
+> human whether RFC 5322 governs their `email` field; `prioritize` makes the product owner correct
+> the impact scores. Running as a single delegated agent with no human in the loop, **neither could
+> be executed.** Invoking the three skills interactively would have produced a design with **two
+> fewer open questions and an arbitrated ranking.**
+
+So the honest statement is not "no new capability". It is that **this packaging removes the human
+checkpoints the skills exist to force, and substitutes written disclaimers for them.** For a
+product whose most-repeated rule is *the tool proposes, the human arbitrates*, that is not a
+neutral trade.
+
+**Use the five phase agents for exploration and for reading a large artefact quickly. Use the
+skills, interactively, when the output is going to be trusted.** Camille and Elian are unaffected:
+judgement is exactly the part that must happen without a human in the loop.
+
 ## The seven
 
 | Agent | SDLC phase | Wraps | Own context earns it? |
