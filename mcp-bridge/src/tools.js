@@ -42,15 +42,53 @@ async function resolvePython() {
   throw new Error('no working Python interpreter found (tried: ' + candidates.join(', ') + '); set QAIA_PYTHON to override');
 }
 
+// Bornes du sous-processus. Sans elles, `run()` accumulait stdout et stderr sans limite et
+// sans horloge : un client pouvait bloquer le pont indefiniment ou epuiser sa memoire avec une
+// entree pathologique. Le pont est le seul palier de ce depot qui accepte du contenu venu d'un
+// tiers -- c'est exactement la ou une borne manquait (B38, revue « developpeur » 2026-08-09).
+const RUN_TIMEOUT_MS = Number(process.env.QAIA_MCP_TIMEOUT_MS || 60000);
+const MAX_OUTPUT_BYTES = Number(process.env.QAIA_MCP_MAX_OUTPUT || 4 * 1024 * 1024);
+
 function run(python, args) {
   return new Promise((resolve, reject) => {
     const p = spawn(python, args, { env: { ...process.env, PYTHONIOENCODING: 'utf-8' } });
     let stdout = '';
     let stderr = '';
-    p.stdout.on('data', (d) => (stdout += d));
-    p.stderr.on('data', (d) => (stderr += d));
-    p.on('error', reject);
-    p.on('exit', (code) => resolve({ code, stdout, stderr }));
+    let truncated = false;
+    let settled = false;
+
+    const finish = (result) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve(result);
+    };
+
+    const timer = setTimeout(() => {
+      p.kill('SIGKILL');
+      finish({ code: null, stdout, stderr: stderr + `\n[pont] delai de ${RUN_TIMEOUT_MS} ms depasse — sous-processus interrompu` });
+    }, RUN_TIMEOUT_MS);
+
+    // Tronquer et le DIRE : une sortie coupee en silence se lirait comme une sortie complete,
+    // ce qui est la classe de defaut que ce depot passe sa journee a fermer.
+    const collect = (which) => (d) => {
+      const chunk = String(d);
+      const current = which === 'out' ? stdout : stderr;
+      if (current.length + chunk.length > MAX_OUTPUT_BYTES) {
+        if (!truncated) {
+          truncated = true;
+          stderr += `\n[pont] sortie tronquee a ${MAX_OUTPUT_BYTES} octets`;
+          p.kill('SIGKILL');
+        }
+        return;
+      }
+      if (which === 'out') stdout += chunk; else stderr += chunk;
+    };
+
+    p.stdout.on('data', collect('out'));
+    p.stderr.on('data', collect('err'));
+    p.on('error', (e) => { clearTimeout(timer); reject(e); });
+    p.on('exit', (code) => finish({ code, stdout, stderr }));
   });
 }
 

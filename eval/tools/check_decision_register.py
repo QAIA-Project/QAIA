@@ -34,16 +34,36 @@ import subprocess
 import sys
 
 REGISTER = os.path.join("docs", "DECISIONS.md")
+# `\bD(\d{1,4})\b` lisait « D2026 » comme la decision numero 2026 : une annee dans un
+# message de commit suffisait a exiger une entree de registre inexistante. Les numeros
+# reels tiennent en trois chiffres a ce jour ; quatre restent admis, mais pas une suite
+# qui ressemble a une annee (B37).
 DECISION = re.compile(r"\bD(\d{1,4})\b")
+LOOKS_LIKE_A_YEAR = re.compile(r"^(19|20)\d{2}$")
 
 
 def head_message():
-    try:
-        out = subprocess.check_output(["git", "log", "-1", "--format=%B"],
-                                      stderr=subprocess.STDOUT)
-    except (subprocess.CalledProcessError, OSError) as e:
-        return None, str(e)
-    return out.decode("utf-8", "replace"), None
+    """Les messages a controler : HEAD, ou toute la branche face a sa base sur une PR.
+
+    Ne lire que HEAD laissait passer une PR de dix commits nommant une decision au troisieme --
+    et c'est la forme qu'ont les PR. Sur GitHub Actions, `GITHUB_BASE_REF` donne la branche
+    cible : on lit alors l'intervalle. Hors PR, le comportement est inchange (B37).
+    """
+    base = os.environ.get("GITHUB_BASE_REF")
+    ranges = [["git", "log", "-1", "--format=%B"]]
+    if base:
+        ranges.insert(0, ["git", "log", "origin/%s..HEAD" % base, "--format=%B"])
+    last_err = None
+    for cmd in ranges:
+        try:
+            out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+        except (subprocess.CalledProcessError, OSError) as e:
+            last_err = str(e)
+            continue
+        text = out.decode("utf-8", "replace")
+        if text.strip():
+            return text, None
+    return None, last_err or "aucun message de commit lisible"
 
 
 def registered():
@@ -67,11 +87,13 @@ def main():
         print("BROKEN: %s not found -- run from the repository root." % REGISTER)
         return 2
 
-    named = sorted({int(n) for n in DECISION.findall(msg)})
+    # Une annee n'est pas un numero de decision : « D2026 » exigeait une entree D2026.
+    named = sorted({int(n) for n in DECISION.findall(msg)
+                    if not LOOKS_LIKE_A_YEAR.match(n)})
     missing = [n for n in named if n not in known]
 
     if missing:
-        print("DECISION NOT REGISTERED: the HEAD commit names %s, absent from %s.\n"
+        print("DECISION NOT REGISTERED: les commits controles nomment %s, absent de %s.\n"
               % (", ".join("D%d" % n for n in missing), REGISTER))
         print("  A commit that names a decision must register it in the same commit.")
         print("  Commit messages are not the project's memory: DECISIONS.md is.\n")
@@ -79,7 +101,7 @@ def main():
         return 1
 
     if not named:
-        print("OK: the HEAD commit names no decision.")
+        print("OK: aucune decision nommee dans les commits controles.")
     else:
         print("OK: %s registered." % ", ".join("D%d" % n for n in named))
     return 0

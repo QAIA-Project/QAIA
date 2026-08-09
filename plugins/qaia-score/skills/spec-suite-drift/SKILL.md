@@ -3,6 +3,14 @@ name: spec-suite-drift
 description: Compare an OpenAPI specification against the test suite that claims to cover it - pure text, no running application. Reports status codes the suite uses that the spec never declares, error codes the spec promises that no test exercises, and endpoints the suite calls that the spec does not describe. Use when a project has both a formal API spec and an automated suite, and nobody has ever checked that they agree.
 ---
 
+> **Ce que cette skill ne peut pas promettre.** L'algorithme ci-dessous est **rejoue par le
+> modele a chaque invocation**, pas charge depuis un fichier fige : deux passages sur le meme
+> fichier peuvent diverger, et la note n'est pas comparable d'une semaine a l'autre. C'est le
+> prix de l'ADR 0002 (aucun code livre dans les plugins), et il est assume -- mais il doit etre
+> dit ici, pas seulement dans le depot. **Pour une note reellement deterministe et diffable,
+> lancez l'outil fige du depot QAIA** plutot que cette skill. Releve par une revue
+> « developpeur » independante le 2026-08-09.
+
 # spec-suite-drift — the specification against the suite
 
 Follow the shared contract in `../README.md`.

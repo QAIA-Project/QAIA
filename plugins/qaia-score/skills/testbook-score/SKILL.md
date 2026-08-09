@@ -3,6 +3,14 @@ name: testbook-score
 description: Score a QAIA test book against its source US with the ISTQB-grounded 10-dimension rubric (0/1/2 per dimension, /20) plus a top-3 fixes list, and record the score in the standardized run manifest. Read-only over test content - it judges, it never edits. Use to review a generated test book or gate a release candidate.
 ---
 
+> **Ce que cette skill ne peut pas promettre.** L'algorithme ci-dessous est **rejoue par le
+> modele a chaque invocation**, pas charge depuis un fichier fige : deux passages sur le meme
+> fichier peuvent diverger, et la note n'est pas comparable d'une semaine a l'autre. C'est le
+> prix de l'ADR 0002 (aucun code livre dans les plugins), et il est assume -- mais il doit etre
+> dit ici, pas seulement dans le depot. **Pour une note reellement deterministe et diffable,
+> lancez l'outil fige du depot QAIA** plutot que cette skill. Releve par une revue
+> « developpeur » independante le 2026-08-09.
+
 # testbook-score — the quality scorecard
 
 Applies the embedded rubric (`rubric.md`, mirroring [`eval/RUBRIC.md`](https://github.com/QAIA-Project/QAIA/blob/main/eval/RUBRIC.md)) to **one** test book

@@ -36,6 +36,14 @@ averaging them hides whichever is worse.
   scoring them anyway.
 - For the mutation track only: a runnable suite (dependencies installed, target reachable).
 
+> **Ce que cette skill ne peut pas promettre.** L'algorithme ci-dessous est **rejoue par le
+> modele a chaque invocation**, pas charge depuis un fichier fige : deux passages sur le meme
+> fichier peuvent diverger, et la note n'est pas comparable d'une semaine a l'autre. C'est le
+> prix de l'ADR 0002 (aucun code livre dans les plugins), et il est assume -- mais il doit etre
+> dit ici, pas seulement dans le depot. **Pour une note reellement deterministe et diffable,
+> lancez l'outil fige du depot QAIA** plutot que cette skill. Releve par une revue
+> « developpeur » independante le 2026-08-09.
+
 ## Track 1 — Static pass (deterministic, run first)
 
 **In Claude Code**: materialize a throwaway script implementing the algorithm below and **run

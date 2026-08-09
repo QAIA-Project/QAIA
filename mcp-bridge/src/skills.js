@@ -21,7 +21,12 @@ function parseFrontmatter(text) {
   const lines = text.split(/\r?\n/);
   if (lines[0] !== '---') return { name: null, description: null };
   const end = lines.indexOf('---', 1);
-  const block = lines.slice(1, end === -1 ? undefined : end);
+  // Un frontmatter non ferme rendait `end === -1`, et `slice(1, undefined)` prenait TOUT le
+  // fichier comme frontmatter : `get('name')` retournait alors la premiere ligne commencant par
+  // « name: » n'importe ou dans le corps. Un fichier sans frontmatter valide n'a pas de
+  // frontmatter -- il ne faut pas en inventer un (B39).
+  if (end === -1) return { name: null, description: null };
+  const block = lines.slice(1, end);
   const get = (key) => {
     const line = block.find((l) => l.startsWith(`${key}:`));
     return line ? line.slice(key.length + 1).trim() : null;
