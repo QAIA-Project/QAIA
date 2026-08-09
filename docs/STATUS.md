@@ -58,6 +58,31 @@ refus, pas un statut. C'est un arbitrage documenté, pas un défaut, et il reste
 l'inverse — 18 skills sur 37 le font, et c'est correct : une skill **installée** vit hors du
 dépôt, où un lien relatif est mort.
 
+### Fin de session — 2026-08-09
+
+**Les scoreurs sont livrés** (décision du fondateur, en séance). `qaia-score` embarque les trois
+`.py` ; les skills les lancent au lieu de les retaper. « 100 % skills Markdown » a cessé d'être
+vrai et a disparu des trois endroits du README où il servait d'argument. ADR 0002 **amendé, pas
+réécrit**. La copie part avec son garde-fou (`check_repo_structure.py` + `ship_scorers.py`),
+éprouvé par injection — quatre copies avaient dérivé dans la journée, celle-ci ne le pourra pas
+en silence.
+
+**#88 fermée.** Contrat d'émission écrit dans `testbook-generate`, bras A de #84 rejoué trois
+fois sur quatre fournisseurs. Les trois causes nommées sont fermées (0 bloc de code sur 12
+sorties, 0 ligne `Feature:` manquante, 0 faute de langue). Deux causes nouvelles documentées
+plutôt que contournées. **La leçon transférable : une règle de forme décrite se prête à
+l'interprétation, une forme montrée se copie** — c'est le squelette à colonnes annotées qui a
+corrigé l'indentation, pas la prose.
+
+**Le constat qui survit à l'issue :** la mesure de portabilité n'est pas déterministe. Deux
+passages du même prompt donnent trois modèles sur quatre au vert, mais pas les mêmes trois.
+Règle qui en découle, écrite dans `eval/portability-2026-08-09/report.md` : **toute mesure de
+portabilité répète et rapporte la dispersion, jamais un chiffre unique.**
+
+**6 issues ouvertes.** La seule qui compte reste #89 — personne d'extérieur n'a jamais mené le
+parcours principal de bout en bout. Elle ne dépend pas de l'outillage.
+
+
 ## Sprint 32 — la distribution, la première application hors du dépôt, et un dépôt qui se corrige lui-même toute la journée (2026-08-08, D140-D164) — TERMINÉ
 
 Session de nuit, mandat d'autonomie complète du fondateur, objectif qu'il a fixé : **1000 étoiles
