@@ -511,6 +511,31 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
                          "blocking": False})
 
     # Scenarios present in the test book but with no test carrying their ID.
+    # L'autre sens, et c'est celui qui manquait. La tracabilite ne verifiait que
+    # cahier -> test : « le titre porte-t-il un tag ? ». Un test etiquete
+    # `@QAIA-US-004-043` alors qu'aucun scenario 043 n'existe marquait donc 25/25 -- alors que
+    # les deux ensembles etaient deja en main. **Un tag qui ne resout rien est pire que pas de
+    # tag : il ressemble a de la tracabilite.** Sept cas dans la vitrine du projet
+    # (`US-004-039` a `-045`), trouves en la relisant, jamais par l'outil.
+    # Bloquant : un lecteur ne peut pas distinguer un scenario supprime d'un identifiant invente.
+    # ... mais UNIQUEMENT dans l'espace de noms du cahier. Une suite porte legitimement des
+    # tags d'autres familles -- `@QAIA-VIS-001`, `@QAIA-A11Y-...`, `@QAIA-CP-...` -- pour des
+    # tests visuels, d'accessibilite ou de contrat qui n'ont aucun scenario Gherkin et n'en
+    # attendent pas. La premiere version signalait 18 cas la ou 7 sont reels : elle reprochait
+    # a la suite d'avoir des espaces de noms separes, ce qui est le bon choix.
+    # Encore « la regle est-elle applicable ? » -- la meme faute que les 279 selecteurs.
+    def namespace(sid):
+        parts = sid.rsplit("-", 1)
+        return parts[0] if len(parts) == 2 and parts[1].isdigit() else sid
+
+    book_namespaces = {namespace(s) for s in feature_ids}
+    dangling = sorted(s for s in (seen_ids - feature_ids)
+                      if namespace(s) in book_namespaces) if feature_ids else []
+    for sid in dangling:
+        findings.append({"kind": "test-without-scenario", "file": "<suite>", "line": 0,
+                         "detail": sid + " — aucun scenario de ce nom dans le cahier de test",
+                         "blocking": True})
+
     orphan_scenarios = sorted(feature_ids - seen_ids) if feature_ids else []
     for sid in orphan_scenarios:
         findings.append({"kind": "scenario-without-test", "file": "<testbook>", "line": 0,
@@ -549,7 +574,8 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
             "substantive_assertions": round(30 * pct(tests_with_real_assertion, tests_total), 1),
             "robust_selectors": robust_selectors,
             "pom_as_fixtures": 20.0 if (has_pages_dir and fixtures_path) else 0.0,
-            "traceability": round(25 * pct(tagged_tests, tests_total), 1),
+            # Un test dont le tag ne resout aucun scenario ne compte plus comme trace.
+            "traceability": round(25 * pct(max(0, tagged_tests - len(dangling)), tests_total), 1),
         }
     score = round(sum(budget.values()), 1)
 

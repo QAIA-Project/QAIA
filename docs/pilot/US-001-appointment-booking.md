@@ -2,11 +2,11 @@
 
 > **Pilot copy.** Original synthetic content (clean-room), MIT-licensed. Domain: health, patient portal.
 >
-> This file is the story **as a real ticket would reach you** — nothing more. The gold-set original
-> (`eval/gold-set/US-001-appointment-booking.md`) carries a sequestered section listing the
-> ambiguities that were planted on purpose; feeding it to the skills would hand you the answer to
-> the question the pilot form asks. Generated from that original by stripping everything from
-> `## Judge reference` onward — the acceptance criteria below are byte-identical to it.
+> This file is the story **as a real ticket would reach you** — nothing more.
+>
+> Read it as you would any ticket that landed in your queue. What to produce, where to send it and
+> who answers your questions are in `docs/PILOT-KIT.md`; everything you need about the *story* is
+> below.
 
 ## User story
 

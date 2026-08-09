@@ -23,7 +23,8 @@ Run the QAIA journey on a ready-made user story, get a Gherkin test book, and te
 ## Step 2 — Pick a story (1 min)
 
 Two ways:
-- **Fastest**: use the ready story `eval/gold-set/US-001-appointment-booking.md` (a teleconsultation booking — 8 acceptance criteria).
+- **Fastest**: use the ready story `docs/pilot/US-001-appointment-booking.md` (a teleconsultation booking — 8 acceptance criteria).
+  Do **not** open anything under `eval/gold-set/` while you are running the pilot: those files carry the answers, and reading one turns your run into a recall exercise. They are in the repository because the project needs them; they are not for you today.
 - **Most useful to us**: bring one *real* user story of your own (anonymize anything sensitive — the tool will also redact PII, but you know your context best).
 
 ## Step 3 — Run the journey (8 min)

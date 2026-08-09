@@ -104,9 +104,15 @@ money **policy**: rate, cap, rounding, grace.
 
 | Question | Step | Outcome |
 |---|---|---|
-| "Does a cancelled appointment free the counter?" | 3 | `[assumption]` — safe default: yes, flagged |
-| "Is a refused attempt an audit event?" | 2 (compliance evidence) | `[open]` |
-| "Missing guardian contact for a minor" | 2 (protected population) | `[open]` |
+| "Does returning an item restore the loyalty points it earned?" | 3 | `[assumption]` — safe default: yes, flagged |
+| "Is a declined payment attempt a reportable event?" | 2 (compliance evidence) | `[open]` |
+| "No billing address on file for a corporate account" | 2 (regulated counterparty) | `[open]` |
+
+<!-- These examples are deliberately drawn from a retail domain. An earlier version used three
+     ambiguities from `US-001-appointment-booking`, which is the story handed to pilot testers:
+     every run of this pass loaded them pre-identified and pre-classified, so the pilot measured
+     recall of the reference file rather than analysis of the requirement. A calibration example
+     must never come from a corpus the tool is evaluated on. -->
 
 ---
 

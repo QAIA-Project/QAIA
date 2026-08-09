@@ -235,6 +235,46 @@ try:
 finally:
     shutil.rmtree(_tmp2, ignore_errors=True)
 
+# --- 7. traceability must be checked in BOTH directions ---------------------------------------
+# It only ever asked "does the title carry a tag?". A test tagged `@QAIA-US-004-043` where no
+# scenario 043 exists scored 25/25 — with both sets already in hand. A tag that resolves to
+# nothing is worse than no tag: it looks like traceability. Seven such tags sat in this project's
+# own showcase, found by reading it, never by the tool.
+#
+# And the first version of the fix flagged 18 instead of 7: it reproached the suite for carrying
+# `@QAIA-VIS-*` and `@QAIA-A11Y-*` tags, which are deliberately separate namespaces with no
+# Gherkin scenario and no need for one. "Is the rule applicable at all?" — the same failure as
+# the 279 selectors, one file over.
+_tmp3 = tempfile.mkdtemp(prefix="qaia-selfcheck-trace-")
+try:
+    with open(os.path.join(_tmp3, "a.spec.ts"), "w", encoding="utf-8") as fh:
+        fh.write("\n".join([
+            "import { test, expect } from '@playwright/test';",
+            "test('@QAIA-US-001-001 covered by the book', async ({ page }) => {",
+            "  await expect(page.locator('#a')).toHaveText('x');",
+            "});",
+            "test('@QAIA-US-001-099 no such scenario', async ({ page }) => {",
+            "  await expect(page.locator('#b')).toHaveText('y');",
+            "});",
+            "test('@QAIA-VIS-001 a separate namespace, legitimately', async ({ page }) => {",
+            "  await expect(page.locator('#c')).toHaveText('z');",
+            "});",
+        ]))
+    specs, _ = A.find_spec_files(_tmp3)
+    book = {"QAIA-US-001-001"}
+    kinds = [f for f in A.static_track(specs, [], _tmp3, book)["findings"]
+             if f["kind"] == "test-without-scenario"]
+    check("a tag resolving to no scenario is reported", len(kinds), 1)
+    if kinds:
+        check("...and it is the dangling one, not the separate namespace",
+              kinds[0]["detail"].split(" ")[0], "QAIA-US-001-099")
+    # No test book supplied: the rule has nothing to resolve against and must stay silent.
+    silent = [f for f in A.static_track(specs, [], _tmp3, set())["findings"]
+              if f["kind"] == "test-without-scenario"]
+    check("with no test book, the rule does not fire", len(silent), 0)
+finally:
+    shutil.rmtree(_tmp3, ignore_errors=True)
+
 if failures:
     print("selfcheck_automation_score: %d FAILURE(S)\n" % len(failures))
     for f in failures:
