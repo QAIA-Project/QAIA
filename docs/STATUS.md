@@ -1,5 +1,63 @@
 # QAIA — état du projet & prompt de reprise
 
+## Revue à cinq personas — 2026-08-09 (fin de sprint 34)
+
+Cinq relectures indépendantes du dépôt, chacune avec un contexte vierge et un seul rôle :
+testeur en poste, directeur des tests, chef de projet, développeur destinataire, utilisateur
+final. **56 défauts remontés, 55 corrigés, 1 réfuté après vérification.** Chaque correction est
+mesurée avant/après ; aucune n'a été retenue sur la seule foi du rapport qui la signalait.
+
+### Les cinq qui comptent
+
+**Une faille, pas une fausseté.** `automation_score.py` exécutait ce qu'un dépôt scanné mettait
+dans un **nom de test** : `escape_grep` échappait les métacaractères d'expression régulière et
+était utilisé comme s'il échappait le shell — ni le backtick ni le guillemet ne passaient par
+lui — et le résultat partait dans `--grep "%s"` sous `shell=True`. Le mode `--third-party` de
+cet outil existe précisément pour lire les dépôts des autres. Corrigé à la racine (argv en
+liste, `shell=False`), tiré à blanc avec un `touch` dans un titre : aucun fichier créé.
+
+**Le chiffre en tête du produit était faux.** `structural_score.py` créditait « AC1 » avec le
+tag `@AC10` — une sous-chaîne. Un cahier déclarant AC1..AC10 et n'en couvrant qu'un marquait
+**100/100 PASS**. Corrigé en jeton entier : 15/30 sur le cas témoin.
+
+**La promesse centrale, cassée dans la vitrine.** Sept tests portaient un identifiant qui ne
+renvoyait à aucun scénario du cahier. Les sept scénarios manquants ont été écrits — pas les
+étiquettes retirées. Ça avait pu vivre parce qu'**aucun workflow ne pointait les outils du
+projet sur un artefact réel** : vingt étapes de CI, et seuls tournaient les selfchecks. Deux
+étapes ajoutées.
+
+**La règle 3 n'était appliquée nulle part.** « Aucun producteur ne note sa propre sortie » est
+le premier argument que le README oppose à la concurrence, et `validate_manifest.py` vérifiait
+seulement que `gate.scoredBy` est une *chaîne*. Contrôle mécanique ajouté, éprouvé dans les
+deux sens, promu en `selfcheck_rule3.py`.
+
+**Le scoreur déterministe n'est pas livré.** Les trois skills de notation n'embarquent aucun
+code : elles demandent au modèle de re-dériver ~300 lignes de regex depuis de la prose, à
+chaque invocation. La promesse « note déterministe, pas une auto-notation par un LLM » tient
+dans ce dépôt et s'amollit à la frontière de livraison. C'est l'ADR 0002, assumé — **le défaut
+n'est pas la décision, c'est que seul son avantage était écrit.** Le prix est désormais dit,
+aux trois endroits où l'affirmation vit et dans chacune des trois skills.
+
+### Ce que la journée dit du projet
+
+Trois défauts ont été trouvés **en prouvant la correction d'un autre**, pas par une revue :
+`.toBe(404)` — la forme la plus courante pour affirmer un code HTTP — n'était jamais lu par
+`spec_suite_drift` ; `expect(true).toBeTruthy()` était classé « faible » par l'outil censé
+attraper exactement ça ; et une de mes propres corrections a fait **diverger** deux copies d'un
+même bloc, transformant un défaut de style en défaut de correction dans l'heure.
+
+Et j'ai rendu la CI rouge une fois, avec une garde « de prudence » que j'avais validée
+**derrière un pipe** — donc en lisant le code de `tail` et non celui de l'outil. Le jour même
+où je corrigeais cette classe de faute chez les autres.
+
+**Cinq cahiers de la vitrine restent en CONCERNS** (74 à 77). L'outil dit vrai : leur `Then`
+est volontairement vague (« the attempt is refused ») au titre de Q10 — l'exigence énonce un
+refus, pas un statut. C'est un arbitrage documenté, pas un défaut, et il reste visible.
+
+**Un constat réfuté :** la revue reprochait des URL GitHub absolues dans une skill. C'est
+l'inverse — 18 skills sur 37 le font, et c'est correct : une skill **installée** vit hors du
+dépôt, où un lien relatif est mort.
+
 ## Sprint 32 — la distribution, la première application hors du dépôt, et un dépôt qui se corrige lui-même toute la journée (2026-08-08, D140-D164) — TERMINÉ
 
 Session de nuit, mandat d'autonomie complète du fondateur, objectif qu'il a fixé : **1000 étoiles
