@@ -1,0 +1,11 @@
+{
+  "name": "qaia-lint-toolchain",
+  "private": true,
+  "description": "Epingle par les octets le seul outil npm que la CI execute. La decision T15 epingle chaque `uses:` d'Action par SHA de commit ; `npx --yes gherkin-lint@4.2.4` epinglait la VERSION mais pas les octets -- un paquet republie, un registre compromis, et la CI executait autre chose. Releve par la revue « developpeur » du 2026-08-09. Avec un lockfile, `npm ci` verifie l'integrite de chaque paquet avant de l'executer.",
+  "devDependencies": {
+    "gherkin-lint": "4.2.4"
+  },
+  "scripts": {
+    "lint:gherkin": "gherkin-lint -c .gherkin-lintrc"
+  }
+}

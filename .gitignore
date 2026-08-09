@@ -22,3 +22,5 @@ __pycache__/
 .claude/worktrees/
 # repertoires de travail temporaires
 .scratch*/
+
+node_modules/

@@ -51,6 +51,10 @@ demo: ## Demarre l'application de demonstration sur http://localhost:4500
 test: ## Joue la suite generee contre la demo (la demo doit tourner)
 	cd examples/expense-demo/tests && npx playwright test
 
+# Le linter vient de `package-lock.json`, pas de `npx --yes` : la decision T15 epingle chaque
+# Action par SHA, et le seul paquet npm que la CI executait etait telecharge au vol -- version
+# fixee, octets libres. `npm ci` verifie l'empreinte d'integrite avant d'executer (B35).
+#
 # Seule definition du perimetre Gherkin du depot. La CI appelle cette cible plutot que de
 # reecrire la liste : elle existait en double, les deux copies ont diverge, et `make lint` etait
 # rouge sur tout clone propre pendant que la CI etait verte. Meme classe que la panne du
@@ -61,9 +65,10 @@ FEATURE_EXCLUDES = -not -path './node_modules/*' -not -path '*/export/*' \
 	  -not -path './eval/portability-2026-08-08/*'
 
 lint: ## Verifie les cahiers Gherkin comme le fait la CI
+	@test -d node_modules/gherkin-lint || npm ci --no-audit --no-fund --silent
 	@if find . -name '*.feature' $(FEATURE_EXCLUDES) | grep -q .; then \
 	  find . -name '*.feature' $(FEATURE_EXCLUDES) \
-	    -exec npx --yes gherkin-lint@4.2.4 -c .gherkin-lintrc {} + ; \
+	    -exec ./node_modules/.bin/gherkin-lint -c .gherkin-lintrc {} + ; \
 	else \
 	  echo "Aucun fichier .feature dans le perimetre -- rien a verifier" ; \
 	fi

@@ -962,15 +962,26 @@ def collect_feature_ids(testbook):
             ids.add(m.group(1))
         # A scenario is flagged when the marker sits on its tag line or in the comment block just
         # above it. Walk the file and attribute a pending flag to the next scenario ID seen.
-        pending_flag = False
+        block_ids = []
+        block_flagged = False
         for line in text.split(NL):
             if FEATURE_FLAGGED_SCENARIO.search(line):
-                pending_flag = True
+                block_flagged = True
             m = FEATURE_TAG.search(line)
-            if m and pending_flag:
-                flagged.add(m.group(1))
+            if m:
+                block_ids.append(m.group(1))
             if line.strip().startswith("Scenario"):
-                pending_flag = False
+                # Fin de l'en-tete : le drapeau vaut pour tous les identifiants qu'il contient,
+                # quel que soit leur ordre. La version precedente attribuait le drapeau au
+                # PROCHAIN identifiant vu, si bien qu'un `@QAIA-X-001` place AVANT le
+                # `@low-confidence` -- ce que produit un cahier dont les etiquettes debordent
+                # sur deux lignes -- consommait la ligne avant que le drapeau existe (B18).
+                if block_flagged:
+                    flagged.update(block_ids)
+                block_ids = []
+                block_flagged = False
+        if block_flagged:
+            flagged.update(block_ids)
     return ids, flagged
 
 
