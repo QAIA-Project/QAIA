@@ -1,0 +1,8 @@
+# Seule dependance tierce du depot, et elle n'etait declaree nulle part : `spec_suite_drift.py`
+# importe `yaml` pour lire une specification OpenAPI. La CI passait parce que l'image
+# `ubuntu-latest` de GitHub embarque PyYAML, pas parce que le depot le demandait -- un jour ou
+# l'image change, ou sur toute machine ordinaire, l'outil tombe en mode degrade sans que
+# personne ait rien decide. Releve par la revue « developpeur » du 2026-08-09.
+#
+# Tout le reste du depot tient sur la bibliotheque standard, et c'est voulu.
+PyYAML>=5.1

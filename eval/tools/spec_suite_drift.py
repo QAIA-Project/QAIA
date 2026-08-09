@@ -75,7 +75,27 @@ SUITE_PATH = re.compile(r"""['"`](/(?:api/)?[a-zA-Z][a-zA-Z0-9_\-/]*(?:\$\{[^}]*
 # 400-contre-422 apparait.
 NAVIGATION = re.compile(r"""\.\s*(?:goto|waitForURL|toHaveURL)\s*\(\s*(?:new\s+RegExp\s*\(\s*)?['"`/]""")
 # Un code HTTP ecrit comme une valeur, jamais comme un fragment de nombre plus long.
-SUITE_STATUS = re.compile(r"(?<![\w.])(?:status\s*[:=]\s*|toBe\s*\(\s*|toEqual\s*\(\s*|,\s*)([1-5]\d{2})(?![\w.])")
+# Un code HTTP ecrit comme une valeur, jamais comme un fragment de nombre plus long.
+# La derniere alternative -- une virgule suivie d'un nombre de 100 a 599 -- est volontairement
+# large : elle attrape `mockApiError(page, '/users', 409, ...)`, le cas qui a fait naitre cet
+# outil, et on ne peut pas deviner le nom du helper qu'un depot inconnu s'est ecrit. Le prix
+# est un faux positif sur les APIs numeriques, ferme par NUMERIC_API juste en dessous.
+SUITE_STATUS = re.compile(r"(?:(?<![\w.])status\s*[:=]\s*|(?<![\w])(?:toBe|toEqual|toHaveProperty)\s*\(\s*|,\s*)([1-5]\d{2})(?![\w.])")
+# Appels dont un argument numerique de 100 a 599 n'est pas un code HTTP : delais, decoupages,
+# arrondis, coordonnees. Cherche dans ce qui precede immediatement le nombre, sur la meme ligne.
+# Sans ca, `waitForTimeout(page, 500)` faisait lire a l'outil une 500 exercee par la suite --
+# et donc taire un vrai « la specification promet une 500 que personne ne teste ».
+NUMERIC_API = re.compile(
+    r"\b(?:waitForTimeout|setTimeout|setInterval|slice|substring|substr|splice|padStart|padEnd|"
+    r"toFixed|repeat|scrollTo|scrollBy|resize|setViewportSize|mouse\s*\.\s*\w+|move|click|"
+    r"fill\s*Rect|drawImage|timeout|delay|width|height|top|left)\b[^;]{0,60}$")
+
+
+def is_http_status(line, match_start):
+    """Le nombre qui commence a `match_start` est-il un code HTTP, ou un nombre ordinaire ?"""
+    return not NUMERIC_API.search(line[:match_start])
+
+
 TEST_DECL = re.compile(r"^\s*(?:test|it)\s*(?:\.\s*\w+\s*)?\(\s*(['\"`])((?:\\.|(?!\1).)*)\1")
 SPEC_GLOB = re.compile(r"\.(spec|test|e2e)\.(js|ts|mjs|cjs)$")
 
@@ -113,10 +133,17 @@ def resolve(path, declared):
     return None
 
 
+UNREADABLE = []
+
+
 def read(path):
+    """Rend "" si le fichier est illisible -- mais le CONSIGNE. Sans cette liste, un fichier
+    qu'on n'a pas pu ouvrir se lisait exactement comme un fichier sans defaut, et l'outil
+    sortait « aucun ecart » avec un code 0. Trouve par la revue « developpeur »."""
     try:
         return io.open(path, encoding="utf-8", errors="replace").read()
-    except (IOError, OSError):
+    except (IOError, OSError) as exc:
+        UNREADABLE.append((path, str(exc)))
         return ""
 
 
@@ -184,6 +211,8 @@ def scan_suite(tests_dir):
                         if p != "/" and not p.startswith("/http"):
                             here_paths.add(p)
                     for m in SUITE_STATUS.finditer(code_only):
+                        if not is_http_status(code_only, m.start()):
+                            continue  # nombre ordinaire, pas un code HTTP (B31)
                         here_status.append((m.group(1), start + offset))
                 seen_paths |= here_paths
                 all_status |= {s for s, _ in here_status}

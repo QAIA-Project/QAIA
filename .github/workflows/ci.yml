@@ -22,36 +22,14 @@ jobs:
             jq empty "$f" || { echo "::error::Invalid JSON manifest detected"; exit 1; }
           done
 
-      - name: Check marketplace and plugin structure
+      - name: Structure du depot (marketplace, garde-fou, contrat de sortie)
         run: |
           set -e
-          test -f .claude-plugin/marketplace.json || { echo "::error::Missing .claude-plugin/marketplace.json"; exit 1; }
-          for p in plugins/*/; do
-            test -f "${p}.claude-plugin/plugin.json" || { echo "::error::Missing plugin.json in plugin directory"; exit 1; }
-            test -f "${p}README.md" || { echo "::error::Missing README.md in plugin directory"; exit 1; }
-          done
-
-      - name: Supply-chain guards (see CONTRIBUTING.md)
-        run: |
-          set -e
-          # Hooks, MCP servers and agents are not part of the roadmap yet: their silent
-          # introduction is the highest-impact attack path (auto-executed shell, arbitrary
-          # binaries) against a maintainer who does not read code. Fail loudly.
-          if find plugins -type d \( -name hooks -o -name agents \) | grep -q .; then
-            echo "::error::hooks/ and agents/ are not allowed in plugins yet (see CONTRIBUTING.md)"; exit 1
-          fi
-          if find plugins -name '.mcp.json' | grep -q .; then
-            echo "::error::.mcp.json is not allowed in plugins yet (see CONTRIBUTING.md)"; exit 1
-          fi
-          for p in plugins/*/.claude-plugin/plugin.json; do
-            if jq -e 'has("hooks") or has("mcpServers") or has("agents")' "$p" >/dev/null; then
-              echo "::error::hooks/mcpServers/agents fields are not allowed in plugin.json yet"; exit 1
-            fi
-          done
-          # Marketplace sources must stay local relative paths: an external source
-          # redirection would compromise every installer.
-          jq -e '.plugins | all(.source | type == "string" and startswith("./"))' .claude-plugin/marketplace.json >/dev/null \
-            || { echo "::error::marketplace plugin sources must be local relative paths (./...)"; exit 1; }
+          # Ces trois portes etaient ecrites en shell ici, et nulle part ailleurs : `make check`
+          # ne les lancait donc pas, alors qu'il se decrit comme « tous les controles que la CI
+          # lance ». Elles vivent maintenant dans un script appele des deux endroits, et qui
+          # peut etre eprouve sur une machine sans `make` -- celle ou ce depot est ecrit.
+          python eval/tools/check_repo_structure.py
 
       - name: Check skill frontmatter
         run: |
@@ -286,46 +264,12 @@ jobs:
       - name: Lint Gherkin features (if any)
         run: |
           set -e
-          # Excludes, beyond node_modules:
-          #  - examples/*/export/ : byte-identical copies of the sibling testbooks,
-          #    produced by the export skill demo (TestRail/Xray/.xlsx bundle) --
-          #    intentionally duplicate Feature names, not a real defect.
-          #  - eval/concerns-zone-fixtures/ : calibration fixtures (issue #21) that
-          #    are deliberately near-identical across m1-m4 subfolders to exercise
-          #    the CONCERNS-zone scorer -- duplication is the point of the fixture.
-          #  - eval/gold-set/*/*-raw.feature : verbatim external oracle data used
-          #    as ground truth for the validation campaign (D117), not authored by
-          #    QAIA's own generation pipeline -- not held to the project's own
-          #    Gherkin style.
-          #  - eval/goldset-hardened/ : deliberately-flawed calibration fixtures
-          #    (truncated.feature, fabrication.feature, c1-hollow-image.feature...)
-          #    used to test the scorer's own defect-detection -- some are not even
-          #    syntactically valid Gherkin by design (see corpus-24-plan.md).
-          #  - eval/baselines/ : benchmark/comparison run output (D51/D58 and
-          #    others), including files with a leading "> US-xxx | source: ..."
-          #    citation-comment header before any Feature: line -- not valid
-          #    Gherkin by construction, not a real deliverable.
-          #  - eval/portability-2026-08-08/ : sorties BRUTES de quatre modeles a qui on a
-          #    donne la skill telle quelle (#84). Deux d'entre elles sont invalides -- l'une
-          #    en francais sans en-tete de langue, l'autre sans ligne Feature: -- et c'est
-          #    tout l'interet : ce sont les defauts que la mesure a trouves. Les corriger
-          #    pour faire taire le linter detruirait la preuve. Elles sont archivees comme
-          #    resultat, pas comme livrable.
-          FIND_ARGS=(. -name '*.feature' \
-            -not -path './node_modules/*' \
-            -not -path '*/export/*' \
-            -not -path './eval/concerns-zone-fixtures/*' \
-            -not -path './eval/gold-set/*' \
-            -not -path './eval/goldset-hardened/*' \
-            -not -path './eval/baselines/*'             -not -path './eval/portability-2026-08-08/*')
-          if find "${FIND_ARGS[@]}" | grep -q .; then
-            # -exec {} + passes each path as a single ./-prefixed argument: no word
-            # splitting, no option injection. Version pinned (decision T15).
-            # gherkin-lint requires an explicit config file (fails without one).
-            find "${FIND_ARGS[@]}" -exec npx --yes gherkin-lint@4.2.4 -c .gherkin-lintrc {} +
-          else
-            echo "No .feature files yet — skipping"
-          fi
+          # Le perimetre n'est plus decrit ici. Il l'etait, en double avec le Makefile, et les
+          # deux copies ont diverge : `make lint` etait rouge sur tout clone propre pendant que
+          # la CI etait verte. Meme classe que la panne du 2026-07-30 (job casse en silence
+          # parce qu'un dossier de fixtures avait ete ajoute sans mettre a jour le scope).
+          # Une seule definition, dans le Makefile, appelee des deux endroits.
+          make lint
 
   dco:
     name: DCO sign-off

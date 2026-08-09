@@ -90,6 +90,13 @@ def run(suite_src):
         os.makedirs(tests)
         io.open(os.path.join(tests, "a.spec.ts"), "w", encoding="utf-8", newline="\n").write(suite_src)
         declared = D.load_spec(spec)
+        if declared is None:
+            # Sans PyYAML, `load_spec` rend None et le documente par un BROKEN sur stderr.
+            # `compare(None, ...)` faisait alors `path in None` -> TypeError : le selfcheck
+            # mourait sur une trace au lieu du code 2 qu'il est cense rapporter.
+            print("BROKEN: PyYAML absent -- selfcheck non concluant (pip install pyyaml)",
+                  file=sys.stderr)
+            sys.exit(2)
         pairs, seen, all_status = D.scan_suite(tests)
         return D.compare(declared, pairs, seen, all_status)
     finally:

@@ -21,7 +21,23 @@ check: ## Lance tous les controles que la CI lance (skills, provenance, outillag
 	python eval/tools/check_loop_wiring.py
 	python eval/tools/check_oracle_library.py
 	python eval/tools/check_agents_tier.py
+	# La CI balaie `find plugins eval -name 'manifest*.json'`. La ligne `--batch plugins`
+	# ne trouve rien aujourd'hui -- il n'existe aucun manifest*.json sous plugins/ -- et les
+	# deux perimetres etaient donc equivalents en pratique. Elle est gardee pour qu'ils le
+	# restent le jour ou un manifeste y apparait, plutot que de le decouvrir en CI.
 	python eval/tools/validate_manifest.py --batch eval
+	python eval/tools/validate_manifest.py --batch plugins
+	# Ce qui suit manquait vraiment : la cible se disait « tous les controles que la CI lance »
+	# et en omettait la moitie. Un nouveau venu la voyait verte, poussait, et decouvrait la CI
+	# rouge -- ce qui est pire que pas de cible du tout.
+	# Les trois portes de structure -- sources du marketplace relatives, rien d'executable sous
+	# plugins/, contrat de sortie identique partout -- etaient ecrites en shell dans ci.yml
+	# seulement. Les recopier ici en aurait fait une deuxieme copie a maintenir, la faute meme
+	# qu'on venait de corriger sur le perimetre Gherkin. Un script, appele des deux endroits.
+	python eval/tools/check_repo_structure.py
+	@echo "--- tests du pont MCP ---"
+	@cd mcp-bridge && npm ci --no-audit --no-fund --silent && npm test
+	$(MAKE) lint
 
 demo: ## Demarre l'application de demonstration sur http://localhost:4500
 	@echo "ExpenseFlow sur http://localhost:4500 -- Ctrl+C pour arreter"
@@ -30,11 +46,22 @@ demo: ## Demarre l'application de demonstration sur http://localhost:4500
 test: ## Joue la suite generee contre la demo (la demo doit tourner)
 	cd examples/expense-demo/tests && npx playwright test
 
-lint: ## Verifie les cahiers Gherkin comme le fait la CI
-	find . -name '*.feature' -not -path './node_modules/*' -not -path '*/export/*' \
+# Seule definition du perimetre Gherkin du depot. La CI appelle cette cible plutot que de
+# reecrire la liste : elle existait en double, les deux copies ont diverge, et `make lint` etait
+# rouge sur tout clone propre pendant que la CI etait verte. Meme classe que la panne du
+# 2026-07-30 consignee dans CLAUDE.md -- une liste dupliquee finit toujours par diverger.
+FEATURE_EXCLUDES = -not -path './node_modules/*' -not -path '*/export/*' \
 	  -not -path './eval/concerns-zone-fixtures/*' -not -path './eval/gold-set/*' \
 	  -not -path './eval/goldset-hardened/*' -not -path './eval/baselines/*' \
-	  -exec npx --yes gherkin-lint@4.2.4 -c .gherkin-lintrc {} +
+	  -not -path './eval/portability-2026-08-08/*'
+
+lint: ## Verifie les cahiers Gherkin comme le fait la CI
+	@if find . -name '*.feature' $(FEATURE_EXCLUDES) | grep -q .; then \
+	  find . -name '*.feature' $(FEATURE_EXCLUDES) \
+	    -exec npx --yes gherkin-lint@4.2.4 -c .gherkin-lintrc {} + ; \
+	else \
+	  echo "Aucun fichier .feature dans le perimetre -- rien a verifier" ; \
+	fi
 
 clean: ## Supprime les sorties de test
 	rm -rf examples/*/tests/test-results examples/*/tests/results.json
