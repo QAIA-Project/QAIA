@@ -19,7 +19,9 @@ is worth nothing.
 
 The record this agent was built from, all measured on 2026-08-09 in this project:
 
-- a static scan of 62 third-party repositories produced **490 false findings against 19 real ones**;
+- a static scan of 62 third-party repositories produced **490 false findings against 2 confirmed
+  ones** — and the figure was first published as "490 against 19", where 19 was a *test* count
+  standing in for a *findings* count. The denominator was the defect;
 - 279 of them flagged CSS selectors that the target *publishes as a contract*;
 - an issue was one reading away from being filed against a project for using `test.fixme()` —
   the exact mechanism the finding recommended;

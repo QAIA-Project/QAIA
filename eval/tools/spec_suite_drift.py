@@ -40,7 +40,15 @@ qu'un seul**. Un bloc citant deux chemins est laisse de cote plutot que devine -
 faux ont ete produits en deux jours par des regles qui preferaient repondre a se taire.
 
 Les codes 2xx ne declenchent jamais R2 : un test nominal exerce le chemin heureux sans jamais
-ecrire `200`.
+ecrire `200`. Les codes 5xx ne declenchent jamais R1 : une suite qui simule un 500 injecte une
+panne pour verifier la degradation du client, elle n'affirme rien sur le contrat.
+
+**Limite connue, non corrigee, et dite plutot que tue : la specification est agregee PAR CHEMIN,
+toutes methodes confondues.** `/articles` se voit donc crediter l'union des codes de `GET` et de
+`POST`. Aucun constat emis n'est donc conscient de la methode, et un code legitime pour l'une
+peut masquer son absence pour l'autre. La corriger demanderait de connaitre la methode du cote
+**suite**, ce que l'heuristique de proximite ne sait pas faire de facon fiable ; une correction a
+moitie serait pire qu'une limite ecrite. Trouve par une revue adversariale le 2026-08-09.
 
 Run:
   python eval/tools/spec_suite_drift.py --spec openapi.yml --tests-dir specs/e2e [--json out.json]
@@ -193,6 +201,16 @@ def compare(declared, pairs, seen_paths, all_status):
 
     for path, status, rel, ln, title in pairs:
         template = resolve(path, declared)
+        # Un 5xx simule est une INJECTION DE PANNE, pas une affirmation sur le contrat. La suite
+        # ne pretend pas que l'API promet un 500 : elle force une defaillance serveur arbitraire
+        # pour verifier que le client se degrade proprement. Aucune specification n'est tenue de
+        # declarer un 500, donc les deux branches de la regle R1 (« la suite teste une promesse
+        # inexistante, ou la spec a oublie un cas ») sont fausses ici.
+        # Quatre des huit constats publies sur RealWorld etaient de cette forme -- meme faute que
+        # les 279 selecteurs et les 408 conventions : **la regle est-elle seulement applicable ?**
+        # Le pendant existait deja pour les 2xx dans R2 ; il manquait ici.
+        if status.startswith("5"):
+            continue
         if template and status not in declared[template]:
             shown = path if path == template else "%s (%s)" % (path, template)
             findings.append({

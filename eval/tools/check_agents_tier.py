@@ -36,6 +36,12 @@ JUDGES = {"camille-judge", "elian-refuter"}
 # pour qu'un ajout silencieux echoue.
 MAY_RUN_COMMANDS = {"marek-automation", "yuki-triage"}
 
+# Liste BLANCHE. Interdire au cas par cas laissait passer tout ce a quoi personne n'avait pense
+# -- notamment `Task`, qui lance un sous-agent avec un outillage arbitraire et rend donc toute
+# limite illusoire. Aucun agent de ce tier n'a de raison de sortir de cette liste ; en ajouter
+# un est une decision, pas une commodite.
+ALLOWED_TOOLS = {"Read", "Glob", "Grep", "Write", "Edit", "Bash"}
+
 NOT_A_PERSON = re.compile(r"is an automated agent, not a person", re.I)
 FM = re.compile(r"^---\s*$(.*?)^---\s*$", re.S | re.M)
 
@@ -97,6 +103,19 @@ def main():
         if "Bash" in tset and name not in MAY_RUN_COMMANDS:
             bad.append(("outils", f, "`Bash` non declare pour cet agent -- l'ajouter est un choix "
                                      "a inscrire dans MAY_RUN_COMMANDS avec son motif"))
+
+        # Une premiere version ne policait que deux choses : le `*` litteral et `Bash` hors
+        # allowlist. Tout le reste passait. `elian-refuter` l'a montre en ajoutant `WebFetch`,
+        # `WebSearch` et surtout `Task` a `salim-testdata` -- l'un des cinq agents que le README
+        # decrit comme une simple couche d'ergonomie -- et le controle sortait 0. `Task` permet
+        # de lancer un sous-agent avec un outillage arbitraire : c'est une escalade **non bornee**
+        # a travers un outil dont le controle n'avait jamais entendu parler.
+        # On enumere donc ce qui est permis, au lieu d'enumerer ce qui est interdit.
+        unknown = tset - ALLOWED_TOOLS
+        if unknown:
+            bad.append(("outils", f, "outil(s) hors du perimetre declare du tier : %s -- ajouter "
+                                     "un outil est un choix a inscrire dans ALLOWED_TOOLS avec "
+                                     "son motif" % ", ".join(sorted(unknown))))
 
         # 3. aucun agent ne se fait passer pour une personne
         if not NOT_A_PERSON.search(text):

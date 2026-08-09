@@ -68,8 +68,13 @@ skipped. Suites importing a local fixtures module are unaffected — they use `t
 | 6 | Verification delegated to a page object or a helper function not counted | 38 |
 | 7 | Angular/Karma specs judged because they import no runner | 1 |
 
-**490 false findings in total, against 19 real ones.** Every defect was invisible while the tool
-only ever read its own output.
+**490 false findings against 2 confirmed findings** (3 counting `realworld#1718`), spanning **19 tests**.
+The figure first published — "490 against 19" — mixed its units: **19 was batch 2's TEST count**,
+promoted to the campaign's finding total in a sentence whose numerator counts findings. That is the
+same "30/100 where only 30 points were reachable" error this report names elsewhere; found by an
+adversarial review on 2026-08-09. The numerator checks out: 408 + 7 + 12 + 24 + 38 + 1 = 490.
+
+Every defect was invisible while the tool only ever read its own output.
 
 ## What did not change
 

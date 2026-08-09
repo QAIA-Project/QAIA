@@ -92,6 +92,47 @@ CLAIMS = {
     "date impossible": (date_ok, False, ["2023-02-29", "2100-02-29", "2023-04-31", "2023-366"]),
 }
 
+def parse_computable_claims(text):
+    """Lit les paniers valide/invalide DEPUIS library.md.
+
+    Ils etaient codes en dur : echanger les deux listes Luhn dans le fichier laissait le
+    controle vert. Chaque valeur est desormais classee par la ligne qui la porte, et une
+    section dont aucun panier n'est lisible est signalee plutot que silencieusement ignoree.
+    """
+    out = {"Luhn valide": (luhn_ok, True, []), "Luhn invalide": (luhn_ok, False, []),
+           "IBAN valide": (iban_ok, True, []),
+           "date valide": (date_ok, True, []), "date impossible": (date_ok, False, [])}
+    PAN = re.compile(r"`(\d[\d ]{12,21})`")
+
+    for line in text.split(NL):
+        h = line.strip()
+        if h.startswith("**Valid test PANs") or (h.startswith("- `") and "·" in h):
+            out["Luhn valide"][2].extend(PAN.findall(h))
+        elif h.startswith("**Invalid (Luhn-fails):**"):
+            out["Luhn invalide"][2].extend(PAN.findall(h))
+        elif h.startswith("**Valid example:**"):
+            m = re.search(r"`([A-Z]{2}[0-9A-Z ]{10,})`", h)
+            if m:
+                out["IBAN valide"][2].append(m.group(1))
+        elif h.startswith("**Edge cases to generate:**"):
+            # Le panier est une annotation en clair APRES la valeur, et sa forme varie :
+            #   `2024-02-29` (leap, valid)        -> entre parentheses
+            #   (`2023-04-31` invalid)            -> hors parentheses, la valeur etant DANS
+            #                                        la parenthese d'un autre propos
+            # Une premiere version exigeait la parenthese et perdait silencieusement le
+            # troisieme cas. On lit donc les ~40 caracteres qui suivent, jusqu'a la valeur
+            # suivante, et on refuse de classer si aucun des deux mots n'apparait.
+            for m in re.finditer(r"`(\d{4}-\d{2}-\d{2}|\d{4}-\d{3})`", h):
+                value = m.group(1)
+                tail = h[m.end():m.end() + 40].split("`")[0].lower()
+                if "invalid" in tail or "non-leap" in tail:
+                    out["date impossible"][2].append(value)
+                elif "valid" in tail:
+                    out["date valide"][2].append(value)
+                # sans annotation lisible : la ligne ne classe pas, on ne devine pas
+    return out
+
+
 ORACLES = os.path.join("eval", "oracles-2026-08-09")
 
 
@@ -147,11 +188,15 @@ def main():
     text = io.open(LIB, encoding="utf-8").read()
 
     bad, checked = [], 0
-    for label, (fn, expected, values) in CLAIMS.items():
+    # Les paniers viennent du FICHIER. `CLAIMS` ne sert plus qu'a exiger qu'aucune section ne
+    # disparaisse : une bibliotheque videe de sa section Luhn ne doit pas passer pour saine.
+    parsed = parse_computable_claims(text)
+    for label, (fn, expected, values) in parsed.items():
+        if not values:
+            bad.append((label, "-", "aucune valeur lue dans library.md -- section absente ou "
+                                    "illisible, le controle porterait sur du vide"))
+            continue
         for v in values:
-            if v not in text:
-                bad.append((label, v, "ABSENTE de library.md -- le controle porte sur du vide"))
-                continue
             got = fn(v)
             checked += 1
             if got is not expected:

@@ -54,14 +54,32 @@ sign-off; the name is an interface convenience and must never become an implied 
 
 No agent approves a release. They produce evidence and a proposed verdict; a human decides.
 
-## Tool scoping
+## Tool scoping — and what it is NOT
 
-The judges (**Camille**, **Elian**) are **read-only**: `Read`, `Glob`, `Grep`. They cannot write a
-file, run a command or reach the network. A judge that can edit the artefact it grades is not a
-judge.
+The judges (**Camille**, **Elian**) declare `tools: Read, Glob, Grep`. The producers declare write
+access scoped to what they generate, and only **Marek** and **Yuki** declare `Bash`, because
+running a suite is their job.
 
-The producers hold write access scoped to what they generate, and none of them holds `Bash` except
-**Marek** and **Yuki**, which have to run a test suite to do their job at all.
+**`tools:` is a request to the harness, not a capability boundary.** This paragraph previously
+claimed the judges "cannot write a file, run a command or reach the network". That sentence was
+false, and it was disproved by the first agent ever launched from this tier: running as
+`elian-refuter` — whose frontmatter lists three read-only tools — it executed `python`, `git`,
+`cp` and `rm -rf`, wrote files, and reached the network. It said so in its own report.
+
+What the declaration actually buys you:
+
+- **an audited intent** — the file states what the agent is supposed to need, so a reviewer can
+  see a widening in a diff;
+- **whatever the harness chooses to enforce**, which varies and which this repository does not
+  control.
+
+What it does not buy you: containment. **Treat an agent file as you would a dependency — read its
+frontmatter and its body before installing it, and assume the tools listed are a floor, not a
+ceiling.**
+
+`eval/tools/check_agents_tier.py` guards the files in `agents-tier/agents/`. It cannot guard the
+copies you make into `.claude/agents/`, which is what your harness actually loads — once copied,
+they are yours and outside this repository's reach.
 
 ## Install
 
