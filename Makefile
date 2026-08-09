@@ -62,7 +62,7 @@ test: ## Joue la suite generee contre la demo (la demo doit tourner)
 FEATURE_EXCLUDES = -not -path './node_modules/*' -not -path '*/export/*' \
 	  -not -path './eval/concerns-zone-fixtures/*' -not -path './eval/gold-set/*' \
 	  -not -path './eval/goldset-hardened/*' -not -path './eval/baselines/*' \
-	  -not -path './eval/portability-2026-08-08/*'
+	  -not -path './eval/portability-2026-08-08/*' \n	  -not -path './eval/portability-2026-08-09/*'
 
 lint: ## Verifie les cahiers Gherkin comme le fait la CI
 	@test -d node_modules/gherkin-lint || npm ci --no-audit --no-fund --silent

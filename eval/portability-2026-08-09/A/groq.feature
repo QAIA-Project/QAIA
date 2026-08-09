@@ -1,0 +1,288 @@
+Feature: US-004 Report Management
+  # US-004: Report Management
+  @use-case @US-004
+
+  Background:
+    Given a report with a valid format
+
+  # AC1 - State Transition
+  @AC1
+  Scenario: AC1-C1 - Draft to submitted with valid data succeeds
+    Given a report in draft state
+    When the user submits the report with valid data
+    Then the report is in submitted state
+    And the report is editable
+    @P2 @state-transition @QAIA-US-004-001
+    # AC1-C1: US-004 → AC1 → AC1-C1
+
+  Scenario: AC1-C2 - Submitted to changes-requested to draft
+    Given a report in submitted state
+    When the user requests changes
+    Then the report is in draft state
+    And the report is editable
+    @P2 @state-transition @QAIA-US-004-002
+    # AC1-C2: US-004 → AC1 → AC1-C2
+
+  Scenario: AC1-C3 - Draft to submitted after changes
+    Given a report in draft state
+    When the user submits the report after changes
+    Then the report is in submitted state
+    And the report is not editable
+    @P2 @state-transition @QAIA-US-004-003
+    # AC1-C3: US-004 → AC1 → AC1-C3
+
+  Scenario: AC1-C4 - Submitting a non-draft report is refused
+    Given a report in submitted state
+    When the user submits the report
+    Then the submission is refused
+    @P2 @state-transition @negative @QAIA-US-004-004
+    # AC1-C4: US-004 → AC1 → AC1-C4
+
+  Scenario: AC1-C5 - Editing a non-draft report is refused
+    Given a report in submitted state
+    When the user edits the report
+    Then the edit is refused
+    @P2 @state-transition @negative @QAIA-US-004-005
+    # AC1-C5: US-004 → AC1 → AC1-C5
+
+  Scenario: AC1-C6 - Rejecting a draft report is refused
+    Given a report in draft state
+    When the user rejects the report
+    Then the rejection is refused
+    @P1 @state-transition @low-confidence @QAIA-US-004-006
+    # AC1-C6: US-004 → AC1 → AC1-C6
+
+  # AC2 - Boundary and Decision Table
+  @AC2
+  Scenario: AC2-C1 - Total just under €500
+    Given a report with a total just under €500
+    When the user submits the report
+    Then the report requires 1 approval
+    @P1 @boundary @QAIA-US-004-007
+    # AC2-C1: US-004 → AC2 → AC2-C1
+
+  Scenario: AC2-C2 - Total exactly €500
+    Given a report with a total exactly €500
+    When the user submits the report
+    Then the report requires 2 approvals
+    @P1 @boundary @low-confidence @QAIA-US-004-008
+    # AC2-C2: US-004 → AC2 → AC2-C2
+
+  Scenario: AC2-C3 - Total exactly €5000
+    Given a report with a total exactly €5000
+    When the user submits the report
+    Then the report requires 2 approvals
+    @P1 @boundary @low-confidence @QAIA-US-004-009
+    # AC2-C3: US-004 → AC2 → AC2-C3
+
+  Scenario: AC2-C4 - Total just above €5000
+    Given a report with a total just above €5000
+    When the user submits the report
+    Then the report requires 3 approvals
+    @P1 @boundary @QAIA-US-004-010
+    # AC2-C4: US-004 → AC2 → AC2-C4
+
+  Scenario: AC2-C5 - Out-of-order approval
+    Given a report in submitted state
+    When the user approves the report out of order
+    Then the approval is refused
+    @P1 @decision-table @negative @QAIA-US-004-011
+    # AC2-C5: US-004 → AC2 → AC2-C5
+
+  # AC3 - Decision Table
+  @AC3
+  Scenario: AC3-C1 - Self-approval
+    Given a report in submitted state
+    When the user approves their own report
+    Then the approval is refused
+    @P1 @decision-table @negative @QAIA-US-004-012
+    # AC3-C1: US-004 → AC3 → AC3-C1
+
+  Scenario: AC3-C2 - Manager submits report
+    Given a report in submitted state
+    When the manager submits the report
+    Then the report requires finance approval
+    @P1 @decision-table @low-confidence @QAIA-US-004-013
+    # AC3-C2: US-004 → AC3 → AC3-C2
+
+  Scenario: AC3-C3 - Manager submits report above €5000
+    Given a report in submitted state
+    When the manager submits the report above €5000
+    Then the report requires finance and director approvals
+    @P1 @decision-table @low-confidence @QAIA-US-004-014
+    # AC3-C3: US-004 → AC3 → AC3-C3
+
+  Scenario: AC3-C4 - Finance submits report
+    Given a report in submitted state
+    When the finance user submits the report
+    Then the report requires director approval
+    @P1 @decision-table @low-confidence @QAIA-US-004-015
+    # AC3-C4: US-004 → AC3 → AC3-C4
+
+  # AC4 - Equivalence Partitioning and Boundary
+  @AC4
+  Scenario: AC4-C1 - Line missing category, amount, or date
+    Given a report with a line missing category, amount, or date
+    When the user submits the report
+    Then the submission is refused
+    @P3 @ep @negative @QAIA-US-004-016
+    # AC4-C1: US-004 → AC4 → AC4-C1
+
+  Scenario: AC4-C2 - Line dated exactly 90 days ago
+    Given a report with a line dated exactly 90 days ago
+    When the user submits the report
+    Then the report is accepted
+    @P2 @boundary @low-confidence @QAIA-US-004-017
+    # AC4-C2: US-004 → AC4 → AC4-C2
+
+  Scenario: AC4-C3 - Line dated 91 days ago
+    Given a report with a line dated 91 days ago
+    When the user submits the report
+    Then the submission is refused
+    @P2 @boundary @negative @QAIA-US-004-018
+    # AC4-C3: US-004 → AC4 → AC4-C3
+
+  # AC5 - Boundary Value Analysis
+  @AC5
+  Scenario: AC5-C1 - Line just under €25 threshold
+    Given a report with a line just under €25 threshold
+    When the user submits the report
+    Then the report is accepted
+    @P2 @boundary @QAIA-US-004-019
+    # AC5-C1: US-004 → AC5 → AC5-C1
+
+  Scenario: AC5-C2 - Line exactly at €25 threshold
+    Given a report with a line exactly at €25 threshold
+    When the user submits the report
+    Then the submission is refused
+    @P1 @boundary @negative @QAIA-US-004-020
+    # AC5-C2: US-004 → AC5 → AC5-C2
+
+  Scenario: AC5-C3 - Line above €25 threshold
+    Given a report with a line above €25 threshold
+    When the user submits the report
+    Then the report is accepted
+    @P3 @ep @QAIA-US-004-021
+    # AC5-C3: US-004 → AC5 → AC5-C3
+
+  Scenario: AC5-C4 - Non-EUR line below €25 threshold
+    Given a report with a non-EUR line below €25 threshold
+    When the user submits the report
+    Then the submission is refused
+    @P1 @boundary @negative @low-confidence @QAIA-US-004-022
+    # AC5-C4: US-004 → AC5 → AC5-C4
+
+  # AC6 - Equivalence Partitioning and Error Guessing
+  @AC6
+  Scenario: AC6-C1 - Non-EUR report conversion
+    Given a report with a non-EUR total
+    When the user submits the report
+    Then the report is converted correctly
+    @P1 @ep @QAIA-US-004-023
+    # AC6-C1: US-004 → AC6 → AC6-C1
+
+  Scenario: AC6-C2 - No resolvable rate
+    Given a report with a currency and date with no resolvable rate
+    When the user submits the report
+    Then the submission is refused
+    @P1 @error-guessing @negative @low-confidence @QAIA-US-004-024
+    # AC6-C2: US-004 → AC6 → AC6-C2
+
+  Scenario: AC6-C3 - Weekend or holiday gap
+    Given a report with a currency and date in a weekend or holiday gap
+    When the user submits the report
+    Then the report is accepted with a stale rate
+    @P1 @error-guessing @low-confidence @QAIA-US-004-025
+    # AC6-C3: US-004 → AC6 → AC6-C3
+
+  Scenario: AC6-C4 - Manager submits non-EUR report above €5000
+    Given a report in submitted state
+    When the manager submits a non-EUR report above €5000
+    Then the report requires finance and director approvals
+    @P1 @decision-table @low-confidence @QAIA-US-004-026
+    # AC6-C4: US-004 → AC6 → AC6-C4
+
+  # AC7 - State Transition (Terminal)
+  @AC7
+  Scenario: AC7-C1 - Rejected report cannot be edited
+    Given a report in rejected state
+    When the user edits the report
+    Then the edit is refused
+    @P2 @state-transition @negative @QAIA-US-004-027
+    # AC7-C1: US-004 → AC7 → AC7-C1
+
+  Scenario: AC7-C2 - Rejected report cannot be re-submitted
+    Given a report in rejected state
+    When the user re-submits the report
+    Then the re-submission is refused
+    @P2 @state-transition @negative @QAIA-US-004-028
+    # AC7-C2: US-004 → AC7 → AC7-C2
+
+  # AC8 - Boundary and Error Guessing
+  @AC8
+  Scenario: AC8-C1 - Rejecting without comment
+    Given a report in submitted state
+    When the user rejects the report without comment
+    Then the rejection is refused
+    @P2 @boundary @negative @QAIA-US-004-029
+    # AC8-C1: US-004 → AC8 → AC8-C1
+
+  Scenario: AC8-C2 - Requesting changes without comment
+    Given a report in submitted state
+    When the user requests changes without comment
+    Then the request is refused
+    @P2 @boundary @negative @QAIA-US-004-030
+    # AC8-C2: US-004 → AC8 → AC8-C2
+
+  Scenario: AC8-C3 - Comment exactly 10 characters
+    Given a report in submitted state
+    When the user rejects the report with a comment exactly 10 characters
+    Then the rejection is accepted
+    @P2 @boundary @QAIA-US-004-031
+    # AC8-C3: US-004 → AC8 → AC8-C3
+
+  Scenario: AC8-C4 - Approving without comment
+    Given a report in submitted state
+    When the user approves the report without comment
+    Then the approval is accepted
+    @P3 @ep @QAIA-US-004-032
+    # AC8-C4: US-004 → AC8 → AC8-C4
+
+  Scenario: AC8-C5 - Every transition is recorded
+    Given a report in submitted state
+    When the user approves or rejects the report
+    Then the transition is recorded in the audit trail
+    @P1 @error-guessing @QAIA-US-004-033
+    # AC8-C5: US-004 → AC8 → AC8-C5
+
+  # Cross-cutting - Authorization and Server-side Enforcement
+  @AC-auth
+  Scenario: AC-auth-C1 - Creating a report without authentication
+    Given a user without authentication
+    When the user creates a report
+    Then the creation is refused
+    @P2 @error-guessing @negative @QAIA-US-004-034
+    # AC-auth-C1: US-004 → AC-auth → AC-auth-C1
+
+  Scenario: AC-auth-C2 - Deciding on a report without authentication
+    Given a user without authentication
+    When the user decides on a report
+    Then the decision is refused
+    @P2 @error-guessing @negative @QAIA-US-004-035
+    # AC-auth-C2: US-004 → AC-auth → AC-auth-C2
+
+  Scenario: AC-auth-C3 - Employee attempting to edit another employee's draft
+    Given an employee without permission
+    When the employee attempts to edit another employee's draft
+    Then the edit is refused without disclosure
+    @P1 @error-guessing @negative @QAIA-US-004-036
+    # AC-auth-C3: US-004 → AC-auth → AC-auth-C3
+
+  # AC-list - List View
+  @AC-list
+  Scenario: AC-list-C1 - Employee with no reports sees an empty state
+    Given an employee with no reports
+    When the employee views their reports
+    Then the employee sees an empty state
+    @P3 @ep @QAIA-US-004-037
+    # AC-list-C1: US-004 → AC-list → AC-list-C1

@@ -1,0 +1,251 @@
+Feature: Expense Report Lifecycle and Approval
+
+  # AC1 — Core state transitions
+  @QAIA-US-004-001 @AC1 @P2 @state-transition
+  Scenario: Submit a draft report successfully
+    Given a user has a report in draft state
+    When they submit the report with valid data
+    Then the report transitions to submitted state
+
+  @QAIA-US-004-002 @AC1 @P2 @state-transition
+  Scenario: Re-enter draft after changes-requested
+    Given a report is in changes-requested state
+    When the submitter edits the report and saves as draft
+    Then the report transitions to draft state
+
+  @QAIA-US-004-003 @AC1 @P2 @state-transition
+  Scenario: Edit and resubmit a draft after changes-requested
+    Given a report is in draft state after changes-requested
+    When the submitter edits the report and submits again
+    Then the report transitions to submitted state
+
+  @QAIA-US-004-004 @AC1 @P2 @state-transition @negative
+  Scenario: Refuse submission from non-draft state
+    Given a report is in submitted state
+    When the submitter attempts to submit again
+    Then the submission is refused with status error
+
+  @QAIA-US-004-005 @AC1 @P2 @state-transition @negative
+  Scenario: Refuse editing of non-draft report
+    Given a report is in submitted state
+    When the submitter attempts to edit the report
+    Then the edit is refused with status error
+
+  @QAIA-US-004-006 @AC1 @P1 @state-transition @negative @low-confidence
+  # AC1-C6 — Q3: rejecting a draft report is refused
+  Scenario: Refuse rejection of draft report
+    Given a report is in draft state
+    When an approver attempts to reject the report
+    Then the rejection is refused with status error
+
+  # AC2 — Approval chain by amount bands
+  @QAIA-US-004-007 @AC2 @P1 @boundary
+  Scenario: Approve report under €500 with manager approval
+    Given a report totals €499.99
+    When the manager approves the report
+    Then the report transitions to approved state
+
+  @QAIA-US-004-008 @AC2 @P1 @boundary @low-confidence
+  # AC2-C2 — Q1: exact €500 requires two approvals
+  Scenario: Approve report at exactly €500 with two approvals
+    Given a report totals €500.00
+    When the manager approves the report
+    And the finance approver approves the report
+    Then the report transitions to approved state
+
+  @QAIA-US-004-009 @AC2 @P1 @boundary @low-confidence
+  # AC2-C3 — Q1: exact €5000 requires two approvals
+  Scenario: Approve report at exactly €5000 with two approvals
+    Given a report totals €5000.00
+    When the manager approves the report
+    And the finance approver approves the report
+    Then the report transitions to approved state
+
+  @QAIA-US-004-010 @AC2 @P1 @boundary
+  Scenario: Approve report over €5000 with three approvals
+    Given a report totals €5000.01
+    When the manager approves the report
+    And the finance approver approves the report
+    And the director approves the report
+    Then the report transitions to approved state
+
+  @QAIA-US-004-011 @AC2 @P1 @decision-table @negative
+  Scenario: Refuse out-of-order approval attempt
+    Given a report totals €5000.01 and is awaiting manager approval
+    When the finance approver attempts to approve the report
+    Then the approval is refused with status error
+
+  # AC3 — Self-approval and skip-level escalation
+  @QAIA-US-004-012 @AC3 @P1 @decision-table @negative
+  Scenario: Refuse self-approval of a report
+    Given a user is the submitter of a report
+    When they attempt to approve their own report
+    Then the approval is refused with status error
+
+  @QAIA-US-004-013 @AC3 @P1 @decision-table @low-confidence
+  # AC3-C2 — Q2: manager <€500 escalates to finance
+  Scenario: Manager submits report under €500 escalates to finance
+    Given a manager submits a report totaling €499.99
+    When the report is submitted
+    Then the next approver is finance (not manager)
+
+  @QAIA-US-004-014 @AC3 @P1 @decision-table @low-confidence
+  # AC3-C3 — Q2: manager >€5000 skips manager step
+  Scenario: Manager submits report over €5000 skips manager step
+    Given a manager submits a report totaling €5000.01
+    When the report is submitted
+    Then the next approver is finance (manager step skipped)
+
+  @QAIA-US-004-015 @AC3 @P1 @decision-table @low-confidence
+  # AC3-C4 — Q8: finance submitter generalizes skip rule
+  Scenario: Finance user submits report requiring finance sign-off
+    Given a finance user submits a report that would require finance approval
+    When the report is submitted
+    Then the next approver is director (finance step skipped)
+
+  # AC4 — Line completeness and 90-day boundary
+  @QAIA-US-004-016 @AC4 @P3 @ep @negative
+  Scenario: Refuse submission with incomplete line data
+    Given a report line is missing category, amount, or date
+    When the report is submitted
+    Then the submission is refused with validation error
+
+  @QAIA-US-004-017 @AC4 @P2 @boundary @low-confidence
+  # AC4-C2 — Q5: line dated exactly 90 days ago is accepted
+  Scenario: Accept line dated exactly 90 days ago
+    Given a report line is dated exactly 90 days ago
+    When the report is submitted
+    Then the line is accepted
+
+  @QAIA-US-004-018 @AC4 @P2 @boundary @negative
+  Scenario: Block line dated 91 days ago
+    Given a report line is dated 91 days ago
+    When the report is submitted
+    Then the line is blocked with an explanatory message
+
+  # AC5 — Receipt threshold boundary
+  @QAIA-US-004-019 @AC5 @P2 @boundary
+  Scenario: Accept line just under €25 receipt threshold without receipt
+    Given a line totals €24.99 and has no receipt
+    When the report is submitted
+    Then the line is accepted
+
+  @QAIA-US-004-020 @AC5 @P1 @boundary @negative
+  Scenario: Refuse line at exactly €25 receipt threshold without receipt
+    Given a line totals €25.00 and has no receipt
+    When the report is submitted
+    Then the line is refused with receipt required message
+
+  @QAIA-US-004-021 @AC5 @P3 @ep
+  Scenario: Accept line with receipt attached
+    Given a line totals €30.00 and has a receipt attached
+    When the report is submitted
+    Then the line is accepted
+
+  @QAIA-US-004-022 @AC5 @P1 @boundary @negative @low-confidence
+  # AC5-C4 — Q6: non-EUR line with EUR-equivalent ≥ €25 refused without receipt
+  Scenario: Refuse non-EUR line with EUR-equivalent ≥ €25 without receipt
+    Given a line has face value 24 in non-EUR currency whose EUR-equivalent is €25.00 and has no receipt
+    When the report is submitted
+    Then the line is refused with receipt required message
+
+  # AC6 — Currency conversion and rate handling
+  @QAIA-US-004-023 @AC6 @P1 @ep
+  Scenario: Convert non-EUR report total correctly to EUR for banding
+    Given a non-EUR report totals 5000 in its currency
+    And the conversion rate is 1.0
+    When the report is submitted
+    Then the converted total is €5000.00 and drives the approval chain
+
+  @QAIA-US-004-024 @AC6 @P1 @error-guessing @negative @low-confidence
+  # AC6-C2 — Q4: refuse submission when no resolvable rate exists
+  Scenario: Refuse submission when currency/date has no resolvable rate
+    Given a report uses a currency/date pair with no available rate
+    When the report is submitted
+    Then the submission is refused with rate unavailable message
+
+  @QAIA-US-004-025 @AC6 @P1 @error-guessing @low-confidence
+  # AC6-C3 — Q4: accept report using last available prior rate for weekend/holiday
+  Scenario: Accept report using last available prior rate for weekend/holiday gap
+    Given a report is dated on a weekend/holiday with no exact-date rate
+    When the report is submitted
+    Then the report is accepted with rateStale flag set
+
+  @QAIA-US-004-026 @AC6 @P1 @decision-table @low-confidence
+  # AC6-C4 — Q7: stale fallback rate drives band and escalation correctly
+  Scenario: Stale fallback rate drives band and self-approval escalation
+    Given a manager submits a foreign-currency report with a stale fallback rate
+    And the converted total is €5000.01
+    When the report is submitted
+    Then the report drives the €5000.01 band requiring three approvals
+    And the manager step is skipped due to escalation rules
+
+  # AC7 — Terminal state enforcement
+  @QAIA-US-004-027 @AC7 @P2 @state-transition @negative
+  Scenario: Refuse editing of rejected report
+    Given a report is in rejected state
+    When the submitter attempts to edit the report
+    Then the edit is refused with status error
+
+  @QAIA-US-004-028 @AC7 @P2 @state-transition @negative
+  Scenario: Refuse resubmission of rejected report
+    Given a report is in rejected state
+    When the submitter attempts to submit the report again
+    Then the submission is refused with status error
+
+  # AC8 — Audit trail completeness
+  @QAIA-US-004-029 @AC8 @P2 @boundary @negative
+  Scenario: Refuse rejection without comment
+    Given a report is in submitted state
+    When an approver rejects the report without a comment
+    Then the rejection is refused with comment required message
+
+  @QAIA-US-004-030 @AC8 @P2 @boundary @negative
+  Scenario: Refuse changes-requested without comment
+    Given a report is in submitted state
+    When an approver requests changes without a comment
+    Then the request is refused with comment required message
+
+  @QAIA-US-004-031 @AC8 @P2 @boundary
+  Scenario: Accept comment of exactly 10 characters
+    Given a report is in submitted state
+    When an approver requests changes with a 10-character comment
+    Then the request is accepted
+
+  @QAIA-US-004-032 @AC8 @P3 @ep
+  Scenario: Approve report without requiring a comment
+    Given a report is in submitted state
+    When an approver approves the report
+    Then the approval is accepted
+
+  @QAIA-US-004-033 @AC8 @P1 @error-guessing
+  Scenario: Record complete audit trail for all transitions
+    Given a report undergoes create, submit, approve, reject, and changes-requested transitions
+    When each transition occurs
+    Then the audit trail records who and when performed each action
+
+  # Cross-cutting authorization and IDOR
+  @QAIA-US-004-034 @AC-auth @P2 @error-guessing @negative
+  Scenario: Refuse report creation without authentication
+    Given no authenticated user session exists
+    When a user attempts to create a report
+    Then the creation is refused with 401 unauthorized
+
+  @QAIA-US-004-035 @AC-auth @P2 @error-guessing @negative
+  Scenario: Refuse decision on report without authentication
+    Given no authenticated user session exists
+    When a user attempts to approve or reject a report
+    Then the decision is refused with 401 unauthorized
+
+  @QAIA-US-004-036 @AC-auth @P1 @error-guessing @negative
+  Scenario: Refuse editing of another employee's draft report
+    Given an employee attempts to edit another employee's draft report
+    When the edit is attempted
+    Then the edit is refused with 404 not found
+
+  # List view
+  @QAIA-US-004-037 @AC-list @P3 @ep
+  Scenario: Show empty state when employee has no reports
+    Given an employee has no reports
+    When they view their reports list
+    Then they see an explicit empty state message

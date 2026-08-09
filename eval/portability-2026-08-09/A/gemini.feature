@@ -1,0 +1,302 @@
+# Feature: US-004 - Expense Report Submission & Approval Workflow
+Feature: US-004 Expense Report Submission and Approval Workflow
+
+  Background:
+    Given the expense management system is operational
+    And default currency conversion rates are configured
+
+  # Journey E2E scenario
+  @QAIA-US-004-001 @AC1 @P1 @smoke
+  Scenario: End-to-end expense report creation, submission, and multi-level approval
+    Given an employee has created a draft expense report with a total of 600.00 EUR and valid receipts
+    When the employee submits the expense report for approval
+    Then the expense report progresses through manager approval and finance approval to reach approved status
+
+  # AC1-C1
+  @QAIA-US-004-002 @AC1 @P2 @ep
+  Scenario: Submit a valid draft expense report
+    Given an employee has a draft expense report with complete line items
+    When the employee submits the draft expense report
+    Then the report status changes to submitted
+
+  # AC1-C2
+  @QAIA-US-004-003 @AC1 @P2 @state-transition
+  Scenario: Transition submitted report to changes-requested and verify it returns to draft
+    Given a submitted expense report is under review by a manager
+    When the manager requests changes on the expense report with a valid comment
+    Then the report status changes to draft and the report becomes editable again
+
+  # AC1-C3
+  @QAIA-US-004-004 @AC1 @P2 @state-transition
+  Scenario: Edit and re-submit a report returned to draft status
+    Given an expense report in draft status following a changes-requested decision
+    And the employee has updated the requested expense lines
+    When the employee re-submits the expense report
+    Then the report status changes to submitted
+
+  # AC1-C4
+  @QAIA-US-004-005 @AC1 @P2 @state-transition @negative
+  Scenario: Refuse submission of an expense report that is not in draft status
+    Given an expense report that is currently in submitted status
+    When the employee attempts to submit the expense report again
+    Then the submission request is refused with a invalid status error
+
+  # AC1-C5
+  @QAIA-US-004-006 @AC1 @P2 @state-transition @negative
+  Scenario: Refuse editing of an expense report that is not in draft status
+    Given an expense report that is currently in submitted status
+    When the employee attempts to modify a line item on the report
+    Then the edit action is refused with a read-only error
+
+  # AC1-C6
+  # open: Q3
+  @QAIA-US-004-007 @AC1 @P1 @state-transition @negative @low-confidence
+  Scenario: Refuse approval decision on a draft expense report
+    Given an expense report that is currently in draft status
+    When a manager attempts to reject the expense report
+    Then the decision is refused because only submitted reports accept decisions
+
+  # AC2-C1
+  @QAIA-US-004-008 @AC2 @P1 @boundary
+  Scenario: Expense report total just under 500 EUR requires manager approval only
+    Given an employee submits an expense report totaling 499.99 EUR
+    When the workflow evaluates the approval chain for the report
+    Then the required approval chain is set to manager only
+
+  # AC2-C2
+  # open: Q1
+  @QAIA-US-004-009 @AC2 @P1 @boundary @low-confidence
+  Scenario: Expense report total exactly 500 EUR requires manager and finance approval
+    Given an employee submits an expense report totaling 500.00 EUR
+    When the workflow evaluates the approval chain for the report
+    Then the required approval chain is set to manager then finance
+
+  # AC2-C3
+  # open: Q1
+  @QAIA-US-004-010 @AC2 @P1 @boundary @low-confidence
+  Scenario: Expense report total exactly 5000 EUR requires manager and finance approval
+    Given an employee submits an expense report totaling 5000.00 EUR
+    When the workflow evaluates the approval chain for the report
+    Then the required approval chain is set to manager then finance
+
+  # AC2-C4
+  @QAIA-US-004-011 @AC2 @P1 @boundary
+  Scenario: Expense report total just above 5000 EUR requires three approval levels
+    Given an employee submits an expense report totaling 5000.01 EUR
+    When the workflow evaluates the approval chain for the report
+    Then the required approval chain is set to manager then finance then director
+
+  # AC2-C5
+  @QAIA-US-004-012 @AC2 @P1 @decision-table @negative
+  Scenario: Refuse out-of-order approval attempt in approval chain
+    Given an expense report totaling 1000.00 EUR awaiting manager approval
+    When a finance user attempts to approve the report before the manager
+    Then the approval action is refused as out-of-order
+
+  # AC3-C1
+  @QAIA-US-004-013 @AC3 @P1 @decision-table @negative
+  Scenario: Refuse self-approval of an expense report
+    Given a manager has submitted their own expense report totaling 300.00 EUR
+    When the manager attempts to approve their own expense report
+    Then the approval action is refused with a self-approval forbidden error
+
+  # AC3-C2
+  # open: Q2
+  @QAIA-US-004-014 @AC3 @P1 @decision-table @low-confidence
+  Scenario: Manager self-submitted report under 500 EUR escalates manager step to finance
+    Given a manager submits their own expense report totaling 350.00 EUR
+    When the workflow evaluates the approval chain for the report
+    Then the manager step is replaced by finance, setting required approver to finance
+
+  # AC3-C3
+  # open: Q2
+  @QAIA-US-004-015 @AC3 @P1 @decision-table @low-confidence
+  Scenario: Manager self-submitted report over 5000 EUR drops manager step and retains remaining chain
+    Given a manager submits their own expense report totaling 6000.00 EUR
+    When the workflow evaluates the approval chain for the report
+    Then the manager step is removed, setting required approval chain to finance then director
+
+  # AC3-C4
+  # open: Q8
+  @QAIA-US-004-016 @AC3 @P1 @decision-table @low-confidence
+  Scenario: Finance user self-submitted report requiring finance approval escalates step to director
+    Given a finance team member submits their own expense report totaling 800.00 EUR
+    When the workflow evaluates the approval chain for the report
+    Then the finance step is replaced by director, setting required approver to director
+
+  # AC4-C1
+  @QAIA-US-004-017 @AC4 @P3 @ep @negative
+  Scenario Outline: Refuse submission of an expense report with incomplete line items
+    Given a draft expense report containing a line with <missing_field> missing
+    When the employee attempts to submit the expense report
+    Then the submission is refused with a line validation error
+
+    Examples:
+      | missing_field |
+      | category      |
+      | amount        |
+      | date          |
+
+  # AC4-C2
+  # open: Q5
+  @QAIA-US-004-018 @AC4 @P2 @boundary @low-confidence
+  Scenario: Expense line dated exactly 90 days ago is accepted
+    Given an expense line dated exactly 90 days before today's server date
+    When the employee submits the expense report
+    Then the expense line is accepted for submission
+
+  # AC4-C3
+  @QAIA-US-004-019 @AC4 @P2 @boundary @negative
+  Scenario: Refuse expense line dated 91 days ago
+    Given an expense line dated 91 days before today's server date
+    When the employee attempts to submit the expense report
+    Then the submission is refused with an expense age limit exceeded error
+
+  # AC5-C1
+  @QAIA-US-004-020 @AC5 @P2 @boundary
+  Scenario: Expense line under 25 EUR without receipt is accepted
+    Given an expense line of 24.99 EUR without an attached receipt
+    When the employee submits the expense report
+    Then the expense report is submitted successfully
+
+  # AC5-C2
+  @QAIA-US-004-021 @AC5 @P1 @boundary @negative
+  Scenario: Refuse expense line at exactly 25 EUR without receipt
+    Given an expense line of 25.00 EUR without an attached receipt
+    When the employee attempts to submit the expense report
+    Then the submission is refused with a missing receipt error
+
+  # AC5-C3
+  @QAIA-US-004-022 @AC5 @P3 @ep
+  Scenario: Expense line equal or above 25 EUR with receipt is accepted
+    Given an expense line of 50.00 EUR with a valid receipt attached
+    When the employee submits the expense report
+    Then the expense report is submitted successfully
+
+  # AC5-C4
+  # open: Q6
+  @QAIA-US-004-023 @AC5 @P1 @boundary @negative @low-confidence
+  Scenario: Refuse non-EUR expense line whose converted total is at or above 25 EUR without receipt
+    Given an expense line of 20.00 USD converting to 25.50 EUR without an attached receipt
+    When the employee attempts to submit the expense report
+    Then the submission is refused with a missing receipt error based on EUR equivalent
+
+  # AC6-C1
+  @QAIA-US-004-024 @AC6 @P1 @ep
+  Scenario: Convert foreign currency expenses to EUR and determine approval band
+    Given an expense report with lines in USD converted to 600.00 EUR
+    When the workflow calculates the report total
+    Then the total is recorded as 600.00 EUR and requires manager and finance approvals
+
+  # AC6-C2
+  # open: Q4
+  @QAIA-US-004-025 @AC6 @P1 @error-guessing @negative @low-confidence
+  Scenario: Refuse submission when exchange rate for currency and date is unresolvable
+    Given an expense line in an unknown foreign currency with no exchange rate available
+    When the employee attempts to submit the expense report
+    Then the submission is refused with an exchange rate unavailable error
+
+  # AC6-C3
+  # open: Q4
+  @QAIA-US-004-026 @AC6 @P1 @error-guessing @low-confidence
+  Scenario: Fall back to last available rate for weekend or holiday expense date
+    Given an expense line in USD dated on a Sunday where no exact exchange rate exists
+    When the employee submits the expense report
+    Then the report uses the last available Friday exchange rate and is flagged as rateStale
+
+  # AC6-C4
+  # open: Q7
+  @QAIA-US-004-027 @AC6 @P1 @decision-table @low-confidence
+  Scenario: Foreign currency conversion via fallback rate drives band calculation and self-approval escalation
+    Given a manager submits a USD expense report converting via a stale fallback rate to 505.00 EUR
+    When the workflow processes the report total
+    Then the converted total of 505.00 EUR is flagged rateStale and sets the approval chain to finance and director
+
+  # AC7-C1
+  @QAIA-US-004-028 @AC7 @P2 @state-transition @negative
+  Scenario: Refuse editing of a rejected expense report
+    Given an expense report in rejected status
+    When the employee attempts to edit a line item on the rejected report
+    Then the edit action is refused with a terminal state error
+
+  # AC7-C2
+  @QAIA-US-004-029 @AC7 @P2 @state-transition @negative
+  Scenario: Refuse re-submission of a rejected expense report
+    Given an expense report in rejected status
+    When the employee attempts to submit the rejected report
+    Then the submission action is refused with a terminal state error
+
+  # AC8-C1
+  @QAIA-US-004-030 @AC8 @P2 @boundary @negative
+  Scenario Outline: Refuse rejection of expense report when comment is missing or under 10 characters
+    Given a submitted expense report awaiting manager decision
+    When the manager rejects the report with comment "<comment>"
+    Then the rejection is refused with a comment length requirement error
+
+    Examples:
+      | comment    |
+      |            |
+      | Short      |
+      | 123456789  |
+
+  # AC8-C2
+  @QAIA-US-004-031 @AC8 @P2 @boundary @negative
+  Scenario Outline: Refuse requesting changes when comment is missing or under 10 characters
+    Given a submitted expense report awaiting manager decision
+    When the manager requests changes with comment "<comment>"
+    Then the action is refused with a comment length requirement error
+
+    Examples:
+      | comment    |
+      |            |
+      | Fix this   |
+      | 123456789  |
+
+  # AC8-C3
+  @QAIA-US-004-032 @AC8 @P2 @boundary
+  Scenario: Accept rejection comment of exactly 10 characters
+    Given a submitted expense report awaiting manager decision
+    When the manager rejects the report with comment "1234567890"
+    Then the rejection is accepted and recorded in the audit trail
+
+  # AC8-C4
+  @QAIA-US-004-033 @AC8 @P3 @ep
+  Scenario: Approval decision does not require a comment
+    Given a submitted expense report awaiting manager decision
+    When the manager approves the report without providing a comment
+    Then the report is approved successfully
+
+  # AC8-C5
+  @QAIA-US-004-034 @AC8 @P1 @error-guessing
+  Scenario: Verify complete audit trail logging across status transitions
+    Given an expense report transitioning through create, submit, and approve actions
+    When the audit log for the expense report is retrieved
+    Then every transition entry contains the actor identity, action type, and exact timestamp
+
+  # AC-auth-C1
+  @QAIA-US-004-035 @AC1 @P2 @error-guessing @negative
+  Scenario: Refuse expense report creation without authentication
+    Given an unauthenticated request to create an expense report
+    When the creation request is sent to the server
+    Then the server responds with an HTTP 401 Unauthorized status
+
+  # AC-auth-C2
+  @QAIA-US-004-036 @AC2 @P2 @error-guessing @negative
+  Scenario: Refuse approval decision without authentication
+    Given an unauthenticated request to decide on a submitted expense report
+    When the decision request is sent to the server
+    Then the server responds with an HTTP 401 Unauthorized status
+
+  # AC-auth-C3
+  @QAIA-US-004-037 @AC1 @P1 @error-guessing @negative
+  Scenario: Refuse cross-user editing of draft report without leaking existence
+    Given an employee attempts to modify a draft expense report belonging to another employee
+    When the edit request is processed by the server
+    Then the server responds with an HTTP 404 Not Found status
+
+  # AC-list-C1
+  @QAIA-US-004-038 @AC1 @P3 @ep
+  Scenario: Display explicit empty state when employee has no expense reports
+    Given an employee with no existing expense reports logs into the system
+    When the employee views the My Reports list
+    Then an explicit empty state message is displayed

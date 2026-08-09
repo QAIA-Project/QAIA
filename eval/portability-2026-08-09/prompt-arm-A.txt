@@ -1,0 +1,383 @@
+---
+name: testbook-generate
+description: Generate the atomic Gherkin test book from prioritized test conditions - stable scenario IDs, coverage matrix, negative-ratio check, confidence marking - or regenerate by scenario-level diff when the US evolved, preserving human edits. Use when asked to write test cases or scenarios from a specification, to produce a test book or feature files, or to refresh an existing one after the requirement changed without losing hand-written edits. Sixth step of the QAIA journey.
+---
+
+# testbook-generate — the test book
+
+Follow the shared contract in `../README.md`. Prerequisites: `03-design.md` and
+`04-priorities.md` (else offer the missing step). Output directory: `.qaia/testbooks/<US-ID>/`.
+
+## Generation rules (non negotiable)
+
+- **Gherkin, English keywords — always, whatever the project language**: `Feature / Background /
+  Scenario / Scenario Outline / Given / When / Then / And / But`. Only the **prose inside a step**
+  follows the project language. A French project still writes `Scenario:`, never `Scénario:`.
+  This clause is explicit because the previous wording was not: a model given this skill emitted
+  `Scénario:` and `Etant donné`, producing an unparsable file, having read "project language" as
+  covering the keywords too. The ambiguity was ours.
+- **Atomic** — one scenario verifies exactly one behavior. No UI-step chains covering several
+  cases. **Exactly one `When` (the action) per scenario; outcomes live only in `Then`** — never
+  bury the action in a `Given` or the outcome in the `When`.
+  `Background` is for shared *state* setup only. `Scenario Outline` + `Examples` covers
+  partitions or boundaries of the *same* behavior, **merged only when all example rows share
+  the same priority and confidence** — otherwise split.
+- **Journey exception**: at most one end-to-end scenario per US (use-case technique), tagged
+  `@smoke`, single journey-level `Then`, excluded from atomicity accounting — see
+  `istqb-design`.
+- **Preconditions are declarative** ("Given a patient with 3 upcoming appointments"), never a
+  click-path. Data seeding belongs to the automation layer: generated tests must run standalone
+  outside the session, and environment or credential details never enter the test book.
+- **Stable IDs** — every scenario tagged `@QAIA-<US-ID>-<NNN>`, NNN never reused even after
+  deletion. Plus: `@AC<n>` (traceability), `@P1/@P2/@P3` (priority), `@negative` where
+  applicable, and **exactly one** technique tag from the closed list:
+  `@ep @boundary @domain-analysis @decision-table @state-transition @pairwise @crud
+  @metamorphic @ai-feature @error-guessing`.
+  The single journey scenario carries `@smoke` instead of a technique tag. `@use-case` is
+  retired — the technique it named no longer exists in the reference taxonomy `istqb-design`
+  follows, so it must not be emitted. Add `@low-confidence` when the scenario rests on an
+  `[assumption]` or `[open]` item.
+- **Every scenario cites its condition** (`AC2-C3`) in a comment line — the full chain
+  US → AC → condition → scenario.
+- **Negative coverage**: the blocking rule is the `[req-neg]` checklist of [ADR 0001](https://github.com/QAIA-Project/QAIA/blob/main/docs/adr/0001-negative-coverage-gate.md) (the
+  negative-path coverage gate) — every refusal, error or denial path has a scenario. The
+  **negative ratio is reported as context, never a gate.** Full doctrine, and why this is
+  laboured: `references/negative-ratio.md`.
+- **Generating on `[open]` items.** A covered condition flagged `[open]` still gets its
+  scenario, written with the *proposed safe default* from `02-understanding.md`, tagged
+  `@low-confidence`, with an inline comment citing the question ID (`# open: Q5`). Never invent
+  a different behavior, never skip silently. Waiving instead of generating is allowed only with
+  the user's recorded approval. **Never pad the negative ratio with invented cases** — if
+  reaching a target would need error-guessing scenarios not grounded in the source or knowledge
+  base, flag the shortfall instead of fabricating.
+
+## Emission contract — the shape of the file, not its content
+
+Everything above says **what** to produce. This section says **under what form**, because that
+half used to be implicit: it lived in the repository's linter configuration, which a host that
+is not Claude Code inside this repository cannot read. Measured on 2026-08-08 (issue #84): of
+four models given this skill and a real input, **two produced Gherkin that was correct on the
+substance and rejected by the linter** — every cause was a convention this file never stated.
+
+1. **Emit the file, nothing else.** No surrounding ``` fence, no preamble, no closing summary.
+   The output IS the `.feature` file. *(Two models out of four wrapped it in a code fence.)*
+
+2. **Exactly one real `Feature:` line, and it is not a comment.** A `# Feature: US-004` comment
+   line above it is a QAIA habit for carrying the US reference — it is **not** the declaration.
+   A file whose only `Feature` is commented out does not parse at all, and every scenario under
+   it is lost. *(One model copied our comment convention and omitted the declaration; a second
+   did the same after a first correction round — this is the most repeated failure of the four.)*
+
+3. **Indentation is structural, not cosmetic.** `Feature:` at column 0; `Background:`,
+   `Scenario:` and `Scenario Outline:` indented 2; every step (`Given/When/Then/And/But`) and
+   `Examples:` indented 4; example table rows indented 6. Tags sit on their own line at the same
+   indentation as the `Scenario:` they precede. *(One model produced structurally valid Gherkin
+   and failed on this alone.)*
+
+4. **English keywords, always** — already stated above, and restated here because it is part of
+   the same contract: `Feature / Background / Scenario / Scenario Outline / Given / When / Then /
+   And / But`, whatever the project language. Only the prose inside a step follows the project.
+
+5. **No trailing whitespace, one space between tags, no duplicate tag on a line.**
+
+### Who arbitrates
+
+This section is the rule **in prose, for a host that cannot read our configuration**. The
+repository's `gherkin-lint` configuration remains the **arbiter**: if the two ever disagree, the
+linter is right and this text is stale — say so rather than reconciling them by hand. The rules
+are deliberately *not* copied from that file. Two sources for one rule diverge; this project
+spent 2026-08-09 correcting five separate cases of exactly that, and will not create a sixth
+here.
+
+## Steps — initial generation
+
+1. **Scope check.** Confirm target coverage with the user: P1+P2 by default, P3 on request
+   (quota trade-off).
+2. **Duplicate scan.** Scan the project's committed `.feature` files (`.qaia/testbooks/` and any
+   test directories the user designates — nothing outside the project). List any scenario
+   already covering a condition and propose reuse. ⚠ VALIDATION on the reuse list.
+
+   **Always record the scan's outcome** in `coverage-matrix.md`'s "Reuse notes" column,
+   including "no duplicates found". A clean scan that leaves no trace is indistinguishable,
+   afterwards, from a scan that never ran — the negative result is as much a deliverable as the
+   positive one.
+3. **Generate per AC.** In Claude Code you may parallelize with one sub-agent per AC, each given
+   only: the AC, its conditions, relevant knowledge entries, and these generation rules. Each
+   sub-agent writes structured JSON to a temp file; only the aggregation enters the main
+   context — the sub-agents exist to keep raw material out of the main context, not merely to go
+   faster. Elsewhere, generate sequentially against the same output contract.
+4. **Consolidation pass** (mandatory, even sequential): unify vocabulary against
+   `knowledge/glossary.md` where it exists, merge redundant scenarios across ACs, factor a
+   common `Background`, verify every ID unique and every condition covered or explicitly waived.
+
+   If the knowledge base is absent, unify internally and **record "knowledge base absent" in
+   this skill's own `synthesis.md`**, not only by relying on an upstream checkpoint's note. The
+   redundancy is deliberate: each deliverable stands on its own, and someone reading this
+   synthesis alone would otherwise never learn the vocabulary was unified against nothing.
+5. **Emission lints — run before showing anything.** Eleven checks, one of them blocking. Full
+   list with the reasoning: `references/emission-lints.md`. In short: the [ADR 0001](https://github.com/QAIA-Project/QAIA/blob/main/docs/adr/0001-negative-coverage-gate.md) negative-path
+   gate blocks emission; one `When` per scenario; no compound `Then`; every asserted literal
+   computed and grounded; `Background` holds only universal invariants; no silent ID gaps; the
+   reported ratio matches a literal tag count in the emitted file.
+
+   Then **write `state/<US-ID>/generated.snapshot.md`** — scenario IDs plus a content hash per
+   scenario. This is the regeneration baseline; without it, regeneration cannot tell a
+   hand-written correction from its own previous output.
+### The emission contract — what a `.feature` file must look like
+
+The rules below are **not style**. A file that breaks any of them does not parse, or fails the
+project's Gherkin linter, and the rest of the chain never sees it. They are stated here because a
+host other than Claude Code cannot read the linter's configuration.
+
+- **A real `Feature:` line is mandatory**, once per file, at column 0, and it is the **first
+  non-comment line**. A file whose feature title appears only inside a `#` comment has no feature
+  at all and does not parse.
+
+  *This rule is stated as a requirement and nothing more, on purpose. An earlier version also
+  described the decorative `# …` comment this project writes above the declaration — and a model
+  that had been emitting the declaration correctly started emitting the comment **instead**.
+  Describing a house convention propagates it, including the confusion it carries.*
+- **Indentation is significant**: `Feature` at column 0, `Background` and `Scenario` indented by 2,
+  steps and `Examples` by 4.
+- **Emit the file's content and nothing else.** No preamble, no explanation, and **never wrap the
+  output in a code fence** — a leading ``` makes the first line invalid.
+- **One `.feature` per functional area**, named after that area.
+
+**If this prose and the linter ever disagree, the linter wins.** It is the arbiter, and it is what
+CI runs. This section exists so a host that cannot read `.gherkin-lintrc` still knows the shape —
+not to become a second source of truth for it.
+
+6. **Write outputs.** `*.feature` (one per functional area); `coverage-matrix.md` (AC →
+   condition → scenario ID → priority → **rationale** → confidence, the rationale column
+   carrying `prioritize`'s one-line risk drivers); `synthesis.md` per the shared contract's
+   deliverable section (`../README.md`), including the full inline question list and the
+   arbitration list. All artifacts carry resume frontmatter (shared-contract rule 10).
+7. ⚠ VALIDATION: present the **synthesis**, not the raw dump — counts, ratio, coverage gaps, and
+   the `@low-confidence` list to review first. Update `journey.md`.
+8. **Project the standardized manifest.** Run `report` (or its logic) to write or refresh
+   `.qaia/reports/<US-ID>/manifest.json`, the shared output contract every plugin reads. Counts
+   come from this generation, never re-estimated.
+
+## Steps — regeneration mode (a test book is never write-once)
+
+Trigger: the US changed, or the user asks to regenerate. The existing book may contain human
+edits — **they win by default.**
+
+1. **Detect human edits first.** Compare the current book against
+   `state/<US-ID>/generated.snapshot.md` by hash; scenarios differing from the snapshot are
+   human-edited. Snapshot absent (pre-0.1.2 book): treat **every** scenario as potentially
+   human-edited, and say so.
+
+   Re-run ingestion→design deltas as needed, writing new questions and conditions back into the
+   `00-04` checkpoints — a regeneration that leaves the checkpoints describing the old
+   requirement makes every later step work from a stale picture. Then compute a scenario-level
+   diff: `unchanged / modified (show old vs new) / new / obsolete`.
+
+   **Scan the whole book**, not just the ACs that visibly changed: a threshold change can touch
+   scenarios tagged on other ACs, and a scoped diff misses them.
+2. ⚠ VALIDATION per conflict: for each `modified` scenario that was human-edited, and each
+   `obsolete` proposal, the user arbitrates. Never delete or overwrite a human-edited scenario
+   without explicit approval.
+3. Retired IDs are never reused. Matrix and synthesis are regenerated, and a `CHANGELOG` section
+   in `synthesis.md` records the diff decisions.
+
+## Guardrails
+
+- A scenario must never assert behavior the source contradicts. When the source is silent, tag
+  `@low-confidence` and record the assumption — plausible-but-wrong is the worst defect
+  (rubric dim. 5).
+- Respect the token budget: sub-agents receive digests from checkpoints, never the raw source or
+  the full knowledge base.
+
+===== CONDITIONS DE TEST CONCUES (03-design.md) =====
+
+---
+stepsCompleted: [00-ingest, 01-review, 02-understanding, 03-design]
+lastStep: 03-design
+lastSaved: 2026-07-25
+---
+
+# 03-design — US-004 (ISTQB technique map + conditions)
+
+Knowledge base: absent for this project slice — proceeding on the source + `02-understanding.md`
+alone (degraded mode, shared-contract rule 8). `design.knowledgeApplied` will be empty in the
+manifest.
+
+## AC → technique map
+
+| AC | Technique(s) | Justification |
+|---|---|---|
+| AC1 | State transition | Explicit lifecycle (`draft/submitted/approved/rejected/changes-requested`) with a re-entrant loop (`changes-requested → draft`) — the textbook fit for state-transition testing. |
+| AC2 | Boundary value analysis + Decision table | Three amount bands with two literal boundaries (€500, €5000) → BVA; the resulting required-role set per band is a decision table (amount band × role). |
+| AC3 | Decision table | Outcome (who approves next) is a function of two independent conditions: submitter's role × current chain position — classic decision-table shape. |
+| AC4 | Equivalence partitioning + Boundary value analysis | Line shape is an EP class (complete/incomplete); the 90-day age check is a boundary on a computed duration. |
+| AC5 | Boundary value analysis | A strict amount threshold (€25) on receipt requirement — BVA at value/value-1. |
+| AC6 | Equivalence partitioning + Error guessing | Currency conversion is an EP class (EUR vs non-EUR); missing/stale rate is an error-guessing condition anchored on the ambiguity log (Q4). |
+| AC7 | State transition | Terminal-state rule — re-uses AC1's state model, asserting `rejected` has no outgoing edge. |
+| AC8 | Boundary value analysis + Error guessing | The 10-character comment minimum is a literal boundary; audit-trail completeness is error-guessing/checklist (who/when present on every transition). |
+| (cross-cutting) | Error guessing / checklist | Authorization and IDOR conditions, anchored on the `istqb-design` 3c systematic-expansion checklist (not named per-AC in the source, but a reflex expansion for any authenticated multi-actor workflow). |
+
+## Test conditions (input contract for `testbook-generate`)
+
+Tag legend: `[req-neg]` = required-negative (ADR 0001 gate). `@low-conf` = built on an
+`[open]`/`[assumption]` item from `02-understanding.md`, cites the question ID.
+
+### AC1 — state transition
+
+- **AC1-C1** — `draft` → `submitted` with valid data succeeds. `[ep]`
+- **AC1-C2** — `submitted` → `changes-requested` → `draft` (re-entrant); report is editable again. `[state-transition]`
+- **AC1-C3** — a `changes-requested`-turned-`draft` report is edited and re-submitted successfully. `[state-transition]`
+- **AC1-C4** — `[req-neg]` submitting a report that is not `draft` (e.g. already `submitted`) is refused. `[state-transition]`
+- **AC1-C5** — `[req-neg]` editing a report that is not `draft` is refused. `[state-transition]`
+- **AC1-C6** — `[req-neg]` rejecting a report currently in `draft` (including one reached via `changes-requested`) is refused — only `submitted` accepts a decision. `@low-conf(Q3)` `[state-transition]`
+
+### AC2 — boundary / decision table (approval chain by amount)
+
+- **AC2-C1** — total just under €500 (e.g. €499.99) requires exactly 1 approval (manager). `[boundary]`
+- **AC2-C2** — total exactly €500.00 requires 2 approvals (manager, finance). `@low-conf(Q1)` `[boundary]`
+- **AC2-C3** — total exactly €5000.00 still requires 2 approvals (manager, finance) — upper end of band B. `@low-conf(Q1)` `[boundary]`
+- **AC2-C4** — total just above €5000 (e.g. €5000.01) requires 3 approvals (manager, finance, director); full chain drives the report to `approved`. `[boundary]`
+- **AC2-C5** — `[req-neg]` an approver whose role is not the current expected role in the chain (out-of-order attempt, e.g. finance acting before manager) is refused. `[decision-table]`
+
+### AC3 — decision table (self-approval / skip-level)
+
+- **AC3-C1** — `[req-neg]` an approver attempting to decide on their own report is refused, regardless of role or band. `[decision-table]`
+- **AC3-C2** — a manager submits a <€500 report: the manager step is replaced by finance (escalation), not left empty. `@low-conf(Q2)` `[decision-table]`
+- **AC3-C3** — a manager submits a >€5000 report: the manager step is dropped (finance already required later), finance and director remain. `@low-conf(Q2)` `[decision-table]`
+- **AC3-C4** — a finance user submits a report requiring finance's own sign-off: the same skip/escalate rule generalizes (finance step replaced by director, or dropped if director already required). `@low-conf(Q8)` `[decision-table]`
+
+### AC4 — equivalence partitioning / boundary
+
+- **AC4-C1** — `[req-neg]` a line missing category, amount, or date is refused at submission. `[ep]`
+- **AC4-C2** — a line dated exactly 90 days ago is accepted (inclusive boundary; server-clock reference, Q5). `@low-conf(Q5)` `[boundary]`
+- **AC4-C3** — `[req-neg]` a line dated 91 days ago is blocked at submission with an explanatory message. `[boundary]`
+
+### AC5 — boundary value analysis
+
+- **AC5-C1** — a line just under the EUR-equivalent €25 threshold, no receipt, is accepted. `[boundary]`
+- **AC5-C2** — `[req-neg]` a line at exactly the EUR-equivalent €25 threshold, no receipt, is refused. `[boundary]`
+- **AC5-C3** — a line ≥ €25 with a receipt attached is accepted. `[ep]`
+- **AC5-C4** — `[req-neg]` a non-EUR line whose face value is < 25 but whose EUR-equivalent is ≥ 25 (no receipt) is refused — receipt threshold is EUR-basis, not face-value. `@low-conf(Q6)` `[boundary]`
+
+### AC6 — equivalence partitioning / error guessing (currency)
+
+- **AC6-C1** — a non-EUR report's total is converted correctly and the converted total (not the face value) drives AC2's band. `[ep]`
+- **AC6-C2** — `[req-neg]` a currency/date pair with no resolvable rate at all is refused at submission with an explanatory message. `@low-conf(Q4)` `[error-guessing]`
+- **AC6-C3** — an expense dated in a weekend/holiday gap (no exact-date rate) is accepted using the last available prior rate, and the report is flagged `rateStale`. `@low-conf(Q4)` `[error-guessing]`
+- **AC6-C4** — a manager-submitted foreign-currency report converted via a stale fallback rate, landing near a band boundary, still drives both the band and the self-approval escalation from that (flagged) total. `@low-conf(Q7)` `[decision-table]`
+
+### AC7 — state transition (terminal)
+
+- **AC7-C1** — `[req-neg]` a `rejected` report cannot be edited. `[state-transition]`
+- **AC7-C2** — `[req-neg]` a `rejected` report cannot be re-submitted. `[state-transition]`
+
+### AC8 — boundary / error guessing (audit trail)
+
+- **AC8-C1** — `[req-neg]` rejecting without a comment, or with a comment under 10 characters, is refused. `[boundary]`
+- **AC8-C2** — `[req-neg]` requesting changes without a comment, or with a comment under 10 characters, is refused. `[boundary]`
+- **AC8-C3** — a comment of exactly 10 characters is accepted (boundary). `[boundary]`
+- **AC8-C4** — approving a report does not require a comment. `[ep]`
+- **AC8-C5** — every transition (create, submit, approve, reject, changes-requested) is recorded in the audit trail with who and when. `[error-guessing]`
+
+### Cross-cutting — authorization & server-side enforcement (3c systematic expansion)
+
+- **AC-auth-C1** — `[req-neg]` creating a report without authentication is refused (401). `[error-guessing]`
+- **AC-auth-C2** — `[req-neg]` deciding on a report without authentication is refused (401). `[error-guessing]`
+- **AC-auth-C3** — `[req-neg]` an employee attempting to edit another employee's draft is refused without disclosing whether the report exists (404, not 403). `[error-guessing]`
+
+### List view (3c reflex, minimal — see ceiling note below)
+
+- **AC-list-C1** — an employee with no reports sees an explicit empty state on "My reports". `[ep]`
+
+## Ceiling — ranges NOT generated (3c, honest recall over fabrication)
+
+- **No delete/discard mechanism** for a draft is named anywhere in the source → not generated (would be fabrication per the ceiling rule); flagged as a gap in `synthesis.md`.
+- **No sort/filter/pagination** on the "mine"/"inbox" lists is named or implied by the source (unlike, say, a search screen) → not generated; flagged as a gap.
+- **No notification mechanism** (email/in-app) is named → not generated; flagged as a gap.
+
+## Journey checkpoint
+
+- Step `03-design`: **done**. 37 conditions across 8 AC + 2 cross-cutting groups; 17 tagged
+  `[req-neg]`.
+- Next step: `prioritize`.
+
+
+===== PRIORITES (04-priorities.md) =====
+
+---
+stepsCompleted: [00-ingest, 01-review, 02-understanding, 03-design, 04-priorities]
+lastStep: 04-priorities
+lastSaved: 2026-07-25
+---
+
+# 04-priorities — US-004
+
+Regulated-context note: this US is finance/HR with an explicit audit-trail requirement (AC8) —
+per the `prioritize` skill's guardrail, traceability/control-relevant conditions default to
+**impact 3** even when the underlying logic is simple, because a silent control failure here is
+a compliance failure, not a cosmetic one. `[open]`/`[assumption]`-flagged conditions (Q1, Q2,
+Q4, Q6, Q7, Q8) score **probability 3** — an under-specified rule is exactly where a real
+defect is likely to hide.
+
+| Condition | Impact | Prob. | Priority | Rationale |
+|---|---|---|---|---|
+| AC1-C1 | 3 | 1 | P2 | Core transition, foundational to every other scenario; simple logic. |
+| AC1-C2 | 2 | 2 | P2 | Re-entrant loop adds state complexity beyond a linear flow. |
+| AC1-C3 | 2 | 2 | P2 | Edit-then-resubmit exercises the loop's exit path. |
+| AC1-C4 [req-neg] | 3 | 1 | P2 | Guards against double-submission; simple status check. |
+| AC1-C5 [req-neg] | 3 | 1 | P2 | Guards against editing in-flight reports; simple status check. |
+| AC1-C6 [req-neg] | 3 | 3 | **P1** | Q3-flagged interaction; wrong behavior here silently breaks AC7's terminality guarantee. |
+| AC2-C1 | 3 | 2 | **P1** | Financial-control boundary; drives who signs off. |
+| AC2-C2 [req-neg-adjacent] | 3 | 3 | **P1** | Q1-flagged; exact-€500 is the deliberately ambiguous boundary. |
+| AC2-C3 | 3 | 3 | **P1** | Q1-flagged; exact-€5000 boundary, same risk class as AC2-C2. |
+| AC2-C4 | 3 | 2 | **P1** | Full 3-level chain; highest-stakes band. |
+| AC2-C5 [req-neg] | 3 | 2 | **P1** | Out-of-order approval would break chain integrity. |
+| AC3-C1 [req-neg] | 3 | 2 | **P1** | Classic internal-control defect class (self-approval). |
+| AC3-C2 | 3 | 3 | **P1** | Q2-flagged escalation semantics; wrong default = a real approval-bypass risk. |
+| AC3-C3 | 3 | 3 | **P1** | Q2-flagged, larger-band variant of the same open question. |
+| AC3-C4 | 3 | 2 | **P1** | Q8-flagged generalization beyond the named example. |
+| AC4-C1 [req-neg] | 2 | 1 | P3 | Basic input-completeness validation, low complexity. |
+| AC4-C2 | 2 | 2 | P2 | Q5-flagged clock reference; boundary logic. |
+| AC4-C3 [req-neg] | 2 | 2 | P2 | Boundary logic, moderate complexity (date arithmetic). |
+| AC5-C1 | 2 | 2 | P2 | Boundary just below the receipt threshold. |
+| AC5-C2 [req-neg] | 3 | 2 | **P1** | Financial-control boundary (receipt mandatory) at the exact threshold. |
+| AC5-C3 | 2 | 1 | P3 | Straightforward positive case. |
+| AC5-C4 [req-neg] | 3 | 3 | **P1** | Q6-flagged cross-AC basis (EUR-equivalent vs face value); real bypass risk if wrong. |
+| AC6-C1 | 3 | 2 | **P1** | Currency conversion feeds AC2's threshold directly — high blast radius if wrong. |
+| AC6-C2 [req-neg] | 3 | 3 | **P1** | Q4-flagged (rate source); undefined external dependency. |
+| AC6-C3 | 3 | 3 | **P1** | Q4-flagged (fallback); silently wrong total would mis-route approval. |
+| AC6-C4 | 3 | 3 | **P1** | Q7-flagged triple intersection; highest combined complexity in the book. |
+| AC7-C1 [req-neg] | 3 | 1 | P2 | Terminal-state guard, simple check but compliance-relevant. |
+| AC7-C2 [req-neg] | 3 | 1 | P2 | Same class as AC7-C1. |
+| AC8-C1 [req-neg] | 3 | 1 | P2 | Compliance evidence requirement, simple length check. |
+| AC8-C2 [req-neg] | 3 | 1 | P2 | Same class as AC8-C1. |
+| AC8-C3 | 2 | 2 | P2 | Exact boundary at the 10-character minimum. |
+| AC8-C4 | 1 | 1 | P3 | Confirms an absence of a constraint — low risk either way. |
+| AC8-C5 | 3 | 2 | **P1** | Audit-trail completeness across multiple event types — the AC8 core promise. |
+| AC-auth-C1 [req-neg] | 3 | 1 | P2 | Standard auth gate, low logic complexity. |
+| AC-auth-C2 [req-neg] | 3 | 1 | P2 | Same class as AC-auth-C1. |
+| AC-auth-C3 [req-neg] | 3 | 2 | **P1** | IDOR class; IDs are IDOR-guessable (`r1`, `r2`…) in this demo SUT, raising real exposure. |
+| AC-list-C1 | 1 | 1 | P3 | Cosmetic empty state. |
+
+## Scope decision (quota trade-off, Q22)
+
+Default scope is P1+P2 (33/37 conditions). For this cross-domain demonstration the maintainer
+asked for the same exhaustiveness standard as `examples/medibook` (all 8 AC covered, not just
+the highest-risk subset) — so the 4 P3 conditions (AC4-C1, AC5-C3, AC8-C4, AC-list-C1) are
+**also** generated. This is recorded as an explicit scope decision, not a silent quota breach:
+`simulated: P1+P2+P3 all generated, full-breadth demo scope`.
+
+⚠ VALIDATION: non-interactive mode — `simulated: scores accepted as proposed, scope decision
+recorded above`.
+
+## Journey checkpoint
+
+- Step `04-priorities`: **done**. 18 P1 / 15 P2 / 4 P3; all 37 generated (full-breadth scope).
+- Next step: `testbook-generate`.
+
+
+===== CE QUE TU DOIS RENDRE =====
+
+Le cahier de tests Gherkin, et RIEN D'AUTRE : pas de preambule, pas d'explication, pas de
+bloc de code englobant. Ta reponse doit commencer par `Feature:` ou par une ligne de
+commentaire `#`, et doit etre un fichier .feature valide.

@@ -1,0 +1,5 @@
+gemini: OK -> eval/portability-2026-08-09/round2b\gemini.txt (13421 chars)
+groq: OK -> eval/portability-2026-08-09/round2b\groq.txt (8949 chars)
+huggingface: OK -> eval/portability-2026-08-09/round2b\huggingface.txt (10379 chars)
+mistral: OK -> eval/portability-2026-08-09/round2b\mistral.txt (11686 chars)
+cerebras: FAILED (HTTP Error 402: Payment Required)
