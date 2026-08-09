@@ -50,7 +50,23 @@ DESC_MIN, DESC_MAX = 120, 600
 # "Use whenever…" and "Use right after…" are as valid as "Use when…", so match the verb plus any
 # ordinary continuation rather than a closed list of next words — the first draft of this regex
 # rejected a description it had itself just been written to accept.
-TRIGGER = re.compile(r"\bUse\s+(when|whenever|for|to|it|this|after|before|right|on|during|in)\b", re.I)
+# Un declencheur peut s'ecrire de plusieurs facons, et la regle en testait UNE : la notre.
+# Mesure du 2026-08-09 sur 159 SKILL.md ecrites par d'autres -- 75 refus pour « ne dit jamais
+# QUAND l'utiliser », dont **13 en ecriture non latine** que le motif ne peut physiquement pas
+# voir, et **62 qui declarent leur declencheur autrement** (`Trigger: replace locator, ...`).
+# Toutes disaient quand les utiliser. La regle mesurait la formulation, pas la propriete --
+# troisieme fois dans la meme journee qu'une regle lexicale penalise une langue ou une
+# convention plutot qu'une lacune.
+TRIGGER = re.compile(
+    r"\bUse\s+(when|whenever|for|to|it|this|after|before|right|on|during|in)\b"
+    r"|\bTrigger(s|ed)?\s*[:\-]"
+    r"|\b(Invoke|Call|Run|Apply)\s+(this|it|when|for|after|before)\b"
+    r"|\bwhen\s+(the\s+)?(user|you|a|an|someone|asked|working|debugging|writing)\b"
+    r"|\bfor\s+(when|any|every|tasks?|cases?)\b", re.I)
+
+# Une description presque sans caracteres latins ne peut pas etre jugee par un motif latin.
+# On le DIT au lieu de la refuser : un controle qui ne sait pas doit se taire.
+NON_LATIN = re.compile(r"[\u2E80-\u9FFF\uAC00-\uD7AF\u0400-\u04FF\u0590-\u08FF]")
 # `step X = done` with nothing making it conditional on the validation having happened.
 UNCONDITIONAL_DONE = re.compile(r"step\s+`?[\w-]+`?\s*=\s*done(?!\s*\*{0,2}only)", re.I)
 # `Qn` is deliberately absent from this pattern. In this catalogue it never means a project
@@ -71,8 +87,24 @@ CAMPAIGN_DATE = re.compile(r"(?<![\w/-])20\d{2}-\d{2}-\d{2}(?![\w/-])")
 
 
 def find_skills(paths):
+    """Fichiers ou repertoires. Sans argument : `plugins/`.
+
+    L'argument n'acceptait qu'un CHEMIN DE FICHIER : passer un repertoire le renvoyait tel quel,
+    et le linter tentait d'ouvrir un dossier comme un fichier -- zero skill lintee, sans message.
+    Trouve le 2026-08-09 en pointant l'outil sur 161 SKILL.md ecrites par d'autres, ce qu'aucune
+    execution n'avait jamais fait : il n'avait tourne que sur `plugins/`, ou le cas ne se pose pas.
+    """
     if paths:
-        return list(paths)
+        out = []
+        for p in paths:
+            if os.path.isdir(p):
+                for root, dirs, files in os.walk(p):
+                    dirs[:] = [d for d in dirs if d not in ("node_modules", ".git")]
+                    if "SKILL.md" in files:
+                        out.append(os.path.join(root, "SKILL.md"))
+            else:
+                out.append(p)
+        return sorted(out)
     out = []
     for root, dirs, files in os.walk("plugins"):
         dirs[:] = [d for d in dirs if d not in ("node_modules", ".git")]
@@ -126,7 +158,11 @@ def lint_one(path):
     if not desc:
         fails.append("frontmatter has no `description` — nothing would ever trigger this skill")
     else:
-        if not TRIGGER.search(desc):
+        if not TRIGGER.search(desc) and len(NON_LATIN.findall(desc)) > len(desc) * 0.2:
+            warns.append("description is mostly non-Latin script — this linter's "
+                         "trigger patterns are Latin-only and cannot judge it. "
+                         "Not counted as a defect.")
+        elif not TRIGGER.search(desc):
             fails.append("description never says WHEN to use the skill (no \"Use when/for/to …\"). "
                          "It is the only triggering signal the model gets; without it the skill is "
                          "reachable only by someone already following a scripted journey.")

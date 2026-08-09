@@ -1,0 +1,79 @@
+{
+ "_source": "GitHub code search, filename:SKILL.md",
+ "_retrieved": "2026-08-09",
+ "_files": 173,
+ "repos": [
+  {
+   "repo": "LeoYeAI/openclaw-master-skills",
+   "stars": 2110,
+   "skills": 2625,
+   "fetched": 20
+  },
+  {
+   "repo": "Free-The-Ai/free-ai",
+   "stars": 833,
+   "skills": 8,
+   "fetched": 8
+  },
+  {
+   "repo": "Enderfga/claw-orchestrator",
+   "stars": 544,
+   "skills": 3,
+   "fetched": 3
+  },
+  {
+   "repo": "Ibrahim-3d/orchestrator-supaconductor",
+   "stars": 371,
+   "skills": 42,
+   "fetched": 20
+  },
+  {
+   "repo": "Achuan-2/siyuan-plugin-task-note-management",
+   "stars": 211,
+   "skills": 5,
+   "fetched": 5
+  },
+  {
+   "repo": "DanielSuo117/velocitai",
+   "stars": 176,
+   "skills": 39,
+   "fetched": 20
+  },
+  {
+   "repo": "ZhangShenao/harness9",
+   "stars": 145,
+   "skills": 7,
+   "fetched": 7
+  },
+  {
+   "repo": "OpenHands/extensions",
+   "stars": 134,
+   "skills": 74,
+   "fetched": 20
+  },
+  {
+   "repo": "TerminalSkills/skills",
+   "stars": 125,
+   "skills": 1018,
+   "fetched": 20
+  },
+  {
+   "repo": "SkeneTechnologies/skene",
+   "stars": 121,
+   "skills": 26,
+   "fetched": 20
+  },
+  {
+   "repo": "NVIDIA-AI-Blueprints/Retail-Agentic-Commerce",
+   "stars": 64,
+   "skills": 10,
+   "fetched": 10
+  },
+  {
+   "repo": "SteveGJones/ai-first-sdlc-practices",
+   "stars": 41,
+   "skills": 101,
+   "fetched": 20
+  }
+ ]
+}
