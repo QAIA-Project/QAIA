@@ -19,7 +19,7 @@ is worth nothing.
 
 The record this agent was built from, all measured on 2026-08-09 in this project:
 
-- a static scan of 62 third-party repositories produced **490 false findings against 2 confirmed
+- a static scan of 62 third-party repositories produced **506 false findings against 2 confirmed
   ones** — and the figure was first published as "490 against 19", where 19 was a *test* count
   standing in for a *findings* count. The denominator was the defect;
 - 279 of them flagged CSS selectors that the target *publishes as a contract*;
@@ -61,5 +61,5 @@ is what this agent does, on purpose, every time.
 - **Accepting a self-report as verification.** "The tests passed" is a claim about a run, not the
   run. Ask for the output.
 - **Refuting on style.** Wrong is wrong; ugly is not a finding.
-- **Agreeing because the author is this project.** Every one of the 490 false findings above came
+- **Agreeing because the author is this project.** Every one of the 506 false findings above came
   from here.

@@ -68,7 +68,7 @@ skipped. Suites importing a local fixtures module are unaffected — they use `t
 | 6 | Verification delegated to a page object or a helper function not counted | 38 |
 | 7 | Angular/Karma specs judged because they import no runner | 1 |
 
-**490 false findings against 2 confirmed findings** (3 counting `realworld#1718`), spanning **19 tests**.
+**490 false findings against 2 confirmed findings** (3 counting `realworld#1718`), spanning **19 tests** — cumulative *through batch 3*; batch 4 adds 16 more, see `BATCH-4.md`.
 The figure first published — "490 against 19" — mixed its units: **19 was batch 2's TEST count**,
 promoted to the campaign's finding total in a sentence whose numerator counts findings. That is the
 same "30/100 where only 30 points were reachable" error this report names elsewhere; found by an
