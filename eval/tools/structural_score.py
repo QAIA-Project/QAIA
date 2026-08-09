@@ -22,7 +22,8 @@ skills reference the *approach*; this proves it discriminates on a hardened gold
 Usage: python3 structural_score.py <file.feature> [--acs AC1,AC2,...] [--source src.md]
        python3 structural_score.py --batch <dir>
 """
-import re, sys, os, json, glob
+import re
+import sys, sys, os, json, glob
 
 # Kept in sync with istqb-design/SKILL.md's technique palette (D109 reorganization) -- stale
 # vs. that palette caused false "wrong tag count" findings on legitimate @crud/@metamorphic/
@@ -70,7 +71,20 @@ VAGUE_RE = re.compile(
     re.I,
 )
 # a real assertion carries a concrete token: number, quoted value, status code, comparator, state verb
-ASSERT_RE = re.compile(r"\d|\"[^\"]+\"|'[^']+'|\b(status|code|HTTP|=|==|>=|<=|>|<|equals?|[ée]gal|contains?|contient|affiche|displays?|redirect|returns?|retourne|is (not )?(visible|present|enabled|disabled)|est (visible|pr[ée]sent|absent))\b", re.I)
+# Noyau commun aux deux expressions ci-dessous : un jeton concret (chiffre, code, statut,
+# comparateur, verbe d'etat). Ecrit UNE fois -- il l'etait deux, a la main, et vingt lignes
+# de commentaire expliquaient pourquoi les deux copies doivent differer sans que rien ne
+# garantisse qu'elles ne different QUE la-dessus (B27, revue « developpeur » 2026-08-09).
+_ASSERT_CORE = (r"\d|\b(status|code|HTTP|=|==|>=|<=|>|<|equals?|[ée]gal|contains?|contient|"
+                r"affiche|displays?|redirect|returns?|retourne|is (not )?(visible|present|"
+                r"enabled|disabled)|est (visible|pr[ée]sent|absent))\b")
+# La seule difference voulue entre les deux : accepter n'importe quel litteral entre
+# guillemets comme preuve d'assertion concrete.
+_QUOTED_LITERAL = r"\"[^\"]+\"|'[^']+'"
+
+# a real assertion carries a concrete token: number, quoted value, status code, comparator,
+# state verb
+ASSERT_RE = re.compile(r"\d|" + _QUOTED_LITERAL + r"|" + _ASSERT_CORE.lstrip(r"\d|"), re.I)
 # #31 (P3, follow-up to D65/D71's documented residual limit): ASSERT_RE's bare quote clause
 # above treats ANY quoted literal as proof of a concrete assertion, but a Then can cite an
 # already-known entity identifier (e.g. `the order between "P1" and "P2" is consistent`) without
@@ -91,10 +105,8 @@ ASSERT_RE = re.compile(r"\d|\"[^\"]+\"|'[^']+'|\b(status|code|HTTP|=|==|>=|<=|>|
 # leniency is actually a problem). Honest partial fix: it closes the documented C5 gap without
 # touching completeness scoring elsewhere; a quoted entity ID sitting next to VAGUE_RE wording in
 # some other phrasing this regex doesn't anticipate could still slip through - not exhaustive.
-_ASSERT_OUTSIDE_QUOTES_RE = re.compile(
-    r"\d|\b(status|code|HTTP|=|==|>=|<=|>|<|equals?|[ée]gal|contains?|contient|affiche|displays?|redirect|returns?|retourne|is (not )?(visible|present|enabled|disabled)|est (visible|pr[ée]sent|absent))\b",
-    re.I,
-)
+_ASSERT_OUTSIDE_QUOTES_RE = re.compile(_ASSERT_CORE, re.I)
+
 _ASSERT_VALUE_NEAR_QUOTE_RE = re.compile(
     r"\b(?:is|are|est|sont|shows?|displays?|affiche(?:nt)?|equals?|[ée]gal(?:e|es)?|contains?|contient|returns?|retourne(?:nt)?|redirects?)\s+(?:not\s+)?(?:to\s+)?[\"'][^\"']+[\"']",
     re.I,
@@ -110,13 +122,33 @@ TECH_LITERAL_RE = re.compile(r"https?://\S+|\b\d{1,3}(?:\.\d{1,3}){3}\b|\b[a-z0-
 def parse_scenarios(text):
     scen, cur = [], None
     tags_pending = []
+    background = []      # les pas d'un `Background:` valent pour chaque scenario du fichier
+    in_background = False
     for raw in text.splitlines():
         line = raw.strip()
         if line.startswith("@"):
             tags_pending += line.split()
             continue
+        # `Background:` et `Rule:` etaient ignores : les pas communs disparaissaient, et un
+        # scenario qui s'appuyait dessus se lisait comme incomplet (B24).
+        if re.match(r"(Background|Contexte)\s*:", line, re.I):
+            in_background = True
+            if cur:
+                scen.append(cur)
+                cur = None
+            continue
+        if re.match(r"(Rule|R[ée]gle)\s*:", line, re.I):
+            in_background = False
+            continue
+        # Une table de donnees sous un `Then` PORTE les valeurs attendues. Les ignorer faisait
+        # noter « aucune assertion concrete » des cahiers dont c'est justement la forme (B24).
+        if line.startswith("|") and cur is not None and cur["steps"]:
+            kw, txt = cur["steps"][-1]
+            cur["steps"][-1] = (kw, (txt + " " + line.strip("| ").replace("|", " ")).strip())
+            continue
         m = re.match(r"(Scenario Outline|Scenario|Sc[ée]nario|Plan du sc[ée]nario)\s*:\s*(.*)", line, re.I)
         if m:
+            in_background = False
             if cur: scen.append(cur)
             cur = {"name": m.group(2).strip(), "tags": tags_pending, "steps": [], "then": []}
             tags_pending = []
@@ -128,12 +160,15 @@ def parse_scenarios(text):
         # generated .feature, tanking traceability to ~0 for a file that was actually tagged.
         if not line.startswith("#"):
             tags_pending = tags_pending if not cur else []
-        if cur is not None:
-            sm = re.match(r"(Given|When|Then|And|But|Soit|Quand|Alors|Etant donn[ée]e?s?|Et|Mais)\b(.*)", line, re.I)
-            if sm:
-                kw, txt = sm.group(1), sm.group(2).strip()
-                cur["steps"].append((kw, txt))
+        sm = re.match(r"(Given|When|Then|And|But|Soit|Quand|Alors|Etant donn[ée]e?s?|Et|Mais)\b(.*)", line, re.I)
+        if sm and (cur is not None or in_background):
+            kw, txt = sm.group(1), sm.group(2).strip()
+            (background if in_background else cur["steps"]).append((kw, txt))
     if cur: scen.append(cur)
+    # Les pas du `Background:` prefixent chaque scenario : c'est ce qu'ils sont.
+    if background:
+        for sc in scen:
+            sc["steps"] = list(background) + sc["steps"]
     # attach 'then' steps: a Then and the And/But that follow it
     for s in scen:
         in_then = False
@@ -156,7 +191,13 @@ def score_feature(path, declared_acs=None, source_text=None, third_party=False):
     En mode tiers, elles sont **exclues et dites exclues**, jamais notees zero : un zero se
     lirait comme une mauvaise note pour avoir refuse nos conventions.
     """
-    text = open(path, encoding="utf-8").read()
+    try:
+        text = open(path, encoding="utf-8").read()
+    except (IOError, OSError) as exc:
+        # Convention du depot : « BROKEN », pas une trace Python. Une trace, dans une CI, se lit
+        # comme un plantage de l'outil et non comme un chemin mal ecrit (B26).
+        print("BROKEN: %s illisible -- %s" % (path, exc), file=sys.stderr)
+        raise SystemExit(2)
     scen = parse_scenarios(text)
     findings = []
     n = len(scen) or 1
@@ -166,7 +207,14 @@ def score_feature(path, declared_acs=None, source_text=None, third_party=False):
     # Indexes par POSITION, pas par nom : un Scenario Outline donne le meme nom a tous ses
     # exemples, et un copier-coller aussi. Indexer par nom faisait qu'un scenario vague
     # excluait son homonyme parfaitement assertif de la completude (revue dev, 2026-08-09).
-    truncated_i = set(i for i, s in enumerate(scen) if any(t.endswith(("…", "...", ",", "-")) or (len(t.split()) < 2) for _, t in s["steps"] if t))
+    # Un pas d'UN SEUL MOT est suspect, pas fautif : `When submit` est laconique mais complet.
+    # Ne restent tronques que les pas qui s'interrompent visiblement (ponctuation suspendue) --
+    # les monosyllabes deviennent un constat non penalisant. L'heuristique plafonnait un PASS a
+    # CONCERNS sans aucune echappatoire (B25).
+    truncated_i = set(i for i, s in enumerate(scen)
+                      if any(t.endswith(("…", "...", ",", "-")) for _, t in s["steps"] if t))
+    terse_i = set(i for i, s in enumerate(scen)
+                  if i not in truncated_i and any(len(t.split()) < 2 for _, t in s["steps"] if t))
     empty_then_i = set(i for i, s in enumerate(scen) if not s["then"])
     hollow_i = set(i for i, s in enumerate(scen) if s["then"] and all(HOLLOW_RE.search(t) for t in s["then"]))
     vague_i = set(i for i, s in enumerate(scen) if s["then"] and not any(has_strict_assertion(t) for t in s["then"]) and any(VAGUE_RE.search(t) for t in s["then"]))
@@ -328,7 +376,13 @@ def main():
         return
     declared = None; source = None; path = args[0]
     if "--acs" in args: declared = args[args.index("--acs") + 1].split(",")
-    if "--source" in args: source = open(args[args.index("--source") + 1], encoding="utf-8").read()
+    if "--source" in args:
+        _src_path = args[args.index("--source") + 1]
+        try:
+            source = open(_src_path, encoding="utf-8").read()
+        except (IOError, OSError) as exc:
+            print("BROKEN: --source %s illisible -- %s" % (_src_path, exc), file=sys.stderr)
+            raise SystemExit(2)
     print(json.dumps(score_feature(path, declared, source, third_party=tp),
                      ensure_ascii=False, indent=2))
 
