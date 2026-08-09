@@ -144,7 +144,18 @@ def parse_scenarios(text):
             elif k in ("given", "when", "soit", "quand", "etant donné", "etant donnée"): in_then = False
     return scen
 
-def score_feature(path, declared_acs=None, source_text=None):
+def score_feature(path, declared_acs=None, source_text=None, third_party=False):
+    """`third_party=True` note un cahier Gherkin que QAIA n'a pas genere.
+
+    Deux des regles de ce fichier encodent des conventions PROPRES a ce projet : le tag de
+    priorite `@P1/@P2/@P3` et le tag de technique issu d'une liste fermee. Aucune des deux
+    n'existe dans Gherkin. Appliquees a un cahier ecrit ailleurs, elles produisent un constat
+    par scenario et noient tout le reste -- 463 constats sur 618 lors de la premiere mesure
+    sur 244 fichiers etrangers.
+
+    En mode tiers, elles sont **exclues et dites exclues**, jamais notees zero : un zero se
+    lirait comme une mauvaise note pour avoir refuse nos conventions.
+    """
     text = open(path, encoding="utf-8").read()
     scen = parse_scenarios(text)
     findings = []
@@ -232,7 +243,17 @@ def score_feature(path, declared_acs=None, source_text=None):
     coherence = 20 * (1 - (len(set(truncated + empty_then)) / n))
     traceability = 25 * (len(traced) / n) * (0.6 + 0.4 * (len(ac_linked) / n))
 
-    raw = readability + completeness + coherence + traceability
+    if third_party:
+        # `traceability` = « le scenario porte un tag @QAIA-<ID> ». Aucun cahier ecrit ailleurs
+        # n'en a, donc 25 des 100 points etaient perdus par construction : sur 244 fichiers
+        # etrangers, `traceability` valait **0 partout**, et le score median tombait a 57 pour
+        # des livres qui n'ont jamais adopte nos conventions.
+        # On remet a l'echelle les trois dimensions qui transferent, au lieu de noter zero la
+        # quatrieme -- meme correction que pour `automation_score`, un etage plus haut.
+        raw = (readability + completeness + coherence) * 100.0 / 75.0
+        traceability = 0.0
+    else:
+        raw = readability + completeness + coherence + traceability
     marker_pen = min(25, 5 * len(markers))
     sniffer_pen = min(25, 5 * len(sniffer_hits))
     redundancy_pen = min(15, 3 * len(redundant_scenarios))
@@ -256,8 +277,14 @@ def score_feature(path, declared_acs=None, source_text=None):
     if vague: findings.append(f"vague/non-verifiable Then (C2): {vague}")
     if truncated: findings.append(f"truncated step(s): {truncated}")
     if redundant_groups: findings.append(f"pesticide paradox: {len(redundant_groups)} near-duplicate group(s) (same Given/When shape) → -{redundancy_pen}: {redundant_groups[:3]}")
-    if no_priority: findings.append(f"missing priority tag (@P1/@P2/@P3): {no_priority}")
-    if technique_hits: findings.append(f"technique tag count != 1 from the closed list: {technique_hits}")
+    if no_priority and not third_party:
+        findings.append(f"missing priority tag (@P1/@P2/@P3): {no_priority}")
+    if technique_hits and not third_party:
+        findings.append(f"technique tag count != 1 from the closed list: {technique_hits}")
+    if third_party:
+        findings.append("third-party book: the @P1/@P2/@P3 and technique tags are QAIA "
+                        "conventions and were EXCLUDED, not scored zero. This score judges "
+                        "Gherkin structure only and is not comparable with a QAIA score.")
 
     return {
         "file": os.path.basename(path), "scenarios": len(scen),
@@ -278,14 +305,18 @@ def main():
             except Exception: pass
     args = sys.argv[1:]
     if not args: print(__doc__); sys.exit(1)
+    tp = "--third-party" in args
+    if tp: args = [a for a in args if a != "--third-party"]
     if args[0] == "--batch":
-        rows = [score_feature(f) for f in sorted(glob.glob(os.path.join(args[1], "*.feature")))]
+        rows = [score_feature(f, third_party=tp)
+                for f in sorted(glob.glob(os.path.join(args[1], "*.feature")))]
         for r in rows: print(json.dumps(r, ensure_ascii=False))
         return
     declared = None; source = None; path = args[0]
     if "--acs" in args: declared = args[args.index("--acs") + 1].split(",")
     if "--source" in args: source = open(args[args.index("--source") + 1], encoding="utf-8").read()
-    print(json.dumps(score_feature(path, declared, source), ensure_ascii=False, indent=2))
+    print(json.dumps(score_feature(path, declared, source, third_party=tp),
+                     ensure_ascii=False, indent=2))
 
 if __name__ == "__main__":
     main()

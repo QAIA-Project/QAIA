@@ -1,6 +1,6 @@
 ---
 name: a11y-audit
-description: Generate and run accessibility tests (axe-core via Playwright, WCAG 2 A/AA) against a running app, plus the keyboard/focus/contrast checks no scanner can perform, reporting violations by severity. Use when a test book or an app needs accessibility coverage, when an accessibility regulation applies (EAA, RGAA, Section 508, WCAG contractual commitment), or when a user asks whether a screen is accessible.
+description: Generate and run accessibility tests (axe-core via Playwright, WCAG 2 A/AA) against a running app, plus the keyboard/focus/contrast checks no scanner can perform, reporting violations by severity. Use when a test book or an app needs accessibility coverage, when an accessibility regulation applies (EAA, EN 301 549, RGAA, Section 508) — the oracle is WCAG 2.1 A/AA in every case, and no run here is a compliance verdict; see references/regulations.md — or when a user asks whether a screen is accessible.
 ---
 
 # a11y-audit — accessibility via axe-core, plus the pass axe cannot do
@@ -10,6 +10,16 @@ Reference: [`examples/medibook/tests/a11y.booking.spec.js`](https://github.com/Q
 Tooling is fixed: **axe-core driven through Playwright** — the de-facto standard for automated
 WCAG checks, and it reuses the browser context the functional tests already run in rather than
 introducing a second driver stack.
+
+**Naming a regulation is an implicit promise about what the run means.** This skill's oracle is
+**WCAG 2.1 A/AA and nothing else**. EN 301 549, the EAA, RGAA 4.1 and Section 508 are all built on
+WCAG, which is why the run helps with all of them — and each adds obligations WCAG does not
+contain, which is why a green run is **never** a compliance verdict for any of them.
+
+RGAA in particular is a *test method*, not a synonym: **106 numbered criteria, a mandatory page
+sample, and a compliance rate this skill's output cannot produce** — different numerator, different
+denominator, different sample. Load `references/regulations.md` before answering any question that
+contains the word "compliant", and use the wording it gives.
 
 **The number that governs this skill: automated tooling detects roughly a third of WCAG success
 criteria.** The rest are not "advanced" — they are keyboard access, focus visibility, and

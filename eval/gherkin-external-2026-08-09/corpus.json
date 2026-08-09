@@ -1,0 +1,83 @@
+{
+ "_source": "GitHub code search — 4 requetes Gherkin (Scenario Outline, Background, espagnol, allemand)",
+ "_retrieved": "2026-08-09",
+ "_why": "testbook-validate affirme auditer n importe quel cahier Gherkin, genere par QAIA ou non. Cette affirmation n avait jamais ete eprouvee sur du Gherkin ecrit ailleurs. Population disponible : 624 640 fichiers .feature sur GitHub.",
+ "_files": 244,
+ "repos": [
+  {
+   "repo": "Arthy000/gherkin-testcafe",
+   "features": 14,
+   "sha256": "47c890335e3929d8"
+  },
+  {
+   "repo": "Automattic/wpcom-legacy-redirector",
+   "features": 6,
+   "sha256": "cb453ad522f10aa2"
+  },
+  {
+   "repo": "IfcOpenShell/IfcOpenShell",
+   "features": 25,
+   "sha256": "adf6c99cc5b69167"
+  },
+  {
+   "repo": "Jacobvu84/selenium-vietnam-training-course",
+   "features": 7,
+   "sha256": "c7eb20b0b51ad7f7"
+  },
+  {
+   "repo": "LarsBerberich/Binokel_Score_Tracker_BDD",
+   "features": 6,
+   "sha256": "92840bfd970fc08b"
+  },
+  {
+   "repo": "Spidertracks/behave-parallel",
+   "features": 25,
+   "sha256": "32ddf9b1ae67f605"
+  },
+  {
+   "repo": "Xe/when-then-zen",
+   "features": 9,
+   "sha256": "3de1ce7cab85a4df"
+  },
+  {
+   "repo": "alphagov/whitehall",
+   "features": 25,
+   "sha256": "7ca8ce4aa7d6df9a"
+  },
+  {
+   "repo": "asok/projectile-rails",
+   "features": 25,
+   "sha256": "b2c2cfe49add2447"
+  },
+  {
+   "repo": "backlogs/redmine_backlogs",
+   "features": 25,
+   "sha256": "f4ef026d98d7e031"
+  },
+  {
+   "repo": "badges/badgerbadgerbadger",
+   "features": 13,
+   "sha256": "7b0bea70b2d8317c"
+  },
+  {
+   "repo": "behave-contrib/try-behave",
+   "features": 5,
+   "sha256": "357b54521e747236"
+  },
+  {
+   "repo": "behave/behave",
+   "features": 25,
+   "sha256": "5d60921fef048ad4"
+  },
+  {
+   "repo": "behave/behave.example",
+   "features": 22,
+   "sha256": "22593e0703c6f27a"
+  },
+  {
+   "repo": "brighton36/CoinPost",
+   "features": 12,
+   "sha256": "7945423b55b340de"
+  }
+ ]
+}

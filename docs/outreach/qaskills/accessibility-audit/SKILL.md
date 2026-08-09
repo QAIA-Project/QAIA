@@ -18,6 +18,35 @@ agents: [claude-code, cursor, github-copilot, codex]
 > [QAIA](https://github.com/QAIA-Project/QAIA) (MIT). The canonical version and its `references/`
 > live in that repository. QAIA is pre-alpha and says so.
 
+## Naming a regulation is an implicit promise
+
+This skill's oracle is **WCAG 2.1 A/AA, and nothing else** — axe-core plus the manual pass.
+
+EN 301 549, the European Accessibility Act, France's RGAA 4.1 and Section 508 are all *built on*
+WCAG, which is why this run helps with every one of them. Each also adds obligations WCAG does not
+contain, which is why a green run is **never** a compliance verdict for any of them.
+
+**RGAA 4.1 in particular is a test *method*, not a synonym for WCAG:** 106 numbered criteria over
+13 themes, a mandatory sample of pages, and a compliance rate computed as
+`criteria compliant / criteria applicable` over that sample. This skill reports violations by
+severity over the screens you point it at — **different numerator, different denominator, different
+sample.** No axe-core rule maps one-to-one onto an RGAA criterion, and the *déclaration
+d'accessibilité* is a legal artefact with a mandatory template that nothing here produces.
+
+Say this:
+
+> ✅ *"axe-core and the manual pass found no WCAG 2.1 AA violation on these screens. That covers
+> roughly a third of the success criteria automatically; the rest, and the RGAA method itself,
+> require a human audit."*
+
+Refuse this:
+
+> ❌ *"The application is RGAA compliant."*
+
+What this skill legitimately gives a regulated audit is a fast, reproducible pass over the
+automatable share, plus the keyboard, focus and contrast checks no scanner performs. It **narrows**
+the manual audit. It does not replace it.
+
 ## The number that governs this skill
 
 **Automated tooling detects roughly a third of WCAG success criteria.**

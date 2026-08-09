@@ -49,7 +49,7 @@
       "derived_from": [
         {
           "path": "plugins/qaia-playwright/skills/a11y-audit/SKILL.md",
-          "sha256": "e1ef7755cbd6771d527fa5f92d565765997fc186667d6d49868ba0962d317ba1"
+          "sha256": "9c8dc8eee6076298d33d4a87d6806faee1bdd2de58a0ac218b3aa53e42c10282"
         },
         {
           "path": "plugins/qaia-playwright/skills/a11y-audit/references/manual-pass.md",
