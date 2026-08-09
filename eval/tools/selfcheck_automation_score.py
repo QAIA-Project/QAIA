@@ -128,6 +128,19 @@ check("quatre tests pendants coutent quatre, pas un",
 check("un seul test pendant coute un",
       _traceability(5, 1, 5), 20.0)
 
+# B17 : la detection des attentes interdites et des selecteurs est ecrite DEUX FOIS -- boucle
+# des specs, boucle des fichiers de support. La revue la classait « qualite » ; elle est devenue
+# un defaut de correction des que B16 (`code_of` au lieu de la ligne brute) n'a ete applique qu'a
+# une des deux copies : du code commente restait signale d'un cote et plus de l'autre. Ce
+# garde-fou relit le source pour qu'elles ne puissent plus diverger sans que la CI le dise.
+import inspect as _inspect
+_body = _inspect.getsource(A.score_suite) if hasattr(A, "score_suite") else _inspect.getsource(A)
+check("aucune detection ne lit la ligne brute (les deux copies restent alignees)",
+      ("FORBIDDEN_WAITS, line)" not in _body)
+      and ("RAW_SELECTOR.search(line)" not in _body)
+      and ("ROLE_SELECTOR.search(line)" not in _body),
+      True)
+
 # --- 3. "nothing was found" assertions must be mutable ---------------------------------------
 # `expect(violations).toEqual([])` is the entire a11y idiom. No operator covered it, so those
 # assertions were absent from the mutation corpus without any field saying so -- the same class of

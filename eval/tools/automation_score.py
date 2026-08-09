@@ -293,10 +293,14 @@ def find_spec_files(tests_dir):
     for p in _walk(tests_dir):
         if not SPEC_GLOB.search(os.path.basename(p)):
             continue
-        head = read(p)[:4000]
+        # Lu une seule fois : `read(p)` etait appele deux fois par fichier candidat, la seconde
+        # dans la ligne juste en dessous (B19). Sans consequence sur le resultat, mais un fichier
+        # qui change entre les deux lectures se scanne dans deux etats differents.
+        body = read(p)
+        head = body[:4000]
         if PLAYWRIGHT_IMPORT.search(head):
             out.append(p)
-        elif FOREIGN_RUNNER.search(head) or JASMINE_STYLE.search(read(p)):
+        elif FOREIGN_RUNNER.search(head) or JASMINE_STYLE.search(body):
             skipped.append(p)
         else:
             out.append(p)     # no runner signal either way: judged, as before
@@ -446,12 +450,13 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
             if weak:
                 findings.append({"kind": "weak-assertion", "file": rel, "line": i,
                                  "detail": weak, "blocking": False})
-            if RAW_SELECTOR.search(line) or XPATH_SELECTOR.search(line):
+            _code = code_of(line)  # du code commente n'est pas un selecteur (B16/B17)
+            if RAW_SELECTOR.search(_code) or XPATH_SELECTOR.search(_code):
                 selector_raw += 1
                 if not third_party:
                     findings.append({"kind": "fragile-selector", "file": rel, "line": i,
                                      "detail": line.strip()[:160], "blocking": False})
-            if ROLE_SELECTOR.search(line):
+            if ROLE_SELECTOR.search(code_of(line)):
                 selector_role += 1
 
         for title, start, end in blocks:
@@ -556,16 +561,17 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
                                      "detail": "cites " + target + ", which does not exist: "
                                                "evidence offered that cannot be inspected",
                                      "blocking": False})
-            wait = first_match(FORBIDDEN_WAITS, line)
+            wait = first_match(FORBIDDEN_WAITS, code_of(line))
             if wait:
                 findings.append({"kind": "forbidden-wait", "file": rel, "line": i,
                                  "detail": wait, "blocking": False})
-            if RAW_SELECTOR.search(line) or XPATH_SELECTOR.search(line):
+            _code = code_of(line)  # du code commente n'est pas un selecteur (B16/B17)
+            if RAW_SELECTOR.search(_code) or XPATH_SELECTOR.search(_code):
                 selector_raw += 1
                 if not third_party:
                     findings.append({"kind": "fragile-selector", "file": rel, "line": i,
                                      "detail": line.strip()[:160], "blocking": False})
-            if ROLE_SELECTOR.search(line):
+            if ROLE_SELECTOR.search(code_of(line)):
                 selector_role += 1
 
     if (not has_pages_dir or not fixtures_path) and not third_party:
