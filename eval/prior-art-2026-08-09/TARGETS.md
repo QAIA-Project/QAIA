@@ -7,8 +7,15 @@ Issu d'une recherche en profondeur (GitHub, GitLab, Codeberg, SourceHut) le 2026
 - **GitLab** : la recherche de code exige Advanced Search, non exposée sans compte. La recherche par nom plafonne à 17 étoiles. Inutilisable pour la découverte.
 - **Codeberg** : renvoie du texte généré aux agents, avec la bannière *« si vous êtes un scraper IA, arrêtez de visiter Codeberg »*.
 - **SourceHut** : aucun point d'entrée de recherche de code.
+- **SourceForge** : testé le 2026-08-09 en réponse à la question directe. La recherche fonctionne et la population n'y est pas — **zéro projet** sur `playwright`, un seul sur « end-to-end testing », et les langages dominants sont Java, Python et C++. SourceForge héberge une autre époque du logiciel ; les suites e2e JavaScript modernes n'y sont pas.
 
-**L'hypothèse « autre hébergeur = autre population » n'est pas testable avec les accès disponibles.** C'est un résultat.
+**L'hypothèse « autre hébergeur = autre population » n'est pas testable avec les accès disponibles** — et là où elle l'est, la population n'existe pas. C'est un résultat, pas un échec.
+
+### Sur Codeberg, et pourquoi on n'y retourne pas par un navigateur
+
+La bannière de Codeberg est une **demande explicite de l'exploitant** adressée aux agents automatiques. Y accéder par un navigateur piloté pour la contourner, c'est faire exactement ce qu'ils ont demandé qu'on ne fasse pas — même catégorie que forcer un `robots.txt`.
+
+Et c'est sans objet : **leur API publique fonctionne et a été utilisée** — c'est le chemin sanctionné. Elle rend un premier dépôt Playwright à **3 étoiles**. Il n'y a rien derrière la porte qu'on envisagerait de forcer.
 
 ## La correction que cette recherche impose
 
