@@ -6,7 +6,12 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const NOW = () => Date.now();
+// Horloge injectable. Les taux de change de cette demo sont des fixtures datees : sans
+// cette couture, tout test qui les utilise porte une date de peremption -- cinq d'entre eux
+// viraient au rouge le 2026-10-20 sans qu'une ligne de code ait bouge, et l'un avec le
+// mauvais message d'erreur, ce qui est pire que rouge. Releve par la revue « developpeur »
+// du 2026-08-09. En l'absence de DEMO_NOW le comportement est inchange.
+const NOW = () => (process.env.DEMO_NOW ? Date.parse(process.env.DEMO_NOW) : Date.now());
 const DAY = 24 * 3600 * 1000;
 
 // --- ambiguity resolutions made explicit in code (full reasoning in
@@ -312,7 +317,11 @@ const server = http.createServer(async (req, res) => {
   // --- static ------------------------------------------------------------
   let file = p === '/' ? '/index.html' : p;
   const fp = path.join(__dirname, 'public', file);
-  if (fp.startsWith(path.join(__dirname, 'public')) && fs.existsSync(fp) && fs.statSync(fp).isFile()) {
+  // Le separateur est indispensable : sans lui, un dossier voisin nomme `public-autre`
+  // satisfait le prefixe et sort du repertoire servi. Severite faible dans cette demo,
+  // mais c'est le motif qu'elle enseigne et qu'un lecteur recopiera (B7).
+  const publicRoot = path.join(__dirname, 'public') + path.sep;
+  if (fp.startsWith(publicRoot) && fs.existsSync(fp) && fs.statSync(fp).isFile()) {
     const ext = path.extname(fp); const ct = ext === '.html' ? 'text/html' : ext === '.js' ? 'text/javascript' : ext === '.css' ? 'text/css' : 'text/plain';
     res.writeHead(200, { 'Content-Type': ct }); return res.end(fs.readFileSync(fp));
   }

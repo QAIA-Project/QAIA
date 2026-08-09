@@ -68,3 +68,36 @@ Feature: Audit trail, mandatory comments and access control
     Given "employee@demo" is signed in with no reports of their own
     When "employee@demo" views "My reports"
     Then the list is empty
+
+  @QAIA-US-004-039 @AC-auth @P1 @negative @error-guessing
+  # condition: AC-auth-C4 [req-neg] — priority P1 — chemin de LECTURE, ajoute le 2026-07-26 :
+  # l'ecriture etait couverte (037), la lecture ne l'etait par rien. Q10 : l'AC enonce un refus,
+  # pas un statut ; le SUT repond 404 pour ne pas divulguer l'existence du rapport.
+  Scenario: A manager cannot read an employee's unsubmitted draft
+    Given "employee@demo" has a draft report "D" that has never been submitted
+    When "manager@demo" attempts to read report "D"
+    Then the attempt is refused
+
+  @QAIA-US-004-040 @AC-auth @P2
+  # condition: AC-auth-C5 — priority P2 — le pendant positif de 039 et 041 : sans lui, les deux
+  # refus seraient satisfaits par un SUT qui refuse tout le monde tout le temps.
+  Scenario: The current approver can read a report once it awaits their role
+    Given a submitted report "R" by "employee@demo" awaiting manager approval
+    When "manager@demo" reads report "R"
+    Then the report is returned with its lines and its total
+
+  @QAIA-US-004-041 @AC-auth @P2 @negative @error-guessing
+  # condition: AC-auth-C6 [req-neg] — priority P2 — etre approbateur ne suffit pas : il faut
+  # etre l'approbateur ATTENDU a cet instant de la chaine.
+  Scenario: An approver not yet in the chain cannot read a submitted report
+    Given a submitted report "R" by "employee@demo" awaiting manager approval
+    When "finance@demo" attempts to read report "R"
+    Then the attempt is refused
+
+  @QAIA-US-004-042 @AC8 @P1 @negative @error-guessing
+  # condition: AC8-C4 [req-neg] — priority P1 — trouve le 2026-07-26 : GET /api/audit n'avait
+  # aucun controle d'authentification et exposait le journal complet a n'importe qui.
+  Scenario: Reading the audit trail without authentication is refused
+    Given at least one report has been submitted and decided
+    When an unauthenticated request attempts to read the audit trail
+    Then the attempt is refused

@@ -4,7 +4,7 @@
 const { test, expect } = require('./fixtures');
 const { apiLogin, apiCreateDraft, apiSubmit, apiCreateSubmittedReport, apiDecide, daysAgoISO, todayISO } = require('./helpers');
 
-const B = 'http://localhost:4500';
+const B = process.env.BASE_URL || 'http://localhost:4500'; // honore BASE_URL comme la config (B1)
 
 test.describe('ExpenseFlow API (US-004)', () => {
 
@@ -285,8 +285,13 @@ test.describe('ExpenseFlow API (US-004)', () => {
     const emp = await apiLogin(request, B, 'employee@demo');
     const mgr = await apiLogin(request, B, 'manager@demo');
     const { id } = await apiCreateSubmittedReport(request, B, emp, { lines: [{ category: 'x', amount: 20, date: todayISO(), receipt: true }] });
-    const comment = '1234567890'; // exactly 10 chars
-    expect(comment.length).toBe(10);
+    // Exactement a la borne : le SUT exige `comment.trim().length >= 10` (server.js:239).
+    // Le derive de la borne plutot que de l'ecrire en dur, pour que le test suive la regle
+    // s'il elle change. L'assertion qui etait ici -- `expect(comment.length).toBe(10)` sur
+    // ce meme litteral -- affirmait que JavaScript sait compter : elle ne pouvait pas
+    // echouer (B2).
+    const MIN_COMMENT = 10;
+    const comment = 'x'.repeat(MIN_COMMENT);
     const r = await apiDecide(request, B, mgr, id, 'reject', comment);
     expect((await r.json()).report.status).toBe('rejected');
   });

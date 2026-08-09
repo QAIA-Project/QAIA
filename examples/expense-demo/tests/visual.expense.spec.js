@@ -18,12 +18,16 @@ const { test, expect } = require('./fixtures');
 const { LoginPage } = require('./pages/LoginPage');
 const { ReportsPage } = require('./pages/ReportsPage');
 
+const B = process.env.BASE_URL || 'http://localhost:4500'; // honore BASE_URL comme la config (B1)
 const TOL = { maxDiffPixelRatio: 0.002 };
-const FIXED_DATE = '2026-07-25'; // inside the 90-day window, frozen so pixels are stable
+// Figee pour que les pixels soient stables, ET dans la fenetre des 90 jours -- ce qui
+// n'etait vrai que jusqu'au 2026-10-24, puisque le SUT compare a son horloge. Demarrer la
+// demo avec DEMO_NOW=2026-07-26 (voir README des tests) rend la paire deterministe.
+const FIXED_DATE = '2026-07-25';
 
 test.describe('ExpenseFlow visual (US-004)', () => {
   test.beforeEach(async ({ request }) => {
-    await request.post('http://localhost:4500/api/reset');
+    await request.post(B + '/api/reset');
   });
 
   test('@QAIA-VIS-001 sign-in screen', async ({ page }) => {
@@ -76,17 +80,17 @@ test.describe('ExpenseFlow visual (US-004)', () => {
   test('@QAIA-VIS-006 approver inbox', async ({ page, request }) => {
     // Seeded through the API rather than the UI: the screen under test is the inbox, and driving
     // the submission through the browser would make this snapshot depend on the draft form too.
-    const t = await (await request.post('http://localhost:4500/api/login', {
+    const t = await (await request.post(B + '/api/login', {
       data: { email: 'employee@demo', password: 'demo1234' },
     })).json();
-    const created = await (await request.post('http://localhost:4500/api/reports', {
+    const created = await (await request.post(B + '/api/reports', {
       headers: { Authorization: 'Bearer ' + t.token },
     })).json();
-    await request.put('http://localhost:4500/api/reports/' + created.report.id, {
+    await request.put(B + '/api/reports/' + created.report.id, {
       headers: { Authorization: 'Bearer ' + t.token },
       data: { currency: 'EUR', lines: [{ category: 'travel', amount: 42.5, date: FIXED_DATE, receipt: true }] },
     });
-    await request.post('http://localhost:4500/api/reports/' + created.report.id + '/submit', {
+    await request.post(B + '/api/reports/' + created.report.id + '/submit', {
       headers: { Authorization: 'Bearer ' + t.token },
     });
 

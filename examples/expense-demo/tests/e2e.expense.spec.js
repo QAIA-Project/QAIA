@@ -10,7 +10,7 @@
 const { test, expect } = require('./fixtures');
 const { apiLogin, apiCreateSubmittedReport, apiDecide, todayISO } = require('./helpers');
 
-const B = 'http://localhost:4500';
+const B = process.env.BASE_URL || 'http://localhost:4500'; // honore BASE_URL comme la config (B1)
 
 test.describe('ExpenseFlow — approval journey (US-004)', () => {
 

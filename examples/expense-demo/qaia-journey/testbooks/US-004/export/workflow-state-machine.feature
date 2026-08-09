@@ -71,3 +71,26 @@ Feature: Expense report lifecycle
     Given a report "R" by "employee@demo" that was rejected by its manager with comment "not a business expense"
     When "employee@demo" attempts to submit report "R"
     Then the attempt is refused
+
+  @QAIA-US-004-043 @AC7 @P2 @negative @state-transition
+  # condition: AC7-C3 [req-neg] — priority P2 — « approuve » est un etat terminal : la revue de
+  # machine a etats couvrait les transitions autorisees, aucune ne verifiait qu'on ne peut plus
+  # en sortir. Trois sorties possibles, trois scenarios (043, 044, 045).
+  Scenario: An approved report cannot be edited
+    Given a report "R" by "employee@demo" that has been fully approved
+    When "employee@demo" attempts to edit report "R"
+    Then the attempt is refused
+
+  @QAIA-US-004-044 @AC7 @P2 @negative @state-transition
+  # condition: AC7-C4 [req-neg] — priority P2
+  Scenario: An approved report cannot be re-submitted
+    Given a report "R" by "employee@demo" that has been fully approved
+    When "employee@demo" attempts to submit report "R" again
+    Then the attempt is refused
+
+  @QAIA-US-004-045 @AC7 @P2 @negative @state-transition
+  # condition: AC7-C5 [req-neg] — priority P2
+  Scenario: An approved report cannot be decided again
+    Given a report "R" by "employee@demo" that has been fully approved
+    When "finance@demo" attempts to approve report "R" again
+    Then the attempt is refused

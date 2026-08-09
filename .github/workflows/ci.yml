@@ -110,6 +110,34 @@ jobs:
           # target is misspelled or a recipe rots, this fails rather than the next newcomer.
           make check
 
+      - name: Le produit passe son propre outil (suite vitrine ExpenseFlow)
+        run: |
+          set -e
+          # Vingt etapes de CI, et aucune ne notait un artefact reel : seuls tournaient les
+          # selfchecks, c'est-a-dire les outils se prouvant justes sur des fixtures de
+          # laboratoire. Sept tests de cette suite ont ainsi porte pendant des semaines un
+          # identifiant qui ne renvoyait a aucun scenario du cahier -- la promesse centrale du
+          # produit, cassee sur `main`, et invisible. Un outil qu'on ne pointe jamais sur le
+          # produit ne garde rien. Releve par la revue « developpeur » du 2026-08-09.
+          #
+          # `--skip-mutation` : la piste mutation exige la suite verte, donc l'application
+          # demarree, ce qui est hors de portee de ce job (voir generated-suite.yml). La piste
+          # statique suffit a garder la classe de defaut ci-dessus.
+          #
+          # L'outil sort 1 des qu'un constat est bloquant : `set -e` fait le reste.
+          python eval/tools/automation_score.py \
+            --tests-dir examples/expense-demo/tests \
+            --testbook examples/expense-demo/qaia-journey/testbooks/US-004 \
+            --skip-mutation
+
+      - name: Les cahiers de la vitrine passent le score structurel
+        run: |
+          set -e
+          # Meme raison : `structural_score.py` note la qualite d'un cahier de test et n'avait
+          # jamais ete lance sur les cahiers que le depot montre en exemple.
+          python eval/tools/structural_score.py \
+            --batch examples/expense-demo/qaia-journey/testbooks/US-004
+
       - name: Requirement sources unchanged since their test book was written
         run: |
           set -e

@@ -39,9 +39,13 @@ check: ## Lance tous les controles que la CI lance (skills, provenance, outillag
 	@cd mcp-bridge && npm ci --no-audit --no-fund --silent && npm test
 	$(MAKE) lint
 
+# Meme reference que `tests/playwright.config.js`. Sans elle, l'application et sa suite lisent
+# deux horloges differentes et cinq tests deviennent rouges a une date que personne n'a decidee.
+DEMO_NOW ?= 2026-07-26
+
 demo: ## Demarre l'application de demonstration sur http://localhost:4500
-	@echo "ExpenseFlow sur http://localhost:4500 -- Ctrl+C pour arreter"
-	node examples/expense-demo/app/server.js
+	@echo "ExpenseFlow sur http://localhost:4500 (horloge figee au $(DEMO_NOW)) -- Ctrl+C pour arreter"
+	DEMO_NOW=$(DEMO_NOW) node examples/expense-demo/app/server.js
 
 test: ## Joue la suite generee contre la demo (la demo doit tourner)
 	cd examples/expense-demo/tests && npx playwright test
