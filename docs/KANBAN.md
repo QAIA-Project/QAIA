@@ -178,6 +178,17 @@ plus #58 : #49-#58 toutes closes).
 
 ---
 
+## Sprint 31 — #60 fermée : une suite générée tourne dans une vraie CI (2026-08-01, D132-D139) ✅ TERMINÉ
+
+Absent de ce tableau jusqu'au 2026-08-09, alors qu'il porte l'une des rares preuves externes du
+projet. Relevé par la revue « chef de projet » ; le détail est dans
+[`STATUS.md`](STATUS.md#sprint-31--60-fermée--une-suite-générée-tourne-dans-une-vraie-ci-2026-08-01-d132--terminé).
+
+- **#60 fermée** — une suite générée par QAIA s'exécute sur un runner GitHub Actions, **sans
+  session Claude ni skill chargée** : 8/8. C'est la démonstration que la sortie du produit vit
+  sans le produit.
+- 5 issues fermées ce jour-là (#60, #62 et trois autres), D132 à D139.
+
 ## Sprint 30 — revue externe confrontée au dépôt, corrections P0, README rendu vrai (2026-07-31, D131) ✅ TERMINÉ
 
 Suite du Sprint 29. Trois analyses externes (ChatGPT, Gemini, Mistral) soumises par le fondateur, vérifiées avant exécution.
@@ -562,7 +573,7 @@ Demande fondateur : enchaîner les 4 leviers + standardiser la sortie + un plugi
 
 ## Sprint 2 — Régression 0.1.1 & agent ReAct ✅ TERMINÉ (baseline 19/20, +2 ; dims 6 et 9 récupérées ; skills qaia-help/testbook-validate testées et corrigées)
 
-## Sprint 9 — Industrialisation & sortie standardisée ✅ TERMINÉ
+## Sprint 9 *(ancienne numérotation — le Sprint 9 courant est plus haut)* — Industrialisation & sortie standardisée ✅ TERMINÉ
 Contrat de sortie unifié (manifeste JSON par US, `docs/OUTPUT-CONTRACT.md`, D39) écrit au même format par tous les plugins. Nouveau plugin **`qaia-score` 0.1.0** (D40) : score /20 + gate PASS/CONCERNS/FAIL/WAIVED, lecture seule — aucun producteur ne s'auto-score. RAG en usage réel (récupération/citation, `examples/rag-demo/`). Oracle projet **OpenAPI** (#16b, `examples/oracle-demo/`). Connecteur **Jira** (#9 fermé, `examples/jira-demo/`). Durcissement M3 `automate` (#10 : scaffold + templates CI GitHub/GitLab/Jenkins + gate T17 honnête). Rituel `/session-review` (`.claude/commands/`). Issues fermées : #9, #11. **Mesure en cours** : calibration `qaia-score` (#17). Restant = **mesurer en réel** (RAG au harnais, M3/T17 sur app pilote) — majoritairement mur humain (#1).
 
 ## Sprint 8 — Éval vérité-terrain (oracle humain) ✅ TERMINÉ
@@ -580,6 +591,13 @@ Recherche de cibles (médical + généraliste, `docs/DEMO-TARGETS.md`) ; sandbox
 
 ## Sprint 3 — Élargissement (équipe agile en workflow, 8 agents) ✅ TERMINÉ — voir `eval/baselines/sprint3-retro.md` (US-002 : 17/20 4/4 ambiguïtés ; US-003 : 19/20 mais 0/4 → action C1 ; régénération/export/RAG : ✅). **Sprint 4 (nouveau) = skills 0.1.2** : top-5 actions de la rétro, puis re-run harnais 3 US.
 
+> **Numéros réutilisés.** Ce document a connu deux numérotations : celle d'origine, et celle
+> qui a suivi la réorganisation. Trois numéros — 3, 4 et 9 — servent donc deux fois, avec des
+> contenus et des états différents. Les entrées de l'ancienne série portent désormais la mention
+> *(ancien plan)* ou *(ancienne numérotation)* pour qu'on sache laquelle on lit. Elles ne sont
+> pas renumérotées : ce sont des traces, et les renuméroter casserait toute référence
+> extérieure. Relevé par la revue « chef de projet » du 2026-08-09.
+
 ## Ancien plan Sprint 2 (conservé pour trace) 🔄
 
 | # | Tâche | État |
@@ -591,7 +609,7 @@ Recherche de cibles (médical + généraliste, `docs/DEMO-TARGETS.md`) ; sandbox
 | S2.5 | Test d'exécution de `qaia-help` et `testbook-validate` sur artefacts réels | 🔄 en cours |
 | S2.6 | Grooming du backlog (ce document) | ✅ ce commit |
 
-## Sprint 3 — Élargissement du gold set & cycle complet (PRÊT)
+## Sprint 3 *(ancien plan, jamais joué sous ce numéro)* — Élargissement du gold set & cycle complet (PRÊT)
 
 | # | Tâche | Critère d'acceptation |
 |---|---|---|
@@ -602,7 +620,7 @@ Recherche de cibles (médical + généraliste, `docs/DEMO-TARGETS.md`) ; sandbox
 | S3.5 | Step-files pour `testbook-generate` (BMAD A6) si les runs 0.1.1 montrent encore des dérives d'exécution | Skill découpée, harnais non dégradé |
 | S3.6 | Doc « Using QAIA with BMAD » (canal d'acquisition, D33) | Page publiée |
 
-## Sprint 4 — Sortie publique (BLOQUÉ par actions propriétaire)
+## Sprint 4 *(ancien plan, jamais joué sous ce numéro)* — Sortie publique (BLOQUÉ par actions propriétaire)
 
 | # | Tâche | Bloqué par |
 |---|---|---|

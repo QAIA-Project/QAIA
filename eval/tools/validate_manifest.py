@@ -72,6 +72,60 @@ def check_enum(v, path, errors, allowed):
         err(errors, path, f"expected one of {sorted(allowed)}, got {v!r}")
 
 
+
+# Skills dont le role EST de controler : elles figurent legitimement dans `producers[]` (elles
+# produisent leur rapport) et peuvent porter la note d'un artefact qu'elles n'ont pas ecrit.
+#
+# Limite assumee : les entrees d'`artifacts` ne nomment pas leur producteur, donc on ne peut pas
+# verifier mecaniquement « ce producteur a-t-il ecrit CE que la porte note ». Cette liste encode
+# la norme telle qu'elle se pratique -- un generateur ne note jamais, un controleur peut. Le jour
+# ou `artifacts[]` portera un champ producteur, ce controle deviendra exact et cette liste
+# disparaitra.
+CHECKER_SKILLS = {
+    "testbook-validate",
+    "testbook-score",
+    "automation-score",
+    "spec-suite-drift",
+    "aptitude-gate",
+    "us-review",
+}
+
+
+def check_scorer_is_not_a_producer(scored_by, producers, path, errors):
+    """Regle 3 : aucun producteur ne note sa propre sortie.
+
+    C'est l'argument que le README met en tete, et il n'etait verifie nulle part -- le
+    validateur controlait seulement que `scoredBy` est une chaine. Un manifeste declarant que
+    `testbook-generate` a produit le cahier ET qu'il l'a note passait sans un mot.
+
+    `scoredBy` s'ecrit « plugin:skill » ; `producers[]` porte `plugin` et `skill` separement.
+    On compare la paire, pas la chaine, pour ne pas dependre du formatage.
+    """
+    if not isinstance(scored_by, str) or not isinstance(producers, list):
+        return  # deja signale par les controles de type
+    scorer = scored_by.strip()
+    if ":" in scorer:
+        plugin, _, skill = scorer.partition(":")
+    else:
+        plugin, skill = None, scorer
+    if skill.strip() in CHECKER_SKILLS:
+        # Une skill de controle apparait legitimement dans `producers[]` : elle produit son
+        # rapport de validation. Noter un cahier qu'elle n'a pas ecrit est precisement ce que
+        # la regle 3 demande, pas ce qu'elle interdit.
+        return
+    for i, p in enumerate(producers):
+        if not isinstance(p, dict):
+            continue
+        same_skill = str(p.get("skill", "")).strip() == skill.strip()
+        same_plugin = plugin is None or str(p.get("plugin", "")).strip() == plugin.strip()
+        if same_skill and same_plugin:
+            err(errors, f"{path}.scoredBy",
+                "regle 3 violee : %r figure dans producers[%d] et n'est pas une skill de "
+                "controle -- un producteur ne peut pas noter sa propre sortie"
+                % (scored_by, i))
+            return
+
+
 def validate_producers(producers, errors):
     if not isinstance(producers, list):
         return err(errors, "producers", "expected array")
@@ -175,7 +229,8 @@ def validate_open_arbitrations(items, errors):
         check_str(a.get("sourceCheckpoint"), f"{p}.sourceCheckpoint", errors)
 
 
-def validate_gate(gate, errors):
+def validate_gate(gate, errors, producers=None):
+    """`producers` sert a la regle 3 ; il reste optionnel pour ne casser aucun appelant."""
     path = "gate"
     if not isinstance(gate, dict):
         return err(errors, path, "expected object")
@@ -199,6 +254,7 @@ def validate_gate(gate, errors):
     check_int(gate.get("score"), f"{path}.score", errors, minimum=0)
     check_int(gate.get("max"), f"{path}.max", errors, minimum=0)
     check_str(gate.get("scoredBy"), f"{path}.scoredBy", errors)
+    check_scorer_is_not_a_producer(gate.get("scoredBy"), producers, path, errors)
     check_datetime(gate.get("at"), f"{path}.at", errors)
     waiver = gate.get("waiver")
     # A WAIVED verdict with no waiver object used to PASS with exit 0 (verified 2026-07-31,
@@ -279,7 +335,7 @@ def validate_manifest(manifest, base_dir=None):
     if "structural" in manifest:
         validate_structural(manifest["structural"], errors)
     if "gate" in manifest:
-        validate_gate(manifest["gate"], errors)
+        validate_gate(manifest["gate"], errors, manifest.get("producers"))
         # A forced stop caps the release verdict regardless of the rubric: the deterministic pass
         # found a scenario that cannot be evaluated at all, and no LLM total overrides that.
         st = manifest.get("structural")

@@ -192,6 +192,14 @@ jobs:
           # refusals. What cannot be settled is printed as not covered rather than passed over.
           python eval/tools/check_oracle_library.py
 
+      - name: regle 3 -- aucun producteur ne note sa propre sortie
+        run: |
+          set -e
+          # L'argument que le README met en tete n'avait aucune application mecanique :
+          # `validate_manifest.py` verifiait que `gate.scoredBy` est une chaine, sans jamais la
+          # comparer a `producers[]`. Un manifeste ou le generateur se notait passait sans un mot.
+          python eval/tools/selfcheck_rule3.py
+
       - name: opt-in agents tier stays opt-in
         run: |
           set -e

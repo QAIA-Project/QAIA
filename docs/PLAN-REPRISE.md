@@ -94,11 +94,16 @@ projet à 84 000 étoiles.* Il ne se périme pas vite, mais il ne grandit pas no
 
 ## Les trois sprints
 
+> *Renumérotés le 2026-08-09 : ce plan proposait S32, S33 et S34 comme sprints à
+> venir alors que le KANBAN porte déjà un Sprint 32 **terminé** et des Sprints 33
+> et 34 **ouverts**. Trois numéros pour deux calendriers — relevé par la revue
+> « chef de projet ». Les numéros libres commencent à 35.*
+
 | Sprint | Contenu | Test de fin |
 |---|---|---|
-| **S32 — Charger** | E1 en entier | Un tiers a lu le cahier et dit s'il lui aurait servi |
-| **S33 — Alléger** | E2 + E3 | Le dépôt s'installe en cinq minutes, ≤ 6 issues ouvertes |
-| **S34 — Sortir** | E4 + ce que S32 a révélé | Le compteur de visiteurs uniques a bougé |
+| **S35 — Charger** | E1 en entier | Un tiers a lu le cahier et dit s'il lui aurait servi |
+| **S36 — Alléger** | E2 + E3 | Le dépôt s'installe en cinq minutes, ≤ 6 issues ouvertes |
+| **S37 — Sortir** | E4 + ce que S35 a révélé | Le compteur de visiteurs uniques a bougé |
 
 ## La règle que je m'impose pour ces trois sprints
 
