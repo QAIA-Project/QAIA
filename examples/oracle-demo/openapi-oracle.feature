@@ -3,7 +3,7 @@ Feature: Create appointment — API contract oracle (POST /api/appointments)
   # issue #16). Every scenario cites the operation and the spec element it is grounded in.
   # Expected statuses come from the contract's documented `responses`, not from extrapolation.
 
-  @QAIA-SHOP-DEMO-201 @P1 @oracle:openapi @use-case
+  @QAIA-SHOP-DEMO-201 @P1 @oracle:openapi
   Scenario: Valid request creates the appointment
     # oracle: openapi createAppointment 201
     Given an authenticated patient and an available slot

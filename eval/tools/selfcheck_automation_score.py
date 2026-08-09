@@ -56,8 +56,23 @@ check("split_tests returns the runner's title, not the source's",
 # The grep pattern is built from that title: it must escape regex metacharacters but must not
 # reintroduce the JS escape, or the mutation is silently never run.
 if titles:
-    check("escape_grep leaves the apostrophe alone",
-          "\\'" in A.escape_grep(titles[0]), False)
+    check("grep_pattern leaves the apostrophe alone",
+          "\\'" in A.grep_pattern(titles[0]), False)
+
+# Le titre d'un test vient du depot SCANNE -- en mode --third-party, de celui d'un inconnu. Il
+# doit atteindre le lanceur comme un element d'argv, jamais comme un morceau de chaine de shell.
+# Garde-fou de la faille trouvee par la revue « developpeur » le 2026-08-09 : `escape_grep`
+# echappait les metacaracteres d'expression reguliere et etait utilise comme s'il echappait le
+# shell, si bien qu'un backtick ou un guillemet dans un nom de test s'executait.
+import inspect
+_src = inspect.getsource(A.run_cmd)
+check("run_cmd ne passe par aucun shell",
+      ("shell=False" in _src) and ("shell=True" not in _src), True)
+
+_HOSTILE = 'a manager`id`s "report" $(id)'
+_pat = A.grep_pattern(_HOSTILE)
+check("un titre hostile reste une donnee : rien n'est ajoute pour le refermer",
+      ('"' in _pat) and ("`" in _pat) and ("\\\"" not in _pat), True)
 
 # --- 3. "nothing was found" assertions must be mutable ---------------------------------------
 # `expect(violations).toEqual([])` is the entire a11y idiom. No operator covered it, so those

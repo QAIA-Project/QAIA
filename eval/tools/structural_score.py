@@ -129,7 +129,7 @@ def parse_scenarios(text):
         if not line.startswith("#"):
             tags_pending = tags_pending if not cur else []
         if cur is not None:
-            sm = re.match(r"(Given|When|Then|And|But|Soit|Quand|Alors|Et|Mais|Etant donn[ée])\b(.*)", line, re.I)
+            sm = re.match(r"(Given|When|Then|And|But|Soit|Quand|Alors|Etant donn[ée]e?s?|Et|Mais)\b(.*)", line, re.I)
             if sm:
                 kw, txt = sm.group(1), sm.group(2).strip()
                 cur["steps"].append((kw, txt))
@@ -163,12 +163,23 @@ def score_feature(path, declared_acs=None, source_text=None, third_party=False):
 
     # --- detectors ---
     markers = MARKER_RE.findall(QUOTED_XXX_TBD_RE.sub('""', text))
-    truncated = [s["name"] for s in scen if any(t.endswith(("…", "...", ",", "-")) or (len(t.split()) < 2) for _, t in s["steps"] if t)]
-    empty_then = [s["name"] for s in scen if not s["then"]]
-    hollow = [s["name"] for s in scen if s["then"] and all(HOLLOW_RE.search(t) for t in s["then"])]
-    vague = [s["name"] for s in scen if s["then"] and not any(has_strict_assertion(t) for t in s["then"]) and any(VAGUE_RE.search(t) for t in s["then"])]
+    # Indexes par POSITION, pas par nom : un Scenario Outline donne le meme nom a tous ses
+    # exemples, et un copier-coller aussi. Indexer par nom faisait qu'un scenario vague
+    # excluait son homonyme parfaitement assertif de la completude (revue dev, 2026-08-09).
+    truncated_i = set(i for i, s in enumerate(scen) if any(t.endswith(("…", "...", ",", "-")) or (len(t.split()) < 2) for _, t in s["steps"] if t))
+    empty_then_i = set(i for i, s in enumerate(scen) if not s["then"])
+    hollow_i = set(i for i, s in enumerate(scen) if s["then"] and all(HOLLOW_RE.search(t) for t in s["then"]))
+    vague_i = set(i for i, s in enumerate(scen) if s["then"] and not any(has_strict_assertion(t) for t in s["then"]) and any(VAGUE_RE.search(t) for t in s["then"]))
+    # les noms restent pour les constats lisibles, mais ne servent plus a decider
+    truncated = [scen[i]["name"] for i in sorted(truncated_i)]
+    empty_then = [scen[i]["name"] for i in sorted(empty_then_i)]
+    hollow = [scen[i]["name"] for i in sorted(hollow_i)]
+    vague = [scen[i]["name"] for i in sorted(vague_i)]
     # a scenario "really covers" only if it has a Then with a concrete assertion, not hollow/empty
-    def covers(s): return bool(s["then"]) and s["name"] not in empty_then and s["name"] not in hollow and s["name"] not in vague and any(ASSERT_RE.search(t) for t in s["then"])
+    def covers_i(i):
+        s = scen[i]
+        return bool(s["then"]) and i not in empty_then_i and i not in hollow_i and i not in vague_i and any(ASSERT_RE.search(t) for t in s["then"])
+    def covers(s): return covers_i(scen.index(s))
     traced = [s for s in scen if any(re.match(r"@QAIA-", t) for t in s["tags"])]
     ac_linked = [s for s in scen if any(re.search(r"@AC[:_-]?\w+|@QAIA-\w+-\d+", t) for t in s["tags"])]
 
@@ -229,18 +240,21 @@ def score_feature(path, declared_acs=None, source_text=None, third_party=False):
 
     # --- deterministic /100 (explicit budget, like a real tg_scorer) ---
     readability = 25 * (len([s for s in scen if s["name"] and s["steps"]]) / n)
-    completeness_base = len([s for s in scen if covers(s)]) / n
+    completeness_base = len([i for i in range(len(scen)) if covers_i(i)]) / n
     if declared_acs:
         covered_acs = set()
-        for s in scen:
-            if covers(s):
+        for i, s in enumerate(scen):
+            if covers_i(i):
                 for tag in s["tags"]:
                     for ac in declared_acs:
-                        if ac.lower() in tag.lower(): covered_acs.add(ac)
+                        # jeton entier, pas sous-chaine : sinon @AC10 credite AC1 (revue dev)
+                        if re.search(r"(?<![A-Za-z0-9])%s(?![A-Za-z0-9])" % re.escape(ac),
+                                     tag, re.I):
+                            covered_acs.add(ac)
         completeness = 30 * (len(covered_acs) / len(declared_acs))
     else:
         completeness = 30 * completeness_base
-    coherence = 20 * (1 - (len(set(truncated + empty_then)) / n))
+    coherence = 20 * (1 - (len(truncated_i | empty_then_i) / n))
     traceability = 25 * (len(traced) / n) * (0.6 + 0.4 * (len(ac_linked) / n))
 
     if third_party:

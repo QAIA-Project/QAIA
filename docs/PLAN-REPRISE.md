@@ -2,9 +2,15 @@
 
 **Écrit le 2026-08-09, après l'audit à froid.** Ce plan part du seul constat qui compte :
 
-> **La seule chose que ce projet ait jamais prouvée à l'extérieur — un défaut trouvé et corrigé
-> chez `realworld-apps/realworld` — vient d'un outil qui lit le code des autres. C'est-à-dire
-> l'exact contraire de l'idée centrale.**
+> **Les deux seules choses que ce projet ait jamais prouvées à l'extérieur viennent d'outils
+> qui lisent le code ou la documentation des autres — pas de la chaîne « exigence → cahier de
+> test ».** Un défaut corrigé chez `realworld-apps/realworld` (84k ★, trouvé par
+> `automation_score`), et **deux défauts fusionnés en amont chez `typicode/json-server`**
+> (75k ★, `eval/external-application-2026-08-08/`) — celui-ci part de la documentation de la
+> cible, pas d'une exigence qu'un humain nous a confiée.
+>
+> *Correction du 2026-08-09 : ce paragraphe ne mentionnait que RealWorld et présentait donc
+> comme unique une preuve qui est double. Relevé par la revue « chef de projet ».*
 >
 > Le cœur — *donner une exigence, recevoir un cahier de test* — n'a jamais été validé par
 > quelqu'un d'extérieur. Pas une fois en quinze jours.
@@ -34,7 +40,7 @@ La périphérie est éprouvée ; le centre est déclaratif.
 **Ce qui ferme l'épique :** un rapport public où un tiers dit si le cahier lui aurait servi.
 **Ni un score, ni une démo. Un avis.**
 
-**Ce qui ne la ferme pas :** nous, disant que ça marche. C'est déjà écrit 184 fois.
+**Ce qui ne la ferme pas :** nous, disant que ça marche. C'est déjà écrit 196 fois.
 
 ---
 

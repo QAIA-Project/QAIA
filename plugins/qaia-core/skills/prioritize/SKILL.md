@@ -19,7 +19,7 @@ business, and how fragile this part of the system really is: **the skill propose
      `[open]`-flagged conditions score higher; stable, well-understood rules lower.
    - **Optional git-history signal** — see `references/git-history-signal.md`. Only when the user
      has explicitly named a target repo path for this session.
-   - **Priority = impact × probability** → **P1 (≥6) / P2 (3-4) / P3 (≤2)**.
+   - **Priority = impact × probability** → **P1 (≥ 6) / P2 (3–5) / P3 (≤ 2)**.
 
 2. **Show your reasoning compactly.** One table: condition, impact, probability, priority,
    one-line rationale.
@@ -44,7 +44,7 @@ business, and how fragile this part of the system really is: **the skill propose
    >   and the story is not fit for a production go/no-go until someone has looked.
    >
    > You do not need to review every row. The ones worth your minutes are those we rated
-   > **P1** — those we believe would hurt most — plus any you would have rated higher.
+   > **P1** — those we believe would hurt most — plus a scan of the titles of everything below — you are the only person who can spot a row we scored low that your business cannot afford. Reading the titles takes a minute; it is the minute this callout exists for.
 
    The user adjusts scores — their business knowledge overrides yours — or approves. Record each
    override with the user's stated reason: that reason is knowledge (offer `rag-build` capture
@@ -76,8 +76,11 @@ The **one-line risk rationale of every priority assignment must reach the delive
 ## Guardrails
 
 - **Never present your scores as final** — the arbitration step is the point of this skill.
-- **A regulated-context project treats traceability-relevant conditions as impact 3 by default**
-  (medical software and regulated environments are QAIA's primary niche). Say so when applying it.
+- **A project under a traceability obligation treats traceability-relevant conditions as
+  impact 3 by default.** Say so when applying it, and say *which* obligation — the user's, not
+  ours. QAIA claims no regulatory coverage: the v1 "medical / regulated" niche framing was
+  **retired (D114)**, and a rule that inflates priorities in the name of a withdrawn
+  positioning is a rule nobody can defend to the person whose release it delays.
 - **The git-history signal is an input to probability, never a verdict and never a shortcut
   around arbitration.** Bounds, citation rules and the "substance over raw count" test:
   `references/git-history-signal.md`. Read only the repo path the user explicitly gave for this

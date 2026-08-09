@@ -6,7 +6,7 @@ Feature: Expense report lifecycle
     Given the ExpenseFlow SUT is reset to its seed state
     And "employee@demo" is an employee whose direct manager is "manager@demo"
 
-  @QAIA-US-004-001 @AC1 @AC2 @AC8 @P1 @smoke @use-case
+  @QAIA-US-004-001 @AC1 @AC2 @AC8 @P1 @smoke
   # journey: end-to-end happy path across the full chain up to first approval
   Scenario: End-to-end journey — draft to first approval on a small report
     Given "employee@demo" has a draft report with one EUR line "taxi" of 40.00 dated today, receipt attached
@@ -50,8 +50,8 @@ Feature: Expense report lifecycle
     Then the attempt is refused
 
   @QAIA-US-004-007 @AC1 @AC7 @P1 @negative @state-transition @low-confidence
-  # condition: AC1-C6 [req-neg] — priority P1 — open: Q3 (reject only from `submitted`, — Q10: the AC states refusal, not a status; SUT answers 409
-  # not from a `changes-requested`-turned-`draft` report; safe default per the standard
+  # condition: AC1-C6 [req-neg] — priority P1 — open: Q3 (reject only from `submitted`, not from a `changes-requested`-turned-`draft` report; safe default per the standard — Q10: the AC states refusal, not a status; SUT answers 409
+  # (Q10: the AC states refusal, not a status; SUT answers 409)
   # state-machine convention that undeclared transitions are forbidden)
   Scenario: A draft reached via changes-requested cannot be rejected directly
     Given report "R" was returned to draft via changes-requested with comment "please add a receipt scan"

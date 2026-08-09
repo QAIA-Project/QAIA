@@ -68,8 +68,11 @@ The open questions this skill raises are the ones a human later has to arbitrate
    >   apply **no** default: those stay open, and every test that depends on them is flagged as
    >   resting on an unconfirmed guess. That flag follows the story to the release decision.
    >
-   > "I don't know" is a useful answer — it tells us to mark an assumption rather than invent a
-   > certainty. The unusable answer is silence.
+   > "I don't know" is a useful answer, and it does one of two things depending on the subject:
+   >   on a low-risk point it becomes a flagged assumption; on anything touching money, safety,
+   >   health data, minors or legal evidence it leaves the question **open** and the scenario
+   >   marked, because no default is safe there. Either way it beats inventing a certainty.
+   >   The unusable answer is silence.
 
    For each question the outcome is exactly one of:
    - **answered** — the user states the rule → recorded as a decision;

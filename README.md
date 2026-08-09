@@ -16,7 +16,7 @@
 Scenario: A line at exactly the receipt threshold without a receipt is refused
   Given "employee@demo" has a draft report with one EUR line "gear" of 25.00 dated today, no receipt attached
   When "employee@demo" submits the report
-  Then the attempt is refused with a 422 status and a message mentioning "receipt"
+  Then the attempt is refused with a message mentioning "receipt"
 ```
 
 38 scenarios from that one story, each traced back to an acceptance criterion in a coverage matrix. **11 of them are flagged low-confidence with the open question named** — because the story didn't say, and quietly picking an interpretation is how a suite ends up looking complete while encoding a guess at exactly the boundary where bugs live.
@@ -25,7 +25,7 @@ Scenario: A line at exactly the receipt threshold without a receipt is refused
 
 [See real input and output side by side →](https://qaia-project.github.io/QAIA/) · [Which tool should you install? (we recommend others for 3 of 4 cases) →](https://qaia-project.github.io/QAIA/compare.html)
 
-**Status: pre-alpha, in active development.** Core (`qaia-core` 0.2.35, 18 skills), automation (`qaia-playwright` 0.1.27, 14 skills), scoring (`qaia-score` 0.2.4, 4 skills) and test-data (`qaia-testdata` 0.1.3, 1 skill) plugins exist — **37 skills** — validate `--strict`, and are proven end-to-end on **two independent real domains** — healthcare ([`examples/medibook/`](examples/medibook), 32 Playwright tests, all green — re-run 2026-07-31, raw output in [`examples/medibook/tests/run-log.txt`](examples/medibook/tests/run-log.txt)) and finance/HR ([`examples/expense-demo/`](examples/expense-demo), 56 green Playwright tests, real bugs found and fixed during automation) — plus a 24-case multi-model robustness corpus ([`eval/baselines/corpus-24-depth.md`](eval/baselines/corpus-24-depth.md)). Formal human-pilot validation hasn't happened yet — see [`docs/STATUS-en.md`](docs/STATUS-en.md) for the honest state in English (the full French record is [`docs/STATUS.md`](docs/STATUS.md)). **Willing to be the first?** [`docs/PILOT-KIT.md`](docs/PILOT-KIT.md) is a 15-minute guided run on a ready-made story, and the only thing asked in return is where it went wrong.
+**Status: pre-alpha, in active development.** Core (`qaia-core` 0.2.35, 18 skills), automation (`qaia-playwright` 0.1.27, 14 skills), scoring (`qaia-score` 0.2.4, 4 skills) and test-data (`qaia-testdata` 0.1.3, 1 skill) plugins exist — **37 skills** — validate `--strict`, and are proven end-to-end on **two independent real domains** — healthcare ([`examples/medibook/`](examples/medibook), 26 Playwright tests / 32 executions across projects, all green — re-run 2026-07-31, raw output in [`examples/medibook/tests/run-log.txt`](examples/medibook/tests/run-log.txt)) and finance/HR ([`examples/expense-demo/`](examples/expense-demo), 56 green Playwright tests, real bugs found and fixed during automation) — plus a 24-case multi-model robustness corpus ([`eval/baselines/corpus-24-depth.md`](eval/baselines/corpus-24-depth.md)). Formal human-pilot validation hasn't happened yet — see [`docs/STATUS-en.md`](docs/STATUS-en.md) for the honest state in English (the full French record is [`docs/STATUS.md`](docs/STATUS.md)). **Willing to be the first?** [`docs/PILOT-KIT.md`](docs/PILOT-KIT.md) is a 15-minute guided run on a ready-made story, and the only thing asked in return is where it went wrong.
 
 QAIA turns user stories into prioritized, traceable **Gherkin test books** and then into **native Playwright tests** — distributed as **skills and plugins** that run inside *your* Claude session. No API key, no backend, no data leaves your session beyond what you already send to Claude.
 
@@ -113,7 +113,7 @@ skills run inside your own Claude Code session, using your own model.
 test book — that is the part worth judging first.
 
 ```
-/plugin marketplace add https://github.com/QAIA-Project/QAIA
+/plugin marketplace add QAIA-Project/QAIA
 /plugin install qaia-core@qaia
 ```
 
@@ -197,7 +197,7 @@ Two things worth reading before you install:
 |---|---|
 | [`PROMPT.md`](PROMPT.md) | Founding prompt (vision, constraints, user journey) |
 | [`docs/DISCOVERY.md`](docs/DISCOVERY.md) | Discovery v2: 3 gates, 88 questions, 12 hard objections |
-| [`docs/DECISIONS.md`](docs/DECISIONS.md) | 41 acted decisions + 17 technical defaults |
+| [`docs/DECISIONS.md`](docs/DECISIONS.md) | 196 decisions, one row each |
 | [`docs/DELIVERY.md`](docs/DELIVERY.md) | Roadmap M0→M5, plugin architecture |
 | [`docs/KANBAN.md`](docs/KANBAN.md) | Board structure + prioritized backlog |
 | [`docs/STATUS.md`](docs/STATUS.md) | **Honest project state + resume prompt** (start here to continue) |
@@ -214,7 +214,7 @@ Two things worth reading before you install:
 | [`examples/scoring-demo/`](examples/scoring-demo/) | Output contract + qaia-score walk-through (manifest, scorecard, gate) |
 | [`examples/rag-demo/`](examples/rag-demo/) | The RAG in use: a knowledge base breaking the recall ceiling on a thin US (D38) |
 | [`examples/jira-demo/`](examples/jira-demo/) | Jira connector: a REST v3 issue export → validated QAIA capture (D9, #9) |
-| [`examples/expense-demo/`](examples/expense-demo/) | Worked end-to-end example, non-medical: real finance/HR app + Playwright automation (40 tests green, 3 real bugs found during automation) |
+| [`examples/expense-demo/`](examples/expense-demo/) | Worked end-to-end example, non-medical: real finance/HR app + Playwright automation (56 green Playwright tests, 3 real bugs found during automation) |
 | [`docs/COMPETITIVE-ANALYSIS.md`](docs/COMPETITIVE-ANALYSIS.md) | Landscape review (2026): where QAIA sits vs SaaS and open-source agentic QA tools |
 | [`eval/baselines/corpus-24-depth.md`](eval/baselines/corpus-24-depth.md) | 24-case statistical depth study across 5 LLM providers and 8 business domains |
 | [`docs/DEMO-TARGETS.md`](docs/DEMO-TARGETS.md) | Vetted catalog of demo/practice apps to exercise QAIA on |
@@ -237,7 +237,7 @@ License: [MIT](LICENSE).
 Scenario: A line at exactly the receipt threshold without a receipt is refused
   Given "employee@demo" has a draft report with one EUR line "gear" of 25.00 dated today, no receipt attached
   When "employee@demo" submits the report
-  Then the attempt is refused with a 422 status and a message mentioning "receipt"
+  Then the attempt is refused with a message mentioning "receipt"
 ```
 
 38 scénarios tirés de cette seule histoire, chacun tracé à son critère d'acceptation dans une matrice de couverture. **11 sont marqués « confiance basse » avec la question ouverte nommée** — parce que l'histoire ne disait pas, et que trancher en silence, c'est produire une suite qui a l'air complète tout en encodant une supposition exactement à la frontière où vivent les défauts.
@@ -331,7 +331,7 @@ skills s'exécutent dans votre propre session Claude Code, avec votre propre mod
 Gherkin — c'est la partie qu'il faut juger en premier.
 
 ```
-/plugin marketplace add https://github.com/QAIA-Project/QAIA
+/plugin marketplace add QAIA-Project/QAIA
 /plugin install qaia-core@qaia
 ```
 

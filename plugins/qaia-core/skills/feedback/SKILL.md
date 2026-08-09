@@ -24,7 +24,9 @@ A generated test book to compare against (`.qaia/testbooks/<US-ID>/`, from `test
    > **If you own the product rather than the tests, read this. You do not need the rest of
    > this page.**
    >
-   > - **What you're being asked:** the same correction has now come up more than once, so it
+   > - **What you're being asked:** a correction is being proposed as a permanent rule — either
+>   because it has come up more than once, or because someone asked for it directly. Which of
+>   the two is stated above this box. It
    >   looks like a standing rule of your business rather than a one-off fix. You are being
    >   asked to confirm that it is — in the wording below.
    > - **Why it matters:** a confirmed rule is reused on every future story, automatically, by
@@ -36,7 +38,7 @@ A generated test book to compare against (`.qaia/testbooks/<US-ID>/`, from `test
    >   attached to their own story, and future generations may repeat the same mistake — which
    >   is the safe outcome, not the harmful one.
    >
-   > Confirming a rule here changes future tests, never past ones, and it can be withdrawn later.
+   > Confirming a rule here changes future tests, never past ones, and it can be withdrawn later — by deleting its entry from `feedback/rules.md` and the corresponding line in `knowledge/index.md`, which is a two-line edit a human makes; there is no automated revoke, and saying otherwise would be a promise nothing keeps.
 5. **Prune.** When promoting, mark source examples `promoted`; offer to archive examples older than ~6 months that never recurred — the store must not grow unbounded, or retrieval degrades and the signal drowns.
 6. **Close the loop.** Tell the user which promoted rules will affect future generations, and remind them the effect is measured — not guaranteed — via the gold set: reapplication of a raw stored example is probabilistic, a promoted rule is the reliable path, and promising more than that would be the dishonest version of "learning".
 

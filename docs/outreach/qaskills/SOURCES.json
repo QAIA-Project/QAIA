@@ -7,7 +7,7 @@
       "derived_from": [
         {
           "path": "plugins/qaia-core/skills/need-understanding/SKILL.md",
-          "sha256": "9e34814f501fa928a7b4d8210584243ce4aa09227fa2c2acce2971929c21c32d"
+          "sha256": "66a29391d798f4a476e9e6e8b836e263a63dd25f044c5060cc1c5f881e422b02"
         },
         {
           "path": "plugins/qaia-core/skills/need-understanding/references/ambiguity-passes.md",

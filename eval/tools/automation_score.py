@@ -46,6 +46,9 @@ import json
 import os
 import re
 import shutil
+import atexit
+import shlex
+import signal
 import subprocess
 import sys
 import tempfile
@@ -707,8 +710,14 @@ def mutate_line(line):
 
 
 def run_cmd(cmd, cwd, timeout):
+    """`cmd` est une LISTE argv, jamais une chaine, et jamais interpretee par un shell.
+
+    Voir la faille B8 : un titre de test lu dans le depot scanne s'executait. Le selfcheck
+    verifie cette propriete en relisant le source de cette fonction -- il cherche donc
+    litteralement le mot-cle interdit, raison pour laquelle il ne peut pas etre ecrit ici.
+    """
     try:
-        p = subprocess.run(cmd, cwd=cwd, shell=True, timeout=timeout,
+        p = subprocess.run(cmd, cwd=cwd, shell=False, timeout=timeout,
                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         return p.returncode, p.stdout.decode("utf-8", errors="replace")
     except subprocess.TimeoutExpired:
@@ -725,8 +734,46 @@ def baseline(run_cwd, base_cmd, timeout):
     return code, out
 
 
-def escape_grep(title):
+def grep_pattern(title):
+    """Le titre devient un motif litteral. Il est passe en ARGUMENT (argv), pas dans une chaine
+    de shell : les metacaracteres de regex sont donc les seuls a neutraliser ici. Cette fonction
+    s'appelait `escape_grep` et etait utilisee comme un echappement de shell alors qu'elle n'en
+    est pas un -- c'etait la faille B8."""
     return re.sub(r"([.^$*+?()\[\]{}|\\/])", r"\\\1", title)
+
+
+# Fichiers actuellement mutes, avec leur texte d'origine. Le mutant est construit pour que
+# les assertions PASSENT : le laisser sur disque est pire que de ne rien faire. Un `finally`
+# ne couvre ni Ctrl-C ni SIGTERM -- d'ou le filet ci-dessous. Seul SIGKILL reste hors de
+# portee, et c'est dit dans le README de l'outil plutot que tu.
+_PENDING = {}
+
+
+def _restore_one(path):
+    text = _PENDING.pop(path, None)
+    if text is None:
+        return
+    try:
+        with open(path, "w", encoding="utf-8") as fh:
+            fh.write(text)
+    except Exception as exc:
+        sys.stderr.write("ATTENTION : %s est reste MUTE (restauration impossible : %s)\n"
+                         % (path, exc))
+
+
+def _restore_all(*_a):
+    for path in list(_PENDING):
+        _restore_one(path)
+
+
+atexit.register(_restore_all)
+for _sig in ("SIGINT", "SIGTERM", "SIGBREAK"):
+    if hasattr(signal, _sig):
+        try:
+            signal.signal(getattr(signal, _sig),
+                          lambda *_a: (_restore_all(), sys.exit(130)))
+        except (ValueError, OSError):
+            pass  # pas le thread principal : le atexit suffit
 
 
 def mutation_track(spec_files, tests_dir, run_cwd, base_cmd, max_mutations, timeout):
@@ -774,18 +821,16 @@ def mutation_track(spec_files, tests_dir, run_cwd, base_cmd, max_mutations, time
         original_text = read(path)
         lines = original_text.split("\n")
         lines[cand["line"] - 1] = cand["mutated_line"]
-        backup = tempfile.mktemp(suffix=".bak")
-        shutil.copy2(path, backup)
+        _PENDING[path] = original_text
         try:
             with open(path, "w", encoding="utf-8") as fh:
                 fh.write("\n".join(lines))
-            cmd = base_cmd
+            cmd = list(base_cmd)
             if cand["test"]:
-                cmd = base_cmd + ' --grep "%s"' % escape_grep(cand["test"])
+                cmd = list(base_cmd) + ["--grep", grep_pattern(cand["test"])]
             rc, rout = run_cmd(cmd, run_cwd, timeout)
         finally:
-            shutil.copy2(backup, path)
-            os.remove(backup)
+            _restore_one(path)
 
         rel = os.path.relpath(path, tests_dir)
         if rc is not None and NO_TESTS_FOUND.search(rout or ""):
@@ -861,7 +906,8 @@ def main():
     ap.add_argument("--tests-dir", required=True, help="directory holding the generated .spec files")
     ap.add_argument("--testbook", help="test book dir or .feature file, for traceability cross-check")
     ap.add_argument("--run-cwd", help="cwd for the Playwright run (defaults to --tests-dir)")
-    ap.add_argument("--run-cmd", default="npx playwright test", help="command that runs the suite")
+    ap.add_argument("--run-cmd", default="npx playwright test",
+                    help="commande qui lance la suite (decoupee par shlex, jamais passee a un shell)")
     ap.add_argument("--max-mutations", type=int, default=25, help="cap on mutations (0 = no cap)")
     ap.add_argument("--timeout", type=int, default=300, help="per-run timeout in seconds")
     ap.add_argument("--skip-mutation", action="store_true", help="static track only")
@@ -901,8 +947,10 @@ def main():
         mutation = {"status": "skipped", "blocker": "--skip-mutation requested",
                     "total": 0, "killed": 0, "survived": []}
     else:
+        # shlex des l'entree : `run_cmd` n'accepte plus qu'une liste argv (B8).
         mutation = mutation_track(spec_files, tests_dir, os.path.abspath(args.run_cwd or tests_dir),
-                                  args.run_cmd, args.max_mutations, args.timeout)
+                                  shlex.split(args.run_cmd, posix=(os.name != "nt")),
+                                  args.max_mutations, args.timeout)
 
     blocking = []
     for f in static["findings"]:
@@ -910,6 +958,16 @@ def main():
             blocking.append("%s: %s (%s:%s)" % (f["kind"], f["detail"][:90], f["file"], f["line"]))
     for s in mutation.get("survived", []):
         blocking.append("mutation-survivor: %s (%s:%s) — %s" % (s["assertion"][:90], s["file"], s["line"], s["mutation"]))
+    er = mutation.get("errored") or []
+    if er:
+        # Bloquant pour la meme raison que `not_run` : une mutation qui n'a pas pu s'executer
+        # n'a rien prouve, et la compter pour rien fait lire « aucun survivant » a une campagne
+        # qui n'a rien mesure du tout.
+        files = sorted(set(x["file"] for x in er))
+        blocking.append("mutation-errored: %d mutation(s) n'ont pas pu s'executer (%s) — elles ne "
+                        "comptent ni comme tuees ni comme survivantes, et le taux les exclut"
+                        % (len(er), ", ".join(files)))
+
     nr = mutation.get("not_run") or []
     if nr:
         # Blocking, not informational: a run that reports "n/n killed" while n assertions were never

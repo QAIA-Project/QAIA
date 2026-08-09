@@ -128,7 +128,10 @@ tests, and its wording is deliberate — it names the risk of answering *and* th
 >   apply **no** default: those stay open, and every test that depends on them is flagged as
 >   resting on an unconfirmed guess. That flag follows the story to the release decision.
 >
-> "I don't know" is a useful answer — it tells us to mark an assumption rather than invent a
+> "I don't know" is a useful answer, and it does one of two things depending on the subject:
+> on a low-risk point it becomes a flagged assumption; on anything touching money, safety,
+> health data, minors or legal evidence it leaves the question **open** and every dependent
+> scenario marked, because no default is safe there. Either way it beats inventing a
 > certainty. The unusable answer is silence.
 
 ### 7. Classify every question — exactly one of three

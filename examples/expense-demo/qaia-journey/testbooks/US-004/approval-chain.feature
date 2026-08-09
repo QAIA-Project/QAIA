@@ -85,8 +85,8 @@ Feature: Approval chain routing
     Then the report awaits approval from "manager" and "finance"
 
   @QAIA-US-004-025 @AC6 @P1 @negative @error-guessing @low-confidence
-  # condition: AC6-C2 [req-neg] — priority P1 — open: Q4 (rate source undefined; no — Q10: the AC states refusal, not a status; SUT answers 422
-  # resolvable rate for an unsupported currency is refused at submission)
+  # condition: AC6-C2 [req-neg] — priority P1 — open: Q4 (rate source undefined; no resolvable rate for an unsupported currency is refused at submission — Q10: the AC states refusal, not a status; SUT answers 422
+  # (Q10: the AC states refusal, not a status; SUT answers 422)
   Scenario: Submitting in a currency with no resolvable rate is refused
     Given "employee@demo" has a draft report in "CHF" with one line "hotel" of 100.00 dated 2026-07-21, receipt attached
     When "employee@demo" submits the report

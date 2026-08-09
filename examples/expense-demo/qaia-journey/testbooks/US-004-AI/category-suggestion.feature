@@ -12,7 +12,7 @@ Feature: AI-style expense category suggestion
   Background:
     Given the employee is authenticated
 
-  @US-004-AI-01 @ai-feature @use-case @P2
+  @US-004-AI-01 @ai-feature @P2
   Scenario: a description with clear category keywords is classified correctly
     When the employee requests a category suggestion for "taxi ride to airport for flight"
     Then the suggested category is "travel"

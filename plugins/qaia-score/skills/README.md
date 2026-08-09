@@ -1,6 +1,6 @@
 # qaia-score skills — scoring only
 
-Two portable skills that **score, and only score**. They read the QAIA artifacts and the
+Four portable skills that **score, and only score**. They read the QAIA artifacts and the
 standardized run manifest (`../OUTPUT-CONTRACT.md`, D39), produce a verdict, and write it
 back into the manifest's `gate` block. They never generate, edit, or delete a scenario — the
 producer/consumer separation is the point: **no plugin scores itself** (qaia-core shared

@@ -49,7 +49,7 @@ not stay only in internal state).
 have a covering `@negative` scenario (17/17 — gate satisfied, ADR 0001); every P1/P2 condition
 covered; all 4 P3 conditions also covered (full-breadth scope decision, `04-priorities.md`).
 Negative ratio: 17/37 = **45.9 %** (reported signal only — since ADR 0001 the ratio is a happy-path-bias indicator, not a gate). 11 scenarios carry `@low-confidence`
-(Q1, Q2×2, Q3, Q4×2, Q5, Q6, Q7, Q8 — one scenario each except Q1 and Q2 which each anchor two
+(Q1×2, Q2×2, Q4×2, then Q3, Q5, Q6, Q7 and Q8 once each — 2+2+2+5 = 11. Three questions anchor two boundary scenarios, not two
 boundary scenarios).
 
 ## Gaps (not generated, ceiling rule 3c — explicit, not silently dropped)

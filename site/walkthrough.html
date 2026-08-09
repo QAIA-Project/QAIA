@@ -145,7 +145,7 @@ Scenario: A line dated 91 days ago is blocked with an explanatory message
   Given "employee@demo" has a draft report with one EUR line "supplies" of 10.00
         dated 91 days ago, receipt attached
   When "employee@demo" submits the report
-  Then the attempt is refused with a 422 status and a message mentioning "90 days"</pre>
+  Then the attempt is refused with a message mentioning "90 days"</pre>
     <div class="lbl">Produced — the coverage matrix, which admits what it does not know</div>
 <pre>| AC  | Condition   | Scenario ID       | Prio | Rationale                              | Confidence  |
 | AC2 | AC2-C1      | @QAIA-US-004-008  | P1   | Financial-control boundary.            | normal      |

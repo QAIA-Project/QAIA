@@ -40,7 +40,7 @@ From Claude Code:
 
 ## Token budget — orders of magnitude
 
-**Version 0.2.34 — measured 2026-07-25. Fully instrumented.** All 14 commands in the table below
+**Version 0.2.35 — measured 2026-07-25, and partial.** The table covers **14 of the 18 skills**: `test-plan-and-closure`, `openapi-ingest`, `signal-ingest` and `qaia` carry **no published cost**. Calling this "fully instrumented" while four skills were unmeasured is exactly the class of claim this project exists to refuse. The 14 measured commands in the table below
 carry a real measurement, taken by the method described here.
 
 **How they were measured.** Each command was applied faithfully, start to finish, by a dedicated

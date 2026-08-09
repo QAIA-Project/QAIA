@@ -198,7 +198,7 @@ Scenario: A line dated 91 days ago is blocked
         one EUR line "supplies" of 10.00 dated
         91 days ago, receipt attached
   When "employee@demo" submits the report
-  Then the attempt is refused with a 422 status
+  Then the attempt is refused with a message mentioning "receipt"
        and a message mentioning "90 days"
 
 <span class="tag">@QAIA-US-004-021 @AC5 @P1 @negative @boundary</span>

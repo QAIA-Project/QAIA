@@ -33,11 +33,13 @@ In Claude Code, just say:
 
 > Use the QAIA `us-ingest` skill on `docs/pilot/US-001-appointment-booking.md`, then walk me through the journey.
 
-> **Pourquoi cette copie et pas le fichier du gold set.** L'original porte une section
-> `## Judge reference` qui **liste les ambiguïtés plantées exprès**. L'ingérer vous donnerait la
-> réponse à la question que ce formulaire vous pose ensuite — la première mesure humaine du
-> projet serait faussée par construction. Les critères d'acceptation des deux fichiers sont
-> identiques à l'octet près.
+> **Why this copy and not the gold-set file.** The original carries a `## Judge reference`
+> section that **lists the ambiguities planted on purpose**. Ingesting it would hand you the answer
+> to the question this form asks you afterwards — the project's first human measurement would be
+> skewed by construction. The acceptance criteria of both files are byte-identical.
+>
+> *(Ce paragraphe était en français dans un document anglais : la seule explication de la
+> consigne était illisible pour qui ne lit pas le français.)*
 
 The tool will, step by step, ask you to validate each stage: the captured source, the extraction, the ambiguities it found (answer or say "not specified"), the ISTQB techniques, the priorities, and finally generate the test book. **Say yes/no/correct as a real reviewer would** — that's exactly the conversational path we need to validate.
 
@@ -49,7 +51,7 @@ Open [a feedback discussion](https://github.com/QAIA-Project/QAIA/discussions) o
 
 ```
 ### QAIA pilot feedback
-- Story used: (gold set US-001 / my own)
+- Story used: (the pilot story `docs/pilot/US-001-appointment-booking.md` / my own ticket)
 - Time spent: __ min
 - Scenarios generated: __   | kept as-is: __ %   | rewritten: __
 - Best thing it did:
@@ -61,7 +63,7 @@ Open [a feedback discussion](https://github.com/QAIA-Project/QAIA/discussions) o
 
 ## Optional — see automation run for real (5 min)
 
-If you're curious, the `examples/medibook/` folder has a running demo app + Playwright tests (E2E, API, a11y, perf, security, visual — 26 tests, 32 executions). `cd examples/medibook/app && node server.js`, then in another shell `cd ../tests && npm i && npx playwright test`.
+If you're curious, the `examples/medibook/` folder has a running demo app + Playwright tests (E2E, API, a11y, perf, security, visual — 26 tests, 32 executions). `cd examples/medibook/app && node server.js`, then in another shell — **from the repository root** — `cd examples/medibook/tests && npm i && npx playwright test`. (The second path was written `cd ../tests`, which only works if the new shell inherits the first one's directory; it does not, and from the root it points outside the repository.)
 
 ---
 
