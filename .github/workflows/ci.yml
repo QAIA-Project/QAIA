@@ -175,6 +175,17 @@ jobs:
           # condition and the one that drifts silently during a rewrite.
           python eval/tools/check_loop_wiring.py
 
+      - name: the oracle library against external authorities
+        run: |
+          set -e
+          # oracle-generate exists so that expected values are DERIVED from a standard rather than
+          # invented. A wrong entry in its library borrows the authority of a norm: nobody
+          # re-litigates it in the generated test book. Luhn, IBAN mod-97 and the calendar are
+          # computed; ISO 3166/4217 and RFC 5322 are checked against frozen external registries
+          # (eval/oracles-2026-08-09/, with provenance and sha256). Six injected faults, six
+          # refusals. What cannot be settled is printed as not covered rather than passed over.
+          python eval/tools/check_oracle_library.py
+
       - name: README version claims match the plugin manifests
         run: |
           set -e

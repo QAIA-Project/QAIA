@@ -24,13 +24,30 @@ Correct expected status per condition — use as the `Then` oracle for API scena
 
 ## RFC 5322 (email)
 
-**Valid:** `user@example.com`, `first.last@sub.example.co.uk`, `user+tag@example.com`, `"quoted"@example.com`
-**Invalid:** `plainaddress`, `@no-local.com`, `user@`, `user@@example.com`, `user@.com`, `user name@example.com` (unquoted space)
-Expected `Then`: accept RFC-5322-valid, reject the rest with a format error.
+**Valid:** `user@example.com`, `first.last@sub.example.co.uk`, `user+tag@example.com`
+**Invalid:** `plainaddress`, `@no-local.com`, `user@`, `user@@example.com`, `user@.com`
+
+**"Valid" is not one category, and this is where email oracles go wrong.** A quoted local part
+such as `"test"@iana.org` is *syntactically valid* — and rejected by a large share of production
+systems, deliberately. Asserting that it must be accepted generates a failing test against a
+system that is not wrong. It belongs in a **third bucket**, never in the plain-valid list:
+
+| Bucket | Example | Expected `Then` |
+|---|---|---|
+| valid | `user@example.com` | accept |
+| invalid | `user@.com` | reject with a format error |
+| **valid but commonly refused** | `"test"@iana.org` (quoted), `test . test@iana.org` (obsolete syntax) | **`[open]` — ask the product what it does.** Never assert either way. |
+
+Canonical corpus, when more than a handful of cases is needed: **`dominicsayers/isemail`,
+`test/tests.xml`** (BSD-3-Clause) — 163 addresses with an authoritative verdict each, and the
+distinction above baked into its categories (`ISEMAIL_ERR` = invalid; `RFC5321`, `DEPREC`, `CFWS`
+= valid at *different* titles, not interchangeable). Cite the case id when a scenario uses one.
 
 ## ISO 4217 (currency codes)
 
-**Valid:** `EUR`, `USD`, `JPY` (0 minor units), `BHD` (3 minor units). **Invalid:** `EU`, `EURO`, `US$`, `XXX` (no currency). Minor-unit rule drives rounding: JPY has no decimals, BHD has 3 — generate rounding boundary cases accordingly.
+**Valid:** `EUR`, `USD`, `JPY` (0 minor units), `BHD` (3 minor units). **Invalid:** `EU`, `EURO`, `US$`. Minor-unit rule drives rounding: JPY has no decimals, BHD has 3 — generate rounding boundary cases accordingly.
+
+**`XXX` is a trap, and it is registered.** ISO 4217 assigns `XXX` to *"transactions where no currency is involved"* — so a validator checking membership of the standard must **accept** it, while a payment flow almost certainly must **reject** it. The two answers are both right and they are not the same question. Emit `[open]`: *does this field mean "a registered code" or "a currency you can charge in"?* Never classify `XXX` as simply invalid — that is the error this line used to carry.
 
 ## ISO 3166 (country codes)
 
