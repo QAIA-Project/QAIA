@@ -12,7 +12,7 @@ Critère de sortie global : un contributeur externe comprend le projet et peut p
 | `CODE_OF_CONDUCT.md` | Contributor Covenant 2.1, limite mainteneur-unique documentée |
 | `SECURITY.md` | Signalement privé via Security Advisories, périmètre injection/supply-chain/code généré |
 | Templates | Issues (Proposition avec processus de challenge, Bug) + PR (checklist DCO/skills) |
-| Marketplace | `.claude-plugin/marketplace.json` + **3 plugins validés `--strict`** : `qaia-core` 0.2.9 (15 skills, parcours complet US→cahier), `qaia-playwright` 0.1.2 (6 skills), `qaia-score` 0.1.1 (2 skills) — 23/23 skills couvertes |
+| Marketplace | `.claude-plugin/marketplace.json` + **4 plugins validés `--strict`** : `qaia-core` 0.2.35 (18 skills, parcours complet US→cahier), `qaia-playwright` 0.1.27 (14 skills), `qaia-score` 0.2.4 (4 skills), `qaia-testdata` 0.1.3 (1 skill) — **37 skills**. Les quatre sources résolvent, aucun manifeste ne déclare `hooks`/`mcpServers`/`agents` (vérifié par `check_repo_structure.py` à chaque commit). *Chiffres du 2026-08-10 ; ce tableau n'est pas couvert par `check_skill_counts.py`, qui ne lit pas ce fichier.* |
 | CI | Validation JSON, structure plugins, frontmatter des skills, lint Gherkin épinglé, **gardes supply-chain** (hooks/agents/MCP interdits, sources marketplace locales), job **DCO** ; Actions épinglées par SHA (T15) |
 | Harnais d'éval | `eval/RUBRIC.md` (10 dimensions, gate ≥ 16/20) + gold set durci + corpus élargi 24 cas (`eval/goldset-hardened/`, `eval/baselines/`) ; score structurel déterministe (`eval/tools/structural_score.py`) |
 | Discussions activées, branch protection sur `main` (CI requise, pas de push direct), 2FA exigée pour les admins | confirmé dans `docs/STATUS.md` |
