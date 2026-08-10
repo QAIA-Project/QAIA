@@ -223,6 +223,13 @@ jobs:
       - name: Aucun cadrage retire dans ce qui est livre
         run: python eval/tools/check_retired_framing.py
 
+      # Le hook anti-Markdown-par-le-shell avait ete eprouve a la main le jour de son ecriture,
+      # et cette preuve vivait dans une transcription de session. Son premier jet laissait passer
+      # la faute exacte qu'il devait attraper -- une retouche de motif le recasserait en silence.
+      # Trouve par `impact-select` sur sa seconde question : ce que le diff laisse non couvert.
+      - name: Le hook anti-Markdown-par-le-shell refuse et laisse passer ce qu'il doit
+        run: python eval/tools/selfcheck_markdown_shell_hook.py
+
       - name: README version claims match the plugin manifests
         run: |
           set -e
