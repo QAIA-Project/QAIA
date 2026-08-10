@@ -216,6 +216,13 @@ jobs:
           # read as a signature. Six injected faults, six refusals.
           python eval/tools/check_agents_tier.py
 
+      # Trouve le 2026-08-10 par le premier dogfood reel : `/qaia-core:hello`, execute depuis le
+      # plugin installe, a affiche a l'utilisateur que QAIA etait prouve sur un domaine
+      # « medical » -- un cadrage retire par D114. La retraction vivait dans les documents de
+      # gouvernance, pas dans le fichier que recoit un utilisateur.
+      - name: Aucun cadrage retire dans ce qui est livre
+        run: python eval/tools/check_retired_framing.py
+
       - name: README version claims match the plugin manifests
         run: |
           set -e
