@@ -73,6 +73,10 @@
   .sub{font-size:19px;color:var(--muted);max-width:62ch;margin:0 0 26px}
   .pill{display:inline-flex;align-items:center;gap:8px;font-size:13px;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--muted);margin-bottom:22px}
   .dot{width:7px;height:7px;border-radius:50%;background:var(--warn)}
+  /* Le seul resultat mesure sur un logiciel tiers. Il vivait a trois ecrans du haut, sous
+     l'encadre de divulgation : un lecteur pouvait partir sans avoir jamais lu la preuve. */
+  .proofline{font-size:16px;max-width:62ch;margin:0 0 24px;padding-left:14px;
+    border-left:3px solid var(--accent);color:var(--fg)}
   .cta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
   .btn{display:inline-block;padding:11px 18px;border-radius:9px;text-decoration:none;font-weight:600;font-size:15px;border:1px solid transparent}
   /* --on-accent is near-black in dark mode: white on #7d94ff is 2.78:1 and fails WCAG 1.4.3.
@@ -109,6 +113,13 @@
 
   .note{background:var(--warn-soft);border:1px solid var(--line);border-left:3px solid var(--warn);border-radius:8px;padding:14px 16px;color:var(--fg);font-size:15px}
   .note strong{color:var(--fg)}
+  /* La divulgation etait AVANT les panneaux : le lecteur avait trois raisons de douter avant
+     d'avoir vu une seule sortie. Elle passe apres, repliee -- rien n'est retire, et le resume
+     dit ce qu'elle contient pour qu'un lecteur presse sache qu'il choisit de ne pas la lire. */
+  details.disclose{margin:22px 0 0;padding:12px 16px}
+  details.disclose>summary{cursor:pointer;font-size:15px;list-style-position:outside}
+  details.disclose>summary:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:4px}
+  .disclose-body{margin-top:10px;font-size:15px}
   ul.tight{margin:8px 0 0;padding-left:20px;color:var(--muted)}
   ul.tight li{margin-bottom:7px}
   footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--muted);font-size:14px}
@@ -141,6 +152,7 @@
     <div class="pill"><span class="dot"></span> Pre-alpha — no human pilot has run it end to end yet</div>
     <h1 class="tagline">A user story goes in.<br>A <em>traceable test book</em> and <em>runnable tests</em> come out.</h1>
     <p class="sub">QAIA is a set of open-source Claude Code plugins for QA engineers. It reads a user story, surfaces what the story doesn't say, derives scenarios with named ISTQB techniques, and generates native Playwright tests — with stable IDs and a requirement coverage matrix that survives the next sprint.</p>
+    <p class="proofline">Pointed at a stranger's repository — <a href="https://github.com/typicode/json-server">json-server</a>, 75,694 stars — and allowed to read <strong>only its README</strong>, never the code, it found <strong>two real defects</strong>. Both were later fixed by the maintainer. <a href="#proof">How it was measured, and the third finding we refused to count →</a></p>
     <div class="cta">
       <a class="btn btn-primary" href="https://github.com/QAIA-Project/QAIA">Get it on GitHub</a>
       <a class="btn btn-ghost" href="./walkthrough.html">See the whole run, step by step</a>
@@ -149,7 +161,7 @@
 
   <section id="what">
     <h2>Markdown skills. Nothing runs by itself.</h2>
-    <p class="lede">QAIA ships no code into your repository and no API key. The 37 skills are Markdown, invoked on demand inside your own Claude Code session on your own model quota. Installing it does not register a hook, an agent, or an MCP server that executes on its own. <span class="mono" style="font-size:.9em">(Precisely: the plugins also carry 48 non-Markdown files — plugin manifests, CI templates you copy, and test fixtures. None of them runs at install or on its own; <a href="https://github.com/QAIA-Project/QAIA/tree/main/plugins">check for yourself</a>.)</span></p>
+    <p class="lede">QAIA ships no code into your repository and no API key. The 37 skills are Markdown, invoked on demand inside your own Claude Code session on your own model quota. Installing it does not register a hook, an agent, or an MCP server that executes on its own. <span class="mono" style="font-size:.9em">(Precisely: the plugins also carry 51 non-Markdown files — plugin manifests, CI templates you copy, test fixtures, and the four Python files, three of which are <code>qaia-score</code>'s scorers. None of them runs at install or on its own; the scorers run when <em>you</em> invoke the scoring skill, with your permissions, and you can read or pin them first. <a href="https://github.com/QAIA-Project/QAIA/tree/main/plugins">Check for yourself</a>.)</span></p>
     <pre><span class="cmt"># in Claude Code</span>
 /plugin marketplace add https://github.com/QAIA-Project/QAIA
 /plugin install qaia-core@qaia          <span class="cmt"># user story → Gherkin test book</span>
@@ -160,16 +172,6 @@
   <section id="how">
     <h2>Real input, real output</h2>
     <p class="lede">Not a mockup. Both panels below are copied verbatim from <a href="https://github.com/QAIA-Project/QAIA/tree/main/examples/expense-demo/qaia-journey">examples/expense-demo/qaia-journey/</a> in the repository, where the whole run is kept — source capture, ambiguity pass, technique justification, priorities, and the emitted book.</p>
-
-    <div class="note">
-      <strong>Full disclosure on this particular run, because it is a demo and not a field result.</strong> Three things the repository records and a landing page would normally quietly drop:
-      <ul class="tight" style="color:inherit;margin-top:10px">
-        <li>The input is <strong>our own gold-set ticket, with ambiguities planted in it on purpose</strong>. Finding a planted ambiguity is easier than finding a wild one.</li>
-        <li>The run was executed <strong>non-interactively</strong>: every point where the tool stops for a human was recorded as <code>simulated: &lt;default applied&gt;</code>. Nobody arbitrated anything. The arbitration path shown further down is a design property that <em>this</em> run did not exercise.</li>
-        <li>The acting model had <strong>read the sequestered "Judge reference" section</strong> of the gold-set file before running. That contaminates it as a blind measurement.</li>
-      </ul>
-      <span style="display:block;margin-top:10px">All three are stated in <a href="https://github.com/QAIA-Project/QAIA/blob/main/examples/expense-demo/qaia-journey/state/US-004/journey.md">the run's own journey file</a>. What the panels below show is the <em>shape</em> of the output — the traceability, the tagging, the flagged questions. They are not evidence that it works on your ticket.</span>
-    </div>
 
     <div class="flow">
       <div>
@@ -207,6 +209,19 @@ Scenario: A line at exactly the receipt
           threshold without a receipt is refused</pre>
       </div>
     </div>
+
+    <details class="note disclose">
+      <summary>Full disclosure: this run is a demo, not a field result — <strong>three things it does not prove</strong></summary>
+      <div class="disclose-body">
+        <p style="margin:0 0 8px">Three things the repository records and a landing page would normally quietly drop:</p>
+        <ul class="tight" style="color:inherit;margin-top:0">
+          <li>The input is <strong>our own gold-set ticket, with ambiguities planted in it on purpose</strong>. Finding a planted ambiguity is easier than finding a wild one.</li>
+          <li>The run was executed <strong>non-interactively</strong>: every point where the tool stops for a human was recorded as <code>simulated: &lt;default applied&gt;</code>. Nobody arbitrated anything. The arbitration path described below is a design property that <em>this</em> run did not exercise.</li>
+          <li>The acting model had <strong>read the sequestered "Judge reference" section</strong> of the gold-set file before running. That contaminates it as a blind measurement.</li>
+        </ul>
+        <p style="margin:10px 0 0">All three are stated in <a href="https://github.com/QAIA-Project/QAIA/blob/main/examples/expense-demo/qaia-journey/state/US-004/journey.md">the run's own journey file</a>. What the panels above show is the <em>shape</em> of the output — the traceability, the tagging, the flagged questions. They are not evidence that it works on your ticket. The measurement on software we did <em>not</em> write is <a href="#proof">further down</a>.</p>
+      </div>
+    </details>
 
     <h3>And a coverage matrix that admits what it doesn't know</h3>
     <p class="lede">This is the part most generators skip. Every scenario traces back to an acceptance criterion and a condition — and where the story is ambiguous, the row says so instead of quietly picking an interpretation. The run raised nine open questions; eleven of its 38 scenarios carry one by name.</p>
@@ -272,7 +287,7 @@ Scenario: A line at exactly the receipt
       </div>
       <div class="card">
         <h4>No producer scores its own work</h4>
-        <p>The structural score is specified as a deterministic algorithm and lives in a separate, read-only plugin, kept apart from the semantic judge. It has repeatedly caught defects the producing skill could not see in itself. Caveat worth knowing: <strong>the plugin ships no code</strong> — the scorer materialises the algorithm as a throwaway script in-session (a deliberate no-shipped-code choice, ADR 0002), so the algorithm is fixed but its implementation is regenerated each run.
+        <p>The structural score is a deterministic algorithm living in a separate, read-only plugin, kept apart from the semantic judge. It has repeatedly caught defects the producing skill could not see in itself. Worth knowing what changed: until 2026-08-09 the plugin shipped <em>no code</em> and asked the model to rebuild ~300 lines of the scorer from prose on every run — so two runs on the same file could legitimately disagree. <strong>A score that is not reproducible is not a score</strong>, so the scorers now ship as pinned Python you can read, diff or refuse. They still do not auto-execute.
         <br><br><a href="https://github.com/QAIA-Project/QAIA/tree/main/plugins/qaia-score">See qaia-score →</a></p>
       </div>
       <div class="card">

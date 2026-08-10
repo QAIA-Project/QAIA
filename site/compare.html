@@ -74,10 +74,10 @@
 <div class="wrap">
 
   <h1>Which QA tool should you install into Claude Code?</h1>
-  <p class="muted">Including the cases where the answer is not QAIA. Last updated 8 August 2026.</p>
+  <p class="muted">Including the cases where the answer is not QAIA. Last updated 10 August 2026; competitor figures read 8 August 2026.</p>
 
   <div class="note">
-    <strong>Conflict of interest, declared up front.</strong> This page is written by the maintainers of one of the tools compared. That is a reason to distrust it, so it is built to be checkable: every claim about another project comes from its public repository or site, linked inline, and each competitor's strengths are stated before QAIA's. Where a rival is simply better for a job, the page says so. If you find a claim here that is wrong or unfair, <a href="https://github.com/QAIA-Project/QAIA/issues">open an issue</a> — corrections get made, and the page carries a date so you can tell whether it went stale.
+    <strong>Conflict of interest, declared up front.</strong> This page is written by the maintainers of one of the tools compared. That is a reason to distrust it, so it is built to be checkable: every claim about another project comes from its public repository or site, linked inline, and the option that beats all four — <em>install nothing and prompt Claude directly</em> — is measured and stated first, above our own. Where a rival is simply better for a job, the page says so and names it. If you find a claim here that is wrong or unfair, <a href="https://github.com/QAIA-Project/QAIA/issues">open an issue</a> — corrections get made, and the page carries a date so you can tell whether it went stale.
   </div>
 
   <h2>The option this page nearly forgot: just prompt Claude directly</h2>
@@ -88,6 +88,11 @@
   </div>
 
   <h2>If you do want a tool</h2>
+  <p class="muted">Four of them, sorted by the job you are trying to do — not by our preference. Ours is first because it is the one this page is accountable for; the three after it are each better than QAIA at the job named in their heading, and that is the point of listing them.</p>
+  <div class="card">
+    <h3>Install QAIA if the output has to be defensible to someone else</h3>
+    <p>A regulated-adjacent audit, a client hand-over, a release gate, a coverage report your manager signs. QAIA's unit is not a better prompt — it is an <strong>artifact</strong>: a Gherkin book with stable scenario IDs, a requirement coverage matrix, a validated manifest per run, a refusal-path coverage gate (every rule that can refuse, error or deny must have a scenario exercising it), and a score computed by a plugin that did not produce the thing it scores. Pointed at <a href="https://github.com/typicode/json-server">json-server</a> and allowed to read only its README, it found two real defects the maintainer later fixed. If nobody downstream will ever ask you "why this scenario and not that one", that machinery is overhead and one of the three tools below is a better fit.</p>
+  </div>
   <div class="card">
     <h3>Install <a href="https://github.com/PramodDutta/qaskills">QASkills.sh</a> if you want your agent to write better tests, today</h3>
     <p>~380 MIT skills, one command (<code>npx @qaskills/cli add playwright-e2e</code>), agent auto-detected, 27+ agents supported, plus an MCP server so you can search and install from inside the agent. Backed by The Testing Academy. We read their <code>istqb-test-design-techniques</code> skill in full: it is competent work — equivalence partitions with a class table, two- and three-value boundary analysis with the off-by-one bug named, decision tables, state transitions, pairwise. If your problem is "Claude writes mediocre tests", that is the shortest path to fixing it, and it is not close.</p>
@@ -100,10 +105,6 @@
     <h3>Install <a href="https://github.com/proffesor-for-testing/agentic-qe">Agentic QE Fleet</a> if you want autonomy and scale</h3>
     <p>A 60-agent autonomous swarm, actively developed. If you want the machine to go wide on its own and you are comfortable with agents that execute, this is the ambitious end of the spectrum.</p>
   </div>
-  <div class="card">
-    <h3>Install QAIA if the output has to be defensible to someone else</h3>
-    <p>A regulated-adjacent audit, a client hand-over, a release gate, a coverage report your manager signs. QAIA's unit is not a better prompt — it is an <strong>artifact</strong>: a Gherkin book with stable scenario IDs, a requirement coverage matrix, a validated manifest per run, a refusal-path coverage gate (every rule that can refuse, error or deny must have a scenario exercising it), and a score computed by a plugin that did not produce the thing it scores. If nobody downstream will ever ask you "why this scenario and not that one", that machinery is overhead and one of the tools above is a better fit.</p>
-  </div>
 
   <h2>Side by side</h2>
   <div class="scroll" tabindex="0" role="region">
@@ -115,7 +116,7 @@
       <tbody>
         <tr><td><strong>Unit shipped</strong></td><td>a skill that improves a prompt</td><td>agents that review a change</td><td>an autonomous agent swarm</td><td>a pipeline that emits artifacts</td></tr>
         <tr><td><strong>Starts from</strong></td><td>whatever you ask</td><td>a code change</td><td>a codebase</td><td>a user story, before code exists</td></tr>
-        <tr><td><strong>Catalogue size</strong></td><td>~380 skills</td><td>10 agents</td><td>60 agents</td><td>35 skills</td></tr>
+        <tr><td><strong>Catalogue size</strong></td><td>~380 skills</td><td>10 agents</td><td>60 agents</td><td>37 skills</td></tr>
         <tr><td><strong>Agents supported</strong></td><td>27+</td><td>Claude Code</td><td>Claude Code</td><td>Claude Code</td></tr>
         <tr><td><strong>Install</strong></td><td>1 command, auto-detected</td><td>plugin / clone</td><td>plugin</td><td>marketplace + 1–4 installs</td></tr>
         <tr><td><strong>Auto-executing components</strong></td><td>none (skills)</td><td>10 agents</td><td>60 agents</td><td>none — <strong>no hook, no agent, no MCP server</strong> is registered by any of the four manifests</td></tr>
@@ -134,7 +135,7 @@
   <h2>The honest weaknesses of QAIA</h2>
   <ul>
     <li><strong>No pilot has ever run it.</strong> Everything measured about QAIA has been measured by harnesses, CI and personas — never by a QA engineer doing their actual job. That is the single biggest unknown and no amount of internal evaluation substitutes for it. If you would consider being the first, there is a <a href="https://github.com/QAIA-Project/QAIA/blob/main/docs/PILOT-KIT.md">15-minute pilot kit</a> built for exactly that.</li>
-    <li><strong>It is narrower.</strong> ~380 skills over there, 30 here. For any given framework — Cypress, pytest, RestAssured, k6, Detox — they will have a skill and we will not.</li>
+    <li><strong>It is narrower.</strong> ~380 skills over there, 37 here. For any given framework — Cypress, pytest, RestAssured, k6, Detox — they will have a skill and we will not.</li>
     <li><strong>It costs more gestures to start.</strong> One command there, several here.</li>
     <li><strong>Claude Code only.</strong> The core is written to be portable, but portability is claimed, not demonstrated on another agent.</li>
     <li><strong>Zero adoption.</strong> At the time of writing, no stars and single-digit unique visitors. You would be early, with everything that implies.</li>

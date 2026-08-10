@@ -67,6 +67,29 @@ TOTAL_CLAIM = [
     re.compile(r"(\d{1,4})\s+skills,\s+\d+\s+plugins", re.I),
     re.compile(r"\bThe\s+(\d{1,4})\s+skills\s+are\b", re.I),
     re.compile(r"\bSur\s+les\s+(\d{1,4})\s+skills", re.I),
+
+    # --- Les trois formes que ce controle a laissees passer, trouvees le 2026-08-10 ------
+    #
+    # Le fichier scannait deja `site/compare.html` et `site/llms.txt` et rendait OK pendant
+    # qu ils annoncaient 35, 30 et 30 pour un depot a 37. Le perimetre etait bon ; c est la
+    # FORME des affirmations qui n etait pas prevue. Un controle qui vise la bonne page et
+    # rate la phrase porte la meme garantie fausse qu un compte juste au-dessus d une table
+    # fausse -- le defaut que `unlisted_skills()` documente un etage plus bas.
+    #
+    # 1. Un adjectif glisse entre le nombre et « skills » : « 30 Markdown skills across
+    #    4 plugins ». La forme `across N plugins` reste ce qui en fait un total.
+    re.compile(r"(\d{1,4})\s+(?:\w+\s+){1,2}skills\s+across\s+\d+\s+plugins", re.I),
+
+    # 2. Une cellule de tableau dont le contenu ENTIER est « N skills » : dans une ligne
+    #    « Catalogue size », c est un total par construction. Exiger `<td>` colle aux
+    #    chiffres protege les catalogues des autres, ecrits en approximation (`~380`) --
+    #    un `~` suffit a ne pas matcher, et c est voulu, pas un accident heureux.
+    re.compile(r"<td>\s*(\d{1,4})\s+skills\s*</td>", re.I),
+
+    # 3. Le comparatif sans le mot : « ~380 skills over there, 30 here ». Le nombre nu ne
+    #    peut etre lu comme un total que par ce qui le precede, donc la regle porte la
+    #    phrase entiere plutot que le nombre.
+    re.compile(r"skills\s+over\s+there,\s*(\d{1,4})\s+here", re.I),
 ]
 
 # Deux formes reelles : "`qaia-core` 0.2.34, 17 skills" dans le bandeau de statut, et

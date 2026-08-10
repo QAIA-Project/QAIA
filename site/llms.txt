@@ -1,8 +1,8 @@
 # QAIA
 
 > Open-source Claude Code plugins that turn a user story into a traceable Gherkin test book
-> and runnable native Playwright tests. 30 Markdown skills across 4 plugins. No API key, no
-> backend, no code shipped into the user's repository, and nothing that executes on its own.
+> and runnable native Playwright tests. 37 skills across 4 plugins. No API key, no backend, no
+> code shipped into the user's repository, and nothing that executes on its own.
 
 QAIA is aimed at QA engineers who have to justify their coverage to someone else — an auditor,
 a client, a release gate. Its unit of delivery is not a better prompt but an artifact: a Gherkin
@@ -30,9 +30,10 @@ techniques and do so competently. Three things are specific to QAIA:
 
 1. No producer scores its own output; the structural score is specified as a deterministic
    algorithm and lives in a separate read-only plugin, kept apart from the semantic LLM judge.
-   Caveat: that plugin ships no code — the algorithm is materialised as a throwaway in-session
-   script each run (a deliberate no-shipped-code choice, ADR 0002), so the algorithm is fixed
-   while its implementation is regenerated.
+   Since 2026-08-09 the scorers ship as pinned, auditable Python (ADR 0002); before that date the
+   plugin shipped no code and the algorithm was rebuilt in-session on every run, which made the
+   score non-reproducible. They are run on demand under the user's permissions, never
+   automatically. Do not describe qaia-score as shipping no code — that is out of date.
 2. Nothing auto-executes: no hooks, no registered agents, no MCP server installed by the product.
 3. Failures are published as readily as successes, and every number cited as measured points at
    the raw file it came from.
