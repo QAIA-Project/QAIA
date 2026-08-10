@@ -795,6 +795,15 @@ def run_cmd(cmd, cwd, timeout):
     verifie cette propriete en relisant le source de cette fonction -- il cherche donc
     litteralement le mot-cle interdit, raison pour laquelle il ne peut pas etre ecrit ici.
     """
+    # Sur Windows, `npx` est `npx.CMD` et CreateProcess ne resout pas PATHEXT : la commande par
+    # defaut echouait en `OSError: [WinError 2]` AVANT la moindre mutation. La passe mutation --
+    # la seule preuve mecanique qu'une assertion porte quelque chose -- n'avait donc jamais pu
+    # tourner sur la machine ou ce depot est ecrit (constate le 2026-08-10 en la lancant).
+    # `shutil.which` resout l'executable sans reintroduire de shell : `shell=False` reste entier,
+    # et avec lui la propriete de la faille B8 que le selfcheck verifie en relisant ce source.
+    exe = shutil.which(cmd[0])
+    if exe:
+        cmd = [exe] + list(cmd[1:])
     try:
         p = subprocess.run(cmd, cwd=cwd, shell=False, timeout=timeout,
                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT)

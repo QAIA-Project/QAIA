@@ -1,0 +1,103 @@
+{
+  "tool": "automation_score.py",
+  "version": 1,
+  "inputs": {
+    "tests_dir": "C:\\Users\\Moretti Cédric\\Documents\\Claude\\QAIA\\examples\\expense-demo\\tests",
+    "testbook": "examples/expense-demo/qaia-journey/testbooks/US-004",
+    "run_cmd": "npx playwright test"
+  },
+  "static": {
+    "score": 95.3,
+    "budget": {
+      "substantive_assertions": 30.0,
+      "robust_selectors": 20.3,
+      "pom_as_fixtures": 20.0,
+      "traceability": 25.0
+    },
+    "counts": {
+      "spec_files": 4,
+      "tests": 56,
+      "tests_with_real_assertion": 56,
+      "role_selectors": 26,
+      "raw_selectors": 6,
+      "tagged_tests": 56,
+      "testbook_scenarios": 45,
+      "scenarios_without_test": 0
+    },
+    "findings": [
+      {
+        "kind": "weak-assertion",
+        "file": "api.expense.spec.js",
+        "line": 319,
+        "detail": "toBeTruthy() — asserts existence, not a value",
+        "blocking": false
+      },
+      {
+        "kind": "weak-assertion",
+        "file": "api.expense.spec.js",
+        "line": 320,
+        "detail": "toBeTruthy() — asserts existence, not a value",
+        "blocking": false
+      },
+      {
+        "kind": "fragile-selector",
+        "file": "visual.expense.spec.js",
+        "line": 36,
+        "detail": "await expect(page.locator('#login-section')).toHaveScreenshot('login.png', TOL);",
+        "blocking": false
+      },
+      {
+        "kind": "fragile-selector",
+        "file": "visual.expense.spec.js",
+        "line": 46,
+        "detail": "await expect(page.locator('#login-section')).toHaveScreenshot('login-error.png', TOL);",
+        "blocking": false
+      },
+      {
+        "kind": "fragile-selector",
+        "file": "visual.expense.spec.js",
+        "line": 55,
+        "detail": "await expect(page.locator('#app-section')).toHaveScreenshot('reports-empty.png', TOL);",
+        "blocking": false
+      },
+      {
+        "kind": "fragile-selector",
+        "file": "visual.expense.spec.js",
+        "line": 65,
+        "detail": "await expect(page.locator('#draft-section')).toHaveScreenshot('draft-one-line.png', TOL);",
+        "blocking": false
+      },
+      {
+        "kind": "fragile-selector",
+        "file": "pages\\ReportsPage.js",
+        "line": 15,
+        "detail": "this.message = page.locator('#message');",
+        "blocking": false
+      },
+      {
+        "kind": "fragile-selector",
+        "file": "pages\\ReportsPage.js",
+        "line": 35,
+        "detail": "mineCards() { return this.mine.locator('[data-testid^=\"report-\"]'); }",
+        "blocking": false
+      }
+    ]
+  },
+  "mutation": {
+    "status": "ok",
+    "blocker": "",
+    "total": 10,
+    "killed": 10,
+    "survived": [],
+    "errored": [],
+    "not_run": [],
+    "skipped_over_cap": 67,
+    "exercised": 10
+  },
+  "blocking": {
+    "failed": false,
+    "reasons": []
+  },
+  "llm_rubric": null,
+  "note": "static score and the LLM rubric score are never summed — see eval/RUBRIC.md, case US 676266. A blocking failure stands regardless of either score."
+}

@@ -1,0 +1,219 @@
+{
+  "contract": "1.0",
+  "usId": "US-002",
+  "title": "Prescription dosage validation",
+  "status": "draft",
+  "generatedAt": "2026-08-10T12:00:00Z",
+  "base": ".qaia",
+  "producers": [
+    {
+      "plugin": "qaia-core",
+      "version": "0.2.35",
+      "skill": "us-review",
+      "at": "2026-08-10T11:30:00Z"
+    },
+    {
+      "plugin": "qaia-core",
+      "version": "0.2.35",
+      "skill": "need-understanding",
+      "at": "2026-08-10T11:35:00Z"
+    },
+    {
+      "plugin": "qaia-core",
+      "version": "0.2.35",
+      "skill": "istqb-design",
+      "at": "2026-08-10T11:42:00Z"
+    },
+    {
+      "plugin": "qaia-core",
+      "version": "0.2.35",
+      "skill": "prioritize",
+      "at": "2026-08-10T11:48:00Z"
+    },
+    {
+      "plugin": "qaia-core",
+      "version": "0.2.35",
+      "skill": "testbook-generate",
+      "at": "2026-08-10T11:55:00Z"
+    },
+    {
+      "plugin": "qaia-core",
+      "version": "0.2.35",
+      "skill": "report",
+      "at": "2026-08-10T12:00:00Z"
+    }
+  ],
+  "artifacts": [
+    {
+      "kind": "feature",
+      "format": "gherkin",
+      "path": "testbooks/US-002/dosage-thresholds.feature"
+    },
+    {
+      "kind": "feature",
+      "format": "gherkin",
+      "path": "testbooks/US-002/cumulative-and-renal.feature"
+    },
+    {
+      "kind": "feature",
+      "format": "gherkin",
+      "path": "testbooks/US-002/age-role-and-override.feature"
+    },
+    {
+      "kind": "feature",
+      "format": "gherkin",
+      "path": "testbooks/US-002/signing-feedback.feature"
+    },
+    {
+      "kind": "synthesis",
+      "format": "markdown",
+      "path": "testbooks/US-002/synthesis.md"
+    },
+    {
+      "kind": "matrix",
+      "format": "markdown",
+      "path": "testbooks/US-002/coverage-matrix.md"
+    }
+  ],
+  "design": {
+    "scenarios": {
+      "total": 28,
+      "byPriority": {
+        "P1": 10,
+        "P2": 11,
+        "P3": 7
+      },
+      "negative": 9,
+      "smoke": 1,
+      "outlines": 0
+    },
+    "coverage": {
+      "acTotal": 8,
+      "acCovered": 8,
+      "reqNegTotal": 5,
+      "reqNegCovered": 5,
+      "negativeRatio": 0.64
+    },
+    "confidence": {
+      "lowConfidence": 13,
+      "openQuestions": 9,
+      "assumptions": 1,
+      "simulated": 6
+    },
+    "techniques": [
+      "ep",
+      "boundary",
+      "decision-table",
+      "domain",
+      "metamorphic",
+      "scenario"
+    ],
+    "oracles": [],
+    "knowledgeApplied": []
+  },
+  "gate": {
+    "verdict": "CONCERNS",
+    "score": 19,
+    "max": 20,
+    "scoredBy": "qaia-score 0.2.4 / testbook-score -- SAME CONTEXT AS THE PRODUCER, see waiver",
+    "at": "2026-08-10T12:20:00Z",
+    "dimensions": [
+      {
+        "id": 1,
+        "name": "Atomicity",
+        "score": 1,
+        "note": "scenario 018 carries two When steps (the metamorphic pair); isolated, under 10% of scenarios"
+      },
+      {
+        "id": 2,
+        "name": "AC coverage",
+        "score": 2,
+        "note": "8 of 8 acceptance criteria covered, matrix proves each link"
+      },
+      {
+        "id": 3,
+        "name": "Negative-path coverage",
+        "score": 2,
+        "note": "5 refusal rules identified, 5 exercised (ADR 0001 gate passed)"
+      },
+      {
+        "id": 4,
+        "name": "ISTQB technique fit",
+        "score": 2,
+        "note": "each technique justified against the AC shape; metamorphic chosen because the rounding rule is absent, so no exact expected value can be stated"
+      },
+      {
+        "id": 5,
+        "name": "Business correctness",
+        "score": 2,
+        "note": "no scenario contradicts the source; every extrapolation carries @low-confidence and a named question"
+      },
+      {
+        "id": 6,
+        "name": "Ambiguity handling",
+        "score": 2,
+        "note": "10 questions raised, 9 with no default applied (protected health domain), none silently resolved -- but see the contamination caveat in the waiver"
+      },
+      {
+        "id": 7,
+        "name": "Stable IDs",
+        "score": 2,
+        "note": "28 unique @QAIA-US-002-* ids, each linked to an AC, matrix consistent"
+      },
+      {
+        "id": 8,
+        "name": "Gherkin form",
+        "score": 2,
+        "note": "repository gherkin-lint passes on all four files"
+      },
+      {
+        "id": 9,
+        "name": "Prioritization",
+        "score": 2,
+        "note": "every scenario carries P1/P2/P3, ordered by failure mode (false pass before false block) with the reasoning stated"
+      },
+      {
+        "id": 10,
+        "name": "Review support",
+        "score": 2,
+        "note": "synthesis by technique, review order by risk, confidence marking on all 13 extrapolated scenarios"
+      }
+    ],
+    "structural": {
+      "mean": 86.0,
+      "byFile": {
+        "signing-feedback.feature": 100,
+        "cumulative-and-renal.feature": 90,
+        "dosage-thresholds.feature": 82,
+        "age-role-and-override.feature": 72
+      },
+      "raw": "reports/US-002/structural-score.json",
+      "gate": "CONCERNS",
+      "forcedStop": false,
+      "worstFile": "age-role-and-override.feature"
+    },
+    "waiver": {
+      "approver": "Moretti Cedric",
+      "at": "2026-08-10",
+      "reason": "Journey run under explicit delegation; six arbitrations pending (two simulated at ingest 2026-07-25, four waived 2026-08-10). Nine of ten open questions carry no default because the whole story sits in a protected health domain, and 13 of 28 scenarios are @low-confidence.",
+      "scope": "US-002 only",
+      "expires": "2026-09-10",
+      "integrityCaveats": [
+        "RULE 3 NOT SATISFIED ON THE RUBRIC PASS: the 19/20 was produced by the same context that generated the book. The plugin is separate, the context is not. Only the structural 86/100 (a shipped Python program) is genuinely independent -- and it found 14 missing technique tags the producer had not seen.",
+        "The deterministic pass disagrees with the rubric pass and that gap is the finding, not a rounding error.",
+        "Measurement value nil on ambiguity detection: 00-source.md had already leaked the substance of the sequestered judge section, so Q1, Q3, Q4 and Q6 prove nothing.",
+        "age-role-and-override.feature scores 72 (CONCERNS) entirely from a redundancy penalty applied to its boundary-value sets -- contested, see issue #99."
+      ],
+      "by": "Moretti Cedric"
+    },
+    "blocksRelease": true,
+    "reasons": [
+      "Dimension 1 scores 1: scenario 018 carries two When steps.",
+      "Six arbitrations pending -- two simulated at ingest (2026-07-25), four waived (2026-08-10); status can never reach validated while any remains.",
+      "Nine of ten open questions carry no default (protected health domain); 13 of 28 scenarios are @low-confidence.",
+      "The rubric pass was produced by the same context as the book -- rule 3 is not satisfied on it. Only the structural 86/100 is independent.",
+      "age-role-and-override.feature at 72 (CONCERNS): redundancy penalty applied to boundary-value sets, contested in issue #99."
+    ],
+    "verdictRule": "CONCERNS par la regle 2 d'aptitude-gate : aucun garde-fou dur n'est casse (8/8 AC, 5/5 refus, aucune dimension a 0, rubrique 19 >= 16), mais six arbitrations restent pendantes -- et une arbitration non resolue plafonne TOUJOURS le verdict a CONCERNS."
+  }
+}

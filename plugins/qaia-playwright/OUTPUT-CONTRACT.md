@@ -58,6 +58,13 @@ producer — fix the source, re-project the manifest, never hand-edit the manife
   "design": {                               // filled by qaia-core (the test book)
     "scenarios": { "total": 22, "byPriority": { "P1": 9, "P2": 8, "P3": 5 },
                    "negative": 9, "smoke": 1, "outlines": 3 },
+    // `total` = les CAS EXECUTABLES : un `Scenario Outline` a N lignes d'`Examples` en vaut N,
+    // ce qu'un lanceur executera et ce que `testbook-export` projette deja en N lignes.
+    // `outlines` = le nombre de blocs `Scenario Outline`, non eclates.
+    // La convention est nommee ici parce qu'elle ne l'etait pas : le scoreur comptait les blocs,
+    // l'export comptait les cas, et `aptitude-gate` decidait d'une release sur le premier des
+    // deux sans que rien ne dise lequel (2026-08-10). Un cahier de 10 Outlines a 6 exemples fait
+    // 60 et non 10 ; tout ratio (negatif, confiance) se calcule sur ce denominateur.
     "coverage": { "acTotal": 6, "acCovered": 6,
                   "reqNegTotal": 7, "reqNegCovered": 7,   // ADR 0001 — the real gate
                   "negativeRatio": 0.41 },                 // D20 — reported signal, not a gate

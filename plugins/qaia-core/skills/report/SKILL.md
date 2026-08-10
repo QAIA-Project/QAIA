@@ -23,6 +23,15 @@ guessed counts.
 1. **Read the source artifacts**, never re-generate them:
    - the `.feature` files (count scenario blocks, priority/`@negative`/`@smoke`/Outline tags,
      technique tags, `@oracle:*` provenance);
+
+   **`total` counts executable cases, not blocks.** A `Scenario Outline` with N `Examples` rows
+   counts N — that is what a runner will execute, and what `testbook-export` already projects as
+   N rows. `outlines` carries the number of un-expanded blocks. Counting blocks instead made a
+   book of 10 Outlines × 6 examples read as 10 scenarios in the manifest and 60 rows in the
+   reviewer's spreadsheet, with every ratio — negative, low-confidence, `byPriority` — computed
+   on the wrong denominator, and `aptitude-gate` deciding a release on it (2026-08-10). The
+   shipped scorer exposes both under `executableCases` and `scenarios`; when it has run, take
+   `total` from `executableCases` rather than recounting.
    - `coverage-matrix.md` (AC covered, condition coverage);
    - `03-design.md` (`[req-neg]` conditions → `reqNegTotal`);
    - `synthesis.md` and `02-understanding.md` (open questions, assumptions, `simulated`,

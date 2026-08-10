@@ -1,0 +1,74 @@
+{
+  "meta": {
+    "usId": "US-002",
+    "title": "Prescription dosage validation",
+    "sourceFile": ".qaia/state/US-002/01-extraction.md",
+    "designFile": ".qaia/state/US-002/03-design.md",
+    "generatedBy": "qaia-testdata/dataset-generate",
+    "generatedAt": "2026-08-10T13:10:00Z",
+    "domain": "health (synthetic, prescribing module)",
+    "disclaimer": "Every entity, name, identifier and threshold in this file is synthetic and invented for QAIA test purposes. Drug names are fictional. Nothing here is real clinical guidance or a real drug reference, and no numeric threshold here may be used as medical advice or as a source of clinical fact.",
+    "pii": "none — no real individual is represented; identifiers are opaque codes, not names"
+  },
+
+  "entities": {
+    "drug": "reference record — AC1: minEffective, maxPerIntake, maxCumulative24h, ageFloorYears",
+    "patient": "AC5 ageYears, AC6 renalInsufficiency flag",
+    "prescriber": "AC5 role, AC2/AC7 identity for the audit trail",
+    "intake": "AC4 — a dated administration of a drug to a patient, the rows the 24 h window sums"
+  },
+
+  "drugs": [
+    { "code": "DRUG-A", "minEffective": 10, "maxPerIntake": 40, "maxCumulative24h": 100, "ageFloorYears": 12, "unit": "mg",
+      "note": "nominal record — the Background of every feature file" },
+    { "code": "DRUG-B", "minEffective": 5,  "maxPerIntake": 20, "maxCumulative24h": 60,  "ageFloorYears": null, "unit": "mg",
+      "note": "incomplete record: no age floor — feeds C03 / @QAIA-US-002-003, open question Q7" },
+    { "code": "DRUG-C", "minEffective": 2,  "maxPerIntake": 7,  "maxCumulative24h": 21,  "ageFloorYears": 6,  "unit": "mg",
+      "note": "ODD maxPerIntake: halving it under AC6 has no stated rounding rule — feeds C19 / @QAIA-US-002-019, question Q6" },
+    { "code": "DRUG-D", "minEffective": 10, "maxPerIntake": 15, "maxCumulative24h": 45, "ageFloorYears": 12, "unit": "mg",
+      "note": "max < 2 x min: under AC6 the reduced maximum (7.5) falls BELOW the minimum effective dose (10). Every dose is then both under the minimum and over the maximum. Feeds C20 / @QAIA-US-002-020, question Q4 — the triple contradiction AC2 x AC6 x AC3" },
+    { "code": "DRUG-X", "absent": true,
+      "note": "deliberately has NO reference record — feeds C02 / @QAIA-US-002-002, question Q7" }
+  ],
+
+  "patients": [
+    { "code": "P1", "ageYears": 30, "renalInsufficiency": false, "note": "adult control, no modifier" },
+    { "code": "P2", "ageYears": 30, "renalInsufficiency": true,  "note": "renal modifier only — the metamorphic pair partner of P1 (C18)" },
+    { "code": "P3", "ageYears": 11, "renalInsufficiency": false, "note": "one year below DRUG-A's age floor — C14, C16, C17" },
+    { "code": "P4", "ageYears": 12, "renalInsufficiency": false, "note": "exactly at the age floor — C15" },
+    { "code": "P5", "ageYears": 11, "renalInsufficiency": true,  "note": "BOTH modifiers at once — C21, question Q5" }
+  ],
+
+  "prescribers": [
+    { "code": "physician@demo",    "roles": [],                      "note": "no pediatric exception" },
+    { "code": "pediatrician@demo", "roles": ["pediatric specialist"], "note": "AC5 exception path" },
+    { "code": "physician2@demo",   "roles": [],                      "note": "second actor, required only by the concurrency case C13" }
+  ],
+
+  "intakeHistory": [
+    { "patient": "P1", "drug": "DRUG-A", "amount": 60, "atOffsetHours": -6,  "note": "C10 — 60 + 40 = 100, exactly the ceiling" },
+    { "patient": "P1", "drug": "DRUG-A", "amount": 61, "atOffsetHours": -6,  "note": "C11 — 61 + 40 = 101, one over" },
+    { "patient": "P1", "drug": "DRUG-A", "amount": 60, "atOffsetHours": -2,  "atWallClock": "23:00 previous day",
+      "note": "C12 — straddles midnight: inside a rolling 24 h window, outside a calendar day. Question Q3" }
+  ],
+
+  "cases": [
+    { "id": "C05", "scenario": "@QAIA-US-002-005", "drug": "DRUG-A", "patient": "P1", "dose": 10, "expect": "pass",    "boundary": "min exactly" },
+    { "id": "C04", "scenario": "@QAIA-US-002-004", "drug": "DRUG-A", "patient": "P1", "dose": 9,  "expect": "warning", "boundary": "min - 1" },
+    { "id": "C07", "scenario": "@QAIA-US-002-007", "drug": "DRUG-A", "patient": "P1", "dose": 39, "expect": "pass",    "boundary": "max - 1" },
+    { "id": "C08", "scenario": "@QAIA-US-002-008", "drug": "DRUG-A", "patient": "P1", "dose": 40, "expect": "pass",    "boundary": "max exactly", "confidence": "low", "openQuestion": "Q1" },
+    { "id": "C09", "scenario": "@QAIA-US-002-009", "drug": "DRUG-A", "patient": "P1", "dose": 41, "expect": "blocked", "boundary": "max + 1" },
+    { "id": "C19", "scenario": "@QAIA-US-002-019", "drug": "DRUG-C", "patient": "P2", "dose": 4,  "expect": "not pass", "confidence": "low", "openQuestion": "Q6",
+      "why": "maxPerIntake 7 halved = 3.5; 4 is above it whichever way 3.5 rounds — chosen so the case stays decidable despite the missing rounding rule" },
+    { "id": "C20", "scenario": "@QAIA-US-002-020", "drug": "DRUG-D", "patient": "P2", "dose": 10, "expect": "blocked", "confidence": "low", "openQuestion": "Q4" },
+    { "id": "C21", "scenario": "@QAIA-US-002-021", "drug": "DRUG-A", "patient": "P5", "dose": 30, "prescriber": "pediatrician@demo", "expect": "blocked", "confidence": "low", "openQuestion": "Q5" },
+    { "id": "C22", "scenario": "@QAIA-US-002-022", "justificationLength": 19, "expect": "override refused", "boundary": "20 - 1" },
+    { "id": "C23", "scenario": "@QAIA-US-002-023", "justificationLength": 20, "expect": "override accepted", "boundary": "20 exactly", "assumption": "Q10 — counted in Unicode code points after trimming" },
+    { "id": "C24", "scenario": "@QAIA-US-002-024", "justification": "                    ", "expect": "override refused", "confidence": "low", "openQuestion": "Q10" }
+  ],
+
+  "notGenerated": {
+    "doseUnit": "AC1..AC6 never name a unit. Every amount above is stated in mg because DRUG-A's record is, but the source does not license that choice — open question Q2. A dataset cannot resolve it; it can only avoid pretending it did.",
+    "clockReference": "intakeHistory uses offsets from the moment of prescription, which presumes a ROLLING window. A calendar-day reading would need different rows. Question Q3 — the dataset is therefore valid for one of the two readings only, and says which."
+  }
+}

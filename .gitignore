@@ -11,8 +11,21 @@ Thumbs.db
 __pycache__/
 *.pyc
 
-# Local QAIA project state (per-project, not the plugin/skill source)
-.qaia/
+# `.qaia/` N'EST PLUS IGNORE depuis le 2026-08-10.
+#
+# Le contrat partage livre dans le plugin dit : « `.qaia/` is expected to be committed to the
+# target repo (visible, reviewable, like any other tracked file) », et toute la reponse a la
+# concurrence (D112, #57) repose la-dessus -- un conflit de merge git ordinaire plutot qu'un
+# ecrasement silencieux. Ce depot promettait donc une propriete qu'il n'exercait nulle part.
+#
+# Consequence pratique constatee le jour meme : un parcours complet sur US-002 a produit 22
+# artefacts -- extraction, questions ouvertes, dessin ISTQB, priorites, cahier, matrice,
+# synthese, manifeste, jeu de donnees, plan et cloture, base de connaissance, exports -- qui
+# n'existaient que sur une machine et disparaissaient a la fin de la session. Le plus gros
+# produit de la journee n'etait versionne nulle part.
+#
+# Les `.feature` de `.qaia/` entrent donc dans le perimetre du linter Gherkin de la CI, ce qui
+# est voulu : le dogfood est tenu au meme standard que le reste.
 
 # Playwright MCP tool scratch output (accessibility snapshots, console logs)
 .playwright-mcp/
