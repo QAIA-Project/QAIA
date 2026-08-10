@@ -122,6 +122,7 @@ TECH_LITERAL_RE = re.compile(r"https?://\S+|\b\d{1,3}(?:\.\d{1,3}){3}\b|\b[a-z0-
 def parse_scenarios(text):
     scen, cur = [], None
     tags_pending = []
+    in_examples = False
     background = []      # les pas d'un `Background:` valent pour chaque scenario du fichier
     in_background = False
     for raw in text.splitlines():
@@ -142,6 +143,20 @@ def parse_scenarios(text):
             continue
         # Une table de donnees sous un `Then` PORTE les valeurs attendues. Les ignorer faisait
         # noter « aucune assertion concrete » des cahiers dont c'est justement la forme (B24).
+        # Un bloc `Examples:` n'est PAS une table de donnees attachee a un pas : ses lignes sont
+        # des cas de test. Les absorber dans le dernier pas faisait qu'un Outline a 6 exemples
+        # comptait pour 1, quand `testbook-export` en fait 6 lignes -- deux tailles pour le meme
+        # cahier, et des ratios calcules sur le mauvais denominateur (2026-08-10).
+        if re.match(r"(Examples|Exemples)\s*:", line, re.I):
+            in_examples = True
+            # -1 : la premiere ligne de pipes qui suit est l'EN-TETE de la table, pas un cas.
+            # Le defaut a -1 dans le compteur ne servait a rien puisque la cle est initialisee a
+            # 0 a la creation du scenario -- l'Outline a 6 exemples rendait 7 (2026-08-10).
+            if cur is not None: cur["examples"] = -1
+            continue
+        if line.startswith("|") and in_examples and cur is not None:
+            cur["examples"] = cur.get("examples", 0) + 1
+            continue
         if line.startswith("|") and cur is not None and cur["steps"]:
             kw, txt = cur["steps"][-1]
             cur["steps"][-1] = (kw, (txt + " " + line.strip("| ").replace("|", " ")).strip())
@@ -150,7 +165,9 @@ def parse_scenarios(text):
         if m:
             in_background = False
             if cur: scen.append(cur)
-            cur = {"name": m.group(2).strip(), "tags": tags_pending, "steps": [], "then": []}
+            in_examples = False
+            cur = {"name": m.group(2).strip(), "tags": tags_pending, "steps": [], "then": [],
+                   "examples": 0}
             tags_pending = []
             continue
         # tags only bind to the next scenario, but a comment line between the tags and the
@@ -160,7 +177,11 @@ def parse_scenarios(text):
         # generated .feature, tanking traceability to ~0 for a file that was actually tagged.
         if not line.startswith("#"):
             tags_pending = tags_pending if not cur else []
-        sm = re.match(r"(Given|When|Then|And|But|Soit|Quand|Alors|Etant donn[ée]e?s?|Et|Mais)\b(.*)", line, re.I)
+        # `*` remplace n'importe quel mot-cle de pas -- Gherkin standard, documente par
+        # Cucumber. Absent de ce motif, les pas de Karate (qui n'utilise que `*`) n'etaient
+        # jamais captures : `then` restait vide et C2 prononcait un FAIL force sur des suites
+        # correctes qui tournent en production (#103, 2026-08-10).
+        sm = re.match(r"(Given|When|Then|And|But|Soit|Quand|Alors|Etant donn[ée]e?s?|Et|Mais|\*)(?:\b|\s)(.*)", line, re.I)
         if sm and (cur is not None or in_background):
             kw, txt = sm.group(1), sm.group(2).strip()
             (background if in_background else cur["steps"]).append((kw, txt))
@@ -215,7 +236,15 @@ def score_feature(path, declared_acs=None, source_text=None, third_party=False):
                       if any(t.endswith(("…", "...", ",", "-")) for _, t in s["steps"] if t))
     terse_i = set(i for i, s in enumerate(scen)
                   if i not in truncated_i and any(len(t.split()) < 2 for _, t in s["steps"] if t))
-    empty_then_i = set(i for i, s in enumerate(scen) if not s["then"])
+    # Un scenario dont TOUS les pas sont `*` n'est pas depourvu de resultat attendu : c'est un
+    # dialecte que ce scoreur ne sait pas mapper vers Given/When/Then. Karate assertait
+    # `status 200` et `match response == first` et recevait « no expected result » -- un verdict
+    # faux rendu avec l'autorite d'un programme. Rendre 0 quand on ne sait pas lire, c'est la
+    # faute meme qu'on reproche aux modeles : une reponse assuree a la place d'un « je ne sais
+    # pas ». On l'exclut des detecteurs de resultat attendu et on le DIT (#103, 2026-08-10).
+    unmappable_i = set(i for i, s in enumerate(scen)
+                       if s["steps"] and all(kw == "*" for kw, _ in s["steps"]))
+    empty_then_i = set(i for i, s in enumerate(scen) if not s["then"]) - unmappable_i
     hollow_i = set(i for i, s in enumerate(scen) if s["then"] and all(HOLLOW_RE.search(t) for t in s["then"]))
     vague_i = set(i for i, s in enumerate(scen) if s["then"] and not any(has_strict_assertion(t) for t in s["then"]) and any(VAGUE_RE.search(t) for t in s["then"]))
     # les noms restent pour les constats lisibles, mais ne servent plus a decider
@@ -325,6 +354,7 @@ def score_feature(path, declared_acs=None, source_text=None, third_party=False):
     # Redundancy alone never forces STOP (mode 3b — real per-value assertions may still
     # differ on an identical Given/When; a human, not the detector, judges that call).
     forced_stop = (len(markers) + len(sniffer_hits) >= 3) or bool(hollow or empty_then or vague)
+    unmappable = [scen[i]["name"] for i in sorted(unmappable_i)]
     if forced_stop: gate = "FAIL"
     elif score >= 80: gate = "PASS"
     elif score >= 60: gate = "CONCERNS"
@@ -335,6 +365,11 @@ def score_feature(path, declared_acs=None, source_text=None, third_party=False):
     if markers: findings.append(f"{len(markers)} unresolved marker(s) → -{marker_pen}")
     if sniffer_hits: findings.append(f"fabrication sniffer: {len(sniffer_hits)} untraceable technical literal(s): {sniffer_hits[:3]}")
     if hollow: findings.append(f"hollow AC (C1 — covered only by an image/table ref): {hollow}")
+    if unmappable:
+        findings.append("dialect not mapped: %d scenario(s) use only the `*` step keyword "
+                        "(valid Gherkin — Karate and similar). Their expected results were NOT "
+                        "assessed and NOT scored zero; this file is not comparable to a "
+                        "Given/When/Then book: %s" % (len(unmappable), unmappable))
     if empty_then: findings.append(f"no expected result (C2 — a question, not a test): {empty_then}")
     if vague: findings.append(f"vague/non-verifiable Then (C2): {vague}")
     if truncated: findings.append(f"truncated step(s): {truncated}")
@@ -350,6 +385,15 @@ def score_feature(path, declared_acs=None, source_text=None, third_party=False):
 
     return {
         "file": os.path.basename(path), "scenarios": len(scen),
+        # `scenarios` compte les BLOCS `Scenario`/`Scenario Outline` -- semantique historique,
+        # conservee pour ne pas invalider les baselines publiees. `executableCases` compte ce
+        # qu'un lanceur executera reellement : un Outline de 6 exemples vaut 6, ce que
+        # `testbook-export` projette deja en 6 lignes. Nommer les deux plutot que d'en changer une
+        # en silence (#104, 2026-08-10).
+        "executableCases": sum(max(1, s.get("examples", 0)) for s in scen),
+        "outlines": sum(1 for s in scen if s.get("examples", 0) > 0),
+        "unmappableDialect": len([1 for i, s in enumerate(scen)
+                                  if s["steps"] and all(k == "*" for k, _ in s["steps"])]),
         "readability": round(readability, 1), "completeness": round(completeness, 1),
         "coherence": round(coherence, 1), "traceability": round(traceability, 1),
         "penalties": {"markers": marker_pen, "sniffer": sniffer_pen, "redundancy": redundancy_pen},

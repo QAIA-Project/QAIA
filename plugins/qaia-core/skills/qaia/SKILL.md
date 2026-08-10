@@ -16,11 +16,36 @@ Repeat until the tester's goal is met or they stop:
 1. **Reason.** From the conversation and the project state (delegate the inspection to
    `qaia-help`'s steps), determine the tester's intent and the single most useful next action.
    State your reasoning in one or two sentences — visible, never silent.
-2. **Act.** Execute the corresponding skill *by its book* (read its SKILL.md and follow it):
-   `us-ingest`, `us-review`, `need-understanding`, `rag-build`, `istqb-design`,
+2. **Act.** Execute the corresponding skill *by its book* (read its SKILL.md and follow it).
+   Never improvise a step a skill already defines; never skip a ⚠ VALIDATION.
+
+   **Entry points** — `us-ingest` (a story, a ticket, a document), `openapi-ingest` (a formal API
+   specification instead of a story), `signal-ingest` (an exported production signal, attached as
+   evidence to questions a book already carries).
+
+   **Journey** — `us-review`, `need-understanding`, `rag-build`, `istqb-design`,
    `oracle-generate`, `prioritize`, `testbook-generate`, `report`, `testbook-export`,
-   `testbook-validate`, `feedback`. Never improvise a step a skill already defines; never skip a
-   ⚠ VALIDATION.
+   `testbook-validate`, `feedback`, `test-plan-and-closure` (the two artefacts a manager signs).
+
+   **Beyond `qaia-core` — check what is installed before proposing it.** This plugin installs
+   alone and cannot assume the others are present, but staying silent about them is worse: it
+   leaves three quarters of the catalogue unreachable for someone who did install them. So look
+   for the skill, then either route to it or name what is missing — **never claim to route to a
+   skill you have not found**:
+
+   - automation, execution and shift-right → `qaia-playwright` (`automate`, `run-report`,
+     `defect-report`, `impact-select`, `confirm-fix`, `flaky-detect`, `locator-repair`,
+     `a11y-audit`, `perf-check`, `security-surface`, `visual-check`,
+     `usability-heuristic-review`, `contract-probe`, `traffic-replay`)
+   - scoring and release readiness → `qaia-score` (`testbook-score`, `aptitude-gate`,
+     `automation-score`, `spec-suite-drift`)
+   - concrete test data for a book whose scenarios carry bare literals → `qaia-testdata`
+     (`dataset-generate`)
+
+   When the plugin is absent, say so and give the one-line install rather than doing the work
+   yourself: *"`qaia-playwright` is not installed — `/plugin install qaia-playwright@qaia`"*.
+   Improvising a skill's job because its plugin is missing is the one failure this list exists to
+   prevent.
 3. **Observe.** Summarize what the step produced (counts, flags, open points) and update the
    checkpoint per the skill's rules.
 4. **Loop or hand over.** Propose the next step with a one-line why — the tester decides. On an

@@ -24,6 +24,14 @@ a first-class use case, not an afterthought.
    Full algorithm, how to run it, and the trap of running the sniffer blind:
    `references/structural-pass.md`.
 
+   **This skill's whole point is auditing books QAIA did not write — so decide the mode first.**
+   A book QAIA generated carries at least one `@QAIA-*` tag; a foreign one carries none. On a
+   foreign book the structural pass must run in **third-party mode** (`--third-party` when using
+   the shipped scorer of `qaia-score`): the tag-based traceability budget is unwinnable by
+   construction, and the priority and technique tags are QAIA conventions, not quality. Measured
+   on a real foreign book: **46/100 FAIL** scored as if it were ours, **67/100 CONCERNS** scored
+   as what it is. Report which mode was applied — a verdict that does not say cannot be read.
+
    This number is **reported alongside** the checklist below and **never averaged into it**.
 
 3. **Run the checklist.** Score each dimension 0/1/2 with one-line evidence, **defaulting to the

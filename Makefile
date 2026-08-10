@@ -23,6 +23,7 @@ check: ## Lance tous les controles que la CI lance (skills, provenance, outillag
 	python eval/tools/check_agents_tier.py
 	python eval/tools/check_retired_framing.py
 	python eval/tools/selfcheck_markdown_shell_hook.py
+	python eval/tools/selfcheck_gherkin_dialect.py
 	python eval/tools/selfcheck_rule3.py
 	# La CI balaie `find plugins eval -name 'manifest*.json'` ; il n'existe aucun
 	# manifest*.json sous `plugins/`, donc les deux perimetres sont equivalents en pratique.

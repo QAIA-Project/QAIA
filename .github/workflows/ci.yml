@@ -230,6 +230,12 @@ jobs:
       - name: Le hook anti-Markdown-par-le-shell refuse et laisse passer ce qu'il doit
         run: python eval/tools/selfcheck_markdown_shell_hook.py
 
+      # Deux defauts de lecture du Gherkin trouves le 2026-08-10 en notant un corpus etranger :
+      # le mot-cle `*` (Gherkin standard) n'etait pas reconnu et valait un FAIL force, et les
+      # lignes d'`Examples` n'etaient pas comptees comme des cas. Corriges, et gardes ici.
+      - name: Lecture du Gherkin -- dialecte `*` et comptage des Examples
+        run: python eval/tools/selfcheck_gherkin_dialect.py
+
       - name: README version claims match the plugin manifests
         run: |
           set -e

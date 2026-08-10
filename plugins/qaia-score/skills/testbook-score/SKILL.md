@@ -37,6 +37,15 @@ in `../README.md`. It is the LLM-judge of the project, packaged as an installabl
    kept **separate** from the LLM rubric (two numbers, never conflated).
    - **In Claude Code**: run the shipped scorer, do not re-implement it —
      `python "${CLAUDE_PLUGIN_ROOT}/scripts/structural_score.py" --batch <folder of .feature files>`
+
+     **Is this book ours? Decide before you run, and add `--third-party` when it is not.** The
+     test is mechanical: a book QAIA generated carries at least one `@QAIA-*` tag; a foreign one
+     carries none. Without the flag, `traceability` (25 points) is lost **by construction** —
+     no book written elsewhere uses our tag convention — and the `@P1/@P2/@P3` and technique tags
+     are scored zero instead of being excluded. Measured on a real foreign book: **46/100 FAIL
+     without the flag, 67/100 CONCERNS with it**. Twenty-one points and a reversed verdict, on the
+     same file. Say which mode you applied in the report: a 67 in third-party mode and a 67 in
+     QAIA mode do not mean the same thing.
      (standard library only; JSON on stdout). It ships inside the plugin as of 2026-08-09; before
      that this skill asked you to materialise the algorithm in session, so two runs on the same
      file could legitimately disagree. **The algorithm below documents what the scorer does; it is
