@@ -22,6 +22,13 @@ jobs:
           # etape est la premiere du job, donc rien n'est encore installe -- mais le meme job
           # lance ensuite `npm ci` dans `mcp-bridge/`, et toute reorganisation d'etapes ferait
           # balayer des milliers de JSON vendus par des tiers (B36, revue « developpeur »).
+          # Un ensemble vide passe en silence : la boucle ne tourne pas, l'etape est verte, et
+          # rien n'a ete verifie. C'est le motif exact qui a rendu `make lint` vert sur zero
+          # fichier pendant un temps indetermine (2026-08-10). Le compte est donc annonce et
+          # zero est une erreur -- ce depot contient des JSON par construction.
+          n=$(find . -name '*.json' -not -path '*/node_modules/*' | wc -l)
+          echo "JSON a valider : $n fichier(s)."
+          [ "$n" -gt 0 ] || { echo "::error::aucun JSON trouve -- le perimetre est casse"; exit 1; }
           find . -name '*.json' -not -path '*/node_modules/*' -print0 | while IFS= read -r -d '' f; do
             jq empty "$f" || { echo "::error::Invalid JSON manifest detected"; exit 1; }
           done
@@ -38,6 +45,11 @@ jobs:
       - name: Check skill frontmatter
         run: |
           set -e
+          # Meme garde que pour les JSON : zero SKILL.md trouve n'est pas un succes, c'est un
+          # perimetre casse. Le depot en contient 37.
+          n=$(find plugins -path '*/skills/*/SKILL.md' | wc -l)
+          echo "SKILL.md a verifier : $n fichier(s)."
+          [ "$n" -gt 0 ] || { echo "::error::aucun SKILL.md trouve -- le perimetre est casse"; exit 1; }
           find plugins -path '*/skills/*/SKILL.md' -print0 | while IFS= read -r -d '' f; do
             head -1 "$f" | grep -qx -- '---' || { echo "::error::A SKILL.md does not start with YAML frontmatter"; exit 1; }
             sed -n '2,/^---$/p' "$f" | grep -q '^name:' || { echo "::error::A SKILL.md frontmatter lacks a name"; exit 1; }
