@@ -1,5 +1,9 @@
 # Prompt — Campagne d'évaluation continue des skills QAIA
 
+> **Document consomme — entree de campagne, pas guide vivant (marque le 2026-08-10).**
+> Prompt de la campagne d'evaluation des skills du 2026-07-29 ; ses sorties vivent dans
+> `eval/skill-eval-campaign-2026-07-29/`. Garde pour la provenance, chiffres figes a sa date.
+
 > Prompt prêt à l'emploi pour faire tourner le parcours QAIA sur des cas réels afin d'éprouver la
 > robustesse des skills elles-mêmes (pas pour livrer un cahier à un utilisateur final). Version
 > corrigée d'une proposition externe qui réintroduisait de l'auto-notation (l'agent producteur

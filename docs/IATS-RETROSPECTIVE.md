@@ -1,5 +1,10 @@
 # Rétrospective honnête : QAIA face aux erreurs d'IATS
 
+> **Document historique — retrospective close (marque le 2026-08-10).**
+> Retour d'experience sur IATS, le projet qui a precede QAIA. Rien ici ne decrit le produit
+> actuel ; c'est la matiere d'ou viennent plusieurs decisions de `docs/DECISIONS.md`. A lire
+> comme une archive, pas comme une consigne.
+
 *Auto-audit — mis à jour le 2026-07-24 (ter). Écrit pour être inconfortable, pas pour rassurer.*
 
 > **Mise à jour du #24 (2026-07-24 ter).** Le harnais de gap annoncé plus bas comme correction

@@ -49,6 +49,11 @@ PLUGIN_STATUS = re.compile(r"\*\*Status:\s*([0-9]+\.[0-9]+\.[0-9]+),\s*(\d{1,3})
 
 TOTAL_SCANNED = [
     "README.md",
+    # Ajoute le 2026-08-10, dans le meme commit que sa creation. Le README bilingue a ete scinde
+    # en README.md (EN) + README.fr.md (FR) ; la moitie francaise porte les memes comptes et les
+    # memes versions de plugin. L'inscrire ici au moment de la scission plutot qu'apres la
+    # premiere derive : un fichier hors perimetre est un angle mort qu'on cree soi-meme.
+    "README.fr.md",
     "docs/TEST-COVERAGE-MAP.md",
     "docs/ACTION-PLAN.md",
     "plugins/qaia-core/CATALOGUE.md",

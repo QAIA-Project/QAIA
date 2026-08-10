@@ -1,5 +1,12 @@
 # Cadre de revue d'architecture QAIA
 
+> **Document consomme — entree de campagne, pas guide vivant (marque le 2026-08-10).**
+> Ce fichier est le *prompt* qui a servi a lancer la revue d'architecture ; son resultat est la
+> note 5,0/10 consignee dans `docs/STATUS.md`. Il est garde pour la provenance : on doit pouvoir
+> relire ce qu'on a demande avant de juger ce qu'on a obtenu. **Il ne decrit pas l'etat actuel du
+> projet** et ne doit pas etre lu comme tel. Non deplace : des campagnes gelees sous `eval/` le
+> referencent par ce chemin.
+
 Origine : proposé par ChatGPT le 2026-08-08, dans un lot de trois analyses externes du dépôt
 commandées par le fondateur. Des trois, c'est la seule qui n'avance aucune affirmation fausse —
 parce qu'elle n'avance aucun chiffre : c'est une **méthodologie**, pas un diagnostic. Les deux

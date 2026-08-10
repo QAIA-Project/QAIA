@@ -287,12 +287,12 @@ Scenario: A line at exactly the receipt
       </div>
       <div class="card">
         <h4>No producer scores its own work</h4>
-        <p>The structural score is a deterministic algorithm living in a separate, read-only plugin, kept apart from the semantic judge. It has repeatedly caught defects the producing skill could not see in itself. Worth knowing what changed: until 2026-08-09 the plugin shipped <em>no code</em> and asked the model to rebuild ~300 lines of the scorer from prose on every run — so two runs on the same file could legitimately disagree. <strong>A score that is not reproducible is not a score</strong>, so the scorers now ship as pinned Python you can read, diff or refuse. They still do not auto-execute.
+        <p>The structural score is a deterministic algorithm living in a separate, read-only plugin, kept apart from the semantic judge. It has repeatedly caught defects the producing skill could not see in itself. Until 2026-08-09 the plugin shipped <em>no code</em> and asked the model to rebuild the scorer from prose each run, so two runs on one file could legitimately disagree. <strong>A score that is not reproducible is not a score</strong> — the scorers now ship as pinned Python you can read, diff or refuse, and still do not auto-execute.
         <br><br><a href="https://github.com/QAIA-Project/QAIA/tree/main/plugins/qaia-score">See qaia-score →</a></p>
       </div>
       <div class="card">
         <h4>The bad grades are published too — and they are self-administered</h4>
-        <p>A 13-persona review scored QAIA <strong>2.4/5</strong>; an architecture review gave <strong>5.0/10</strong>. Both are published with what was fixed and what wasn't. <strong>Both were also run by this project on itself</strong> — agent panels playing a fictional review firm, not outside humans. That makes them a hostile-reading exercise, not independent validation, and calling them an "external audit" would be the same overclaim the grades are supposed to guard against.
+        <p>A 13-persona review scored QAIA <strong>2.4/5</strong>; an architecture review gave <strong>5.0/10</strong>. Both are published with what was fixed and what wasn't — and <strong>both were run by this project on itself</strong>, agent panels playing a fictional review firm, not outside humans. That makes them a hostile-reading exercise, not independent validation; calling them an "external audit" would be the same overclaim the grades exist to guard against.
         <br><br><a href="https://github.com/QAIA-Project/QAIA/blob/main/docs/STATUS-en.md">Read the honest status →</a></p>
       </div>
     </div>
@@ -315,39 +315,18 @@ Scenario: A line at exactly the receipt
     <p class="lede">The two questions a QA lead asks in the first sixty seconds, answered before you have to ask them.</p>
 
     <h3>Everything QAIA writes goes in one directory</h3>
-    <pre>.qaia/
-├── knowledge/          <span class="cmt"># team knowledge base, one concern per file</span>
-├── state/&lt;US-ID&gt;/      <span class="cmt"># journey checkpoints: source, ambiguities, technique choices, priorities</span>
-├── testbooks/&lt;US-ID&gt;/  <span class="cmt"># the .feature files, synthesis, coverage matrix</span>
-├── feedback/           <span class="cmt"># your corrections, and the rules promoted from them after you approve</span>
-└── reports/&lt;US-ID&gt;/    <span class="cmt"># manifest.json — the one output contract all four plugins share</span></pre>
-    <p class="lede" style="margin-top:14px">Plain files, meant to be committed and diffed. Nothing is written outside <code>.qaia/</code> and the test directories you point it at, and nothing in there executes.</p>
+    <p class="lede">Everything lands under <code>.qaia/</code> — the team knowledge base, the journey checkpoints, the <code>.feature</code> files and coverage matrix, your corrections, and one <code>manifest.json</code> per run that all four plugins share. Plain files, meant to be committed and diffed. Nothing is written outside <code>.qaia/</code> and the test directories you point it at, and nothing in there executes. <a href="./walkthrough.html">The seven steps, and the artifact each one produces →</a></p>
 
     <h3>Three things your security reviewer will ask</h3>
     <ul class="tight">
-      <li><strong>Personal data is masked at ingestion.</strong> The ingest step scans for direct personal and sensitive data and redacts before anything is written or reasoned over — it also strips control and bidirectional-override characters.</li>
-      <li><strong>Fetched content is treated as data, never as instructions.</strong> Jira comments, issue bodies and captured HTTP traffic are untrusted input: a directive found inside them is reported to you, not obeyed. That check has fired in real runs.</li>
-      <li><strong>QAIA installs no MCP server and no hook.</strong> To be precise rather than flattering: the automation plugin expects <em>you</em> to have Playwright available in your own session — that is your MCP configuration, not something QAIA registers. Installing QAIA adds Markdown to your Claude Code config and nothing that runs.</li>
+      <li><strong>Personal data is masked at ingestion</strong> — direct personal and sensitive data is redacted before anything is written or reasoned over, along with control and bidirectional-override characters.</li>
+      <li><strong>Fetched content is data, never instructions.</strong> Jira comments, issue bodies and captured HTTP traffic are untrusted: a directive found inside them is reported to you, not obeyed. That check has fired in real runs.</li>
+      <li><strong>No MCP server, no hook.</strong> Precisely rather than flatteringly: the automation plugin expects <em>you</em> to already have Playwright in your session — your MCP configuration, not something QAIA registers.</li>
     </ul>
 
     <h3>The cost, in real measured numbers</h3>
-    <p class="lede">QAIA runs on your Claude subscription quota, not an API bill. Per-command round-trip cost, each from a real measured run (one run per command, so treat these as orders of magnitude, not averages):</p>
-    <div class="scroll" tabindex="0" role="region">
-      <table>
-        <caption class="sr-only">Measured token cost per QAIA command, one run each, July 2026.</caption>
-        <thead><tr><th scope="col">Command</th><th scope="col">Measured tokens</th><th scope="col">Command</th><th scope="col">Measured tokens</th></tr></thead>
-        <tbody>
-          <tr><td><code>hello</code></td><td>39.1k</td><td><code>oracle-generate</code></td><td>67.1k</td></tr>
-          <tr><td><code>us-ingest</code></td><td>44.9k</td><td><code>us-review</code></td><td>73.8k</td></tr>
-          <tr><td><code>istqb-design</code></td><td>40.1k</td><td><code>testbook-export</code></td><td>77.6k</td></tr>
-          <tr><td><code>qaia-help</code></td><td>56.3k</td><td><code>prioritize</code></td><td>84.7k</td></tr>
-          <tr><td><code>rag-build</code></td><td>67.6k</td><td><code>need-understanding</code></td><td>91.1k</td></tr>
-          <tr><td><code>feedback</code></td><td>88.5k</td><td><code>testbook-validate</code></td><td>107.1k</td></tr>
-          <tr><td><code>testbook-generate</code></td><td>112.5k</td><td><code>report</code></td><td>139.7k</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="lede" style="margin-top:14px">The uncomfortable part, published rather than smoothed: <strong>13 of the 14 measured commands cost more than the project's own prior expert estimate</strong>, some of them by a factor of four. The estimates were wrong; the measurements replaced them instead of the other way round. <a href="https://github.com/QAIA-Project/QAIA/blob/main/plugins/qaia-core/README.md">Full table, the method behind the numbers, and what each tier actually buys →</a></p>
+    <p class="lede">QAIA runs on your Claude subscription quota, not an API bill. Measured round-trip cost per command ranges from <strong>39k tokens</strong> (<code>hello</code>) to <strong>140k</strong> (<code>report</code>), with the step most people run first — <code>testbook-generate</code> — at <strong>112k</strong>. One run per command, so treat them as orders of magnitude, not averages.</p>
+    <p class="lede">The uncomfortable part, published rather than smoothed: <strong>13 of the 14 measured commands cost more than the project's own prior expert estimate</strong>, some by a factor of four. The estimates were wrong; the measurements replaced them instead of the other way round. <a href="https://github.com/QAIA-Project/QAIA/blob/main/plugins/qaia-core/README.md">The full 14-command table, the method behind the numbers, and what each tier buys →</a></p>
   </section>
 
   <section id="limits">

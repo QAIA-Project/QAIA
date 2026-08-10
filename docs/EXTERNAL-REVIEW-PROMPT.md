@@ -1,5 +1,12 @@
 # Prompt de revue externe — à coller dans un LLM sans accès au dépôt
 
+> **Document consomme — entree de campagne, pas guide vivant (marque le 2026-08-10).**
+> Prompt de la revue externe ; son resultat est la note 2,4/5 consignee dans `docs/STATUS.md`.
+> **Les chiffres qu'il contient sont ceux de sa redaction** (« 35 skills » etait juste le
+> 2026-07-29 ; le depot en porte 37 au 2026-08-10). Ils ne sont pas corriges : reecrire l'enonce
+> d'une campagne apres coup falsifierait ce qui a reellement ete demande au relecteur. Meme
+> raison que l'exclusion de `docs/STATUS.md` du perimetre de `check_skill_counts.py`.
+
 Complément de [`ARCHITECTURE-REVIEW-PROMPT.md`](ARCHITECTURE-REVIEW-PROMPT.md), qui s'adresse à un
 agent **ayant** le dépôt sous la main. Celui-ci s'adresse à un LLM de conversation — ChatGPT,
 Gemini, Mistral — qui n'a rien d'autre que le message qu'on lui envoie.
