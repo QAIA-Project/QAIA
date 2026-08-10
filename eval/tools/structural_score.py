@@ -147,7 +147,9 @@ def parse_scenarios(text):
         # des cas de test. Les absorber dans le dernier pas faisait qu'un Outline a 6 exemples
         # comptait pour 1, quand `testbook-export` en fait 6 lignes -- deux tailles pour le meme
         # cahier, et des ratios calcules sur le mauvais denominateur (2026-08-10).
-        if re.match(r"(Examples|Exemples)\s*:", line, re.I):
+        # `Scenarios:` est l'alias officiel d'`Examples:`. Verifie AVANT le motif de scenario :
+        # sinon `Scenarios:` serait lu comme un `Scenario` sans titre (#105).
+        if re.match(r"(Examples|Exemples|Scenarios)\s*:", line, re.I):
             in_examples = True
             # -1 : la premiere ligne de pipes qui suit est l'EN-TETE de la table, pas un cas.
             # Le defaut a -1 dans le compteur ne servait a rien puisque la cle est initialisee a
@@ -161,7 +163,12 @@ def parse_scenarios(text):
             kw, txt = cur["steps"][-1]
             cur["steps"][-1] = (kw, (txt + " " + line.strip("| ").replace("|", " ")).strip())
             continue
-        m = re.match(r"(Scenario Outline|Scenario|Sc[ée]nario|Plan du sc[ée]nario)\s*:\s*(.*)", line, re.I)
+        # Alias officiels de Gherkin 6, absents jusqu'au 2026-08-10 : `Example:` pour
+        # `Scenario:`, `Scenario Template:` pour `Scenario Outline:`. Un cahier ecrit avec
+        # eux -- la documentation Cucumber s'en sert dans ses propres exemples de `Rule:` --
+        # rendait ZERO scenario, aucun constat, et un 20/100 FAIL muet (#105).
+        # Les formes longues passent avant les courtes : `Scenario Outline` avant `Scenario`.
+        m = re.match(r"(Scenario Outline|Scenario Template|Scenario|Sc[ée]nario|Plan du sc[ée]nario|Example|Exemple)\s*:\s*(.*)", line, re.I)
         if m:
             in_background = False
             if cur: scen.append(cur)
@@ -221,7 +228,23 @@ def score_feature(path, declared_acs=None, source_text=None, third_party=False):
         raise SystemExit(2)
     scen = parse_scenarios(text)
     findings = []
-    n = len(scen) or 1
+    # ZERO scenario extrait : on ne note pas. Le `or 1` ci-dessous rendait une note sur un
+    # denominateur invente, donc un 20/100 FAIL muet sur un cahier parfaitement valide dont on
+    # n'avait simplement pas su lire les mots-cles -- `Example:` et `Scenario Template:` l'ont
+    # produit jusqu'au 2026-08-10 (#105). Un verdict fabrique sur un parse vide est exactement
+    # la faute que ce projet reproche aux modeles : une reponse assuree a la place d'un « je ne
+    # sais pas ». On le DIT, et on ne met aucun chiffre.
+    if not scen:
+        return {"file": os.path.basename(path), "scenarios": 0, "executableCases": 0,
+                "outlines": 0, "unmappableDialect": 0,
+                "scoreable": False, "score": None, "gate": "UNSCORED", "forced_stop": False,
+                "readability": None, "completeness": None, "coherence": None,
+                "traceability": None, "penalties": {}, "tag_audit": {},
+                "findings": ["not scoreable: no scenario could be extracted from this file. "
+                             "It may use Gherkin keywords this scorer does not know, a "
+                             "localisation it does not carry, or contain no scenario at all. "
+                             "No score is emitted -- a number here would be fabricated."]}
+    n = len(scen)
 
     # --- detectors ---
     markers = MARKER_RE.findall(QUOTED_XXX_TBD_RE.sub('""', text))

@@ -84,6 +84,39 @@ THEN_VIDE = """Feature: un Then reellement absent
     When the total is evaluated
 """
 
+# --- #105 : alias officiels de Gherkin 6 -------------------------------------------------
+# `Example:` remplace `Scenario:`, `Scenario Template:` remplace `Scenario Outline:`, et
+# `Scenarios:` remplace `Examples:`. La documentation Cucumber s'en sert dans ses propres
+# exemples de `Rule:`. Aucun n'etait reconnu : le parseur rendait ZERO scenario, aucun constat,
+# et un 20/100 FAIL muet -- un mode d'echec plus silencieux que celui de Karate.
+EXAMPLE_ALIAS = """Feature: Rule et Example
+
+  Rule: un rapport sous le seuil ne demande qu'une approbation
+
+    Example: sous le seuil
+      Given a report of 100
+      Then only the manager approves
+"""
+
+TEMPLATE_ALIAS = """Feature: Scenario Template et Scenarios
+
+  Scenario Template: refus de <amount>
+    Given a report of <amount>
+    Then the submission is refused
+
+    Scenarios:
+      | amount |
+      | -1     |
+      | 0      |
+"""
+
+# Un fichier dont zero scenario est extrait ne doit JAMAIS recevoir de note : un chiffre sur un
+# parse vide est fabrique, et c'est la faute meme que ce projet reproche aux modeles.
+AUCUN_SCENARIO = """Feature: aucun scenario extractible
+
+  Du texte libre, aucun scenario.
+"""
+
 # Une DataTable sous un `Then` porte le resultat attendu : elle ne doit PAS etre comptee
 # comme des cas d'Examples, et ne doit pas declencher C2.
 DATATABLE = """Feature: resultat attendu porte par une table
@@ -143,14 +176,33 @@ def main():
     if not t or any("no expected result" in f for f in t.get("findings", [])):
         ko.append(("une DataTable sous un `Then` declenche C2", "pas de C2", "C2 present"))
 
+    e = note(EXAMPLE_ALIAS)
+    if not e or e.get("scenarios") != 1:
+        ko.append(("#105 `Example:` (alias de `Scenario`, Gherkin 6) n'est plus lu",
+                   1, e and e.get("scenarios")))
+
+    st = note(TEMPLATE_ALIAS)
+    if not st or st.get("scenarios") != 1:
+        ko.append(("#105 `Scenario Template:` n'est plus lu", 1, st and st.get("scenarios")))
+    if not st or st.get("executableCases") != 2:
+        ko.append(("#105 `Scenarios:` ne compte plus ses lignes comme des cas",
+                   2, st and st.get("executableCases")))
+
+    vide = note(AUCUN_SCENARIO)
+    if not vide or vide.get("score") is not None or vide.get("gate") != "UNSCORED":
+        ko.append(("#105 un fichier sans scenario extractible recoit de nouveau une note -- un "
+                   "chiffre sur un parse vide est fabrique", "score=None et gate=UNSCORED",
+                   vide and (vide.get("score"), vide.get("gate"))))
+
     if ko:
         print("LECTURE DU GHERKIN NON CONFORME -- %d cas.\n" % len(ko))
         for nom, attendu, obtenu in ko:
             print("  %s\n    attendu %r, obtenu %r\n" % (nom, attendu, obtenu))
         return 1
 
-    print("OK: dialecte `*` reconnu et rapporte, Examples comptes en cas executables, "
-          "`Then` vide toujours refuse, DataTable toujours acceptee.")
+    print("OK: dialecte `*` reconnu et rapporte, alias Gherkin 6 lus (Example, Scenario "
+          "Template, Scenarios), Examples comptes en cas executables, `Then` vide toujours "
+          "refuse, DataTable toujours acceptee, parse vide jamais note.")
     return 0
 
 

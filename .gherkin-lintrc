@@ -1,6 +1,9 @@
 {
   "no-dupe-feature-names": "on",
-  "no-dupe-scenario-names": ["on", "in-feature"],
+  "no-dupe-scenario-names": [
+    "on",
+    "in-feature"
+  ],
   "no-empty-file": "on",
   "no-files-without-scenarios": "on",
   "no-trailing-spaces": "on",
@@ -19,7 +22,8 @@
       "when": 4,
       "then": 4,
       "and": 4,
-      "but": 4
+      "but": 4,
+      "Rule": 2
     }
   ],
   "no-partially-commented-tag-lines": "on",

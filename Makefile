@@ -65,16 +65,26 @@ test: ## Joue la suite generee contre la demo (la demo doit tourner)
 FEATURE_EXCLUDES = -not -path './node_modules/*' -not -path '*/export/*' \
 	  -not -path './eval/concerns-zone-fixtures/*' -not -path './eval/gold-set/*' \
 	  -not -path './eval/goldset-hardened/*' -not -path './eval/baselines/*' \
-	  -not -path './eval/portability-2026-08-08/*' \n	  -not -path './eval/portability-2026-08-09/*'
+	  -not -path './eval/gherkin-conformance/*' \
+	  -not -path './eval/portability-2026-08-08/*' \
+	  -not -path './eval/portability-2026-08-09/*'
 
+# `find ... | grep -q .` masquait le code de sortie de find derriere celui de grep. Un perimetre
+# casse -- il a suffi d'un backslash-n litteral dans FEATURE_EXCLUDES -- faisait echouer find,
+# qui ne rendait rien, donc grep echouait, donc la branche `else` annoncait « rien a verifier »
+# et la cible sortait VERTE sans avoir lint un seul fichier. C'est mot pour mot la panne
+# fondatrice de CLAUDE.md (« le job Lint Gherkin etait casse en silence »), revenue dans le
+# mecanisme bati pour l'empecher -- et c'est la branche serviable qui convertissait l'erreur en
+# vert. Le code de sortie de find est desormais lu, et zero fichier trouve est une ERREUR : ce
+# depot contient des .feature, donc un perimetre qui n'en voit aucun est casse (2026-08-10).
 lint: ## Verifie les cahiers Gherkin comme le fait la CI
 	@test -d node_modules/gherkin-lint || npm ci --no-audit --no-fund --silent
-	@if find . -name '*.feature' $(FEATURE_EXCLUDES) | grep -q .; then \
-	  find . -name '*.feature' $(FEATURE_EXCLUDES) \
-	    -exec ./node_modules/.bin/gherkin-lint -c .gherkin-lintrc {} + ; \
-	else \
-	  echo "Aucun fichier .feature dans le perimetre -- rien a verifier" ; \
-	fi
+	@files=$$(find . -name '*.feature' $(FEATURE_EXCLUDES)) || { \
+	  echo "ERREUR : perimetre Gherkin casse -- find a echoue." ; exit 1 ; } ; \
+	  if [ -z "$$files" ]; then \
+	    echo "ERREUR : aucun .feature trouve alors que ce depot en contient." ; exit 1 ; \
+	  fi ; \
+	  echo "$$files" | xargs ./node_modules/.bin/gherkin-lint -c .gherkin-lintrc
 
 clean: ## Supprime les sorties de test
 	rm -rf examples/*/tests/test-results examples/*/tests/results.json
