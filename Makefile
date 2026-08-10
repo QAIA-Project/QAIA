@@ -77,6 +77,9 @@ FEATURE_EXCLUDES = -not -path './node_modules/*' -not -path '*/export/*' \
 # mecanisme bati pour l'empecher -- et c'est la branche serviable qui convertissait l'erreur en
 # vert. Le code de sortie de find est desormais lu, et zero fichier trouve est une ERREUR : ce
 # depot contient des .feature, donc un perimetre qui n'en voit aucun est casse (2026-08-10).
+# La cible ANNONCE combien de fichiers elle verifie : une cible muette qui passe est
+# indistinguable d'une cible qui n'a rien fait -- c'est ce silence qui a laisse la panne
+# de perimetre invisible. Le nombre est la preuve, dans le log, que le linter a mordu.
 lint: ## Verifie les cahiers Gherkin comme le fait la CI
 	@test -d node_modules/gherkin-lint || npm ci --no-audit --no-fund --silent
 	@files=$$(find . -name '*.feature' $(FEATURE_EXCLUDES)) || { \
@@ -84,6 +87,7 @@ lint: ## Verifie les cahiers Gherkin comme le fait la CI
 	  if [ -z "$$files" ]; then \
 	    echo "ERREUR : aucun .feature trouve alors que ce depot en contient." ; exit 1 ; \
 	  fi ; \
+	  echo "Perimetre Gherkin : $$(echo "$$files" | wc -l) fichier(s) a verifier." ; \
 	  echo "$$files" | xargs ./node_modules/.bin/gherkin-lint -c .gherkin-lintrc
 
 clean: ## Supprime les sorties de test
