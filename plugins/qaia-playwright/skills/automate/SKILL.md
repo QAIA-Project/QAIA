@@ -47,9 +47,10 @@ Two architectural choices are fixed, not renegotiated per run:
   medibook flake hunt.
 - **No trivial assertions, and no assertion that contradicts its own `Then`** — every
   `expect(...)` must check real SUT state, agree in *polarity* with the clause it comes from, and
-  carry its scenario's ambiguity flag if the book set one. Full lint, its **nine** defect classes
-  — four hollow shapes plus five measured on real generated suites — and the contract boundary it
-  must not cross: `references/self-review-lint.md`.
+  carry its scenario's ambiguity flag if the book set one. Full lint, its **ten** defect classes
+  — four hollow shapes, five measured on real generated suites, and one that no assertion review
+  can see (a fixture that re-imposes the state its own test asserts changing) — and the contract
+  boundary it must not cross: `references/self-review-lint.md`.
 - **One `e2e` project per browser engine, and never more** — a suite is multiplied by an engine
   matrix only where the engine can change the answer: layout, native controls, focus order,
   storage policy. An API test has no engine; in `examples/expense-demo` that is 43 of 56 tests,
@@ -76,6 +77,17 @@ Two architectural choices are fixed, not renegotiated per run:
 
    A scenario with no level tag is a book that predates ADR 0008 or was hand-edited: say so and
    offer to run `testbook-generate` rather than guessing on its behalf.
+
+   **And if there is no test book at all**, this step has no input. Do not invent scenario IDs and
+   do not decide levels yourself — that is precisely the failure ADR 0008 was written against, and
+   doing it here reintroduces it one skill further down. Say that the book is missing, name the
+   requirement you were given instead, and offer the chain that produces one (`us-ingest` →
+   `istqb-design` → `testbook-generate`). If the human tells you to proceed regardless, the suite
+   you produce carries **`no-testbook` in its manifest provenance** and its `design` block covers
+   only the part that came from a real book — never a count you assembled yourself.
+   *(Added 2026-08-11: this step covered "a book without level tags" and not "no book", which is
+   the more common situation on a target nobody has designed for yet. An automation run hit it and
+   had no clean way out.)*
 2. **Testability precheck (CTAL-TAE) — before generating anything.** Assess the SUT's own
    testability rather than silently generating against whatever is there:
 
@@ -121,7 +133,7 @@ Two architectural choices are fixed, not renegotiated per run:
 5. **Self-review before writing** — a mechanical anti-sycophancy lint on the generator's own
    output, run before each spec reaches disk. It catches tautological comparisons, contentless
    `expect()` calls, weak-by-construction matchers on lazy locators, and scenarios whose `Then`
-   produced zero assertions — **plus the five classes that no shape check sees**: an assertion
+   produced zero assertions — **plus the six classes that no shape check sees**: an assertion
    contradicting its `Then`, a dropped ambiguity flag, a test whose whole evidence is one-sided, a
    literal with no provenance, and a report claiming what the code does not support. Full protocol,
    and the contract boundary it must not cross: `references/self-review-lint.md`. Silent when clean.

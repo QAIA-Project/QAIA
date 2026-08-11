@@ -1,0 +1,55 @@
+import { chromium } from '@playwright/test';
+const dt = (p) => p.evaluate(() => Array.from(document.querySelectorAll('[data-test]')).map(e => e.tagName+'|'+e.getAttribute('data-test')));
+const b = await chromium.launch();
+const ctx = await b.newContext();
+const p = await ctx.newPage();
+await p.goto('https://www.saucedemo.com/');
+await p.fill('[data-test=username]','standard_user');
+await p.fill('[data-test=password]','secret_sauce');
+await p.click('[data-test=login-button]');
+await p.waitForURL(/inventory/);
+console.log('--- INVENTORY url', p.url());
+console.log((await dt(p)).join('\n'));
+console.log('--- storage after login:', JSON.stringify(await ctx.storageState()).slice(0,1200));
+// item detail then back
+await p.click('[data-test=add-to-cart-sauce-labs-backpack]');
+console.log('--- badge after add:', await p.locator('[data-test=shopping-cart-badge]').textContent());
+await p.click('[data-test=item-4-title-link]');
+console.log('--- ITEM url', p.url());
+console.log((await dt(p)).join('\n'));
+await p.goBack();
+console.log('--- badge after back:', await p.locator('[data-test=shopping-cart-badge]').textContent());
+// cart
+await p.click('[data-test=shopping-cart-link]');
+console.log('--- CART url', p.url());
+console.log((await dt(p)).join('\n'));
+await p.click('[data-test=checkout]');
+console.log('--- STEP1 url', p.url());
+console.log((await dt(p)).join('\n'));
+await p.click('[data-test=continue]');
+console.log('--- err empty:', await p.locator('[data-test=error]').textContent());
+await p.fill('[data-test=firstName]','A'); await p.click('[data-test=continue]');
+console.log('--- err lastname:', await p.locator('[data-test=error]').textContent());
+await p.fill('[data-test=lastName]','B'); await p.click('[data-test=continue]');
+console.log('--- err zip:', await p.locator('[data-test=error]').textContent());
+await p.fill('[data-test=postalCode]','C'); await p.click('[data-test=continue]');
+console.log('--- STEP2 url', p.url());
+console.log((await dt(p)).join('\n'));
+console.log('--- totals:', await p.locator('[data-test=subtotal-label]').textContent(), await p.locator('[data-test=tax-label]').textContent(), await p.locator('[data-test=total-label]').textContent());
+await p.click('[data-test=finish]');
+console.log('--- COMPLETE url', p.url());
+console.log((await dt(p)).join('\n'));
+console.log('--- header text:', await p.locator('[data-test=complete-header]').textContent());
+console.log('--- badge after finish:', await p.locator('[data-test=shopping-cart-badge]').count());
+// cookie persistence check: new page same context
+const p2 = await ctx.newPage();
+await p2.goto('https://www.saucedemo.com/inventory.html');
+console.log('--- new tab same ctx url:', p2.url());
+// direct access without login: fresh context
+const ctx2 = await b.newContext();
+const p3 = await ctx2.newPage();
+const r = await p3.goto('https://www.saucedemo.com/inventory.html');
+console.log('--- unauth inventory status', r.status(), 'url', p3.url());
+console.log((await dt(p3)).join('\n'));
+console.log('--- unauth err:', await p3.locator('[data-test=error]').count() ? await p3.locator('[data-test=error]').textContent() : 'NONE');
+await b.close();

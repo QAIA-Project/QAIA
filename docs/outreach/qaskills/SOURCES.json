@@ -39,7 +39,7 @@
       "derived_from": [
         {
           "path": "plugins/qaia-playwright/skills/automate/references/self-review-lint.md",
-          "sha256": "4f921bda6c8b8876f6d9461cecced9ed58a60b5b81ac0cf2ae4356f712782684"
+          "sha256": "6ba1ccd24b3f46c0a1bef3d12762992b28d5cab485734f9bacb4c3fbce932f40"
         }
       ]
     },

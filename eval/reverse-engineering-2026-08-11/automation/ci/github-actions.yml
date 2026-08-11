@@ -1,0 +1,75 @@
+# QAIA — Playwright CI (GitHub Actions), instancie depuis
+# `plugins/qaia-playwright/skills/automate/templates/github-actions.yml` pour la campagne
+# reverse-engineering du 2026-08-11.
+#
+# Volontairement PAS depose dans `.github/workflows/` : cette suite vise deux services publics
+# tiers (saucedemo.com, restful-booker.herokuapp.com). La declencher sur chaque push de ce
+# depot en ferait un envoi periodique non sollicite vers des tiers, ce que la consigne de
+# campagne interdit. Le fichier est livre pret a l'emploi et son declenchement est MANUEL.
+#
+# La suite generee est autonome : elle tourne sans QAIA et sans session Claude.
+name: qaia-reverse-engineering-2026-08-11
+
+on:
+  workflow_dispatch:
+
+jobs:
+  playwright:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: eval/reverse-engineering-2026-08-11/automation
+    env:
+      # URLs par variables de depot, jamais en dur. Les justificatifs restful-booker sont
+      # publics (publies par la documentation du bac a sable) mais passent par le meme canal :
+      # le jour ou la cible change, rien n'est a recompiler.
+      SD_BASE_URL: ${{ vars.SD_BASE_URL || 'https://www.saucedemo.com' }}
+      RB_BASE_URL: ${{ vars.RB_BASE_URL || 'https://restful-booker.herokuapp.com' }}
+      RB_USERNAME: ${{ secrets.RB_USERNAME }}
+      RB_PASSWORD: ${{ secrets.RB_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: eval/reverse-engineering-2026-08-11/automation/package-lock.json
+
+      - run: npm ci
+
+      # Le projet `api` tourne AVANT l'installation du navigateur, et sans lui : ses 55 tests
+      # passent par APIRequestContext (ADR 0008 — le niveau est lu, pas devine). Une suite dont
+      # 55 cas sur 76 sont des requetes HTTP n'a aucune raison d'attendre 200 Mo de Chromium
+      # pour rendre son premier verdict.
+      - name: Run the api project (no browser)
+        run: npx playwright test --project=api --grep-invert "@quarantine"
+
+      - run: npx playwright install --with-deps chromium
+
+      # retries: 0 (voir playwright.config.js). Aucun projet a moteur autre que `e2e-desktop`
+      # n'est declare : le nommer ici ferait echouer Playwright, ce qui vaut mieux qu'une
+      # etape verte a vide.
+      - name: Run the browser project (excludes @quarantine)
+        run: npx playwright test --project=e2e-desktop --grep-invert "@quarantine"
+
+      - name: Run quarantined tests (non-blocking, reported separately)
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        run: npx playwright test --grep "@quarantine" --output=quarantine-results
+
+      - name: Publish JUnit + HTML + manifest
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: qaia-reports
+          path: |
+            eval/reverse-engineering-2026-08-11/automation/junit.xml
+            eval/reverse-engineering-2026-08-11/automation/results.json
+            eval/reverse-engineering-2026-08-11/automation/manifest.json
+            eval/reverse-engineering-2026-08-11/automation/request-count.json
+            eval/reverse-engineering-2026-08-11/automation/playwright-report/
+            eval/reverse-engineering-2026-08-11/automation/test-results/
+          retention-days: 14
+          if-no-files-found: warn

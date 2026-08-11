@@ -1,0 +1,831 @@
+<testsuites id="" name="" tests="76" failures="25" skipped="0" errors="0" time="49.23109899999999">
+<testsuite name="e2e.saucedemo.spec.js" timestamp="2026-08-11T09:03:55.626Z" hostname="e2e-desktop" tests="21" failures="2" skipped="0" time="27.595" errors="0">
+<testcase name="US-SD-01 — Se connecter a la boutique › @QAIA-SD-001 @AC1 @e2e Un couple valide ouvre la page catalogue" classname="e2e.saucedemo.spec.js" time="0.373">
+</testcase>
+<testcase name="US-SD-01 — Se connecter a la boutique › @QAIA-SD-002 @AC2 @e2e Un identifiant absent est refuse par un message qui nomme le champ" classname="e2e.saucedemo.spec.js" time="0.293">
+</testcase>
+<testcase name="US-SD-01 — Se connecter a la boutique › @QAIA-SD-003 @AC3 @e2e Un mot de passe absent est refuse par un message qui nomme le champ" classname="e2e.saucedemo.spec.js" time="0.311">
+</testcase>
+<testcase name="US-SD-01 — Se connecter a la boutique › @QAIA-SD-004 @AC4 @e2e Un couple inconnu est refuse sans reveler lequel des deux est faux" classname="e2e.saucedemo.spec.js" time="0.492">
+</testcase>
+<testcase name="US-SD-01 — Se connecter a la boutique › @QAIA-SD-005 @AC5 @e2e Un compte verrouille est refuse par un message de verrouillage, pas de mauvais identifiants" classname="e2e.saucedemo.spec.js" time="0.31">
+</testcase>
+<testcase name="US-SD-01 — Se connecter a la boutique › @QAIA-SD-006 @AC6 @e2e @unconfirmed Apres un refus, l identifiant reste affiche et le mot de passe est vide" classname="e2e.saucedemo.spec.js" time="10.316">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\e2e.saucedemo-US-SD-01-—-S-a803a-et-le-mot-de-passe-est-vide-e2e-desktop\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\e2e.saucedemo-US-SD-01-—-S-a803a-et-le-mot-de-passe-est-vide-e2e-desktop\error-context.md]]
+
+[[ATTACHMENT|test-results\e2e.saucedemo-US-SD-01-—-S-a803a-et-le-mot-de-passe-est-vide-e2e-desktop\trace.zip]]
+]]>
+</system-out>
+<failure message="expect(locator).toHaveValue(expected) failed" type="expect.toHaveValue">
+<![CDATA[  [e2e-desktop] › e2e.saucedemo.spec.js:71:3 › US-SD-01 — Se connecter a la boutique › @QAIA-SD-006 @AC6 @e2e @unconfirmed Apres un refus, l identifiant reste affiche et le mot de passe est vide 
+
+    Error: expect(locator).toHaveValue(expected) failed
+
+    Locator:  getByTestId('password')
+    Expected: ""
+    Received: "definitely_wrong"
+    Timeout:  10000ms
+
+    Call log:
+      - Expect "toHaveValue" with timeout 10000ms
+      - waiting for getByTestId('password')
+        23 × locator resolved to <input id="password" type="password" name="password" autocorrect="off" data-test="password" autocapitalize="none" placeholder="Password" value="definitely_wrong" class="input_error form_input error"/>
+           - unexpected value "definitely_wrong"
+
+
+      80 |     await expect(loginPage.error).toHaveText(MSG.noMatch);
+      81 |     await expect(loginPage.username).toHaveValue('standard_user');
+    > 82 |     await expect(loginPage.password).toHaveValue('');
+         |                                      ^
+      83 |   });
+      84 |
+      85 |   test('@QAIA-SD-007 @AC7 @e2e La page catalogue n est pas accessible sans etre connecte', async ({ page, inventoryPage }) => {
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\reverse-engineering-2026-08-11\automation\specs\e2e.saucedemo.spec.js:82:38
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\e2e.saucedemo-US-SD-01-—-S-a803a-et-le-mot-de-passe-est-vide-e2e-desktop\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\e2e.saucedemo-US-SD-01-—-S-a803a-et-le-mot-de-passe-est-vide-e2e-desktop\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\e2e.saucedemo-US-SD-01-—-S-a803a-et-le-mot-de-passe-est-vide-e2e-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\e2e.saucedemo-US-SD-01-—-S-a803a-et-le-mot-de-passe-est-vide-e2e-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="US-SD-01 — Se connecter a la boutique › @QAIA-SD-007 @AC7 @e2e La page catalogue n est pas accessible sans etre connecte" classname="e2e.saucedemo.spec.js" time="0.546">
+</testcase>
+<testcase name="US-SD-02 — Composer un panier › @QAIA-SD-008 @AC1 @e2e Ajouter un article incremente la pastille du panier de 1" classname="e2e.saucedemo.spec.js" time="0.357">
+</testcase>
+<testcase name="US-SD-02 — Composer un panier › @QAIA-SD-009 @AC2 @e2e Le bouton d un article ajoute devient Remove" classname="e2e.saucedemo.spec.js" time="0.344">
+</testcase>
+<testcase name="US-SD-02 — Composer un panier › @QAIA-SD-010 @AC3 @e2e Retirer un article decremente la pastille et a zero elle disparait" classname="e2e.saucedemo.spec.js" time="0.345">
+</testcase>
+<testcase name="US-SD-02 — Composer un panier › @QAIA-SD-011 @AC4 @e2e Le panier contient exactement les articles ajoutes, libelle et prix identiques au catalogue" classname="e2e.saucedemo.spec.js" time="0.382">
+</testcase>
+<testcase name="US-SD-02 — Composer un panier › @QAIA-SD-012 @AC5 @e2e Le contenu du panier survit a un aller-retour vers une fiche article" classname="e2e.saucedemo.spec.js" time="0.341">
+</testcase>
+<testcase name="US-SD-02 — Composer un panier › @QAIA-SD-013 @AC6 @e2e Le tri du catalogue ne modifie pas le contenu du panier" classname="e2e.saucedemo.spec.js" time="0.344">
+</testcase>
+<testcase name="US-SD-03 — Passer commande › @QAIA-SD-014 @AC1 @AC2 @e2e Le champ firstName est obligatoire et son absence est nommee" classname="e2e.saucedemo.spec.js" time="0.379">
+</testcase>
+<testcase name="US-SD-03 — Passer commande › @QAIA-SD-015 @AC1 @AC2 @e2e Le champ lastName est obligatoire et son absence est nommee" classname="e2e.saucedemo.spec.js" time="0.296">
+</testcase>
+<testcase name="US-SD-03 — Passer commande › @QAIA-SD-016 @AC1 @AC2 @e2e Le champ postalCode est obligatoire et son absence est nommee" classname="e2e.saucedemo.spec.js" time="0.346">
+</testcase>
+<testcase name="US-SD-03 — Passer commande › @QAIA-SD-017 @AC3 @e2e Le recapitulatif affiche sous-total, taxe et total" classname="e2e.saucedemo.spec.js" time="0.328">
+</testcase>
+<testcase name="US-SD-03 — Passer commande › @QAIA-SD-018 @AC4 @e2e Le total est la somme du sous-total et de la taxe" classname="e2e.saucedemo.spec.js" time="0.315">
+</testcase>
+<testcase name="US-SD-03 — Passer commande › @QAIA-SD-019 @AC5 @e2e @unconfirmed La taxe vaut 8 % du sous-total arrondi au centime" classname="e2e.saucedemo.spec.js" time="0.411">
+</testcase>
+<testcase name="US-SD-03 — Passer commande › @QAIA-SD-020 @AC6 @e2e Confirmer la commande affiche une confirmation et vide le panier" classname="e2e.saucedemo.spec.js" time="0.408">
+</testcase>
+<testcase name="US-SD-03 — Passer commande › @QAIA-SD-021 @AC7 @e2e @unconfirmed Un panier vide ne permet pas d atteindre la confirmation" classname="e2e.saucedemo.spec.js" time="10.358">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\e2e.saucedemo-US-SD-03-—-P-f6801-d-atteindre-la-confirmation-e2e-desktop\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\e2e.saucedemo-US-SD-03-—-P-f6801-d-atteindre-la-confirmation-e2e-desktop\error-context.md]]
+
+[[ATTACHMENT|test-results\e2e.saucedemo-US-SD-03-—-P-f6801-d-atteindre-la-confirmation-e2e-desktop\trace.zip]]
+]]>
+</system-out>
+<failure message="expect(page).not.toHaveURL(expected) failed" type="expect.not.toHaveURL">
+<![CDATA[  [e2e-desktop] › e2e.saucedemo.spec.js:263:3 › US-SD-03 — Passer commande › @QAIA-SD-021 @AC7 @e2e @unconfirmed Un panier vide ne permet pas d atteindre la confirmation 
+
+    Error: expect(page).not.toHaveURL(expected) failed
+
+    Expected pattern: not /checkout-complete\.html$/
+    Received string: "https://www.saucedemo.com/checkout-complete.html"
+    Timeout: 10000ms
+
+    Call log:
+      - Expect "not toHaveURL" with timeout 10000ms
+        23 × locator resolved to <html lang="en">…</html>
+           - unexpected value "https://www.saucedemo.com/checkout-complete.html"
+
+
+      270 |     await checkoutPage.finishButton.click().catch(() => {});
+      271 |
+    > 272 |     await expect(page).not.toHaveURL(/checkout-complete\.html$/);
+          |                            ^
+      273 |     await expect(checkoutPage.completeHeader).toHaveCount(0);
+      274 |   });
+      275 | });
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\reverse-engineering-2026-08-11\automation\specs\e2e.saucedemo.spec.js:272:28
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\e2e.saucedemo-US-SD-03-—-P-f6801-d-atteindre-la-confirmation-e2e-desktop\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\e2e.saucedemo-US-SD-03-—-P-f6801-d-atteindre-la-confirmation-e2e-desktop\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\e2e.saucedemo-US-SD-03-—-P-f6801-d-atteindre-la-confirmation-e2e-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\e2e.saucedemo-US-SD-03-—-P-f6801-d-atteindre-la-confirmation-e2e-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+</testsuite>
+<testsuite name="api.restfulbooker.spec.js" timestamp="2026-08-11T09:03:55.626Z" hostname="api" tests="55" failures="23" skipped="0" time="13.042" errors="0">
+<testcase name="US-RB-01 — Obtenir un jeton d acces › @QAIA-RB-001 @AC1 @P1 @api Des justificatifs valides renvoient un jeton" classname="api.restfulbooker.spec.js" time="0.401">
+</testcase>
+<testcase name="US-RB-01 — Obtenir un jeton d acces › @QAIA-RB-002 @AC2 @P1 @api @low-confidence Des justificatifs dont &quot;password&quot; est errone ne renvoient aucun jeton" classname="api.restfulbooker.spec.js" time="0.092">
+</testcase>
+<testcase name="US-RB-01 — Obtenir un jeton d acces › @QAIA-RB-002 @AC2 @P1 @api @low-confidence Des justificatifs dont &quot;username&quot; est errone ne renvoient aucun jeton" classname="api.restfulbooker.spec.js" time="0.088">
+</testcase>
+<testcase name="US-RB-01 — Obtenir un jeton d acces › @QAIA-RB-003 @AC2 @P1 @api @low-confidence Le champ &quot;username&quot; omis du corps d authentification est refuse" classname="api.restfulbooker.spec.js" time="0.09">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\api.restfulbooker-US-RB-01-347e7-authentification-est-refuse-api\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [api] › api.restfulbooker.spec.js:44:5 › US-RB-01 — Obtenir un jeton d acces › @QAIA-RB-003 @AC2 @P1 @api @low-confidence Le champ "username" omis du corps d authentification est refuse 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 401
+    Received: 200
+
+      48 |       const res = await api.post('/auth', { data: omit(CREDENTIALS, champ) });
+      49 |
+    > 50 |       expect(res.status()).toBe(401);
+         |                            ^
+      51 |       const body = await res.json();
+      52 |       expect(body.token).toBeUndefined();
+      53 |     });
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\reverse-engineering-2026-08-11\automation\specs\api.restfulbooker.spec.js:50:28
+
+    Error Context: ..\test-results\api.restfulbooker-US-RB-01-347e7-authentification-est-refuse-api\error-context.md
+]]>
+</failure>
+</testcase>
+<testcase name="US-RB-01 — Obtenir un jeton d acces › @QAIA-RB-003 @AC2 @P1 @api @low-confidence Le champ &quot;password&quot; omis du corps d authentification est refuse" classname="api.restfulbooker.spec.js" time="0.388">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\api.restfulbooker-US-RB-01-5be97-authentification-est-refuse-api\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [api] › api.restfulbooker.spec.js:44:5 › US-RB-01 — Obtenir un jeton d acces › @QAIA-RB-003 @AC2 @P1 @api @low-confidence Le champ "password" omis du corps d authentification est refuse 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 401
+    Received: 200
+
+      48 |       const res = await api.post('/auth', { data: omit(CREDENTIALS, champ) });
+      49 |
+    > 50 |       expect(res.status()).toBe(401);
+         |                            ^
+      51 |       const body = await res.json();
+      52 |       expect(body.token).toBeUndefined();
+      53 |     });
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\reverse-engineering-2026-08-11\automation\specs\api.restfulbooker.spec.js:50:28
+
+    Error Context: ..\test-results\api.restfulbooker-US-RB-01-5be97-authentification-est-refuse-api\error-context.md
+]]>
+</failure>
+</testcase>
+<testcase name="US-RB-01 — Obtenir un jeton d acces › @QAIA-RB-004 @AC3 @P1 @api @low-confidence Le statut d une authentification refusee differe de celui d un succes" classname="api.restfulbooker.spec.js" time="0.393">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\api.restfulbooker-US-RB-01-8ce88-iffere-de-celui-d-un-succes-api\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [api] › api.restfulbooker.spec.js:56:3 › US-RB-01 — Obtenir un jeton d acces › @QAIA-RB-004 @AC3 @P1 @api @low-confidence Le statut d une authentification refusee differe de celui d un succes 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 401
+    Received: 200
+
+      59 |     const res = await api.post('/auth', { data: { ...CREDENTIALS, password: 'mauvais_mot_de_passe' } });
+      60 |
+    > 61 |     expect(res.status()).toBe(401);
+         |                          ^
+      62 |   });
+      63 | });
+      64 |
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\reverse-engineering-2026-08-11\automation\specs\api.restfulbooker.spec.js:61:26
+
+    Error Context: ..\test-results\api.restfulbooker-US-RB-01-8ce88-iffere-de-celui-d-un-succes-api\error-context.md
+]]>
+</failure>
+</testcase>
+<testcase name="US-RB-02 — Creer une reservation › @QAIA-RB-005 @AC1 @P1 @api Un corps complet cree la reservation et renvoie son identifiant" classname="api.restfulbooker.spec.js" time="0.372">
+</testcase>
+<testcase name="US-RB-02 — Creer une reservation › @QAIA-RB-006 @AC1 @P2 @api Une reservation se cree sans aucun justificatif" classname="api.restfulbooker.spec.js" time="0.088">
+</testcase>
+<testcase name="US-RB-02 — Creer une reservation › @QAIA-RB-007 @AC2 @P1 @api Une reservation creee est relisible avec les memes valeurs metier" classname="api.restfulbooker.spec.js" time="0.177">
+</testcase>
+<testcase name="US-RB-02 — Creer une reservation › @QAIA-RB-008 @AC3 @P1 @api @low-confidence Omettre le champ obligatoire &quot;firstname&quot; a la creation est refuse" classname="api.restfulbooker.spec.js" time="0.088">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\api.restfulbooker-US-RB-02-dbbaf-me-a-la-creation-est-refuse-api\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [api] › api.restfulbooker.spec.js:98:5 › US-RB-02 — Creer une reservation › @QAIA-RB-008 @AC3 @P1 @api @low-confidence Omettre le champ obligatoire "firstname" a la creation est refuse 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 400
+    Received: 500
+
+      102 |       const res = await api.post('/booking', { data: omit(bookingPayload(), champ) });
+      103 |
+    > 104 |       expect(res.status()).toBe(400);
+          |                            ^
+      105 |     });
+      106 |   }
+      107 |
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\reverse-engineering-2026-08-11\automation\specs\api.restfulbooker.spec.js:104:28
+
+    Error Context: ..\test-results\api.restfulbooker-US-RB-02-dbbaf-me-a-la-creation-est-refuse-api\error-context.md
+]]>
+</failure>
+</testcase>
+<testcase name="US-RB-02 — Creer une reservation › @QAIA-RB-008 @AC3 @P1 @api @low-confidence Omettre le champ obligatoire &quot;lastname&quot; a la creation est refuse" classname="api.restfulbooker.spec.js" time="0.372">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\api.restfulbooker-US-RB-02-9f8ff-me-a-la-creation-est-refuse-api\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [api] › api.restfulbooker.spec.js:98:5 › US-RB-02 — Creer une reservation › @QAIA-RB-008 @AC3 @P1 @api @low-confidence Omettre le champ obligatoire "lastname" a la creation est refuse 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 400
+    Received: 500
+
+      102 |       const res = await api.post('/booking', { data: omit(bookingPayload(), champ) });
+      103 |
+    > 104 |       expect(res.status()).toBe(400);
+          |                            ^
+      105 |     });
+      106 |   }
+      107 |
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\reverse-engineering-2026-08-11\automation\specs\api.restfulbooker.spec.js:104:28
+
+    Error Context: ..\test-results\api.restfulbooker-US-RB-02-9f8ff-me-a-la-creation-est-refuse-api\error-context.md
+]]>
+</failure>
+</testcase>
+<testcase name="US-RB-02 — Creer une reservation › @QAIA-RB-008 @AC3 @P1 @api @low-confidence Omettre le champ obligatoire &quot;totalprice&quot; a la creation est refuse" classname="api.restfulbooker.spec.js" time="0.37">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\api.restfulbooker-US-RB-02-5ebcf-ce-a-la-creation-est-refuse-api\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [api] › api.restfulbooker.spec.js:98:5 › US-RB-02 — Creer une reservation › @QAIA-RB-008 @AC3 @P1 @api @low-confidence Omettre le champ obligatoire "totalprice" a la creation est refuse 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 400
+    Received: 500
+
+      102 |       const res = await api.post('/booking', { data: omit(bookingPayload(), champ) });
+      103 |
+    > 104 |       expect(res.status()).toBe(400);
+          |                            ^
+      105 |     });
+      106 |   }
+      107 |
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\reverse-engineering-2026-08-11\automation\specs\api.restfulbooker.spec.js:104:28
+
+    Error Context: ..\test-results\api.restfulbooker-US-RB-02-5ebcf-ce-a-la-creation-est-refuse-api\error-context.md
+]]>
+</failure>
+</testcase>
+<testcase name="US-RB-02 — Creer une reservation › @QAIA-RB-008 @AC3 @P1 @api @low-confidence Omettre le champ obligatoire &quot;depositpaid&quot; a la creation est refuse" classname="api.restfulbooker.spec.js" time="0.371">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\api.restfulbooker-US-RB-02-95c87-id-a-la-creation-est-refuse-api\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [api] › api.restfulbooker.spec.js:98:5 › US-RB-02 — Creer une reservation › @QAIA-RB-008 @AC3 @P1 @api @low-confidence Omettre le champ obligatoire "depositpaid" a la creation est refuse 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 400
+    Received: 500
+
+      102 |       const res = await api.post('/booking', { data: omit(bookingPayload(), champ) });
+      103 |
+    > 104 |       expect(res.status()).toBe(400);
+          |                            ^
+      105 |     });
+      106 |   }
+      107 |
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\reverse-engineering-2026-08-11\automation\specs\api.restfulbooker.spec.js:104:28
+
+    Error Context: ..\test-results\api.restfulbooker-US-RB-02-95c87-id-a-la-creation-est-refuse-api\error-context.md
+]]>
+</failure>
+</testcase>
+<testcase name="US-RB-02 — Creer une reservation › @QAIA-RB-008 @AC3 @P1 @api @low-confidence Omettre le champ obligatoire &quot;bookingdates.checkin&quot; a la creation est refuse" classname="api.restfulbooker.spec.js" time="0.386">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\api.restfulbooker-US-RB-02-8cff5-in-a-la-creation-est-refuse-api\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [api] › api.restfulbooker.spec.js:98:5 › US-RB-02 — Creer une reservation › @QAIA-RB-008 @AC3 @P1 @api @low-confidence Omettre le champ obligatoire "bookingdates.checkin" a la creation est refuse 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 400
+    Received: 500
+
+      102 |       const res = await api.post('/booking', { data: omit(bookingPayload(), champ) });
+      103 |
+    > 104 |       expect(res.status()).toBe(400);
+          |                            ^
+      105 |     });
+      106 |   }
+      107 |
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\reverse-engineering-2026-08-11\automation\specs\api.restfulbooker.spec.js:104:28
+
+    Error Context: ..\test-results\api.restfulbooker-US-RB-02-8cff5-in-a-la-creation-est-refuse-api\error-context.md
+]]>
+</failure>
+</testcase>
+<testcase name="US-RB-02 — Creer une reservation › @QAIA-RB-008 @AC3 @P1 @api @low-confidence Omettre le champ obligatoire &quot;bookingdates.checkout&quot; a la creation est refuse" classname="api.restfulbooker.spec.js" time="0.378">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\api.restfulbooker-US-RB-02-cb57b-ut-a-la-creation-est-refuse-api\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [api] › api.restfulbooker.spec.js:98:5 › US-RB-02 — Creer une reservation › @QAIA-RB-008 @AC3 @P1 @api @low-confidence Omettre le champ obligatoire "bookingdates.checkout" a la creation est refuse 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 400
+    Received: 500
+
+      102 |       const res = await api.post('/booking', { data: omit(bookingPayload(), champ) });
+      103 |
+    > 104 |       expect(res.status()).toBe(400);
+          |                            ^
+      105 |     });
+      106 |   }
+      107 |
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\reverse-engineering-2026-08-11\automation\specs\api.restfulbooker.spec.js:104:28
+
+    Error Context: ..\test-results\api.restfulbooker-US-RB-02-cb57b-ut-a-la-creation-est-refuse-api\error-context.md
+]]>
+</failure>
+</testcase>
+<testcase name="US-RB-02 — Creer une reservation › @QAIA-RB-008 @AC3 @P1 @api @low-confidence Omettre le champ obligatoire &quot;additionalneeds&quot; a la creation est refuse" classname="api.restfulbooker.spec.js" time="0.375">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\api.restfulbooker-US-RB-02-78593-ds-a-la-creation-est-refuse-api\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [api] › api.restfulbooker.spec.js:98:5 › US-RB-02 — Creer une reservation › @QAIA-RB-008 @AC3 @P1 @api @low-confidence Omettre le champ obligatoire "additionalneeds" a la creation est refuse 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 400
+    Received: 200
+
+      102 |       const res = await api.post('/booking', { data: omit(bookingPayload(), champ) });
+      103 |
+    > 104 |       expect(res.status()).toBe(400);
+          |                            ^
+      105 |     });
+      106 |   }
+      107 |
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\reverse-engineering-2026-08-11\automation\specs\api.restfulbooker.spec.js:104:28
+
+    Error Context: ..\test-results\api.restfulbooker-US-RB-02-78593-ds-a-la-creation-est-refuse-api\error-context.md
+]]>
+</failure>
+</testcase>
+<testcase name="US-RB-02 — Creer une reservation › @QAIA-RB-009 @AC3 @P1 @api @low-confidence Un corps de creation vide est refuse" classname="api.restfulbooker.spec.js" time="0.372">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\api.restfulbooker-US-RB-02-d251c-de-creation-vide-est-refuse-api\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [api] › api.restfulbooker.spec.js:108:3 › US-RB-02 — Creer une reservation › @QAIA-RB-009 @AC3 @P1 @api @low-confidence Un corps de creation vide est refuse 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 400
+    Received: 500
+
+      110 |     const res = await api.post('/booking', { data: {} });
+      111 |
+    > 112 |     expect(res.status()).toBe(400);
+          |                          ^
+      113 |   });
+      114 |
+      115 |   for (const [champ, valeur] of [['totalprice', 'cent'], ['depositpaid', 'oui']]) {
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\reverse-engineering-2026-08-11\automation\specs\api.restfulbooker.spec.js:112:26
+
+    Error Context: ..\test-results\api.restfulbooker-US-RB-02-d251c-de-creation-vide-est-refuse-api\error-context.md
+]]>
+</failure>
+</testcase>
+<testcase name="US-RB-02 — Creer une reservation › @QAIA-RB-010 @AC3 @P2 @api @low-confidence Le champ &quot;totalprice&quot; envoye dans un type non declare est refuse" classname="api.restfulbooker.spec.js" time="0.395">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\api.restfulbooker-US-RB-02-208aa-type-non-declare-est-refuse-api\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [api] › api.restfulbooker.spec.js:116:5 › US-RB-02 — Creer une reservation › @QAIA-RB-010 @AC3 @P2 @api @low-confidence Le champ "totalprice" envoye dans un type non declare est refuse 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 400
+    Received: 200
+
+      118 |       const res = await api.post('/booking', { data: bookingPayload({ [champ]: valeur }) });
+      119 |
+    > 120 |       expect(res.status()).toBe(400);
+          |                            ^
+      121 |     });
+      122 |   }
+      123 |
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\reverse-engineering-2026-08-11\automation\specs\api.restfulbooker.spec.js:120:28
+
+    Error Context: ..\test-results\api.restfulbooker-US-RB-02-208aa-type-non-declare-est-refuse-api\error-context.md
+]]>
+</failure>
+</testcase>
+<testcase name="US-RB-02 — Creer une reservation › @QAIA-RB-010 @AC3 @P2 @api @low-confidence Le champ &quot;depositpaid&quot; envoye dans un type non declare est refuse" classname="api.restfulbooker.spec.js" time="0.377">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\api.restfulbooker-US-RB-02-43e55-type-non-declare-est-refuse-api\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [api] › api.restfulbooker.spec.js:116:5 › US-RB-02 — Creer une reservation › @QAIA-RB-010 @AC3 @P2 @api @low-confidence Le champ "depositpaid" envoye dans un type non declare est refuse 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 400
+    Received: 200
+
+      118 |       const res = await api.post('/booking', { data: bookingPayload({ [champ]: valeur }) });
+      119 |
+    > 120 |       expect(res.status()).toBe(400);
+          |                            ^
+      121 |     });
+      122 |   }
+      123 |
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\reverse-engineering-2026-08-11\automation\specs\api.restfulbooker.spec.js:120:28
+
+    Error Context: ..\test-results\api.restfulbooker-US-RB-02-43e55-type-non-declare-est-refuse-api\error-context.md
+]]>
+</failure>
+</testcase>
+<testcase name="US-RB-02 — Creer une reservation › @QAIA-RB-011 @AC3 @P2 @api @low-confidence Une date de check-in hors du format CCYY-MM-DD est refusee" classname="api.restfulbooker.spec.js" time="0.389">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\api.restfulbooker-US-RB-02-4f040-rmat-CCYY-MM-DD-est-refusee-api\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [api] › api.restfulbooker.spec.js:124:3 › US-RB-02 — Creer une reservation › @QAIA-RB-011 @AC3 @P2 @api @low-confidence Une date de check-in hors du format CCYY-MM-DD est refusee 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 400
+    Received: 200
+
+      129 |     });
+      130 |
+    > 131 |     expect(res.status()).toBe(400);
+          |                          ^
+      132 |   });
+      133 |
+      134 |   test('@QAIA-RB-012 @AC5 @P1 @api Le statut declare d une creation est 200', async ({ api }) => {
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\reverse-engineering-2026-08-11\automation\specs\api.restfulbooker.spec.js:131:26
+
+    Error Context: ..\test-results\api.restfulbooker-US-RB-02-4f040-rmat-CCYY-MM-DD-est-refusee-api\error-context.md
+]]>
+</failure>
+</testcase>
+<testcase name="US-RB-02 — Creer une reservation › @QAIA-RB-012 @AC5 @P1 @api Le statut declare d une creation est 200" classname="api.restfulbooker.spec.js" time="0.421">
+</testcase>
+<testcase name="US-RB-02 — Creer une reservation › @QAIA-RB-013 @AC6 @P2 @api Une creation en XML renvoie une reponse XML" classname="api.restfulbooker.spec.js" time="0.096">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\api.restfulbooker-US-RB-02-5fa18-XML-renvoie-une-reponse-XML-api\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toContain(expected) // indexOf" type="expect.toContain">
+<![CDATA[  [api] › api.restfulbooker.spec.js:141:3 › US-RB-02 — Creer une reservation › @QAIA-RB-013 @AC6 @P2 @api Une creation en XML renvoie une reponse XML 
+
+    Error: expect(received).toContain(expected) // indexOf
+
+    Expected substring: "<created-booking>"
+    Received string:    "{\"bookingid\":2727,\"booking\":{\"firstname\":\"QAIA1786439074655910\",\"lastname\":\"Testeur\",\"totalprice\":111,\"depositpaid\":true,\"bookingdates\":{\"checkin\":\"2018-01-01\",\"checkout\":\"2019-01-01\"},\"additionalneeds\":\"Breakfast\"}}"
+
+      149 |     expect(res.status()).toBe(200);
+      150 |     const body = await res.text();
+    > 151 |     expect(body).toContain('<created-booking>');
+          |                  ^
+      152 |     expect(body).toContain(p.firstname);
+      153 |   });
+      154 |
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\reverse-engineering-2026-08-11\automation\specs\api.restfulbooker.spec.js:151:18
+
+    Error Context: ..\test-results\api.restfulbooker-US-RB-02-5fa18-XML-renvoie-une-reponse-XML-api\error-context.md
+]]>
+</failure>
+</testcase>
+<testcase name="US-RB-02 — Creer une reservation › @QAIA-RB-014 @AC6 @P3 @api @low-confidence Un type de contenu non supporte est refuse sans erreur serveur" classname="api.restfulbooker.spec.js" time="0.374">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\api.restfulbooker-US-RB-02-22170--refuse-sans-erreur-serveur-api\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [api] › api.restfulbooker.spec.js:155:3 › US-RB-02 — Creer une reservation › @QAIA-RB-014 @AC6 @P3 @api @low-confidence Un type de contenu non supporte est refuse sans erreur serveur 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 415
+    Received: 500
+
+      161 |     });
+      162 |
+    > 163 |     expect(res.status()).toBe(415);
+          |                          ^
+      164 |   });
+      165 |
+      166 |   for (const prix of [0, -1]) {
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\reverse-engineering-2026-08-11\automation\specs\api.restfulbooker.spec.js:163:26
+
+    Error Context: ..\test-results\api.restfulbooker-US-RB-02-22170--refuse-sans-erreur-serveur-api\error-context.md
+]]>
+</failure>
+</testcase>
+<testcase name="US-RB-02 — Creer une reservation › @QAIA-RB-015 @AC7 @P3 @api @low-confidence Un totalprice de 0, hors du domaine metier, est refuse" classname="api.restfulbooker.spec.js" time="0.38">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\api.restfulbooker-US-RB-02-b600c-u-domaine-metier-est-refuse-api\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [api] › api.restfulbooker.spec.js:167:5 › US-RB-02 — Creer une reservation › @QAIA-RB-015 @AC7 @P3 @api @low-confidence Un totalprice de 0, hors du domaine metier, est refuse 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 400
+    Received: 200
+
+      170 |       const res = await api.post('/booking', { data: bookingPayload({ totalprice: prix }) });
+      171 |
+    > 172 |       expect(res.status()).toBe(400);
+          |                            ^
+      173 |     });
+      174 |   }
+      175 | });
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\reverse-engineering-2026-08-11\automation\specs\api.restfulbooker.spec.js:172:28
+
+    Error Context: ..\test-results\api.restfulbooker-US-RB-02-b600c-u-domaine-metier-est-refuse-api\error-context.md
+]]>
+</failure>
+</testcase>
+<testcase name="US-RB-02 — Creer une reservation › @QAIA-RB-015 @AC7 @P3 @api @low-confidence Un totalprice de -1, hors du domaine metier, est refuse" classname="api.restfulbooker.spec.js" time="0.367">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\api.restfulbooker-US-RB-02-8f474-u-domaine-metier-est-refuse-api\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [api] › api.restfulbooker.spec.js:167:5 › US-RB-02 — Creer une reservation › @QAIA-RB-015 @AC7 @P3 @api @low-confidence Un totalprice de -1, hors du domaine metier, est refuse 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 400
+    Received: 200
+
+      170 |       const res = await api.post('/booking', { data: bookingPayload({ totalprice: prix }) });
+      171 |
+    > 172 |       expect(res.status()).toBe(400);
+          |                            ^
+      173 |     });
+      174 |   }
+      175 | });
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\reverse-engineering-2026-08-11\automation\specs\api.restfulbooker.spec.js:172:28
+
+    Error Context: ..\test-results\api.restfulbooker-US-RB-02-8f474-u-domaine-metier-est-refuse-api\error-context.md
+]]>
+</failure>
+</testcase>
+<testcase name="US-RB-03 — Proteger les operations mutantes › @QAIA-RB-016 @AC1 @AC2 @AC3 @P1 @api @low-confidence Un PUT sans justificatif est refuse" classname="api.restfulbooker.spec.js" time="0.476">
+</testcase>
+<testcase name="US-RB-03 — Proteger les operations mutantes › @QAIA-RB-016 @AC1 @AC2 @AC3 @P1 @api @low-confidence Un PATCH sans justificatif est refuse" classname="api.restfulbooker.spec.js" time="0.183">
+</testcase>
+<testcase name="US-RB-03 — Proteger les operations mutantes › @QAIA-RB-016 @AC1 @AC2 @AC3 @P1 @api @low-confidence Un DELETE sans justificatif est refuse" classname="api.restfulbooker.spec.js" time="0.18">
+</testcase>
+<testcase name="US-RB-03 — Proteger les operations mutantes › @QAIA-RB-017 @AC3 @P2 @api @low-confidence Un PUT avec un jeton inconnu est refuse comme sans justificatif" classname="api.restfulbooker.spec.js" time="0.183">
+</testcase>
+<testcase name="US-RB-03 — Proteger les operations mutantes › @QAIA-RB-017 @AC3 @P2 @api @low-confidence Un PATCH avec un jeton inconnu est refuse comme sans justificatif" classname="api.restfulbooker.spec.js" time="0.182">
+</testcase>
+<testcase name="US-RB-03 — Proteger les operations mutantes › @QAIA-RB-017 @AC3 @P2 @api @low-confidence Un DELETE avec un jeton inconnu est refuse comme sans justificatif" classname="api.restfulbooker.spec.js" time="0.181">
+</testcase>
+<testcase name="US-RB-03 — Proteger les operations mutantes › @QAIA-RB-018 @AC4 @P1 @api Une modification refusee laisse la reservation inchangee" classname="api.restfulbooker.spec.js" time="0.28">
+</testcase>
+<testcase name="US-RB-03 — Proteger les operations mutantes › @QAIA-RB-019 @AC5 @P1 @api Une modification totale portant le jeton en cookie est acceptee" classname="api.restfulbooker.spec.js" time="0.185">
+</testcase>
+<testcase name="US-RB-03 — Proteger les operations mutantes › @QAIA-RB-020 @AC5 @P1 @api Une modification totale portant une authentification Basic est acceptee" classname="api.restfulbooker.spec.js" time="0.179">
+</testcase>
+<testcase name="US-RB-03 — Proteger les operations mutantes › @QAIA-RB-021 @AC6 @P2 @api @low-confidence Une modification totale amputee d un champ obligatoire est refusee" classname="api.restfulbooker.spec.js" time="0.179">
+</testcase>
+<testcase name="US-RB-03 — Proteger les operations mutantes › @QAIA-RB-022 @AC7 @P1 @api Une modification partielle ne touche que le champ envoye" classname="api.restfulbooker.spec.js" time="0.187">
+</testcase>
+<testcase name="US-RB-03 — Proteger les operations mutantes › @QAIA-RB-023 @AC7 @P2 @api @low-confidence Une modification partielle a corps vide laisse la reservation inchangee" classname="api.restfulbooker.spec.js" time="0.181">
+</testcase>
+<testcase name="US-RB-03 — Proteger les operations mutantes › @QAIA-RB-024 @AC8 @P2 @api @low-confidence La suppression authentifiee d une reservation creee par le test renvoie 201" classname="api.restfulbooker.spec.js" time="0.183">
+</testcase>
+<testcase name="US-RB-03 — Proteger les operations mutantes › @QAIA-RB-025 @AC8 @P2 @api @low-confidence Une reservation supprimee n est plus lisible" classname="api.restfulbooker.spec.js" time="0.274">
+</testcase>
+<testcase name="US-RB-04 — Lister et filtrer les reservations › @QAIA-RB-026 @AC1 @P1 @api La liste sans filtre renvoie des identifiants de reservation" classname="api.restfulbooker.spec.js" time="0.275">
+</testcase>
+<testcase name="US-RB-04 — Lister et filtrer les reservations › @QAIA-RB-027 @AC2 @P2 @api Le filtre declare &quot;firstname&quot; restreint la liste" classname="api.restfulbooker.spec.js" time="0.092">
+</testcase>
+<testcase name="US-RB-04 — Lister et filtrer les reservations › @QAIA-RB-027 @AC2 @P2 @api Le filtre declare &quot;lastname&quot; restreint la liste" classname="api.restfulbooker.spec.js" time="0.092">
+</testcase>
+<testcase name="US-RB-04 — Lister et filtrer les reservations › @QAIA-RB-027 @AC2 @P2 @api Le filtre declare &quot;checkin&quot; restreint la liste" classname="api.restfulbooker.spec.js" time="0.091">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\api.restfulbooker-US-RB-04-1d803--checkin-restreint-la-liste-api\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [api] › api.restfulbooker.spec.js:313:5 › US-RB-04 — Lister et filtrer les reservations › @QAIA-RB-027 @AC2 @P2 @api Le filtre declare "checkin" restreint la liste 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      320 |       expect(res.status()).toBe(200);
+      321 |       const body = await res.json();
+    > 322 |       expect(body.some((b) => b.bookingid === readOnlyBooking.id)).toBe(true);
+          |                                                                    ^
+      323 |     });
+      324 |   }
+      325 |
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\reverse-engineering-2026-08-11\automation\specs\api.restfulbooker.spec.js:322:68
+
+    Error Context: ..\test-results\api.restfulbooker-US-RB-04-1d803--checkin-restreint-la-liste-api\error-context.md
+]]>
+</failure>
+</testcase>
+<testcase name="US-RB-04 — Lister et filtrer les reservations › @QAIA-RB-027 @AC2 @P2 @api Le filtre declare &quot;checkout&quot; restreint la liste" classname="api.restfulbooker.spec.js" time="0.179">
+</testcase>
+<testcase name="US-RB-04 — Lister et filtrer les reservations › @QAIA-RB-028 @AC2 @P2 @api Les quatre filtres combines restreignent la liste conjointement" classname="api.restfulbooker.spec.js" time="0.097">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\api.restfulbooker-US-RB-04-b7581-nent-la-liste-conjointement-api\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [api] › api.restfulbooker.spec.js:326:3 › US-RB-04 — Lister et filtrer les reservations › @QAIA-RB-028 @AC2 @P2 @api Les quatre filtres combines restreignent la liste conjointement 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      333 |
+      334 |     const body = await res.json();
+    > 335 |     expect(body.some((b) => b.bookingid === readOnlyBooking.id)).toBe(true);
+          |                                                                  ^
+      336 |   });
+      337 |
+      338 |   test('@QAIA-RB-029 @AC3 @P2 @api @low-confidence Un filtre de check-in egal a la date de la reservation l inclut', async ({ api, readOnlyBooking }) => {
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\reverse-engineering-2026-08-11\automation\specs\api.restfulbooker.spec.js:335:66
+
+    Error Context: ..\test-results\api.restfulbooker-US-RB-04-b7581-nent-la-liste-conjointement-api\error-context.md
+]]>
+</failure>
+</testcase>
+<testcase name="US-RB-04 — Lister et filtrer les reservations › @QAIA-RB-029 @AC3 @P2 @api @low-confidence Un filtre de check-in egal a la date de la reservation l inclut" classname="api.restfulbooker.spec.js" time="0.101">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\api.restfulbooker-US-RB-04-5d447--de-la-reservation-l-inclut-api\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [api] › api.restfulbooker.spec.js:338:3 › US-RB-04 — Lister et filtrer les reservations › @QAIA-RB-029 @AC3 @P2 @api @low-confidence Un filtre de check-in egal a la date de la reservation l inclut 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      342 |
+      343 |     const body = await res.json();
+    > 344 |     expect(body.some((b) => b.bookingid === readOnlyBooking.id)).toBe(true);
+          |                                                                  ^
+      345 |   });
+      346 |
+      347 |   test('@QAIA-RB-030 @AC3 @P2 @api @low-confidence Un filtre de date hors du format CCYY-MM-DD est refuse', async ({ api }) => {
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\reverse-engineering-2026-08-11\automation\specs\api.restfulbooker.spec.js:344:66
+
+    Error Context: ..\test-results\api.restfulbooker-US-RB-04-5d447--de-la-reservation-l-inclut-api\error-context.md
+]]>
+</failure>
+</testcase>
+<testcase name="US-RB-04 — Lister et filtrer les reservations › @QAIA-RB-030 @AC3 @P2 @api @low-confidence Un filtre de date hors du format CCYY-MM-DD est refuse" classname="api.restfulbooker.spec.js" time="0.388">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\api.restfulbooker-US-RB-04-2dd7c-ormat-CCYY-MM-DD-est-refuse-api\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [api] › api.restfulbooker.spec.js:347:3 › US-RB-04 — Lister et filtrer les reservations › @QAIA-RB-030 @AC3 @P2 @api @low-confidence Un filtre de date hors du format CCYY-MM-DD est refuse 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 400
+    Received: 500
+
+      349 |     const res = await api.get('/booking?checkin=13/03/2014');
+      350 |
+    > 351 |     expect(res.status()).toBe(400);
+          |                          ^
+      352 |   });
+      353 |
+      354 |   test('@QAIA-RB-031 @AC4 @P2 @api Un filtre sans correspondance renvoie un tableau vide', async ({ api }) => {
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\reverse-engineering-2026-08-11\automation\specs\api.restfulbooker.spec.js:351:26
+
+    Error Context: ..\test-results\api.restfulbooker-US-RB-04-2dd7c-ormat-CCYY-MM-DD-est-refuse-api\error-context.md
+]]>
+</failure>
+</testcase>
+<testcase name="US-RB-04 — Lister et filtrer les reservations › @QAIA-RB-031 @AC4 @P2 @api Un filtre sans correspondance renvoie un tableau vide" classname="api.restfulbooker.spec.js" time="0.375">
+</testcase>
+<testcase name="US-RB-04 — Lister et filtrer les reservations › @QAIA-RB-032 @AC5 @P3 @api @low-confidence Un parametre de requete inconnu est ignore" classname="api.restfulbooker.spec.js" time="0.178">
+</testcase>
+<testcase name="US-RB-05 — Lire une reservation par identifiant › @QAIA-RB-033 @AC1 @P1 @api Une lecture par identifiant renvoie les champs declares" classname="api.restfulbooker.spec.js" time="0.094">
+</testcase>
+<testcase name="US-RB-05 — Lire une reservation par identifiant › @QAIA-RB-034 @AC2 @P1 @api @low-confidence Une lecture sur un identifiant inexistant est refusee" classname="api.restfulbooker.spec.js" time="0.088">
+</testcase>
+<testcase name="US-RB-05 — Lire une reservation par identifiant › @QAIA-RB-035 @AC3 @P2 @api @low-confidence Une lecture sur un identifiant non numerique est refusee" classname="api.restfulbooker.spec.js" time="0.087">
+</testcase>
+<testcase name="US-RB-05 — Lire une reservation par identifiant › @QAIA-RB-036 @AC4 @P2 @api Une lecture demandant du XML renvoie un document XML" classname="api.restfulbooker.spec.js" time="0.094">
+</testcase>
+<testcase name="US-RB-06 — Controle de sante et surface protocolaire › @QAIA-RB-037 @AC1 @P1 @api @low-confidence Le controle de sante renvoie le statut promis par son exemple" classname="api.restfulbooker.spec.js" time="0.089">
+</testcase>
+<testcase name="US-RB-06 — Controle de sante et surface protocolaire › @QAIA-RB-038 @AC2 @P3 @api @low-confidence Une methode non declaree sur un chemin valide est refusee comme telle" classname="api.restfulbooker.spec.js" time="0.089">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\api.restfulbooker-US-RB-06-91da2-ide-est-refusee-comme-telle-api\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [api] › api.restfulbooker.spec.js:425:3 › US-RB-06 — Controle de sante et surface protocolaire › @QAIA-RB-038 @AC2 @P3 @api @low-confidence Une methode non declaree sur un chemin valide est refusee comme telle 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 405
+    Received: 404
+
+      428 |     const res = await api.post('/ping', { data: {} });
+      429 |
+    > 430 |     expect(res.status()).toBe(405);
+          |                          ^
+      431 |   });
+      432 | });
+      433 |
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\reverse-engineering-2026-08-11\automation\specs\api.restfulbooker.spec.js:430:26
+
+    Error Context: ..\test-results\api.restfulbooker-US-RB-06-91da2-ide-est-refusee-comme-telle-api\error-context.md
+]]>
+</failure>
+</testcase>
+</testsuite>
+</testsuites>

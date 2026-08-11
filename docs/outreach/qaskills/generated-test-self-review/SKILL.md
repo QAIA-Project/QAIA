@@ -158,6 +158,38 @@ used actually ran something.
 
 ---
 
+## D10 — The fixture that invalidates the assertion
+
+**D1 to D9 all look at the assertion. None looks at what the setup does to the state the
+assertion reads.** A test can be perfectly written and still prove nothing, because its own
+fixture keeps re-establishing the condition it is meant to observe changing.
+
+Measured on 2026-08-11, on a generated suite. The cart was seeded declaratively with
+Playwright's `addInitScript` — the right instinct, and the one a testability precheck asks for.
+But `addInitScript` runs on **every navigation**, so it re-created the cart the application had
+just emptied:
+
+- one test went **red for a false reason** (the emptying worked; the fixture undid it);
+- two others went **green while proving nothing** — the state they asserted had been re-imposed
+  between the action and the check.
+
+Two false greens, produced by a correct-looking fixture, invisible to the nine classes above and
+to the author's own reading. Found by *running* the suite and looking at a failure that made no
+sense.
+
+Three questions, before a spec reaches disk:
+
+1. **Does any setup hook re-run after the action?** `addInitScript`, a `beforeEach` that
+   navigates, a route handler that replays a response — each can re-apply state mid-test.
+2. **For every test whose expected outcome is an absence or a decrease** (a cart emptied, an item
+   removed, a counter back to zero): could a fixture re-create what the action removed? That is
+   the shape most exposed to this class.
+3. **Does a green here mean the action worked, or that the fixture won?** If you cannot answer
+   from the code, the test does not answer it either.
+
+*This class exists because the other nine did not catch it. A review that only reads assertions
+certifies the half of the file that is easiest to get right.*
+
 ## On a hit — self-correct before writing
 
 Derive the real assertion from the expected outcome — the concrete value, status or visible state

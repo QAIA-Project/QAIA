@@ -1,0 +1,95 @@
+{
+  "contract": "1.1",
+  "usId": "REV-2026-08-11",
+  "title": "Reverse-engineering 2026-08-11 — automatisation saucedemo + restful-booker",
+  "status": "review",
+  "generatedAt": "2026-08-11T09:05:00Z",
+  "base": ".qaia",
+
+  "producers": [
+    { "plugin": "qaia-playwright", "version": "0.1.1", "skill": "automate", "at": "2026-08-11T09:00:00Z" },
+    { "plugin": "qaia-playwright", "version": "0.1.1", "skill": "run-report", "at": "2026-08-11T09:05:00Z" }
+  ],
+
+  "artifacts": [
+    { "kind": "execution", "format": "junit", "path": "junit.xml" },
+    { "kind": "execution", "format": "json", "path": "results.json" },
+    { "kind": "execution", "format": "html", "path": "playwright-report/index.html" }
+  ],
+
+  "design": {
+    "scenarios": {
+      "total": 55,
+      "byPriority": { "P1": 28, "P2": 22, "P3": 5 },
+      "negative": 32,
+      "smoke": 0,
+      "outlines": 8
+    },
+    "byLevel": { "e2e": 0, "api": 55 },
+    "coverage": {
+      "acTotal": 28,
+      "acCovered": 28,
+      "reqNegTotal": 32,
+      "reqNegCovered": 32,
+      "negativeRatio": 0.58
+    },
+    "confidence": { "lowConfidence": 36, "openQuestions": 13, "assumptions": 0, "simulated": 0 },
+    "techniques": ["ep", "boundary", "decision-table", "pairwise", "crud", "error-guessing"],
+    "oracles": [],
+    "knowledgeApplied": []
+  },
+
+  "execution": {
+    "total": 76,
+    "passed": 51,
+    "failed": 25,
+    "blocked": 0,
+    "byType": { "e2e-desktop": 21, "api": 55 },
+    "traceability": { "scenariosAutomated": 55, "scenariosTotal": 55 }
+  },
+
+  "openArbitrations": [
+    {
+      "id": "REV-SD-NO-BOOK",
+      "kind": "assumption",
+      "about": "Le bloc design ne decrit QUE le cahier restful-booker (38 blocs / 55 cas), seul cahier Gherkin existant au moment de la generation. Les 21 tests e2e saucedemo comptes dans execution.byType n'ont AUCUN scenario amont : leurs identifiants et leur etiquette de niveau ont ete decides par l'automatisation, exactement ce qu'ADR 0008 interdit. Le trou est declare ici plutot que comble par des chiffres inventes.",
+      "sourceCheckpoint": "specs/e2e.saucedemo.spec.js"
+    },
+    {
+      "id": "SD-01-AC6",
+      "kind": "assumption",
+      "about": "La ligne de base ecrit que ce critere est une supposition non verifiee. Le test @QAIA-SD-006 l'asserte et echoue : le mot de passe n'est pas vide apres un refus. L'echec repond a la question, il n'accuse pas une regression.",
+      "sourceCheckpoint": "00-BASELINE-sans-skills.md"
+    },
+    {
+      "id": "SD-03-AC5",
+      "kind": "assumption",
+      "about": "La regle 'taxe = 8 % du sous-total' est deduite d'une seule observation par la ligne de base. Le test @QAIA-SD-019 l'eprouve sur deux compositions de panier et passe : l'hypothese resiste sur deux points, elle n'est pas demontree.",
+      "sourceCheckpoint": "00-BASELINE-sans-skills.md"
+    },
+    {
+      "id": "SD-03-AC7",
+      "kind": "assumption",
+      "about": "Critere declare non verifie par la ligne de base. Le test @QAIA-SD-021 echoue : un panier vide atteint la confirmation de commande. Defaut candidat, a arbitrer par le produit.",
+      "sourceCheckpoint": "00-BASELINE-sans-skills.md"
+    },
+    {
+      "id": "RB-OPEN-Q",
+      "kind": "open",
+      "about": "13 questions ouvertes distinctes portees par le cahier restful-booker (Q1..Q15, sans Q7 ni Q13) : le contrat apidoc ne declare aucun code d'erreur sur aucune de ses huit operations. 22 des 23 echecs API sont sur des scenarios @low-confidence portant l'une de ces questions.",
+      "sourceCheckpoint": "21-restfulbooker.feature"
+    },
+    {
+      "id": "RB-LOWCONF-COUNT",
+      "kind": "open",
+      "about": "L'en-tete du cahier restful-booker annonce 30 scenarios @low-confidence. Le comptage litteral sur le fichier donne 22 blocs, soit 36 cas executables. Aucun des deux ne vaut 30 : ecart a arbitrer avec l'auteur du cahier, non corrige ici (le cahier appartient a un autre testeur).",
+      "sourceCheckpoint": "21-restfulbooker.feature"
+    },
+    {
+      "id": "RB-023-FLAKE",
+      "kind": "open",
+      "about": "@QAIA-RB-023 a echoue sur un delai de 6,2 s au premier run puis passe aux deux suivants, code inchange. Candidat instable a 1 echec sur 3 runs : signale avec sa preuve, jamais mis en quarantaine automatiquement. Le seuil de flaky-detect (3 runs minimum) est tout juste atteint et ne suffit pas a conclure.",
+      "sourceCheckpoint": "junit.xml"
+    }
+  ]
+}
