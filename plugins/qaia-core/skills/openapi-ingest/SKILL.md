@@ -65,7 +65,26 @@ one interpretation is worse than a prose-derived one, because its precision is m
 ## Steps
 
 1. **Freeze the spec.** Copy it into the run's `sources/` and record its sha256 in
-   `REQUIREMENT-SOURCE.json`. A spec is a URL that changes without warning; a test book whose
+   `REQUIREMENT-SOURCE.json`, **at the run root, in this shape** — the file is read by tooling,
+   so its keys are not free:
+
+   ```json
+   {
+     "testbook": "<path to the .feature this source produced>",
+     "note": "<why this source is frozen>",
+     "sources": [
+       { "label": "<what it is, and when it was fetched>",
+         "path": "sources/<file>",
+         "origin": "<the URL it came from>",
+         "sha256": "<hex>" }
+     ]
+   }
+   ```
+
+   *This shape is spelled out since 2026-08-11. It was previously left implicit, and an agent
+   following this step faithfully invented its own keys — the schema existed only inside a
+   checker's source code, which an installer never sees. A step that names an artifact owes its
+   form.* A spec is a URL that changes without warning; a test book whose
    requirement cannot be re-read at the version it was generated from cannot be argued about later.
    `check_requirement_drift.py` then fails the day it moves.
 2. **Inventory.** Count paths, operations, schemas, declared codes. This is what the coverage
