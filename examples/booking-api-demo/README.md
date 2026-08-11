@@ -28,6 +28,7 @@ avant le serveur qui l'implémente. Le cahier a été dérivé de ce document et
 | `sources/booking-api.openapi.yaml` | La spécification, gelée, sha256 `009c4ecd…` |
 | `qaia-journey/state/BOOK-API/03-design.md` | 16 conditions, **toutes `[level: api]`**, chacune citant sa clause · 13 `[req-neg]` · 3 questions ouvertes |
 | `qaia-journey/testbooks/BOOK-API/appointments.feature` | 16 blocs / **23 cas exécutables**, tous `@api`, chacun avec son `# contract:` |
+| `qaia-journey/testbooks/BOOK-API/testbook.en.md` | Le **même cahier en langage naturel**, lisible sans connaître Gherkin — vérifié étape par étape contre le `.feature` |
 | `app/server.js` | Le serveur qui implémente la spécification. Aucune dépendance. `node app/server.js` |
 | `tests/` | La suite Playwright : **un seul projet `api`, sans moteur de navigateur** |
 | `qaia-journey/reports/BOOK-API/manifest.json` | Contrat 1.1 : `design.byLevel` = 0 e2e / 23 api, `execution.byType.api` = 23 |
@@ -69,6 +70,24 @@ Détail et sorties brutes : `evidence/mutation-run.txt`.
 
 **Compter 8/8 aurait été plus flatteur et faux. Compter 7/8 sans l'analyse aurait signalé un trou
 qui n'existe pas.**
+
+## Le rendu en langage naturel, et comment il a été produit
+
+`testbook.en.md` porte les 23 cas — `Préconditions / Action / Résultat attendu`, les étiquettes
+traduites en mots (niveau, priorité, technique, chemin de refus, question ouverte), les
+`Scenario Outline` éclatés avec leurs valeurs substituées. **Aucun texte d'étape n'est réécrit** :
+seul le mot-clé Gherkin est remplacé par un intitulé.
+
+`python eval/tools/check_nl_projection.py` compare les deux fichiers étape par étape et échoue si
+une seule diverge. La valeur du contrôle ne se démontre pas sur ce fichier-ci, qui est conforme :
+elle se démontre sur `eval/tools/fixtures/nl-projection-red/`, **huit divergences injectées, huit
+détectées** — dont une valeur d'`Examples` modifiée d'un caractère, la dérive qu'un relecteur
+humain ne verra jamais dans un document de vingt pages.
+
+**Dit franchement** : ce rendu-ci a été produit par un script de session, déterministe, et non par
+un modèle suivant le format. En production c'est `testbook-export` qui l'écrit — et c'est
+précisément la dérive d'un modèle que le contrôle existe pour attraper. Ce fichier montre le
+format et le contrôle ; il ne mesure pas la fidélité d'une génération.
 
 ## Les trois questions que la spécification laisse ouvertes
 

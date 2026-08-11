@@ -260,6 +260,17 @@ jobs:
           python eval/tools/check_test_levels.py
           python eval/tools/selfcheck_test_levels.py
 
+      # Le rendu en langage naturel (S40) est le document que des humains LISENT -- donc celui
+      # que personne ne reconfronte jamais a sa source. `testbook-export` portait deja la regle
+      # « an export is a projection, never a second source » ; rien ne l'appliquait. Huit
+      # divergences injectees, dont une valeur d'`Examples` modifiee d'un caractere : la derive
+      # qu'un relecteur humain ne verra jamais dans un document de vingt pages.
+      - name: Le rendu en langage naturel ne ment pas sur son Gherkin
+        run: |
+          set -e
+          python eval/tools/check_nl_projection.py
+          python eval/tools/selfcheck_nl_projection.py
+
       - name: README version claims match the plugin manifests
         run: |
           set -e
