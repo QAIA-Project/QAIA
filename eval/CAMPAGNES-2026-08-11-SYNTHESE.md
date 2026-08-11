@@ -6,7 +6,26 @@ défaut, seize constats bruts effondrés à la vérification), changement de cla
 C'est la forme exacte de la campagne json-server — la seule qui ait jamais produit un effet
 externe dans ce projet.
 
-**Ça a marché.** Quatre constats confirmés, reproduits indépendamment, sans antériorité — sur les trois cibles.
+**Ça a marché.** Quatre constats confirmés, reproduits indépendamment, sans antériorité — sur les
+trois cibles.
+
+## Publié en amont le 2026-08-11
+
+| Constat | Signalement |
+|---|---|
+| Uptime Kuma — `responseMaxLength = 0` détruit la réponse | [louislam/uptime-kuma#7703](https://github.com/louislam/uptime-kuma/issues/7703) |
+| Uptime Kuma — maintenance récurrente qui saute sa première occurrence | [louislam/uptime-kuma#7704](https://github.com/louislam/uptime-kuma/issues/7704) |
+| PocketBase — `?!=` et `?!~` se contredisent sur une relation vide | [pocketbase/pocketbase#7801](https://github.com/pocketbase/pocketbase/issues/7801) |
+| restful-booker — 500 sur corps malformé | [mwinteringham/restful-booker#58](https://github.com/mwinteringham/restful-booker/issues/58) |
+| Meilisearch — `totalHits` ignore `maxTotalHits`, se reproduit en v1.53.0 | [commentaire sur #6482](https://github.com/meilisearch/meilisearch/issues/6482#issuecomment-5253843510) |
+
+**Quatre issues et un commentaire**, publiés sous l'identité du fondateur, chacun avec sa
+reproduction minimale et l'antériorité citée. Corps relus depuis l'API après publication.
+
+**Non publié, et c'est délibéré** : l'incohérence Meilisearch `minimum: 0` documenté / `0` refusé.
+Vérifiée et sans antériorité, mais elle relève du dépôt de documentation et son impact se limite
+aux schémas générés. Le brouillon reste disponible ; ouvrir cinq issues le même jour depuis le
+même compte est le meilleur moyen de n'être lu par personne.
 
 ---
 
@@ -165,5 +184,7 @@ qu'il était facile à lancer.**
 | [`uptime-kuma-2026-08-11/`](uptime-kuma-2026-08-11/) | 15 promesses éprouvées, 17 sondes rejouables, cible HTTP locale pilotable |
 | [`oracle-vs-validatorjs-2026-08-11/`](oracle-vs-validatorjs-2026-08-11/) | Les deux campagnes à zéro défaut, et l'analyse de pourquoi |
 
-**Rien n'a été publié en amont.** Les quatre constats attendent une décision explicite du fondateur,
-sous son identité GitHub.
+**Publié le 2026-08-11** — voir le tableau en tête. Ce que ces cinq signalements deviennent
+n'appartient plus au projet : un mainteneur peut fermer, requalifier, ou demander une
+clarification. **Le résultat de cette campagne sera ce qu'ils en feront**, pas ce que nous en
+avons écrit.

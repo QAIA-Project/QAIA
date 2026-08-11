@@ -6,6 +6,29 @@ Le développement se déroule en **sprints courts** exécutés en sessions agent
 
 ---
 
+## Campagnes externes — 2026-08-11 — **4 issues et 1 commentaire publiés en amont** 🟢
+
+Première fois depuis la campagne json-server du 2026-08-08 que le projet produit un effet hors
+de son dépôt. Synthèse : [`eval/CAMPAGNES-2026-08-11-SYNTHESE.md`](../eval/CAMPAGNES-2026-08-11-SYNTHESE.md).
+
+| Cible | Constat | Signalement |
+|---|---|---|
+| Uptime Kuma 2.5.0 | `responseMaxLength = 0` détruit la réponse alors que le champ annonce « unlimited » | [#7703](https://github.com/louislam/uptime-kuma/issues/7703) |
+| Uptime Kuma 2.5.0 | maintenance récurrente qui saute sa première occurrence — chemin par défaut du formulaire | [#7704](https://github.com/louislam/uptime-kuma/issues/7704) |
+| PocketBase 0.39.10 | `?!=` et `?!~` se contredisent sur une relation vide | [#7801](https://github.com/pocketbase/pocketbase/issues/7801) |
+| restful-booker | 500 sur corps malformé | [#58](https://github.com/mwinteringham/restful-booker/issues/58) |
+| Meilisearch v1.53.0 | `totalHits` ignore `maxTotalHits` — déjà connu, confirmation de version | [commentaire #6482](https://github.com/meilisearch/meilisearch/issues/6482#issuecomment-5253843510) |
+
+**Le chiffre qui compte, et il n'est pas flatteur** : ~30 constats bruts, **4 publiables**. Un sur
+quinze. Les 26 autres sont morts à la vérification — dont 12 causés par **notre propre corpus
+d'oracles**, faux depuis son gel et corrigé le même jour.
+
+**Ce qui a décidé du résultat n'est pas la méthode, c'est la cible.** Deux campagnes sur des
+bibliothèques de fonctions pures : **zéro**. Trois campagnes sur des applications avec état dont
+la documentation promet un comportement : **quatre**.
+
+---
+
 ## Sprint 38-39-40 — exécutés le 2026-08-11, puis retournés par sept relecteurs 🟠 EN REVUE
 
 **Livré** : ADR 0008 (le niveau de test décidé à la conception) · contrat de sortie 1.0 → 1.1
