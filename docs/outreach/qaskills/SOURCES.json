@@ -67,7 +67,7 @@
       "derived_from": [
         {
           "path": "plugins/qaia-playwright/skills/security-surface/SKILL.md",
-          "sha256": "3c32215089dd13d1ee37b6c5d3a47e9fc34ba9e294c5afbb0f2c93b978d4e80a"
+          "sha256": "06f2cfc47207371c5debdd063dd8ca914cfc2e5b0f5ee9bf7fd1dbc07d3583dd"
         },
         {
           "path": "plugins/qaia-playwright/skills/security-surface/references/protocols.md",
@@ -81,7 +81,7 @@
       "derived_from": [
         {
           "path": "plugins/qaia-playwright/skills/perf-check/SKILL.md",
-          "sha256": "9ecf063644a4e86bdb3f3e36f6eb278b0c605dcce3ebbf862415633789812238"
+          "sha256": "f203a6892116ddf63cdadcfb1b1410c5791ea8cd5c66e925b75d76810652fcfe"
         }
       ]
     },

@@ -5,6 +5,24 @@ description: Generate and run risk-based passive security-surface checks (CT-SEC
 
 # security-surface — risk-based passive security checks (CT-SEC)
 
+## PORTE — à franchir avant l'étape 0, avant les protocoles, avant tout
+
+**Cibles autorisées et auto-hébergées uniquement.** Trois bases d'autorisation, et trois
+seulement — détaillées dans « Guardrails (blocking) » plus bas : une application du dépôt sous
+`examples/` · une cible listée dans [`DEMO-TARGETS.md`](https://github.com/QAIA-Project/QAIA/blob/main/docs/DEMO-TARGETS.md) **et dont la colonne
+Security l'autorise** · une autorisation nominative de l'humain, citée mot pour mot.
+**Si aucune ne s'applique, tu ne sondes pas.** Tu peux concevoir, et tu dis que tu n'as pas exécuté.
+
+**Interdit ≠ inopérant, et les deux se rencontrent.** Même avec le mandat, une partie de la
+méthode reste bloquée pour d'autres raisons : l'étape 0 exige des actifs tirés de la US, du cahier
+ou de la base de connaissance — **documents que seul le propriétaire détient** — et le protocole
+d'isolement (IDOR) est vide de sens sur un service dont le modèle de données n'a pas de notion de
+propriétaire. **Un seul des six protocoles, S5, est exécutable sans mandat.** Dis lequel s'applique
+avant de commencer, plutôt que de le découvrir au protocole 4.
+
+*Cette porte vivait après l'étape 0 et les six protocoles jusqu'au 2026-08-11, relevée par un
+testeur appliqué à trois cibles tierces. La règle n'a pas changé ; sa place, oui.*
+
 Reference: [`examples/medibook/tests/security.booking.spec.js`](https://github.com/QAIA-Project/QAIA/blob/main/examples/medibook/tests/security.booking.spec.js)
 (401/IDOR/malformed-input/user-enumeration).
 

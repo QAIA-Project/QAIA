@@ -5,6 +5,21 @@ description: Generate and run performance checks (latency budgets, concurrency i
 
 # perf-check — performance
 
+## PORTE — à franchir avant de concevoir quoi que ce soit
+
+**Cibles auto-hébergées uniquement.** Charger une démonstration publique partagée est interdit et
+contrevient généralement à ses conditions d'utilisation. **Refuse une cible publique partagée ;
+exige une URL auto-hébergée** (Docker, VPS, local).
+
+**Critère d'applicabilité, distinct de l'autorisation** : même autorisée, une cible servie derrière
+un CDN ne mesure pas l'application. Charger une démonstration publique mesurerait le CDN — un
+chiffre qui a l'air d'une performance applicative et n'en est pas. Si tu ne peux pas nommer ce que
+la mesure attribue à l'application, la mesure n'a pas lieu d'être.
+
+*Cette porte était en avant-dernière ligne de ce fichier jusqu'au 2026-08-11. Un testeur appliqué
+à trois cibles tierces l'a relevé : un agent qui lit en flux a déjà conçu le run quand il
+rencontre l'interdit. La règle n'a pas changé ; sa place, oui.*
+
 Reference: [`examples/medibook/tests/perf.slots.spec.js`](https://github.com/QAIA-Project/QAIA/blob/main/examples/medibook/tests/perf.slots.spec.js) (p95 latency + no-oversell under
 contention). Real load uses **k6**; a lightweight Playwright-request version covers
 latency/concurrency without extra tooling.
@@ -71,6 +86,6 @@ latency/concurrency without extra tooling.
 
 ## Guardrails
 
-- **Self-hosted targets only**: load testing a shared public demo is forbidden and often against
-  its terms. Refuse a public shared target; require a self-hosted URL (Docker/VPS/local).
+- **Cibles auto-hébergées uniquement** — énoncé en tête de ce fichier, sous « PORTE ». Il n'est
+  pas répété ici : deux copies d'une règle divergent.
 - Report measured latencies; never assert a budget you did not actually measure.

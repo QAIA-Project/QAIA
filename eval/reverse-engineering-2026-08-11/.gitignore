@@ -1,0 +1,4 @@
+# Le persona automaticien installe Playwright ici pour exercer les cibles.
+automation/node_modules/
+automation/test-results/
+automation/playwright-report/

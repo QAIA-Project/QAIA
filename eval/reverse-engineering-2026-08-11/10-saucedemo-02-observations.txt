@@ -1,0 +1,139 @@
+Sortie brute des trois passes d'observation Playwright sur https://www.saucedemo.com
+Date : 2026-08-11. Chromium headless. Scripts temporaires supprimes apres execution
+(site-qa/tests/_tmp_probe{1,2,3,4}.js) ; c'est CE fichier qui est la trace conservee,
+exigee par la regle 4bis du contrat partage (« une mesure citee pointe vers une sortie
+brute conservee »). Toute valeur chiffree du fichier 10-...-03-design.md se relit ici.
+
+=== PASSE 1 — acces direct, refus de connexion, panier, tunnel a vide ===
+A1 direct /inventory.html url= https://www.saucedemo.com/inventory.html
+A1 error= "Epic sadface: You can only access '/inventory.html' when you are logged in."
+A2 direct /cart.html url= https://www.saucedemo.com/cart.html err= "Epic sadface: You can only access '/cart.html' when you are logged in."
+A3 direct /checkout-step-two.html url= https://www.saucedemo.com/checkout-step-two.html err= "Epic sadface: You can only access '/checkout-step-two.html' when you are logged in."
+B1 empty password err= "Epic sadface: Password is required"
+B1 username field value after refusal= "standard_user"
+B1 password field value after refusal= ""
+B2 wrong pair err= "Epic sadface: Username and password do not match any user in this service"
+B2 username retained= "standard_user"
+B2 password retained= "WRONGPASS"
+B3 unknown user err= "Epic sadface: Username and password do not match any user in this service"
+B4 locked err= "Epic sadface: Sorry, this user has been locked out."
+B4 url= https://www.saucedemo.com/
+B5 locked+wrongpw err= "Epic sadface: Username and password do not match any user in this service"
+B6 both empty err= "Epic sadface: Username is required"
+B7 empty user only err= "Epic sadface: Username is required"
+B8 uppercase user err= "Epic sadface: Username and password do not match any user in this service" url= https://www.saucedemo.com/
+C0 standard login ms= 559 url= https://www.saucedemo.com/inventory.html
+C1 items= ["Sauce Labs Backpack","Sauce Labs Bike Light","Sauce Labs Bolt T-Shirt","Sauce Labs Fleece Jacket","Sauce Labs Onesie","Test.allTheThings() T-Shirt (Red)"]
+C1 prices= ["$29.99","$9.99","$15.99","$49.99","$7.99","$15.99"]
+C2 sort options= ["Name (A to Z)","Name (Z to A)","Price (low to high)","Price (high to low)"]
+D1 badge after 1 add= 1
+D1 button text now= Remove
+D2 badge after 2 adds= 2
+D3 prices after lohi= ["$7.99","$9.99","$15.99","$15.99","$29.99","$49.99"]
+D3 badge after sort= 2
+D4 detail url= https://www.saucedemo.com/inventory-item.html?id=2
+D4 badge on detail= 2
+D5 sort value after back= az
+D5 prices after back= ["$29.99","$9.99","$15.99","$49.99","$7.99","$15.99"]
+D5 badge after back= 2
+E1 badge= 1
+E2 badge count (expect 0 elements)= 0
+F0 cart items= 0
+F1 url after checkout on empty cart= https://www.saucedemo.com/checkout-step-one.html
+F2 url step two= https://www.saucedemo.com/checkout-step-two.html
+F2 summary= "Payment Information:SauceCard #31337Shipping Information:Free Pony Express Delivery!Price TotalItem total: $0Tax: $0.00Total: $0.00CancelFinish"
+F3 url after finish on empty cart= https://www.saucedemo.com/checkout-complete.html
+F3 header= "Thank you for your order!"
+
+=== PASSE 2 — taxe sur quatre paniers, tunnel, session, les quatre profils inexploites ===
+TAX basket ["sauce-labs-onesie"] | Item total: $7.99 | Tax: $0.64 | Total: $8.63 | ratio= 0.080100 | sum ok= true
+TAX basket ["sauce-labs-fleece-jacket"] | Item total: $49.99 | Tax: $4.00 | Total: $53.99 | ratio= 0.080016 | sum ok= true
+TAX basket ["sauce-labs-backpack","sauce-labs-bike-light","sauce-labs-bolt-t-shirt"] | Item total: $55.97 | Tax: $4.48 | Total: $60.45 | ratio= 0.080043 | sum ok= true
+TAX basket [les 6 articles] | Item total: $129.94 | Tax: $10.40 | Total: $140.34 | ratio= 0.080037 | sum ok= true
+CHK1 all empty= "Error: First Name is required"
+CHK2 first only= "Error: Last Name is required"
+CHK3 first+last= "Error: Postal Code is required"
+CHK4 postal=spaces -> url= https://www.saucedemo.com/checkout-step-two.html
+CHK5 all whitespace -> url= https://www.saucedemo.com/checkout-step-two.html err= null
+CHK6 exotic (<script>alert(1)</script> / "O日本 مرحبا" / 300 x 'x') -> url= https://www.saucedemo.com/checkout-step-two.html
+CHK7 cancel step-one -> url= https://www.saucedemo.com/cart.html
+POST1 complete header= "Thank you for your order!"
+POST1 badge count= 0
+POST2 back after finish -> url= https://www.saucedemo.com/checkout-step-two.html has finish btn= 1
+POST3 revisit step-two url= https://www.saucedemo.com/checkout-step-two.html summary items= 0
+LOG1 after logout url= https://www.saucedemo.com/
+LOG2 back to inventory after logout err= "Epic sadface: You can only access '/inventory.html' when you are logged in."
+LOG3 badge after re-login= 1 (element present, texte "1")
+LOG4 badge after reset= 0
+LOG4 backpack button text= still Remove
+=== problem_user login ms=54 url=https://www.saucedemo.com/inventory.html
+  imgs distinct= ["/assets/sl-404-Cq1a9k9X.jpg"]
+  names= ["Sauce Labs Backpack","Sauce Labs Bike Light","Sauce Labs Bolt T-Shirt","Sauce Labs Fleece Jacket","Sauce Labs Onesie","Test.allTheThings() T-Shirt (Red)"]
+  prices after hilo= ["$29.99","$9.99","$15.99","$49.99","$7.99","$15.99"]   (inchange : tri inerte)
+  names after za= ["Sauce Labs Backpack", ... ordre initial ...]            (inchange : tri inerte)
+  badge after add backpack= 1
+  backpack now Remove?= 1
+  badge after remove= 1                                                     (Remove sans effet)
+  detail url= .../inventory-item.html?id=5 title= "Sauce Labs Fleece Jacket" (lien du Backpack)
+  typed fields = ["Lovelace","","05000"]                                    (le champ Nom rejette la saisie)
+  after continue url= .../checkout-step-one.html err= "Error: Last Name is required"
+=== performance_glitch_user login ms=5063 url=https://www.saucedemo.com/inventory.html
+  imgs distinct= 6 visuels distincts, corrects
+  prices after hilo= ["$49.99","$29.99","$15.99","$15.99","$9.99","$7.99"]   (tri correct)
+  names after za= ordre inverse correct
+  badge after remove= NONE(gone)                                            (Remove correct)
+  after continue url= .../checkout-step-two.html ; summary "Item total: $9.99" "Tax: $0.80"
+  after finish url= .../checkout-complete.html header= "Thank you for your order!"
+=== error_user login ms=53 url=https://www.saucedemo.com/inventory.html
+  imgs distinct= 6 visuels distincts, corrects
+  prices after hilo= inchange (tri inerte) ; names after za= inchange (tri inerte)
+  badge after remove= 1                                                     (Remove sans effet)
+  after continue url= .../checkout-step-two.html ; summary "Item total: $39.98" "Tax: $3.20"
+  after finish url= .../checkout-step-two.html header= null                 (Finish sans effet)
+=== visual_user login ms=47 url=https://www.saucedemo.com/inventory.html
+  imgs distinct= ["/assets/sl-404-...jpg", puis 5 visuels corrects]         (1 image sur 6 en 404)
+  prices after hilo= ["$20.55","$63.8","$34.75","$54.99","$4.23","$32.56"]  (prix aleatoires, non tries)
+  names after za= ordre inverse correct
+  badge after remove= NONE(gone)
+  after continue -> step-two ; summary "Item total: $9.99" "Tax: $0.80"     (le panier utilise le vrai prix)
+  after finish header= "Thank you for your order!"
+
+=== PASSE 3 — prix par vue, lien article, Reset App State, persistance du tri, double Finish ===
+### standard_user
+  initial prices= ["$29.99","$9.99","$15.99","$49.99","$7.99","$15.99"]
+  link[0] catalogue="Sauce Labs Backpack" -> id=4 detail="Sauce Labs Backpack" price="$29.99"
+  link[1] catalogue="Sauce Labs Bike Light" -> id=0 detail="Sauce Labs Bike Light" price="$9.99"
+  link[2] catalogue="Sauce Labs Bolt T-Shirt" -> id=1 detail="Sauce Labs Bolt T-Shirt" price="$15.99"
+  cart row= "1 Sauce Labs Backpack ... $29.99 Remove"
+### visual_user
+  initial prices= ["$54.97","$47.3","$8.17","$77.04","$43.61","$44.72"]     (differents a chaque chargement)
+  link[0] catalogue="Sauce Labs Backpack" -> id=4 detail="Sauce Labs Backpack" price="$29.99"
+  link[1] catalogue="Sauce Labs Bike Light" -> id=0 detail="Sauce Labs Bike Light" price="$9.99"
+  link[2] catalogue="Sauce Labs Bolt T-Shirt" -> id=1 detail="Sauce Labs Bolt T-Shirt" price="$15.99"
+  cart row= "1 Sauce Labs Backpack ... $29.99 Remove"
+  => vignette $54.97 vs fiche $29.99 vs panier $29.99 ; et "$47.3" a une seule decimale
+### problem_user
+  initial prices= ["$29.99","$9.99","$15.99","$49.99","$7.99","$15.99"]     (corrects)
+  link[0] catalogue="Sauce Labs Backpack"   -> id=5 detail="Sauce Labs Fleece Jacket" price="$49.99"
+  link[1] catalogue="Sauce Labs Bike Light" -> id=1 detail="Sauce Labs Bolt T-Shirt"  price="$15.99"
+  link[2] catalogue="Sauce Labs Bolt T-Shirt" -> id=2 detail="Sauce Labs Onesie"      price="$7.99"
+  cart row= "1 Sauce Labs Backpack ... $29.99 Remove"                       (le panier, lui, est juste)
+RESET before: badge= 2 remove-buttons= 2
+RESET after : badge count= 0 remove-buttons still shown= 2
+RESET cart page rows= 0
+RESET after reload: remove-buttons= 0
+SORT set hilo prices= ["$49.99","$29.99","$15.99","$15.99","$9.99","$7.99"]
+SORT after back-to-products: selector= az prices= ordre initial
+SORT after cart round-trip (Continue Shopping): selector= az
+DBL first finish url= .../checkout-complete.html
+DBL back url= .../checkout-step-two.html items in summary= 0
+DBL second finish url= .../checkout-complete.html header= "Thank you for your order!"
+EMPTY subtotal= "Item total: $0" tax= "Tax: $0.00" total= "Total: $0.00"
+
+=== PASSE 4 — surface HTTP hors navigateur (client @playwright/test request) ===
+GET /inventory.html        status= 404 len= 3414 contenu catalogue= non
+GET /cart.html             status= 404 len= 3414 contenu catalogue= non
+GET /checkout-complete.html status= 404 len= 3414 contenu catalogue= non
+GET /nope.html             status= 404 len= 3414   (meme corps que les trois precedents)
+GET /                      status= 200 len= 1349
+POST /inventory.html       status= 405

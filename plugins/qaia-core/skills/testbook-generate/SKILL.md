@@ -79,11 +79,16 @@ substance and rejected by the linter** — every cause was a convention this fil
 1. **Emit the file, nothing else.** No surrounding ``` fence, no preamble, no closing summary.
    The output IS the `.feature` file. *(Two models out of four wrapped it in a code fence.)*
 
-2. **Exactly one real `Feature:` line, and it is not a comment.** A `# Feature: US-004` comment
-   line above it is a QAIA habit for carrying the US reference — it is **not** the declaration.
-   A file whose only `Feature` is commented out does not parse at all, and every scenario under
-   it is lost. *(One model copied our comment convention and omitted the declaration; a second
-   did the same after a first correction round — this is the most repeated failure of the four.)*
+2. **Exactly one real `Feature:` line, at column 0, and it is the first non-comment line.** A
+   file whose feature title appears only inside a `#` comment has no feature at all: it does not
+   parse, and every scenario under it is lost. *(One model emitted the title as a comment and
+   omitted the declaration; a second did the same after a first correction round — the most
+   repeated failure of the four.)*
+
+   *This rule is stated as a requirement and nothing more, on purpose. An earlier version also
+   **described** the decorative `# …` comment this project writes above the declaration — and a
+   model that had been emitting the declaration correctly started emitting the comment
+   **instead**. Describing a house convention propagates it, including the confusion it carries.*
 
 3. **Indentation is structural, not cosmetic — copy this shape exactly.** Column counts are
    absolute, not relative to whatever nesting you have in mind. The fence below belongs to *this
@@ -121,6 +126,8 @@ substance and rejected by the linter** — every cause was a convention this fil
    And / But`, whatever the project language. Only the prose inside a step follows the project.
 
 6. **No trailing whitespace, one space between tags, no duplicate tag on a line.**
+
+7. **One `.feature` per functional area**, named after that area.
 
 ### Who arbitrates
 
@@ -165,29 +172,16 @@ here.
    Then **write `state/<US-ID>/generated.snapshot.md`** — scenario IDs plus a content hash per
    scenario. This is the regeneration baseline; without it, regeneration cannot tell a
    hand-written correction from its own previous output.
-### The emission contract — what a `.feature` file must look like
-
-The rules below are **not style**. A file that breaks any of them does not parse, or fails the
-project's Gherkin linter, and the rest of the chain never sees it. They are stated here because a
-host other than Claude Code cannot read the linter's configuration.
-
-- **A real `Feature:` line is mandatory**, once per file, at column 0, and it is the **first
-  non-comment line**. A file whose feature title appears only inside a `#` comment has no feature
-  at all and does not parse.
-
-  *This rule is stated as a requirement and nothing more, on purpose. An earlier version also
-  described the decorative `# …` comment this project writes above the declaration — and a model
-  that had been emitting the declaration correctly started emitting the comment **instead**.
-  Describing a house convention propagates it, including the confusion it carries.*
-- **Indentation is significant**: `Feature` at column 0, `Background` and `Scenario` indented by 2,
-  steps and `Examples` by 4.
-- **Emit the file's content and nothing else.** No preamble, no explanation, and **never wrap the
-  output in a code fence** — a leading ``` makes the first line invalid.
-- **One `.feature` per functional area**, named after that area.
-
-**If this prose and the linter ever disagree, the linter wins.** It is the arbiter, and it is what
-CI runs. This section exists so a host that cannot read `.gherkin-lintrc` still knows the shape —
-not to become a second source of truth for it.
+<!-- Un SECOND exemplaire du contrat d'emission vivait ici, insere entre l'etape 5 et
+     l'etape 6 de la liste ci-dessus, qu'il coupait en deux. Il declarait lui-meme, en derniere
+     ligne : « not to become a second source of truth for it ». Il en etait pourtant une, et les
+     deux exemplaires avaient DIVERGE precisement sur la convention `# Feature:` -- le premier la
+     decrivait, le second racontait qu'on l'avait retiree parce que la decrire faisait emettre le
+     commentaire A LA PLACE de la declaration. Le premier avait donc reintroduit la panne que le
+     second documentait comme corrigee, sur la regle que ce fichier appelle « the most repeated
+     failure of the four ».
+     Fusionne le 2026-08-11 dans la section « Emission contract » unique ci-dessus. Trouve par un
+     testeur applique aux skills sur une cible externe, pas par un controle du depot. -->
 
 6. **Write outputs.** `*.feature` (one per functional area); `coverage-matrix.md` (AC →
    condition → scenario ID → priority → **rationale** → confidence, the rationale column
