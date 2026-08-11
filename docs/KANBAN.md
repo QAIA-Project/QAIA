@@ -6,6 +6,30 @@ Le développement se déroule en **sprints courts** exécutés en sessions agent
 
 ---
 
+## Sprints 38 à 41 — EPIC E5, deux niveaux, deux langues, une campagne (2026-08-11) ⚪ PLANIFIÉ
+
+Plan complet : [`EPIC-NIVEAUX-ET-LN.md`](EPIC-NIVEAUX-ET-LN.md). Demande du fondateur — terminer les
+niveaux E2E et API, en Gherkin **et** en langage naturel, plus un rapport de campagne.
+
+**Mesuré avant d'être planifié** : `@e2e`/`@api` n'existent nulle part dans les plugins (0 résultat),
+alors que `execution.byType` les attend déjà — le niveau est **deviné par `automate`**, au bout de la
+chaîne. Aucun rendu en langage naturel. `test-plan-and-closure` couvre **une** US, jamais une campagne.
+
+**Arbitrage** : la règle « aucune 38ᵉ skill tant que E1 n'est pas fermée » est **tenue** — les quatre
+chantiers sont des extensions de skills existantes. Le catalogue reste à 37.
+
+| Sprint | Chantier | Test de fin |
+|---|---|---|
+| S38 | Le niveau devient une donnée (ADR 0008, contrat 1.1, linter) | Le linter passe au **rouge** sur une fixture sans niveau |
+| S39 | L'API de bout en bout (forme des pas, ADR 0001 par niveau) | Une spec OpenAPI réelle → cahier `@api` vert et tracé |
+| S40 | Le langage naturel (projection vérifiée, pas génération) | Divergence injectée détectée par `check_nl_projection.py` |
+| S41 | Le rapport de campagne + la preuve croisée | Rapport sur ≥ 2 US et 2 niveaux, avec un échec réel non lissé |
+
+**Numéros** : S35-S37 restent réservés par [`PLAN-REPRISE.md`](PLAN-REPRISE.md) (E1→E4) — deux
+calendriers sur les mêmes numéros, le dépôt s'est déjà fait prendre une fois.
+
+---
+
 ## Sprint 34 — huit agents exercés, onze défauts, et un critère qui explique les campagnes (2026-08-09, D172-D196) 🔵 OUVERT
 
 Ouvert sur une campagne externe, **retourné trois fois dans la journée** par ce qu'elle a trouvé.
