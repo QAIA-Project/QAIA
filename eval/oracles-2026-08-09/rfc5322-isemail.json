@@ -1,987 +1,1025 @@
 {
- "_source": "https://github.com/dominicsayers/isemail/blob/master/test/tests.xml",
- "_retrieved": "2026-08-09",
- "_source_sha256": "5a87895d3913c97d45e4f46a34e0d36aad956329b8fd83635850b92cd501bff9",
- "_license": "BSD-3-Clause (Dominic Sayers)",
- "_note": "ISEMAIL_ERR = invalide. Les autres categories sont valides a des titres DIFFERENTS et ne sont pas interchangeables : RFC5321 (valide mais hors du sous-ensemble usuel), DEPREC (syntaxe obsolete mais analysable), CFWS (commentaires/espaces), DNSWARN (syntaxe bonne, DNS douteux).",
- "cases": [
-  {
-   "id": "2",
-   "address": "test",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_NODOMAIN"
-  },
-  {
-   "id": "3",
-   "address": "@",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_NOLOCALPART"
-  },
-  {
-   "id": "4",
-   "address": "test@",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_NODOMAIN"
-  },
-  {
-   "id": "5",
-   "address": "test@io",
-   "category": "ISEMAIL_VALID_CATEGORY",
-   "diagnosis": "ISEMAIL_VALID"
-  },
-  {
-   "id": "6",
-   "address": "@io",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_NOLOCALPART"
-  },
-  {
-   "id": "7",
-   "address": "@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_NOLOCALPART"
-  },
-  {
-   "id": "8",
-   "address": "test@iana.org",
-   "category": "ISEMAIL_VALID_CATEGORY",
-   "diagnosis": "ISEMAIL_VALID"
-  },
-  {
-   "id": "9",
-   "address": "test@nominet.org.uk",
-   "category": "ISEMAIL_VALID_CATEGORY",
-   "diagnosis": "ISEMAIL_VALID"
-  },
-  {
-   "id": "10",
-   "address": "test@about.museum",
-   "category": "ISEMAIL_VALID_CATEGORY",
-   "diagnosis": "ISEMAIL_VALID"
-  },
-  {
-   "id": "11",
-   "address": "a@iana.org",
-   "category": "ISEMAIL_VALID_CATEGORY",
-   "diagnosis": "ISEMAIL_VALID"
-  },
-  {
-   "id": "12",
-   "address": "test@e.com",
-   "category": "ISEMAIL_DNSWARN",
-   "diagnosis": "ISEMAIL_DNSWARN_NO_RECORD"
-  },
-  {
-   "id": "13",
-   "address": "test@iana.a",
-   "category": "ISEMAIL_DNSWARN",
-   "diagnosis": "ISEMAIL_DNSWARN_NO_RECORD"
-  },
-  {
-   "id": "14",
-   "address": "test.test@iana.org",
-   "category": "ISEMAIL_VALID_CATEGORY",
-   "diagnosis": "ISEMAIL_VALID"
-  },
-  {
-   "id": "15",
-   "address": ".test@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_DOT_START"
-  },
-  {
-   "id": "16",
-   "address": "test.@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_DOT_END"
-  },
-  {
-   "id": "17",
-   "address": "test..iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_CONSECUTIVEDOTS"
-  },
-  {
-   "id": "18",
-   "address": "test_exa-mple.com",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_NODOMAIN"
-  },
-  {
-   "id": "19",
-   "address": "!#$%&`*+/=?^`{|}~@iana.org",
-   "category": "ISEMAIL_VALID_CATEGORY",
-   "diagnosis": "ISEMAIL_VALID"
-  },
-  {
-   "id": "20",
-   "address": "test\\@test@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_EXPECTING_ATEXT"
-  },
-  {
-   "id": "21",
-   "address": "123@iana.org",
-   "category": "ISEMAIL_VALID_CATEGORY",
-   "diagnosis": "ISEMAIL_VALID"
-  },
-  {
-   "id": "22",
-   "address": "test@123.com",
-   "category": "ISEMAIL_VALID_CATEGORY",
-   "diagnosis": "ISEMAIL_VALID"
-  },
-  {
-   "id": "23",
-   "address": "test@iana.123",
-   "category": "ISEMAIL_RFC5321",
-   "diagnosis": "ISEMAIL_RFC5321_TLDNUMERIC"
-  },
-  {
-   "id": "24",
-   "address": "test@255.255.255.255",
-   "category": "ISEMAIL_RFC5321",
-   "diagnosis": "ISEMAIL_RFC5321_TLDNUMERIC"
-  },
-  {
-   "id": "25",
-   "address": "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghiklm@iana.org",
-   "category": "ISEMAIL_VALID_CATEGORY",
-   "diagnosis": "ISEMAIL_VALID"
-  },
-  {
-   "id": "26",
-   "address": "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghiklmn@iana.org",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_LOCAL_TOOLONG"
-  },
-  {
-   "id": "27",
-   "address": "test@abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.com",
-   "category": "ISEMAIL_DNSWARN",
-   "diagnosis": "ISEMAIL_DNSWARN_NO_RECORD"
-  },
-  {
-   "id": "28",
-   "address": "test@abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghiklm.com",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_LABEL_TOOLONG"
-  },
-  {
-   "id": "29",
-   "address": "test@mason-dixon.com",
-   "category": "ISEMAIL_VALID_CATEGORY",
-   "diagnosis": "ISEMAIL_VALID"
-  },
-  {
-   "id": "30",
-   "address": "test@-iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_DOMAINHYPHENSTART"
-  },
-  {
-   "id": "31",
-   "address": "test@iana-.com",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_DOMAINHYPHENEND"
-  },
-  {
-   "id": "32",
-   "address": "test@c--n.com",
-   "category": "ISEMAIL_VALID_CATEGORY",
-   "diagnosis": "ISEMAIL_VALID"
-  },
-  {
-   "id": "33",
-   "address": "test@iana.co-uk",
-   "category": "ISEMAIL_DNSWARN",
-   "diagnosis": "ISEMAIL_DNSWARN_NO_RECORD"
-  },
-  {
-   "id": "34",
-   "address": "test@.iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_DOT_START"
-  },
-  {
-   "id": "35",
-   "address": "test@iana.org.",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_DOT_END"
-  },
-  {
-   "id": "36",
-   "address": "test@iana..com",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_CONSECUTIVEDOTS"
-  },
-  {
-   "id": "37",
-   "address": "a@a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s.t.u.v.w.x.y.z.a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s.t.u.v.w.x.y.z.a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s.t.u.v.w.x.y.z.a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s.t.u.v.w.x.y.z.a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s.t.u.v",
-   "category": "ISEMAIL_DNSWARN",
-   "diagnosis": "ISEMAIL_DNSWARN_NO_RECORD"
-  },
-  {
-   "id": "38",
-   "address": "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghiklm@abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghi",
-   "category": "ISEMAIL_DNSWARN",
-   "diagnosis": "ISEMAIL_DNSWARN_NO_RECORD"
-  },
-  {
-   "id": "39",
-   "address": "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghiklm@abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghij",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_TOOLONG"
-  },
-  {
-   "id": "40",
-   "address": "a@abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefg.hij",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_TOOLONG"
-  },
-  {
-   "id": "41",
-   "address": "a@abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefg.hijk",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_DOMAIN_TOOLONG"
-  },
-  {
-   "id": "42",
-   "address": "\"test\"@iana.org",
-   "category": "ISEMAIL_RFC5321",
-   "diagnosis": "ISEMAIL_RFC5321_QUOTEDSTRING"
-  },
-  {
-   "id": "43",
-   "address": "\"\"@iana.org",
-   "category": "ISEMAIL_RFC5321",
-   "diagnosis": "ISEMAIL_RFC5321_QUOTEDSTRING"
-  },
-  {
-   "id": "44",
-   "address": "\"\"\"@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_EXPECTING_ATEXT"
-  },
-  {
-   "id": "45",
-   "address": "\"\\a\"@iana.org",
-   "category": "ISEMAIL_RFC5321",
-   "diagnosis": "ISEMAIL_RFC5321_QUOTEDSTRING"
-  },
-  {
-   "id": "46",
-   "address": "\"\\\"\"@iana.org",
-   "category": "ISEMAIL_RFC5321",
-   "diagnosis": "ISEMAIL_RFC5321_QUOTEDSTRING"
-  },
-  {
-   "id": "47",
-   "address": "\"\\\"@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_UNCLOSEDQUOTEDSTR"
-  },
-  {
-   "id": "48",
-   "address": "\"\\\\\"@iana.org",
-   "category": "ISEMAIL_RFC5321",
-   "diagnosis": "ISEMAIL_RFC5321_QUOTEDSTRING"
-  },
-  {
-   "id": "49",
-   "address": "test\"@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_EXPECTING_ATEXT"
-  },
-  {
-   "id": "50",
-   "address": "\"test@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_UNCLOSEDQUOTEDSTR"
-  },
-  {
-   "id": "51",
-   "address": "\"test\"test@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_ATEXT_AFTER_QS"
-  },
-  {
-   "id": "52",
-   "address": "test\"text\"@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_EXPECTING_ATEXT"
-  },
-  {
-   "id": "53",
-   "address": "\"test\"\"test\"@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_EXPECTING_ATEXT"
-  },
-  {
-   "id": "54",
-   "address": "\"test\".\"test\"@iana.org",
-   "category": "ISEMAIL_DEPREC",
-   "diagnosis": "ISEMAIL_DEPREC_LOCALPART"
-  },
-  {
-   "id": "55",
-   "address": "\"test\\ test\"@iana.org",
-   "category": "ISEMAIL_RFC5321",
-   "diagnosis": "ISEMAIL_RFC5321_QUOTEDSTRING"
-  },
-  {
-   "id": "56",
-   "address": "\"test\".test@iana.org",
-   "category": "ISEMAIL_DEPREC",
-   "diagnosis": "ISEMAIL_DEPREC_LOCALPART"
-  },
-  {
-   "id": "57",
-   "address": "\"test␀\"@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_EXPECTING_QTEXT"
-  },
-  {
-   "id": "58",
-   "address": "\"test\\␀\"@iana.org",
-   "category": "ISEMAIL_DEPREC",
-   "diagnosis": "ISEMAIL_DEPREC_QP"
-  },
-  {
-   "id": "59",
-   "address": "\"abcdefghijklmnopqrstuvwxyz abcdefghijklmnopqrstuvwxyz abcdefghj\"@iana.org",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_LOCAL_TOOLONG"
-  },
-  {
-   "id": "60",
-   "address": "\"abcdefghijklmnopqrstuvwxyz abcdefghijklmnopqrstuvwxyz abcdefg\\h\"@iana.org",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_LOCAL_TOOLONG"
-  },
-  {
-   "id": "61",
-   "address": "test@[255.255.255.255]",
-   "category": "ISEMAIL_RFC5321",
-   "diagnosis": "ISEMAIL_RFC5321_ADDRESSLITERAL"
-  },
-  {
-   "id": "62",
-   "address": "test@a[255.255.255.255]",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_EXPECTING_ATEXT"
-  },
-  {
-   "id": "63",
-   "address": "test@[255.255.255]",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_DOMAINLITERAL"
-  },
-  {
-   "id": "64",
-   "address": "test@[255.255.255.255.255]",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_DOMAINLITERAL"
-  },
-  {
-   "id": "65",
-   "address": "test@[255.255.255.256]",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_DOMAINLITERAL"
-  },
-  {
-   "id": "66",
-   "address": "test@[1111:2222:3333:4444:5555:6666:7777:8888]",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_DOMAINLITERAL"
-  },
-  {
-   "id": "67",
-   "address": "test@[IPv6:1111:2222:3333:4444:5555:6666:7777]",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_IPV6_GRPCOUNT"
-  },
-  {
-   "id": "68",
-   "address": "test@[IPv6:1111:2222:3333:4444:5555:6666:7777:8888]",
-   "category": "ISEMAIL_RFC5321",
-   "diagnosis": "ISEMAIL_RFC5321_ADDRESSLITERAL"
-  },
-  {
-   "id": "69",
-   "address": "test@[IPv6:1111:2222:3333:4444:5555:6666:7777:8888:9999]",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_IPV6_GRPCOUNT"
-  },
-  {
-   "id": "70",
-   "address": "test@[IPv6:1111:2222:3333:4444:5555:6666:7777:888G]",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_IPV6_BADCHAR"
-  },
-  {
-   "id": "71",
-   "address": "test@[IPv6:1111:2222:3333:4444:5555:6666::8888]",
-   "category": "ISEMAIL_DEPREC",
-   "diagnosis": "ISEMAIL_RFC5321_IPV6DEPRECATED"
-  },
-  {
-   "id": "72",
-   "address": "test@[IPv6:1111:2222:3333:4444:5555::8888]",
-   "category": "ISEMAIL_RFC5321",
-   "diagnosis": "ISEMAIL_RFC5321_ADDRESSLITERAL"
-  },
-  {
-   "id": "73",
-   "address": "test@[IPv6:1111:2222:3333:4444:5555:6666::7777:8888]",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_IPV6_MAXGRPS"
-  },
-  {
-   "id": "74",
-   "address": "test@[IPv6::3333:4444:5555:6666:7777:8888]",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_IPV6_COLONSTRT"
-  },
-  {
-   "id": "75",
-   "address": "test@[IPv6:::3333:4444:5555:6666:7777:8888]",
-   "category": "ISEMAIL_RFC5321",
-   "diagnosis": "ISEMAIL_RFC5321_ADDRESSLITERAL"
-  },
-  {
-   "id": "76",
-   "address": "test@[IPv6:1111::4444:5555::8888]",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_IPV6_2X2XCOLON"
-  },
-  {
-   "id": "77",
-   "address": "test@[IPv6:::]",
-   "category": "ISEMAIL_RFC5321",
-   "diagnosis": "ISEMAIL_RFC5321_ADDRESSLITERAL"
-  },
-  {
-   "id": "78",
-   "address": "test@[IPv6:1111:2222:3333:4444:5555:255.255.255.255]",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_IPV6_GRPCOUNT"
-  },
-  {
-   "id": "79",
-   "address": "test@[IPv6:1111:2222:3333:4444:5555:6666:255.255.255.255]",
-   "category": "ISEMAIL_RFC5321",
-   "diagnosis": "ISEMAIL_RFC5321_ADDRESSLITERAL"
-  },
-  {
-   "id": "80",
-   "address": "test@[IPv6:1111:2222:3333:4444:5555:6666:7777:255.255.255.255]",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_IPV6_GRPCOUNT"
-  },
-  {
-   "id": "81",
-   "address": "test@[IPv6:1111:2222:3333:4444::255.255.255.255]",
-   "category": "ISEMAIL_RFC5321",
-   "diagnosis": "ISEMAIL_RFC5321_ADDRESSLITERAL"
-  },
-  {
-   "id": "82",
-   "address": "test@[IPv6:1111:2222:3333:4444:5555:6666::255.255.255.255]",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_IPV6_MAXGRPS"
-  },
-  {
-   "id": "83",
-   "address": "test@[IPv6:1111:2222:3333:4444:::255.255.255.255]",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_IPV6_2X2XCOLON"
-  },
-  {
-   "id": "84",
-   "address": "test@[IPv6::255.255.255.255]",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_IPV6_COLONSTRT"
-  },
-  {
-   "id": "85",
-   "address": " test @iana.org",
-   "category": "ISEMAIL_DEPREC",
-   "diagnosis": "ISEMAIL_DEPREC_CFWS_NEAR_AT"
-  },
-  {
-   "id": "86",
-   "address": "test@ iana .com",
-   "category": "ISEMAIL_DEPREC",
-   "diagnosis": "ISEMAIL_DEPREC_CFWS_NEAR_AT"
-  },
-  {
-   "id": "87",
-   "address": "test . test@iana.org",
-   "category": "ISEMAIL_DEPREC",
-   "diagnosis": "ISEMAIL_DEPREC_FWS"
-  },
-  {
-   "id": "88",
-   "address": "␍␊ test@iana.org",
-   "category": "ISEMAIL_CFWS",
-   "diagnosis": "ISEMAIL_CFWS_FWS"
-  },
-  {
-   "id": "89",
-   "address": "␍␊ ␍␊ test@iana.org",
-   "category": "ISEMAIL_DEPREC",
-   "diagnosis": "ISEMAIL_DEPREC_FWS"
-  },
-  {
-   "id": "90",
-   "address": "(comment)test@iana.org",
-   "category": "ISEMAIL_CFWS",
-   "diagnosis": "ISEMAIL_CFWS_COMMENT"
-  },
-  {
-   "id": "91",
-   "address": "((comment)test@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_UNCLOSEDCOMMENT"
-  },
-  {
-   "id": "92",
-   "address": "(comment(comment))test@iana.org",
-   "category": "ISEMAIL_CFWS",
-   "diagnosis": "ISEMAIL_CFWS_COMMENT"
-  },
-  {
-   "id": "93",
-   "address": "test@(comment)iana.org",
-   "category": "ISEMAIL_DEPREC",
-   "diagnosis": "ISEMAIL_DEPREC_CFWS_NEAR_AT"
-  },
-  {
-   "id": "94",
-   "address": "test(comment)test@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_ATEXT_AFTER_CFWS"
-  },
-  {
-   "id": "95",
-   "address": "test@(comment)[255.255.255.255]",
-   "category": "ISEMAIL_DEPREC",
-   "diagnosis": "ISEMAIL_DEPREC_CFWS_NEAR_AT"
-  },
-  {
-   "id": "96",
-   "address": "(comment)abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghiklm@iana.org",
-   "category": "ISEMAIL_CFWS",
-   "diagnosis": "ISEMAIL_CFWS_COMMENT"
-  },
-  {
-   "id": "97",
-   "address": "test@(comment)abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.com",
-   "category": "ISEMAIL_DEPREC",
-   "diagnosis": "ISEMAIL_DEPREC_CFWS_NEAR_AT"
-  },
-  {
-   "id": "98",
-   "address": "(comment)test@abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghik.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghik.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijk.abcdefghijklmnopqrstuvwxyzabcdefghijk.abcdefghijklmnopqrstu",
-   "category": "ISEMAIL_CFWS",
-   "diagnosis": "ISEMAIL_CFWS_COMMENT"
-  },
-  {
-   "id": "99",
-   "address": "test@iana.org␊",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_EXPECTING_ATEXT"
-  },
-  {
-   "id": "100",
-   "address": "test@xn--hxajbheg2az3al.xn--jxalpdlp",
-   "category": "ISEMAIL_VALID_CATEGORY",
-   "diagnosis": "ISEMAIL_VALID"
-  },
-  {
-   "id": "101",
-   "address": "xn--test@iana.org",
-   "category": "ISEMAIL_VALID_CATEGORY",
-   "diagnosis": "ISEMAIL_VALID"
-  },
-  {
-   "id": "102",
-   "address": "test@iana.org-",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_DOMAINHYPHENEND"
-  },
-  {
-   "id": "103",
-   "address": "\"test@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_UNCLOSEDQUOTEDSTR"
-  },
-  {
-   "id": "104",
-   "address": "(test@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_UNCLOSEDCOMMENT"
-  },
-  {
-   "id": "105",
-   "address": "test@(iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_UNCLOSEDCOMMENT"
-  },
-  {
-   "id": "106",
-   "address": "test@[1.2.3.4",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_UNCLOSEDDOMLIT"
-  },
-  {
-   "id": "107",
-   "address": "\"test\\\"@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_UNCLOSEDQUOTEDSTR"
-  },
-  {
-   "id": "108",
-   "address": "(comment\\)test@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_UNCLOSEDCOMMENT"
-  },
-  {
-   "id": "109",
-   "address": "test@iana.org(comment\\)",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_UNCLOSEDCOMMENT"
-  },
-  {
-   "id": "110",
-   "address": "test@iana.org(comment\\",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_BACKSLASHEND"
-  },
-  {
-   "id": "112",
-   "address": "test@[RFC-5322-domain-literal]",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_DOMAINLITERAL"
-  },
-  {
-   "id": "113",
-   "address": "test@[RFC-5322]-domain-literal]",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_ATEXT_AFTER_DOMLIT"
-  },
-  {
-   "id": "114",
-   "address": "test@[RFC-5322-[domain-literal]",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_EXPECTING_DTEXT"
-  },
-  {
-   "id": "115",
-   "address": "test@[RFC-5322-\\␇-domain-literal]",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_DOMLIT_OBSDTEXT"
-  },
-  {
-   "id": "116",
-   "address": "test@[RFC-5322-\\␉-domain-literal]",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_DOMLIT_OBSDTEXT"
-  },
-  {
-   "id": "117",
-   "address": "test@[RFC-5322-\\]-domain-literal]",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_DOMLIT_OBSDTEXT"
-  },
-  {
-   "id": "118",
-   "address": "test@[RFC-5322-domain-literal\\]",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_UNCLOSEDDOMLIT"
-  },
-  {
-   "id": "119",
-   "address": "test@[RFC-5322-domain-literal\\",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_BACKSLASHEND"
-  },
-  {
-   "id": "120",
-   "address": "test@[RFC 5322 domain literal]",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_DOMAINLITERAL"
-  },
-  {
-   "id": "121",
-   "address": "test@[RFC-5322-domain-literal] (comment)",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_DOMAINLITERAL"
-  },
-  {
-   "id": "122",
-   "address": "@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_EXPECTING_ATEXT"
-  },
-  {
-   "id": "123",
-   "address": "test@.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_EXPECTING_ATEXT"
-  },
-  {
-   "id": "124",
-   "address": "\"\"@iana.org",
-   "category": "ISEMAIL_DEPREC",
-   "diagnosis": "ISEMAIL_DEPREC_QTEXT"
-  },
-  {
-   "id": "125",
-   "address": "\"\\\"@iana.org",
-   "category": "ISEMAIL_DEPREC",
-   "diagnosis": "ISEMAIL_DEPREC_QP"
-  },
-  {
-   "id": "126",
-   "address": "()test@iana.org",
-   "category": "ISEMAIL_DEPREC",
-   "diagnosis": "ISEMAIL_DEPREC_CTEXT"
-  },
-  {
-   "id": "127",
-   "address": "test@iana.org␍",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_CR_NO_LF"
-  },
-  {
-   "id": "128",
-   "address": "␍test@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_CR_NO_LF"
-  },
-  {
-   "id": "129",
-   "address": "\"␍test\"@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_CR_NO_LF"
-  },
-  {
-   "id": "130",
-   "address": "(␍)test@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_CR_NO_LF"
-  },
-  {
-   "id": "131",
-   "address": "test@iana.org(␍)",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_CR_NO_LF"
-  },
-  {
-   "id": "132",
-   "address": "␊test@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_EXPECTING_ATEXT"
-  },
-  {
-   "id": "133",
-   "address": "\"␊\"@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_EXPECTING_QTEXT"
-  },
-  {
-   "id": "134",
-   "address": "\"\\␊\"@iana.org",
-   "category": "ISEMAIL_DEPREC",
-   "diagnosis": "ISEMAIL_DEPREC_QP"
-  },
-  {
-   "id": "135",
-   "address": "(␊)test@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_EXPECTING_CTEXT"
-  },
-  {
-   "id": "136",
-   "address": "␇@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_EXPECTING_ATEXT"
-  },
-  {
-   "id": "137",
-   "address": "test@␇.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_EXPECTING_ATEXT"
-  },
-  {
-   "id": "138",
-   "address": "\"␇\"@iana.org",
-   "category": "ISEMAIL_DEPREC",
-   "diagnosis": "ISEMAIL_DEPREC_QTEXT"
-  },
-  {
-   "id": "139",
-   "address": "\"\\␇\"@iana.org",
-   "category": "ISEMAIL_DEPREC",
-   "diagnosis": "ISEMAIL_DEPREC_QP"
-  },
-  {
-   "id": "140",
-   "address": "(␇)test@iana.org",
-   "category": "ISEMAIL_DEPREC",
-   "diagnosis": "ISEMAIL_DEPREC_CTEXT"
-  },
-  {
-   "id": "141",
-   "address": "␍␊test@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_FWS_CRLF_END"
-  },
-  {
-   "id": "142",
-   "address": "␍␊ ␍␊test@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_FWS_CRLF_END"
-  },
-  {
-   "id": "143",
-   "address": " ␍␊test@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_FWS_CRLF_END"
-  },
-  {
-   "id": "144",
-   "address": " ␍␊ test@iana.org",
-   "category": "ISEMAIL_CFWS",
-   "diagnosis": "ISEMAIL_CFWS_FWS"
-  },
-  {
-   "id": "145",
-   "address": " ␍␊ ␍␊test@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_FWS_CRLF_END"
-  },
-  {
-   "id": "146",
-   "address": " ␍␊␍␊test@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_FWS_CRLF_X2"
-  },
-  {
-   "id": "147",
-   "address": " ␍␊␍␊ test@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_FWS_CRLF_X2"
-  },
-  {
-   "id": "148",
-   "address": "test@iana.org␍␊ ",
-   "category": "ISEMAIL_CFWS",
-   "diagnosis": "ISEMAIL_CFWS_FWS"
-  },
-  {
-   "id": "149",
-   "address": "test@iana.org␍␊ ␍␊ ",
-   "category": "ISEMAIL_DEPREC",
-   "diagnosis": "ISEMAIL_DEPREC_FWS"
-  },
-  {
-   "id": "150",
-   "address": "test@iana.org␍␊",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_FWS_CRLF_END"
-  },
-  {
-   "id": "151",
-   "address": "test@iana.org␍␊ ␍␊",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_FWS_CRLF_END"
-  },
-  {
-   "id": "152",
-   "address": "test@iana.org ␍␊",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_FWS_CRLF_END"
-  },
-  {
-   "id": "153",
-   "address": "test@iana.org ␍␊ ",
-   "category": "ISEMAIL_CFWS",
-   "diagnosis": "ISEMAIL_CFWS_FWS"
-  },
-  {
-   "id": "154",
-   "address": "test@iana.org ␍␊ ␍␊",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_FWS_CRLF_END"
-  },
-  {
-   "id": "155",
-   "address": "test@iana.org ␍␊␍␊",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_FWS_CRLF_X2"
-  },
-  {
-   "id": "156",
-   "address": "test@iana.org ␍␊␍␊ ",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_FWS_CRLF_X2"
-  },
-  {
-   "id": "157",
-   "address": " test@iana.org",
-   "category": "ISEMAIL_CFWS",
-   "diagnosis": "ISEMAIL_CFWS_FWS"
-  },
-  {
-   "id": "158",
-   "address": "test@iana.org ",
-   "category": "ISEMAIL_CFWS",
-   "diagnosis": "ISEMAIL_CFWS_FWS"
-  },
-  {
-   "id": "159",
-   "address": "test@[IPv6:1::2:]",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_IPV6_COLONEND"
-  },
-  {
-   "id": "160",
-   "address": "\"test\\©\"@iana.org",
-   "category": "ISEMAIL_ERR",
-   "diagnosis": "ISEMAIL_ERR_EXPECTING_QPAIR"
-  },
-  {
-   "id": "161",
-   "address": "test@iana/icann.org",
-   "category": "ISEMAIL_RFC5322",
-   "diagnosis": "ISEMAIL_RFC5322_DOMAIN"
-  },
-  {
-   "id": "165",
-   "address": "test.(comment)test@iana.org",
-   "category": "ISEMAIL_DEPREC",
-   "diagnosis": "ISEMAIL_DEPREC_COMMENT"
-  },
-  {
-   "id": "166",
-   "address": "test@org",
-   "category": "ISEMAIL_RFC5321",
-   "diagnosis": "ISEMAIL_RFC5321_TLD"
-  },
-  {
-   "id": "167",
-   "address": "test@test.com",
-   "category": "ISEMAIL_DNSWARN",
-   "diagnosis": "ISEMAIL_DNSWARN_NO_MX_RECORD"
-  },
-  {
-   "id": "168",
-   "address": "test@nic.no",
-   "category": "ISEMAIL_DNSWARN",
-   "diagnosis": "ISEMAIL_DNSWARN_NO_RECORD"
-  }
- ]
+  "_source": "https://github.com/dominicsayers/isemail/blob/master/test/tests.xml",
+  "_retrieved": "2026-08-09",
+  "_source_sha256": "5a87895d3913c97d45e4f46a34e0d36aad956329b8fd83635850b92cd501bff9",
+  "_license": "BSD-3-Clause (Dominic Sayers)",
+  "_note": "ISEMAIL_ERR = invalide. Les autres categories sont valides a des titres DIFFERENTS et ne sont pas interchangeables : RFC5321 (valide mais hors du sous-ensemble usuel), DEPREC (syntaxe obsolete mais analysable), CFWS (commentaires/espaces), DNSWARN (syntaxe bonne, DNS douteux).",
+  "cases": [
+    {
+      "id": "2",
+      "address": "test",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_NODOMAIN"
+    },
+    {
+      "id": "3",
+      "address": "@",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_NOLOCALPART"
+    },
+    {
+      "id": "4",
+      "address": "test@",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_NODOMAIN"
+    },
+    {
+      "id": "5",
+      "address": "test@io",
+      "category": "ISEMAIL_VALID_CATEGORY",
+      "diagnosis": "ISEMAIL_VALID"
+    },
+    {
+      "id": "6",
+      "address": "@io",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_NOLOCALPART"
+    },
+    {
+      "id": "7",
+      "address": "@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_NOLOCALPART"
+    },
+    {
+      "id": "8",
+      "address": "test@iana.org",
+      "category": "ISEMAIL_VALID_CATEGORY",
+      "diagnosis": "ISEMAIL_VALID"
+    },
+    {
+      "id": "9",
+      "address": "test@nominet.org.uk",
+      "category": "ISEMAIL_VALID_CATEGORY",
+      "diagnosis": "ISEMAIL_VALID"
+    },
+    {
+      "id": "10",
+      "address": "test@about.museum",
+      "category": "ISEMAIL_VALID_CATEGORY",
+      "diagnosis": "ISEMAIL_VALID"
+    },
+    {
+      "id": "11",
+      "address": "a@iana.org",
+      "category": "ISEMAIL_VALID_CATEGORY",
+      "diagnosis": "ISEMAIL_VALID"
+    },
+    {
+      "id": "12",
+      "address": "test@e.com",
+      "category": "ISEMAIL_DNSWARN",
+      "diagnosis": "ISEMAIL_DNSWARN_NO_RECORD"
+    },
+    {
+      "id": "13",
+      "address": "test@iana.a",
+      "category": "ISEMAIL_DNSWARN",
+      "diagnosis": "ISEMAIL_DNSWARN_NO_RECORD"
+    },
+    {
+      "id": "14",
+      "address": "test.test@iana.org",
+      "category": "ISEMAIL_VALID_CATEGORY",
+      "diagnosis": "ISEMAIL_VALID"
+    },
+    {
+      "id": "15",
+      "address": ".test@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_DOT_START"
+    },
+    {
+      "id": "16",
+      "address": "test.@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_DOT_END"
+    },
+    {
+      "id": "17",
+      "address": "test..iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_CONSECUTIVEDOTS"
+    },
+    {
+      "id": "18",
+      "address": "test_exa-mple.com",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_NODOMAIN"
+    },
+    {
+      "id": "19",
+      "address": "!#$%&`*+/=?^`{|}~@iana.org",
+      "category": "ISEMAIL_VALID_CATEGORY",
+      "diagnosis": "ISEMAIL_VALID"
+    },
+    {
+      "id": "20",
+      "address": "test\\@test@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_EXPECTING_ATEXT"
+    },
+    {
+      "id": "21",
+      "address": "123@iana.org",
+      "category": "ISEMAIL_VALID_CATEGORY",
+      "diagnosis": "ISEMAIL_VALID"
+    },
+    {
+      "id": "22",
+      "address": "test@123.com",
+      "category": "ISEMAIL_VALID_CATEGORY",
+      "diagnosis": "ISEMAIL_VALID"
+    },
+    {
+      "id": "23",
+      "address": "test@iana.123",
+      "category": "ISEMAIL_RFC5321",
+      "diagnosis": "ISEMAIL_RFC5321_TLDNUMERIC"
+    },
+    {
+      "id": "24",
+      "address": "test@255.255.255.255",
+      "category": "ISEMAIL_RFC5321",
+      "diagnosis": "ISEMAIL_RFC5321_TLDNUMERIC"
+    },
+    {
+      "id": "25",
+      "address": "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghiklm@iana.org",
+      "category": "ISEMAIL_VALID_CATEGORY",
+      "diagnosis": "ISEMAIL_VALID"
+    },
+    {
+      "id": "26",
+      "address": "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghiklmn@iana.org",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_LOCAL_TOOLONG"
+    },
+    {
+      "id": "27",
+      "address": "test@abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.com",
+      "category": "ISEMAIL_DNSWARN",
+      "diagnosis": "ISEMAIL_DNSWARN_NO_RECORD"
+    },
+    {
+      "id": "28",
+      "address": "test@abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghiklm.com",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_LABEL_TOOLONG"
+    },
+    {
+      "id": "29",
+      "address": "test@mason-dixon.com",
+      "category": "ISEMAIL_VALID_CATEGORY",
+      "diagnosis": "ISEMAIL_VALID"
+    },
+    {
+      "id": "30",
+      "address": "test@-iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_DOMAINHYPHENSTART"
+    },
+    {
+      "id": "31",
+      "address": "test@iana-.com",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_DOMAINHYPHENEND"
+    },
+    {
+      "id": "32",
+      "address": "test@c--n.com",
+      "category": "ISEMAIL_VALID_CATEGORY",
+      "diagnosis": "ISEMAIL_VALID"
+    },
+    {
+      "id": "33",
+      "address": "test@iana.co-uk",
+      "category": "ISEMAIL_DNSWARN",
+      "diagnosis": "ISEMAIL_DNSWARN_NO_RECORD"
+    },
+    {
+      "id": "34",
+      "address": "test@.iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_DOT_START"
+    },
+    {
+      "id": "35",
+      "address": "test@iana.org.",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_DOT_END"
+    },
+    {
+      "id": "36",
+      "address": "test@iana..com",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_CONSECUTIVEDOTS"
+    },
+    {
+      "id": "37",
+      "address": "a@a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s.t.u.v.w.x.y.z.a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s.t.u.v.w.x.y.z.a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s.t.u.v.w.x.y.z.a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s.t.u.v.w.x.y.z.a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s.t.u.v",
+      "category": "ISEMAIL_DNSWARN",
+      "diagnosis": "ISEMAIL_DNSWARN_NO_RECORD"
+    },
+    {
+      "id": "38",
+      "address": "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghiklm@abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghi",
+      "category": "ISEMAIL_DNSWARN",
+      "diagnosis": "ISEMAIL_DNSWARN_NO_RECORD"
+    },
+    {
+      "id": "39",
+      "address": "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghiklm@abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghij",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_TOOLONG"
+    },
+    {
+      "id": "40",
+      "address": "a@abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefg.hij",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_TOOLONG"
+    },
+    {
+      "id": "41",
+      "address": "a@abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefg.hijk",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_DOMAIN_TOOLONG"
+    },
+    {
+      "id": "42",
+      "address": "\"test\"@iana.org",
+      "category": "ISEMAIL_RFC5321",
+      "diagnosis": "ISEMAIL_RFC5321_QUOTEDSTRING"
+    },
+    {
+      "id": "43",
+      "address": "\"\"@iana.org",
+      "category": "ISEMAIL_RFC5321",
+      "diagnosis": "ISEMAIL_RFC5321_QUOTEDSTRING"
+    },
+    {
+      "id": "44",
+      "address": "\"\"\"@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_EXPECTING_ATEXT"
+    },
+    {
+      "id": "45",
+      "address": "\"\\a\"@iana.org",
+      "category": "ISEMAIL_RFC5321",
+      "diagnosis": "ISEMAIL_RFC5321_QUOTEDSTRING"
+    },
+    {
+      "id": "46",
+      "address": "\"\\\"\"@iana.org",
+      "category": "ISEMAIL_RFC5321",
+      "diagnosis": "ISEMAIL_RFC5321_QUOTEDSTRING"
+    },
+    {
+      "id": "47",
+      "address": "\"\\\"@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_UNCLOSEDQUOTEDSTR"
+    },
+    {
+      "id": "48",
+      "address": "\"\\\\\"@iana.org",
+      "category": "ISEMAIL_RFC5321",
+      "diagnosis": "ISEMAIL_RFC5321_QUOTEDSTRING"
+    },
+    {
+      "id": "49",
+      "address": "test\"@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_EXPECTING_ATEXT"
+    },
+    {
+      "id": "50",
+      "address": "\"test@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_UNCLOSEDQUOTEDSTR"
+    },
+    {
+      "id": "51",
+      "address": "\"test\"test@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_ATEXT_AFTER_QS"
+    },
+    {
+      "id": "52",
+      "address": "test\"text\"@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_EXPECTING_ATEXT"
+    },
+    {
+      "id": "53",
+      "address": "\"test\"\"test\"@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_EXPECTING_ATEXT"
+    },
+    {
+      "id": "54",
+      "address": "\"test\".\"test\"@iana.org",
+      "category": "ISEMAIL_DEPREC",
+      "diagnosis": "ISEMAIL_DEPREC_LOCALPART"
+    },
+    {
+      "id": "55",
+      "address": "\"test\\ test\"@iana.org",
+      "category": "ISEMAIL_RFC5321",
+      "diagnosis": "ISEMAIL_RFC5321_QUOTEDSTRING"
+    },
+    {
+      "id": "56",
+      "address": "\"test\".test@iana.org",
+      "category": "ISEMAIL_DEPREC",
+      "diagnosis": "ISEMAIL_DEPREC_LOCALPART"
+    },
+    {
+      "id": "57",
+      "address": "\"test␀\"@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_EXPECTING_QTEXT",
+      "_unusable": "substitution par images de controle : l adresse contient U+2400 (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "58",
+      "address": "\"test\\␀\"@iana.org",
+      "category": "ISEMAIL_DEPREC",
+      "diagnosis": "ISEMAIL_DEPREC_QP",
+      "_unusable": "substitution par images de controle : l adresse contient U+2400 (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "59",
+      "address": "\"abcdefghijklmnopqrstuvwxyz abcdefghijklmnopqrstuvwxyz abcdefghj\"@iana.org",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_LOCAL_TOOLONG"
+    },
+    {
+      "id": "60",
+      "address": "\"abcdefghijklmnopqrstuvwxyz abcdefghijklmnopqrstuvwxyz abcdefg\\h\"@iana.org",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_LOCAL_TOOLONG"
+    },
+    {
+      "id": "61",
+      "address": "test@[255.255.255.255]",
+      "category": "ISEMAIL_RFC5321",
+      "diagnosis": "ISEMAIL_RFC5321_ADDRESSLITERAL"
+    },
+    {
+      "id": "62",
+      "address": "test@a[255.255.255.255]",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_EXPECTING_ATEXT"
+    },
+    {
+      "id": "63",
+      "address": "test@[255.255.255]",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_DOMAINLITERAL"
+    },
+    {
+      "id": "64",
+      "address": "test@[255.255.255.255.255]",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_DOMAINLITERAL"
+    },
+    {
+      "id": "65",
+      "address": "test@[255.255.255.256]",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_DOMAINLITERAL"
+    },
+    {
+      "id": "66",
+      "address": "test@[1111:2222:3333:4444:5555:6666:7777:8888]",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_DOMAINLITERAL"
+    },
+    {
+      "id": "67",
+      "address": "test@[IPv6:1111:2222:3333:4444:5555:6666:7777]",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_IPV6_GRPCOUNT"
+    },
+    {
+      "id": "68",
+      "address": "test@[IPv6:1111:2222:3333:4444:5555:6666:7777:8888]",
+      "category": "ISEMAIL_RFC5321",
+      "diagnosis": "ISEMAIL_RFC5321_ADDRESSLITERAL"
+    },
+    {
+      "id": "69",
+      "address": "test@[IPv6:1111:2222:3333:4444:5555:6666:7777:8888:9999]",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_IPV6_GRPCOUNT"
+    },
+    {
+      "id": "70",
+      "address": "test@[IPv6:1111:2222:3333:4444:5555:6666:7777:888G]",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_IPV6_BADCHAR"
+    },
+    {
+      "id": "71",
+      "address": "test@[IPv6:1111:2222:3333:4444:5555:6666::8888]",
+      "category": "ISEMAIL_DEPREC",
+      "diagnosis": "ISEMAIL_RFC5321_IPV6DEPRECATED"
+    },
+    {
+      "id": "72",
+      "address": "test@[IPv6:1111:2222:3333:4444:5555::8888]",
+      "category": "ISEMAIL_RFC5321",
+      "diagnosis": "ISEMAIL_RFC5321_ADDRESSLITERAL"
+    },
+    {
+      "id": "73",
+      "address": "test@[IPv6:1111:2222:3333:4444:5555:6666::7777:8888]",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_IPV6_MAXGRPS"
+    },
+    {
+      "id": "74",
+      "address": "test@[IPv6::3333:4444:5555:6666:7777:8888]",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_IPV6_COLONSTRT"
+    },
+    {
+      "id": "75",
+      "address": "test@[IPv6:::3333:4444:5555:6666:7777:8888]",
+      "category": "ISEMAIL_RFC5321",
+      "diagnosis": "ISEMAIL_RFC5321_ADDRESSLITERAL"
+    },
+    {
+      "id": "76",
+      "address": "test@[IPv6:1111::4444:5555::8888]",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_IPV6_2X2XCOLON"
+    },
+    {
+      "id": "77",
+      "address": "test@[IPv6:::]",
+      "category": "ISEMAIL_RFC5321",
+      "diagnosis": "ISEMAIL_RFC5321_ADDRESSLITERAL"
+    },
+    {
+      "id": "78",
+      "address": "test@[IPv6:1111:2222:3333:4444:5555:255.255.255.255]",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_IPV6_GRPCOUNT"
+    },
+    {
+      "id": "79",
+      "address": "test@[IPv6:1111:2222:3333:4444:5555:6666:255.255.255.255]",
+      "category": "ISEMAIL_RFC5321",
+      "diagnosis": "ISEMAIL_RFC5321_ADDRESSLITERAL"
+    },
+    {
+      "id": "80",
+      "address": "test@[IPv6:1111:2222:3333:4444:5555:6666:7777:255.255.255.255]",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_IPV6_GRPCOUNT"
+    },
+    {
+      "id": "81",
+      "address": "test@[IPv6:1111:2222:3333:4444::255.255.255.255]",
+      "category": "ISEMAIL_RFC5321",
+      "diagnosis": "ISEMAIL_RFC5321_ADDRESSLITERAL"
+    },
+    {
+      "id": "82",
+      "address": "test@[IPv6:1111:2222:3333:4444:5555:6666::255.255.255.255]",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_IPV6_MAXGRPS"
+    },
+    {
+      "id": "83",
+      "address": "test@[IPv6:1111:2222:3333:4444:::255.255.255.255]",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_IPV6_2X2XCOLON"
+    },
+    {
+      "id": "84",
+      "address": "test@[IPv6::255.255.255.255]",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_IPV6_COLONSTRT"
+    },
+    {
+      "id": "85",
+      "address": " test @iana.org",
+      "category": "ISEMAIL_DEPREC",
+      "diagnosis": "ISEMAIL_DEPREC_CFWS_NEAR_AT"
+    },
+    {
+      "id": "86",
+      "address": "test@ iana .com",
+      "category": "ISEMAIL_DEPREC",
+      "diagnosis": "ISEMAIL_DEPREC_CFWS_NEAR_AT"
+    },
+    {
+      "id": "87",
+      "address": "test . test@iana.org",
+      "category": "ISEMAIL_DEPREC",
+      "diagnosis": "ISEMAIL_DEPREC_FWS"
+    },
+    {
+      "id": "88",
+      "address": "␍␊ test@iana.org",
+      "category": "ISEMAIL_CFWS",
+      "diagnosis": "ISEMAIL_CFWS_FWS",
+      "_unusable": "substitution par images de controle : l adresse contient U+240D, U+240A (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "89",
+      "address": "␍␊ ␍␊ test@iana.org",
+      "category": "ISEMAIL_DEPREC",
+      "diagnosis": "ISEMAIL_DEPREC_FWS",
+      "_unusable": "substitution par images de controle : l adresse contient U+240D, U+240A, U+240D, U+240A (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "90",
+      "address": "(comment)test@iana.org",
+      "category": "ISEMAIL_CFWS",
+      "diagnosis": "ISEMAIL_CFWS_COMMENT"
+    },
+    {
+      "id": "91",
+      "address": "((comment)test@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_UNCLOSEDCOMMENT"
+    },
+    {
+      "id": "92",
+      "address": "(comment(comment))test@iana.org",
+      "category": "ISEMAIL_CFWS",
+      "diagnosis": "ISEMAIL_CFWS_COMMENT"
+    },
+    {
+      "id": "93",
+      "address": "test@(comment)iana.org",
+      "category": "ISEMAIL_DEPREC",
+      "diagnosis": "ISEMAIL_DEPREC_CFWS_NEAR_AT"
+    },
+    {
+      "id": "94",
+      "address": "test(comment)test@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_ATEXT_AFTER_CFWS"
+    },
+    {
+      "id": "95",
+      "address": "test@(comment)[255.255.255.255]",
+      "category": "ISEMAIL_DEPREC",
+      "diagnosis": "ISEMAIL_DEPREC_CFWS_NEAR_AT"
+    },
+    {
+      "id": "96",
+      "address": "(comment)abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghiklm@iana.org",
+      "category": "ISEMAIL_CFWS",
+      "diagnosis": "ISEMAIL_CFWS_COMMENT"
+    },
+    {
+      "id": "97",
+      "address": "test@(comment)abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghikl.com",
+      "category": "ISEMAIL_DEPREC",
+      "diagnosis": "ISEMAIL_DEPREC_CFWS_NEAR_AT"
+    },
+    {
+      "id": "98",
+      "address": "(comment)test@abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghik.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghik.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijk.abcdefghijklmnopqrstuvwxyzabcdefghijk.abcdefghijklmnopqrstu",
+      "category": "ISEMAIL_CFWS",
+      "diagnosis": "ISEMAIL_CFWS_COMMENT"
+    },
+    {
+      "id": "99",
+      "address": "test@iana.org␊",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_EXPECTING_ATEXT",
+      "_unusable": "substitution par images de controle : l adresse contient U+240A (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "100",
+      "address": "test@xn--hxajbheg2az3al.xn--jxalpdlp",
+      "category": "ISEMAIL_VALID_CATEGORY",
+      "diagnosis": "ISEMAIL_VALID"
+    },
+    {
+      "id": "101",
+      "address": "xn--test@iana.org",
+      "category": "ISEMAIL_VALID_CATEGORY",
+      "diagnosis": "ISEMAIL_VALID"
+    },
+    {
+      "id": "102",
+      "address": "test@iana.org-",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_DOMAINHYPHENEND"
+    },
+    {
+      "id": "103",
+      "address": "\"test@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_UNCLOSEDQUOTEDSTR"
+    },
+    {
+      "id": "104",
+      "address": "(test@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_UNCLOSEDCOMMENT"
+    },
+    {
+      "id": "105",
+      "address": "test@(iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_UNCLOSEDCOMMENT"
+    },
+    {
+      "id": "106",
+      "address": "test@[1.2.3.4",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_UNCLOSEDDOMLIT"
+    },
+    {
+      "id": "107",
+      "address": "\"test\\\"@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_UNCLOSEDQUOTEDSTR"
+    },
+    {
+      "id": "108",
+      "address": "(comment\\)test@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_UNCLOSEDCOMMENT"
+    },
+    {
+      "id": "109",
+      "address": "test@iana.org(comment\\)",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_UNCLOSEDCOMMENT"
+    },
+    {
+      "id": "110",
+      "address": "test@iana.org(comment\\",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_BACKSLASHEND"
+    },
+    {
+      "id": "112",
+      "address": "test@[RFC-5322-domain-literal]",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_DOMAINLITERAL"
+    },
+    {
+      "id": "113",
+      "address": "test@[RFC-5322]-domain-literal]",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_ATEXT_AFTER_DOMLIT"
+    },
+    {
+      "id": "114",
+      "address": "test@[RFC-5322-[domain-literal]",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_EXPECTING_DTEXT"
+    },
+    {
+      "id": "115",
+      "address": "test@[RFC-5322-\\␇-domain-literal]",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_DOMLIT_OBSDTEXT",
+      "_unusable": "substitution par images de controle : l adresse contient U+2407 (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "116",
+      "address": "test@[RFC-5322-\\␉-domain-literal]",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_DOMLIT_OBSDTEXT",
+      "_unusable": "substitution par images de controle : l adresse contient U+2409 (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "117",
+      "address": "test@[RFC-5322-\\]-domain-literal]",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_DOMLIT_OBSDTEXT"
+    },
+    {
+      "id": "118",
+      "address": "test@[RFC-5322-domain-literal\\]",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_UNCLOSEDDOMLIT"
+    },
+    {
+      "id": "119",
+      "address": "test@[RFC-5322-domain-literal\\",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_BACKSLASHEND"
+    },
+    {
+      "id": "120",
+      "address": "test@[RFC 5322 domain literal]",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_DOMAINLITERAL"
+    },
+    {
+      "id": "121",
+      "address": "test@[RFC-5322-domain-literal] (comment)",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_DOMAINLITERAL"
+    },
+    {
+      "id": "122",
+      "address": "@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_EXPECTING_ATEXT"
+    },
+    {
+      "id": "123",
+      "address": "test@.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_EXPECTING_ATEXT"
+    },
+    {
+      "id": "124",
+      "address": "\"\"@iana.org",
+      "category": "ISEMAIL_DEPREC",
+      "diagnosis": "ISEMAIL_DEPREC_QTEXT"
+    },
+    {
+      "id": "125",
+      "address": "\"\\\"@iana.org",
+      "category": "ISEMAIL_DEPREC",
+      "diagnosis": "ISEMAIL_DEPREC_QP"
+    },
+    {
+      "id": "126",
+      "address": "()test@iana.org",
+      "category": "ISEMAIL_DEPREC",
+      "diagnosis": "ISEMAIL_DEPREC_CTEXT"
+    },
+    {
+      "id": "127",
+      "address": "test@iana.org␍",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_CR_NO_LF",
+      "_unusable": "substitution par images de controle : l adresse contient U+240D (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "128",
+      "address": "␍test@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_CR_NO_LF",
+      "_unusable": "substitution par images de controle : l adresse contient U+240D (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "129",
+      "address": "\"␍test\"@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_CR_NO_LF",
+      "_unusable": "substitution par images de controle : l adresse contient U+240D (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "130",
+      "address": "(␍)test@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_CR_NO_LF",
+      "_unusable": "substitution par images de controle : l adresse contient U+240D (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "131",
+      "address": "test@iana.org(␍)",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_CR_NO_LF",
+      "_unusable": "substitution par images de controle : l adresse contient U+240D (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "132",
+      "address": "␊test@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_EXPECTING_ATEXT",
+      "_unusable": "substitution par images de controle : l adresse contient U+240A (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "133",
+      "address": "\"␊\"@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_EXPECTING_QTEXT",
+      "_unusable": "substitution par images de controle : l adresse contient U+240A (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "134",
+      "address": "\"\\␊\"@iana.org",
+      "category": "ISEMAIL_DEPREC",
+      "diagnosis": "ISEMAIL_DEPREC_QP",
+      "_unusable": "substitution par images de controle : l adresse contient U+240A (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "135",
+      "address": "(␊)test@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_EXPECTING_CTEXT",
+      "_unusable": "substitution par images de controle : l adresse contient U+240A (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "136",
+      "address": "␇@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_EXPECTING_ATEXT",
+      "_unusable": "substitution par images de controle : l adresse contient U+2407 (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "137",
+      "address": "test@␇.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_EXPECTING_ATEXT",
+      "_unusable": "substitution par images de controle : l adresse contient U+2407 (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "138",
+      "address": "\"␇\"@iana.org",
+      "category": "ISEMAIL_DEPREC",
+      "diagnosis": "ISEMAIL_DEPREC_QTEXT",
+      "_unusable": "substitution par images de controle : l adresse contient U+2407 (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "139",
+      "address": "\"\\␇\"@iana.org",
+      "category": "ISEMAIL_DEPREC",
+      "diagnosis": "ISEMAIL_DEPREC_QP",
+      "_unusable": "substitution par images de controle : l adresse contient U+2407 (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "140",
+      "address": "(␇)test@iana.org",
+      "category": "ISEMAIL_DEPREC",
+      "diagnosis": "ISEMAIL_DEPREC_CTEXT",
+      "_unusable": "substitution par images de controle : l adresse contient U+2407 (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "141",
+      "address": "␍␊test@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_FWS_CRLF_END",
+      "_unusable": "substitution par images de controle : l adresse contient U+240D, U+240A (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "142",
+      "address": "␍␊ ␍␊test@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_FWS_CRLF_END",
+      "_unusable": "substitution par images de controle : l adresse contient U+240D, U+240A, U+240D, U+240A (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "143",
+      "address": " ␍␊test@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_FWS_CRLF_END",
+      "_unusable": "substitution par images de controle : l adresse contient U+240D, U+240A (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "144",
+      "address": " ␍␊ test@iana.org",
+      "category": "ISEMAIL_CFWS",
+      "diagnosis": "ISEMAIL_CFWS_FWS",
+      "_unusable": "substitution par images de controle : l adresse contient U+240D, U+240A (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "145",
+      "address": " ␍␊ ␍␊test@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_FWS_CRLF_END",
+      "_unusable": "substitution par images de controle : l adresse contient U+240D, U+240A, U+240D, U+240A (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "146",
+      "address": " ␍␊␍␊test@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_FWS_CRLF_X2",
+      "_unusable": "substitution par images de controle : l adresse contient U+240D, U+240A, U+240D, U+240A (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "147",
+      "address": " ␍␊␍␊ test@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_FWS_CRLF_X2",
+      "_unusable": "substitution par images de controle : l adresse contient U+240D, U+240A, U+240D, U+240A (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "148",
+      "address": "test@iana.org␍␊ ",
+      "category": "ISEMAIL_CFWS",
+      "diagnosis": "ISEMAIL_CFWS_FWS",
+      "_unusable": "substitution par images de controle : l adresse contient U+240D, U+240A (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "149",
+      "address": "test@iana.org␍␊ ␍␊ ",
+      "category": "ISEMAIL_DEPREC",
+      "diagnosis": "ISEMAIL_DEPREC_FWS",
+      "_unusable": "substitution par images de controle : l adresse contient U+240D, U+240A, U+240D, U+240A (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "150",
+      "address": "test@iana.org␍␊",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_FWS_CRLF_END",
+      "_unusable": "substitution par images de controle : l adresse contient U+240D, U+240A (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "151",
+      "address": "test@iana.org␍␊ ␍␊",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_FWS_CRLF_END",
+      "_unusable": "substitution par images de controle : l adresse contient U+240D, U+240A, U+240D, U+240A (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "152",
+      "address": "test@iana.org ␍␊",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_FWS_CRLF_END",
+      "_unusable": "substitution par images de controle : l adresse contient U+240D, U+240A (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "153",
+      "address": "test@iana.org ␍␊ ",
+      "category": "ISEMAIL_CFWS",
+      "diagnosis": "ISEMAIL_CFWS_FWS",
+      "_unusable": "substitution par images de controle : l adresse contient U+240D, U+240A (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "154",
+      "address": "test@iana.org ␍␊ ␍␊",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_FWS_CRLF_END",
+      "_unusable": "substitution par images de controle : l adresse contient U+240D, U+240A, U+240D, U+240A (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "155",
+      "address": "test@iana.org ␍␊␍␊",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_FWS_CRLF_X2",
+      "_unusable": "substitution par images de controle : l adresse contient U+240D, U+240A, U+240D, U+240A (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "156",
+      "address": "test@iana.org ␍␊␍␊ ",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_FWS_CRLF_X2",
+      "_unusable": "substitution par images de controle : l adresse contient U+240D, U+240A, U+240D, U+240A (bloc Control Pictures) au lieu du caractere de controle reel"
+    },
+    {
+      "id": "157",
+      "address": " test@iana.org",
+      "category": "ISEMAIL_CFWS",
+      "diagnosis": "ISEMAIL_CFWS_FWS"
+    },
+    {
+      "id": "158",
+      "address": "test@iana.org ",
+      "category": "ISEMAIL_CFWS",
+      "diagnosis": "ISEMAIL_CFWS_FWS"
+    },
+    {
+      "id": "159",
+      "address": "test@[IPv6:1::2:]",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_IPV6_COLONEND"
+    },
+    {
+      "id": "160",
+      "address": "\"test\\©\"@iana.org",
+      "category": "ISEMAIL_ERR",
+      "diagnosis": "ISEMAIL_ERR_EXPECTING_QPAIR"
+    },
+    {
+      "id": "161",
+      "address": "test@iana/icann.org",
+      "category": "ISEMAIL_RFC5322",
+      "diagnosis": "ISEMAIL_RFC5322_DOMAIN"
+    },
+    {
+      "id": "165",
+      "address": "test.(comment)test@iana.org",
+      "category": "ISEMAIL_DEPREC",
+      "diagnosis": "ISEMAIL_DEPREC_COMMENT"
+    },
+    {
+      "id": "166",
+      "address": "test@org",
+      "category": "ISEMAIL_RFC5321",
+      "diagnosis": "ISEMAIL_RFC5321_TLD"
+    },
+    {
+      "id": "167",
+      "address": "test@test.com",
+      "category": "ISEMAIL_DNSWARN",
+      "diagnosis": "ISEMAIL_DNSWARN_NO_MX_RECORD"
+    },
+    {
+      "id": "168",
+      "address": "test@nic.no",
+      "category": "ISEMAIL_DNSWARN",
+      "diagnosis": "ISEMAIL_DNSWARN_NO_RECORD"
+    }
+  ],
+  "_defect": "TROUVE LE 2026-08-11, en exercant ce corpus contre validator.js 13.15.35. 37 cas sur 163 contiennent des IMAGES de caracteres de controle (bloc Unicode U+2400-243F : SYMBOL FOR NULL, FOR LINE FEED, FOR CARRIAGE RETURN, FOR BELL) au lieu des caracteres de controle eux-memes -- la substitution vient du XML source, ou ces caracteres ne peuvent pas s ecrire litteralement. Un validateur voit donc un caractere IMPRIMABLE et l accepte, ce qui est correct de sa part. CONSEQUENCE : ce corpus a produit 12 faux constats contre validator.js avant qu une sonde avec de VRAIS caracteres de controle ne montre qu il les refuse tous. Un utilisateur d oracle-generate qui s en sert pour eprouver son validateur d e-mails obtiendrait les memes 12 faux constats. Les cas concernes portent desormais `_unusable` et NE DOIVENT PAS servir de verdict. Les autres restent valables. check_oracle_library.py ne pouvait pas le voir : il declare explicitement ne pas couvrir RFC 5322 (lecture de grammaire). L angle mort etait assume ; le corpus etait faux quand meme."
 }

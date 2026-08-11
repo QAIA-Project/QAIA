@@ -237,8 +237,28 @@ def main():
 
     if os.path.isfile(mail_path):
         import json
-        corpus = {c["address"]: c for c in
-                  json.load(io.open(mail_path, encoding="utf-8"))["cases"]}
+        _mail = json.load(io.open(mail_path, encoding="utf-8"))
+        corpus = {c["address"]: c for c in _mail["cases"]}
+
+        # SUBSTITUTION PAR IMAGES DE CONTROLE -- ajoute le 2026-08-11.
+        # Le corpus vient d'un XML, ou un caractere de controle ne peut pas s'ecrire
+        # litteralement. La source y substitue les IMAGES du bloc Unicode U+2400-243F
+        # (SYMBOL FOR NULL, FOR LINE FEED, FOR CARRIAGE RETURN...). Un validateur voit alors
+        # un caractere IMPRIMABLE et l'accepte, ce qui est correct de sa part -- mais le corpus
+        # attend un refus. Resultat mesure : 12 faux constats contre validator.js 13.15.35,
+        # avant qu'une sonde avec de VRAIS caracteres de controle ne montre qu'il les refuse tous.
+        # 37 cas sur 163 sont concernes, soit 23 % du corpus.
+        # C'est CALCULABLE -- une plage de points de code -- donc ca entre dans le perimetre de
+        # ce controle, contrairement a la grammaire RFC 5322 qui en reste dehors.
+        unflagged = [c["id"] for c in _mail["cases"]
+                     if any(0x2400 <= ord(ch) <= 0x243F for ch in c["address"])
+                     and "_unusable" not in c]
+        if unflagged:
+            bad.append(("corpus isemail", ", ".join(unflagged[:8]),
+                        "%d cas contiennent une IMAGE de caractere de controle (U+2400-243F) "
+                        "sans porter `_unusable` -- ils rendront un faux constat contre tout "
+                        "validateur qui les accepte, et il aura raison de les accepter"
+                        % len(unflagged)))
         # Seules les adresses PRESENTES dans le corpus sont tranchees. Une absence n'est pas un
         # accord : elle est listee comme non tranchee.
         # La bibliotheque a TROIS paniers, pas deux : valide, invalide, et « valide mais

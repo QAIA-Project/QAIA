@@ -1,0 +1,1 @@
+{ "name": "oracle-vs-validatorjs", "private": true, "type": "commonjs", "dependencies": { "validator": "^13.15.15" } }

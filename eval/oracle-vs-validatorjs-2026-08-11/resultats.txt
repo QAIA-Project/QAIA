@@ -1,0 +1,72 @@
+# Oracle indépendant contre validator.js 13.15.35
+
+Sources gelées :
+  isemail   https://github.com/dominicsayers/isemail/blob/master/test/tests.xml  sha256 5a87895d3913c97d…
+  ISO       https://github.com/datasets/country-codes/blob/main/data/country-codes.csv  sha256 67b009b529330b0a…
+
+## 1. isEmail contre le corpus isemail
+
+Cas tranchants (ERR + VALID_CATEGORY) : 79 — écarts : **13**
+  [ISEMAIL_VALID_CATEGORY #5] "test@io"  attendu=true obtenu=false  (ISEMAIL_VALID)
+  [ISEMAIL_ERR #57] "\"test␀\"@iana.org"  attendu=false obtenu=true  (ISEMAIL_ERR_EXPECTING_QTEXT)
+  [ISEMAIL_ERR #99] "test@iana.org␊"  attendu=false obtenu=true  (ISEMAIL_ERR_EXPECTING_ATEXT)
+  [ISEMAIL_ERR #127] "test@iana.org␍"  attendu=false obtenu=true  (ISEMAIL_ERR_CR_NO_LF)
+  [ISEMAIL_ERR #128] "␍test@iana.org"  attendu=false obtenu=true  (ISEMAIL_ERR_CR_NO_LF)
+  [ISEMAIL_ERR #129] "\"␍test\"@iana.org"  attendu=false obtenu=true  (ISEMAIL_ERR_CR_NO_LF)
+  [ISEMAIL_ERR #132] "␊test@iana.org"  attendu=false obtenu=true  (ISEMAIL_ERR_EXPECTING_ATEXT)
+  [ISEMAIL_ERR #133] "\"␊\"@iana.org"  attendu=false obtenu=true  (ISEMAIL_ERR_EXPECTING_QTEXT)
+  [ISEMAIL_ERR #136] "␇@iana.org"  attendu=false obtenu=true  (ISEMAIL_ERR_EXPECTING_ATEXT)
+  [ISEMAIL_ERR #137] "test@␇.org"  attendu=false obtenu=true  (ISEMAIL_ERR_EXPECTING_ATEXT)
+  [ISEMAIL_ERR #141] "␍␊test@iana.org"  attendu=false obtenu=true  (ISEMAIL_ERR_FWS_CRLF_END)
+  [ISEMAIL_ERR #150] "test@iana.org␍␊"  attendu=false obtenu=true  (ISEMAIL_ERR_FWS_CRLF_END)
+  [ISEMAIL_ERR #160] "\"test\\©\"@iana.org"  attendu=false obtenu=true  (ISEMAIL_ERR_EXPECTING_QPAIR)
+
+Catégories non tranchantes — rapportées, jamais comptées comme un écart :
+  ISEMAIL_DNSWARN         5/8 acceptées par validator.js
+  ISEMAIL_RFC5321         6/16 acceptées par validator.js
+  ISEMAIL_RFC5322         0/30 acceptées par validator.js
+  ISEMAIL_DEPREC          6/20 acceptées par validator.js
+  ISEMAIL_CFWS            0/10 acceptées par validator.js
+
+## 2. ISO 3166 contre le registre gelé
+
+alpha-2 : 249 codes du registre, **0** refusés par validator.js
+alpha-3 : 249 codes du registre, **0** refusés par validator.js
+
+## 3. ISO 4217 contre le registre gelé (sens unique, cf. caveat du registre)
+
+155 codes en usage dans le registre, **2** refusés par validator.js → XCG ZWG
+XXX (assigné par ISO 4217 à « aucune devise ») : validator.isISO4217("XXX") = true
+
+## 4. Luhn (ISO/IEC 7812) — somme de contrôle recalculée ici
+
+    4111111111111111  luhn=true  isCreditCard=true
+    4012888888881881  luhn=true  isCreditCard=true
+    5555555555554444  luhn=true  isCreditCard=true
+    378282246310005   luhn=true  isCreditCard=true
+    6011111111111117  luhn=true  isCreditCard=true
+    4111111111111112  luhn=false isCreditCard=false
+    1234567890123456  luhn=false isCreditCard=false
+    0000000000000001  luhn=false isCreditCard=false
+    4111111111111     luhn=false isCreditCard=false
+    41111111111111111 luhn=false isCreditCard=false
+
+  Note : un écart n'est pas forcément un défaut — `isCreditCard` vérifie AUSSI la longueur
+  et le préfixe réseau, ce que Luhn seul ne fait pas. Seul le sens « Luhn faux mais accepté »
+  serait un vrai défaut.
+
+## 5. IBAN (ISO 13616) — mod-97 recalculé ici
+
+    FR1420041010050500013M02606   mod97=true  isIBAN=true
+    GB82WEST12345698765432        mod97=true  isIBAN=true
+    DE89370400440532013000        mod97=true  isIBAN=true
+    FR1420041010050500013M02607   mod97=false isIBAN=false
+    GB82WEST1234569876543         mod97=false isIBAN=false
+    fr1420041010050500013m02606   mod97=true  isIBAN=true
+
+## Bilan des écarts DÉCISIFS
+
+  isEmail  : 13
+  ISO 3166 : 0
+  ISO 4217 : 2
+  IBAN     : 0
