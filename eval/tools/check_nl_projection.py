@@ -155,9 +155,16 @@ def parse_projection(path):
     return blocks, language
 
 
-def check_pair(feature_path, projection_path):
+def check_pair(feature_paths, projection_path):
+    """`feature_paths` : un chemin, ou la liste des .feature du dossier (l'ordre fixe l'ordre
+    attendu des blocs). Un cahier reel porte plusieurs fichiers pour une meme US -- exiger un
+    seul serait une limite de l'outil imposee au produit."""
+    if isinstance(feature_paths, str):
+        feature_paths = [feature_paths]
     problems = []
-    expected = parse_feature(feature_path)
+    expected = []
+    for path in feature_paths:
+        expected.extend(parse_feature(path))
     blocks, language = parse_projection(projection_path)
 
     if language not in LABELS:
@@ -206,10 +213,12 @@ def find_pairs(root="."):
                              if re.match(r"^testbook\.[a-z]{2}\.md$", f))
         if not features or not projections:
             continue
-        if len(features) != 1 or len(projections) != 1:
+        # Un seul rendu par dossier : il projette TOUS les .feature de l'US, dans l'ordre
+        # alphabetique des fichiers. Deux rendus concurrents seraient deux sources.
+        if len(projections) != 1:
             pairs.append((dirpath, features, projections))
             continue
-        pairs.append((os.path.join(dirpath, features[0]),
+        pairs.append(([os.path.join(dirpath, f) for f in features],
                       os.path.join(dirpath, projections[0])))
     return pairs
 
@@ -226,9 +235,9 @@ def main(argv):
     failures, total_scenarios = [], 0
     for pair in pairs:
         if len(pair) == 3:
-            failures.append((pair[0], ["un seul .feature et un seul testbook.<lang>.md par "
-                                       "dossier sont supportes ; trouve %d / %d"
-                                       % (len(pair[1]), len(pair[2]))]))
+            failures.append((pair[0], ["un seul testbook.<lang>.md par dossier ; trouve %d "
+                                       "rendu(s) pour %d fichier(s) .feature"
+                                       % (len(pair[2]), len(pair[1]))]))
             continue
         feature_path, projection_path = pair
         problems, count = check_pair(feature_path, projection_path)

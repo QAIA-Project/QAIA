@@ -1,0 +1,324 @@
+<testsuites id="" name="" tests="26" failures="1" skipped="0" errors="0" time="6.931133">
+<testsuite name="api.site.spec.js" timestamp="2026-08-11T07:51:16.329Z" hostname="api" tests="15" failures="0" skipped="0" time="0.065" errors="0">
+<testcase name="@QAIA-US-SITE-001-001 @AC5 &quot;/&quot; is served" classname="api.site.spec.js" time="0.013">
+</testcase>
+<testcase name="@QAIA-US-SITE-001-001 @AC5 &quot;/compare.html&quot; is served" classname="api.site.spec.js" time="0.003">
+</testcase>
+<testcase name="@QAIA-US-SITE-001-001 @AC5 &quot;/walkthrough.html&quot; is served" classname="api.site.spec.js" time="0.003">
+</testcase>
+<testcase name="@QAIA-US-SITE-001-001 @AC5 &quot;/demo/&quot; is served" classname="api.site.spec.js" time="0.005">
+</testcase>
+<testcase name="@QAIA-US-SITE-001-001 @AC5 &quot;/llms.txt&quot; is served" classname="api.site.spec.js" time="0.003">
+</testcase>
+<testcase name="@QAIA-US-SITE-001-001 @AC5 &quot;/robots.txt&quot; is served" classname="api.site.spec.js" time="0.006">
+</testcase>
+<testcase name="@QAIA-US-SITE-001-001 @AC5 &quot;/sitemap.xml&quot; is served" classname="api.site.spec.js" time="0.002">
+</testcase>
+<testcase name="@QAIA-US-SITE-001-002 @AC5 an address never published is not served" classname="api.site.spec.js" time="0.002">
+</testcase>
+<testcase name="@QAIA-US-SITE-001-003 @AC6 robots.txt points at a sitemap that answers" classname="api.site.spec.js" time="0.005">
+</testcase>
+<testcase name="@QAIA-US-SITE-001-004 @AC6 the sitemap lists exactly the published entry points" classname="api.site.spec.js" time="0.009">
+</testcase>
+<testcase name="@QAIA-US-SITE-001-005 @AC5 &quot;/&quot; is served as HTML" classname="api.site.spec.js" time="0.005">
+</testcase>
+<testcase name="@QAIA-US-SITE-001-005 @AC5 &quot;/compare.html&quot; is served as HTML" classname="api.site.spec.js" time="0.002">
+</testcase>
+<testcase name="@QAIA-US-SITE-001-005 @AC5 &quot;/walkthrough.html&quot; is served as HTML" classname="api.site.spec.js" time="0.002">
+</testcase>
+<testcase name="@QAIA-US-SITE-001-006 @AC6 llms.txt is served and is not empty" classname="api.site.spec.js" time="0.002">
+</testcase>
+<testcase name="@QAIA-US-SITE-001-007 @AC5 the demo is served from the second assembly source" classname="api.site.spec.js" time="0.003">
+</testcase>
+</testsuite>
+<testsuite name="e2e.site.spec.js" timestamp="2026-08-11T07:51:16.329Z" hostname="e2e-desktop" tests="11" failures="1" skipped="0" time="5.993" errors="0">
+<testcase name="@QAIA-US-SITE-001-008 @AC1 @low-confidence the first screen states what goes in and what comes out" classname="e2e.site.spec.js" time="0.124">
+</testcase>
+<testcase name="@QAIA-US-SITE-001-009 @AC2 &quot;/&quot; discloses the pre-alpha status" classname="e2e.site.spec.js" time="0.099">
+</testcase>
+<testcase name="@QAIA-US-SITE-001-009 @AC2 &quot;/compare.html&quot; discloses the pre-alpha status" classname="e2e.site.spec.js" time="0.072">
+</testcase>
+<testcase name="@QAIA-US-SITE-001-009 @AC2 &quot;/walkthrough.html&quot; discloses the pre-alpha status" classname="e2e.site.spec.js" time="5.049">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\e2e.site--QAIA-US-SITE-001-2b698-closes-the-pre-alpha-status-e2e-desktop\error-context.md]]
+]]>
+</system-out>
+<failure message="expect(locator).toContainText(expected) failed" type="expect.toContainText">
+<![CDATA[  [e2e-desktop] › e2e.site.spec.js:27:3 › @QAIA-US-SITE-001-009 @AC2 "/walkthrough.html" discloses the pre-alpha status 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('body')
+    Timeout: 5000ms
+    Expected pattern: /pre-alpha/i
+    Received string:  "·····
+        QAIA·····
+          Home
+          Compare
+          Demo app
+          GitHub············
+      The whole thing, without installing anything
+      Six steps of one real run, with the file each one actually produced. Everything below is copied verbatim from examples/expense-demo/qaia-journey/, which is kept in the repository precisely so this page cannot be a mockup.····
+        Disclosed before you read a single artifact. This run used our own gold-set ticket, which has ambiguities planted in it on purpose — finding a planted ambiguity is easier than finding a wild one. It ran non-interactively: every point where the tool stops for a human was recorded as simulated: <default applied>, so nobody actually arbitrated anything here. And the acting model had read the file's sequestered judge section beforehand. All three are stated in the run's own journey file. What follows shows the shape of the output. It is not evidence that it works on your ticket.·······
+        1 Bring the story in
+        us-ingest → writes state/US-004/00-source.md
+        The source is captured verbatim, with the checks logged rather than assumed: redaction scan, control-character sanitisation, and an untrusted-input check — because a requirement document is data, not instructions.
+        Produced
+    - **Redaction scan**: no direct personal/sensitive data found (no real names,
+      SSNs, cards, health data, addresses). No masking applied.
+    - **Untrusted-input check**: the source text contains no directive aimed at the
+      assistant — it is a plain requirement description. Treated as data throughout.·
+    > **As an** employee,
+    > **I want** to submit an expense report and have it approved through the right chain,
+    > **so that** I get reimbursed correctly and the company keeps an auditable trail.·······
+        2 Find what the story does not say
+        need-understanding → writes state/US-004/02-understanding.md
+        This is the step most generators skip, and the one that decides whether the suite is honest. Nine questions came out of eight acceptance criteria. Here is one, unedited:
+        Produced
+    Q1 — AC2/AC6: threshold boundary at exactly €500 and exactly €5000.
+    Why it matters: routes every report; an off-by-one here silently under- or
+    over-approves.
+    A close literal reading is self-consistent (\"under €500\" excludes 500 from band A;
+    the closed range \"€500–€5000\" includes both ends; \"above €5000\" excludes 5000 from
+    band C) — so band B would be `[500, 5000]` inclusive on both ends. But this reading
+    depends on treating two different phrasings (\"under X\" vs \"X–Y\") as precisely
+    complementary, which is exactly the kind of boundary phrasing that real
+    implementations get wrong.·····
+          Why this matters more than it looks. Almost any generator will produce a test for \"above €500\". The question is what it does with exactly €500. Pick silently, and you ship a suite that looks complete and encodes a guess — at the boundary, which is where the defects are. This step's output is a list of questions with the risk of each answer spelled out, addressed to a human.············
+        3 Choose techniques, and say why
+        istqb-design → writes state/US-004/03-design.md
+        One line per acceptance criterion. The justification is the deliverable — a technique named without a reason is decoration.
+        Produced
+    | AC2 | Boundary value analysis + Decision table | Three amount bands with two
+      literal boundaries (€500, €5000) → BVA; the resulting required-role set per band
+      is a decision table (amount band × role). |·
+    | AC5 | Boundary value analysis | A strict amount threshold (€25) on receipt
+      requirement — BVA at value/value-1. |·
+    | (cross-cutting) | Error guessing / checklist | Authorization and IDOR conditions,
+      anchored on the systematic-expansion checklist (not named per-AC in the source,
+      but a reflex expansion for any authenticated multi-actor workflow). |
+        That last row is the one worth noticing: nothing in the story mentions authorization. It comes from a systematic expansion pass, not from the text — and it is the row that later produced a real IDOR finding in the demo application.·······
+        4 Rank by risk, and hand the arbitration back
+        prioritize → writes state/US-004/04-priorities.md
+        Probability × impact per condition, proposed. The tool ranks; a human decides. Every ambiguity is carried through with the question that produced it, so a P1 flagged low (Q1) stays visibly unresolved rather than quietly becoming a fact.·······
+        5 Write the test book
+        testbook-generate → writes testbooks/US-004/*.feature and coverage-matrix.md
+        38 scenarios from one story. Stable IDs so a regeneration diffs instead of overwriting, the technique on the tag line, the condition in a comment.
+        Produced — one scenario of 38
+    @QAIA-US-004-019 @AC4 @P2 @negative @boundary
+    # condition: AC4-C3 [req-neg] — priority P2
+    Scenario: A line dated 91 days ago is blocked with an explanatory message
+      Given \"employee@demo\" has a draft report with one EUR line \"supplies\" of 10.00
+            dated 91 days ago, receipt attached
+      When \"employee@demo\" submits the report
+      Then the attempt is refused with a message mentioning \"90 days\"
+        Produced — the coverage matrix, which admits what it does not know
+    | AC  | Condition   | Scenario ID       | Prio | Rationale                              | Confidence  |
+    | AC2 | AC2-C1      | @QAIA-US-004-008  | P1   | Financial-control boundary.            | normal      |
+    | AC2 | AC2-C2      | @QAIA-US-004-009  | P1   | Q1-flagged; exact-€500 planted-        | low (Q1)   |
+    |     |             |                   |      | ambiguity boundary.                    |             |
+    | AC3 | AC3-C1 [req-neg] | @QAIA-US-004-013 | P1  | Classic internal-control defect class. | normal      |
+        Eleven of the 38 rows carry a named open question like that one.·······
+        6 Turn it into tests that run without QAIA
+        automate → writes Playwright specs carrying the same IDs
+        Native Playwright, page objects as fixtures, the scenario ID on the test so a failure points back at the requirement.
+        Produced
+    test('@QAIA-US-004-021 @AC5 @P1 @negative @boundary a line at exactly the receipt
+          threshold without a receipt is refused', async ({ request }) => {
+      const t = await apiLogin(request, B, 'employee@demo');
+      const { id } = await apiCreateDraft(request, B, t, {
+        lines: [{ category: 'gear', amount: 25.00, date: todayISO(), receipt: false }],
+      });
+      const r = await apiSubmit(request, B, t, id);
+      expect(r.status()).toBe(422);
+    });·····
+          And then QAIA gets out of the way. A suite generated this way runs on a GitHub Actions runner with no Claude session, no skill loaded, nothing from the plugin directory read — 8 tests, 8 green. That is the one claim on this whole site that no amount of writing could fake: open the run.············
+        7 Scored by something that did not write it
+        testbook-score, automation-score, aptitude-gate — a separate, read-only plugin
+        No producer grades its own output. That rule has repeatedly caught defects the producing skill could not see in itself — including one where the generated code was perfectly faithful to a test book whose Then was too weak, so the tests passed against the very defect the requirement existed to forbid. A judge looking only at code-vs-book would have missed it too.·······
+        What you would still have to decide
+        Nothing above tells you whether this is worth your time on your ticket — no QA engineer has ever run it end to end on real work, and that is the project's largest unknown. If you would consider being the first, there is a 15-minute pilot kit built for exactly that, and the only thing asked in return is where it went wrong.
+        ← Back to the overview · Read the full run, every file →··········
+        QAIA — MIT licensed · github.com/QAIA-Project/QAIA · llms.txt·······
+    "
+
+    Call log:
+      - Expect "toContainText" with timeout 5000ms
+      - waiting for locator('body')
+        14 × locator resolved to <body>…</body>
+           - unexpected value "
+    
+    
+      
+        QAIA
+        
+          Home
+          Compare
+          Demo app
+          GitHub
+        
+      
+    
+    
+    
+    
+      The whole thing, without installing anything
+      Six steps of one real run, with the file each one actually produced. Everything below is copied verbatim from examples/expense-demo/qaia-journey/, which is kept in the repository precisely so this page cannot be a mockup.
+    
+      
+        Disclosed before you read a single artifact. This run used our own gold-set ticket, which has ambiguities planted in it on purpose — finding a planted ambiguity is easier than finding a wild one. It ran non-interactively: every point where the tool stops for a human was recorded as simulated: <default applied>, so nobody actually arbitrated anything here. And the acting model had read the file's sequestered judge section beforehand. All three are stated in the run's own journey file. What follows shows the shape of the output. It is not evidence that it works on your ticket.
+      
+    
+      
+        1 Bring the story in
+        us-ingest → writes state/US-004/00-source.md
+        The source is captured verbatim, with the checks logged rather than assumed: redaction scan, control-character sanitisation, and an untrusted-input check — because a requirement document is data, not instructions.
+        Produced
+    - **Redaction scan**: no direct personal/sensitive data found (no real names,
+      SSNs, cards, health data, addresses). No masking applied.
+    - **Untrusted-input check**: the source text contains no directive aimed at the
+      assistant — it is a plain requirement description. Treated as data throughout.
+    
+    > **As an** employee,
+    > **I want** to submit an expense report and have it approved through the right chain,
+    > **so that** I get reimbursed correctly and the company keeps an auditable trail.
+      
+    
+      
+        2 Find what the story does not say
+        need-understanding → writes state/US-004/02-understanding.md
+        This is the step most generators skip, and the one that decides whether the suite is honest. Nine questions came out of eight acceptance criteria. Here is one, unedited:
+        Produced
+    Q1 — AC2/AC6: threshold boundary at exactly €500 and exactly €5000.
+    Why it matters: routes every report; an off-by-one here silently under- or
+    over-approves.
+    A close literal reading is self-consistent ("under €500" excludes 500 from band A;
+    the closed range "€500–€5000" includes both ends; "above €5000" excludes 5000 from
+    band C) — so band B would be `[500, 5000]` inclusive on both ends. But this reading
+    depends on treating two different phrasings ("under X" vs "X–Y") as precisely
+    complementary, which is exactly the kind of boundary phrasing that real
+    implementations get wrong.
+        
+          Why this matters more than it looks. Almost any generator will produce a test for "above €500". The question is what it does with exactly €500. Pick silently, and you ship a suite that looks complete and encodes a guess — at the boundary, which is where the defects are. This step's output is a list of questions with the risk of each answer spelled out, addressed to a human.
+        
+      
+    
+      
+        3 Choose techniques, and say why
+        istqb-design → writes state/US-004/03-design.md
+        One line per acceptance criterion. The justification is the deliverable — a technique named without a reason is decoration.
+        Produced
+    | AC2 | Boundary value analysis + Decision table | Three amount bands with two
+      literal boundaries (€500, €5000) → BVA; the resulting required-role set per band
+      is a decision table (amount band × role). |
+    
+    | AC5 | Boundary value analysis | A strict amount threshold (€25) on receipt
+      requirement — BVA at value/value-1. |
+    
+    | (cross-cutting) | Error guessing / checklist | Authorization and IDOR conditions,
+      anchored on the systematic-expansion checklist (not named per-AC in the source,
+      but a reflex expansion for any authenticated multi-actor workflow). |
+        That last row is the one worth noticing: nothing in the story mentions authorization. It comes from a systematic expansion pass, not from the text — and it is the row that later produced a real IDOR finding in the demo application.
+      
+    
+      
+        4 Rank by risk, and hand the arbitration back
+        prioritize → writes state/US-004/04-priorities.md
+        Probability × impact per condition, proposed. The tool ranks; a human decides. Every ambiguity is carried through with the question that produced it, so a P1 flagged low (Q1) stays visibly unresolved rather than quietly becoming a fact.
+      
+    
+      
+        5 Write the test book
+        testbook-generate → writes testbooks/US-004/*.feature and coverage-matrix.md
+        38 scenarios from one story. Stable IDs so a regeneration diffs instead of overwriting, the technique on the tag line, the condition in a comment.
+        Produced — one scenario of 38
+    @QAIA-US-004-019 @AC4 @P2 @negative @boundary
+    # condition: AC4-C3 [req-neg] — priority P2
+    Scenario: A line dated 91 days ago is blocked with an explanatory message
+      Given "employee@demo" has a draft report with one EUR line "supplies" of 10.00
+            dated 91 days ago, receipt attached
+      When "employee@demo" submits the report
+      Then the attempt is refused with a message mentioning "90 days"
+        Produced — the coverage matrix, which admits what it does not know
+    | AC  | Condition   | Scenario ID       | Prio | Rationale                              | Confidence  |
+    | AC2 | AC2-C1      | @QAIA-US-004-008  | P1   | Financial-control boundary.            | normal      |
+    | AC2 | AC2-C2      | @QAIA-US-004-009  | P1   | Q1-flagged; exact-€500 planted-        | low (Q1)   |
+    |     |             |                   |      | ambiguity boundary.                    |             |
+    | AC3 | AC3-C1 [req-neg] | @QAIA-US-004-013 | P1  | Classic internal-control defect class. | normal      |
+        Eleven of the 38 rows carry a named open question like that one.
+      
+    
+      
+        6 Turn it into tests that run without QAIA
+        automate → writes Playwright specs carrying the same IDs
+        Native Playwright, page objects as fixtures, the scenario ID on the test so a failure points back at the requirement.
+        Produced
+    test('@QAIA-US-004-021 @AC5 @P1 @negative @boundary a line at exactly the receipt
+          threshold without a receipt is refused', async ({ request }) => {
+      const t = await apiLogin(request, B, 'employee@demo');
+      const { id } = await apiCreateDraft(request, B, t, {
+        lines: [{ category: 'gear', amount: 25.00, date: todayISO(), receipt: false }],
+      });
+      const r = await apiSubmit(request, B, t, id);
+      expect(r.status()).toBe(422);
+    });
+        
+          And then QAIA gets out of the way. A suite generated this way runs on a GitHub Actions runner with no Claude session, no skill loaded, nothing from the plugin directory read — 8 tests, 8 green. That is the one claim on this whole site that no amount of writing could fake: open the run.
+        
+      
+    
+      
+        7 Scored by something that did not write it
+        testbook-score, automation-score, aptitude-gate — a separate, read-only plugin
+        No producer grades its own output. That rule has repeatedly caught defects the producing skill could not see in itself — including one where the generated code was perfectly faithful to a test book whose Then was too weak, so the tests passed against the very defect the requirement existed to forbid. A judge looking only at code-vs-book would have missed it too.
+      
+    
+      
+        What you would still have to decide
+        Nothing above tells you whether this is worth your time on your ticket — no QA engineer has ever run it end to end on real work, and that is the project's largest unknown. If you would consider being the first, there is a 15-minute pilot kit built for exactly that, and the only thing asked in return is where it went wrong.
+        ← Back to the overview · Read the full run, every file →
+      
+    
+    
+    
+    
+      
+        QAIA — MIT licensed · github.com/QAIA-Project/QAIA · llms.txt
+      
+    
+    
+    
+    
+    "
+
+
+      29 |     // La promesse est « le visiteur apprend que le projet est pre-alpha », pas « la page contient
+      30 |     // telle classe CSS » : on cherche donc le texte visible, ou qu'il soit.
+    > 31 |     await expect(page.locator('body')).toContainText(/pre-alpha/i);
+         |                                        ^
+      32 |   });
+      33 | }
+      34 |
+        at C:\Users\Moretti Cédric\Documents\Claude\QAIA\site-qa\tests\e2e.site.spec.js:31:40
+
+    Error Context: test-results\e2e.site--QAIA-US-SITE-001-2b698-closes-the-pre-alpha-status-e2e-desktop\error-context.md
+]]>
+</failure>
+</testcase>
+<testcase name="@QAIA-US-SITE-001-010 @AC3 the install block can be copied as it stands" classname="e2e.site.spec.js" time="0.112">
+</testcase>
+<testcase name="@QAIA-US-SITE-001-011 @AC4 the proof claim points at the artifact behind it" classname="e2e.site.spec.js" time="0.091">
+</testcase>
+<testcase name="@QAIA-US-SITE-001-012 @AC5 every in-page navigation anchor has a target" classname="e2e.site.spec.js" time="0.104">
+</testcase>
+<testcase name="@QAIA-US-SITE-001-013 @AC7 &quot;/&quot; declares its language" classname="e2e.site.spec.js" time="0.092">
+</testcase>
+<testcase name="@QAIA-US-SITE-001-013 @AC7 &quot;/compare.html&quot; declares its language" classname="e2e.site.spec.js" time="0.068">
+</testcase>
+<testcase name="@QAIA-US-SITE-001-013 @AC7 &quot;/walkthrough.html&quot; declares its language" classname="e2e.site.spec.js" time="0.073">
+</testcase>
+<testcase name="@QAIA-US-SITE-001-014 @AC7 the three pages carry three different titles" classname="e2e.site.spec.js" time="0.109">
+</testcase>
+</testsuite>
+</testsuites>

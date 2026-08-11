@@ -83,7 +83,7 @@ def main():
     # Les fixtures rouges doivent rester HORS du perimetre du controle lui-meme, sinon `make check`
     # serait rouge en permanence et la preuve deviendrait une panne.
     in_scope = [p for p in C.find_pairs(".")
-                if any("nl-projection-red" in str(part) for part in p)]
+                if "nl-projection-red" in str(p)]
     if in_scope:
         failures.append("les fixtures rouges sont dans le perimetre du controle : %s" % in_scope)
 

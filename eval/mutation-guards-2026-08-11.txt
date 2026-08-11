@@ -1,27 +1,4 @@
-Campagne mutation sur les garde-fous S38-S40 -- 2026-08-11
-
-## Ce que la PREMIERE passe a trouve, et qui compte plus que le resultat final
-
-Premiere passe : 13 candidates, 13 executees, 12 tuees, **1 SURVIVANTE**.
-
-    [SURVIT] la pile de tags ne remonte plus au-dessus d'un commentaire
-             selfcheck_test_levels.py -> exit=0
-
-Trou reel. La fixture rouge de `check_test_levels.py` ne portait que des scenarios dont les tags
-touchent la ligne `Scenario:`. Or la forme la PLUS COURANTE du depot intercale un commentaire --
-`# condition: AC8-C1`, `# contract: createAppointment · responses.201` -- entre les tags et le
-scenario. Casser la remontee au-dessus d'un commentaire aurait rendu le controle aveugle a la
-moitie des cahiers, et AUCUNE auto-verification ne l'aurait dit.
-
-Corrige : cinquieme cas dans la fixture (tags, commentaire, scenario), que le selfcheck exige
-de voir rester silencieux.
-
-Deuxieme trou, trouve par la meme campagne mais autrement : les regles de `design.byLevel`
-n'avaient d'auto-verification NULLE PART. La campagne a du fabriquer une sonde a la volee pour
-pouvoir muter le validateur -- c'est-a-dire que la regle etait appliquee par le code et prouvee
-par rien de durable. La sonde est devenue `selfcheck_manifest_bylevel.py`, livree et branchee.
-
-## Passe finale, apres les deux corrections
+Campagne mutation sur les garde-foux S38-S40 -- 2026-08-11
 
 Chaque mutation neutralise UNE regle de detection dans un controle.
 TUEE = l'auto-verification du controle passe au rouge. SURVIT = personne ne l'aurait vu.

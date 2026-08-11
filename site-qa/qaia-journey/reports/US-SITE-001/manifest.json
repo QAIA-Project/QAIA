@@ -1,0 +1,121 @@
+{
+  "contract": "1.1",
+  "usId": "US-SITE-001",
+  "title": "The QAIA site decides whether a visitor tries it",
+  "status": "review",
+  "generatedAt": "2026-08-11T00:00:00Z",
+  "base": "qaia-journey",
+  "producers": [
+    {
+      "plugin": "qaia-core",
+      "version": "0.2.6",
+      "skill": "report",
+      "at": "2026-08-11T00:00:00Z"
+    },
+    {
+      "plugin": "qaia-playwright",
+      "version": "0.1.4",
+      "skill": "run-report",
+      "at": "2026-08-11T00:00:00Z"
+    }
+  ],
+  "artifacts": [
+    {
+      "kind": "feature",
+      "format": "gherkin",
+      "path": "testbooks/US-SITE-001/landing-and-navigation.feature"
+    },
+    {
+      "kind": "feature",
+      "format": "gherkin",
+      "path": "testbooks/US-SITE-001/published-contract.feature"
+    },
+    {
+      "kind": "export",
+      "format": "markdown",
+      "path": "testbooks/US-SITE-001/testbook.en.md"
+    },
+    {
+      "kind": "execution",
+      "format": "junit",
+      "path": "reports/US-SITE-001/evidence/junit-run-1-red.xml"
+    },
+    {
+      "kind": "execution",
+      "format": "junit",
+      "path": "reports/US-SITE-001/evidence/junit-run-2-green.xml"
+    }
+  ],
+  "design": {
+    "scenarios": {
+      "total": 26,
+      "byPriority": {
+        "P1": 14,
+        "P2": 4,
+        "P3": 8
+      },
+      "negative": 8,
+      "smoke": 0,
+      "outlines": 4
+    },
+    "byLevel": {
+      "e2e": 11,
+      "api": 15
+    },
+    "coverage": {
+      "acTotal": 7,
+      "acCovered": 7,
+      "reqNegTotal": 6,
+      "reqNegCovered": 6,
+      "negativeRatio": 0.31
+    },
+    "confidence": {
+      "lowConfidence": 1,
+      "openQuestions": 3,
+      "assumptions": 2,
+      "simulated": 0
+    },
+    "techniques": [
+      "ep",
+      "boundary",
+      "pairwise",
+      "error-guessing"
+    ],
+    "oracles": [],
+    "knowledgeApplied": []
+  },
+  "execution": {
+    "total": 26,
+    "passed": 26,
+    "failed": 0,
+    "blocked": 0,
+    "byType": {
+      "api": 15,
+      "e2e-desktop": 11
+    },
+    "traceability": {
+      "scenariosAutomated": 26,
+      "scenariosTotal": 26
+    }
+  },
+  "openArbitrations": [
+    {
+      "id": "Q1",
+      "kind": "open",
+      "about": "« sans faire defiler » n'a pas de definition ; defaut sur 1280x720",
+      "sourceCheckpoint": "state/US-SITE-001/03-design.md"
+    },
+    {
+      "id": "Q2",
+      "kind": "open",
+      "about": "quels fichiers comptent comme points d'entree publies",
+      "sourceCheckpoint": "state/US-SITE-001/03-design.md"
+    },
+    {
+      "id": "Q3",
+      "kind": "open",
+      "about": "les liens externes, hors perimetre par decision",
+      "sourceCheckpoint": "state/US-SITE-001/01-extraction.md"
+    }
+  ]
+}
