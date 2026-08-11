@@ -39,6 +39,17 @@ guessed counts.
    - `03-design.md` and the `# rule: BR-KB-nnn` scenario comments → `design.knowledgeApplied`
      (the knowledge-base rules that shaped the book — the provenance that shows the team's
      own rules were actually applied, not merely available).
+1b. **Count the level tags → `design.byLevel`** (contract 1.1, [ADR 0008](https://github.com/QAIA-Project/QAIA/blob/main/docs/adr/0008-test-level-is-a-design-property.md)). Closed keys
+   `e2e` / `api`, counted on the **same denominator as `scenarios.total`** — an Outline with N
+   `Examples` rows contributes N to its level, exactly as it contributes N to the total. The two
+   must therefore sum to `total`; the shipped validator rejects a manifest where they do not.
+
+   **Emit the block only if every scenario carries a level tag.** A book generated before
+   2026-08-11, or hand-edited, may have scenarios without one: in that case **omit `byLevel`
+   entirely** and say which scenarios lack the tag. The contract makes it optional precisely so
+   that a partial count is never shipped — a `byLevel` covering 18 of 22 scenarios would read as
+   a coverage-by-level statement that nobody established, which is worse than its absence.
+
 2. **Compute the counts** — do not estimate. Every number in the manifest must equal what the
    artifacts contain: the negative ratio is `@negative` blocks / all blocks (the single
    definition given by `testbook-generate`), `reqNegCovered/reqNegTotal` is the negative-path
@@ -55,7 +66,7 @@ guessed counts.
    `sourceCheckpoint`. A non-interactive run surfaces all its `simulated` entries here.
 5. **Write** `.qaia/reports/<US-ID>/manifest.json` (create the directory). On a surface
    without file tooling, emit the JSON as a fenced block and tell the user where to save it.
-6. **Report** the headline line to the user: US-ID, scenarios by priority, AC coverage,
+6. **Report** the headline line to the user: US-ID, scenarios by priority, **by level**, AC coverage,
    negative-path gate (`reqNegCovered/reqNegTotal`), open arbitrations count — and remind
    them the `gate` verdict is filled by `qaia-score`, not here.
 

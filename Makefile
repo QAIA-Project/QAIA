@@ -25,6 +25,8 @@ check: ## Lance tous les controles que la CI lance (skills, provenance, outillag
 	python eval/tools/selfcheck_markdown_shell_hook.py
 	python eval/tools/selfcheck_gherkin_dialect.py
 	python eval/tools/selfcheck_rule3.py
+	python eval/tools/check_test_levels.py
+	python eval/tools/selfcheck_test_levels.py
 	# La CI balaie `find plugins eval -name 'manifest*.json'` ; il n'existe aucun
 	# manifest*.json sous `plugins/`, donc les deux perimetres sont equivalents en pratique.
 	# J'y avais ajoute `--batch plugins` « pour qu'ils le restent » : l'outil sort 2 sur un

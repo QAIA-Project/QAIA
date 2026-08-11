@@ -59,6 +59,23 @@ Two architectural choices are fixed, not renegotiated per run:
 ## Steps
 
 1. **Map** each scenario to a test: parse its `Given/When/Then`, its tags, its `# condition` comment. One `When` = one action.
+
+1b. **Read the level tag — do not infer it** ([ADR 0008](https://github.com/QAIA-Project/QAIA/blob/main/docs/adr/0008-test-level-is-a-design-property.md)). Each scenario carries exactly one of
+   `@e2e` / `@api`, assigned and justified by `istqb-design` back at the condition. **That tag
+   decides the Playwright project**: `@api` → the request-context project, no browser engine;
+   `@e2e` → the desktop project (plus the mobile-emulation project where the compatibility
+   reference says the engine can change the answer).
+
+   Until 2026-08-11 this skill decided the level itself, from the wording of the steps. That
+   heuristic survives as a **cross-check, never as the decision**: when the shape of a scenario
+   disagrees with its tag — a `@api` scenario whose steps only describe a screen, a `@e2e`
+   scenario that is purely a request and a status — **report the disagreement against that
+   scenario ID and stop for the user's call.** Do not silently route it to the project the shape
+   suggests, and do not edit the tag: the test book is the source of truth, so a wrong tag is
+   fixed upstream in the book, then the suite is regenerated.
+
+   A scenario with no level tag is a book that predates ADR 0008 or was hand-edited: say so and
+   offer to run `testbook-generate` rather than guessing on its behalf.
 2. **Testability precheck (CTAL-TAE) — before generating anything.** Assess the SUT's own
    testability rather than silently generating against whatever is there:
 

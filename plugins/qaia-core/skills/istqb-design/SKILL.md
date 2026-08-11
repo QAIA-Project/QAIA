@@ -77,6 +77,25 @@ what was considered and excluded: `references/technique-notes.md`.
    partitions with representative values, boundaries (value, value±1), decision-table columns,
    transition pairs (valid **and** at least one invalid). This list is the input contract of
    `testbook-generate` — conditions, not scenarios yet.
+2b. **Assign each condition its test level, and justify it** ([ADR 0008](https://github.com/QAIA-Project/QAIA/blob/main/docs/adr/0008-test-level-is-a-design-property.md)).
+   Exactly one of `e2e` or `api` per condition, on the same criterion [ADR 0004](https://github.com/QAIA-Project/QAIA/blob/main/docs/adr/0004-test-level-boundary.md) already
+   uses for the scope boundary — **the interface through which the promise is observable**:
+
+   | Level | The promise is observable… | Typical source |
+   |---|---|---|
+   | `api` | in HTTP, without a browser — status, body, header, effect on a resource | a clause of an OpenAPI/Swagger contract, a documented endpoint behavior |
+   | `e2e` | only through the user interface — a journey, a rendering, a visible screen state | an AC phrased in terms of what the user sees or does |
+
+   Write it as `[level: api]` next to the condition in `03-design.md`, with the one-sentence
+   justification. **A condition that seems to need both is two conditions** — split it here, where
+   it is cheap, rather than leaving `testbook-generate` to emit a scenario that cannot carry one
+   level tag.
+
+   This decision belongs here and nowhere else. Until 2026-08-11 it was made by `automate`, at the
+   far end of the chain, from the wording of the generated steps — so the test book could not say
+   what it covered per level, and the ADR 0001 gate below could count a contract refusal as covered
+   by a UI scenario that never touched the contract.
+
 3. **Negative pressure — the refusal-path coverage gate.** For every rule that can refuse, error
    or deny, mark the corresponding condition as a **required-negative** (`[req-neg]` in
    `03-design.md`). These are what the coverage gate enforces downstream: **not a percentage, a

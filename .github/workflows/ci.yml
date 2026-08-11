@@ -248,6 +248,18 @@ jobs:
       - name: Lecture du Gherkin -- dialecte `*` et comptage des Examples
         run: python eval/tools/selfcheck_gherkin_dialect.py
 
+      # ADR 0008 : le niveau de test (@e2e | @api) est decide par `istqb-design` et porte par le
+      # scenario. `gherkin-lint` ne sait pas exiger une etiquette -- ses regles de tags disent ce
+      # qui est permis, jamais ce qui est obligatoire -- donc la regle serait restee une intention.
+      # Le controle est livre avec sa fixture rouge et l'auto-verification qui la voit rouge : ce
+      # depot a deja eu deux portes vertes a vide (2026-07-30, 2026-08-10), les deux fois parce
+      # que rien n'exercait la panne que la cible pretendait attraper.
+      - name: Niveau de test declare sur chaque scenario (ADR 0008)
+        run: |
+          set -e
+          python eval/tools/check_test_levels.py
+          python eval/tools/selfcheck_test_levels.py
+
       - name: README version claims match the plugin manifests
         run: |
           set -e

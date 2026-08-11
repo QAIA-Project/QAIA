@@ -187,6 +187,30 @@ def validate_design(design, errors):
     by_pri = sc.get("byPriority", {})
     for pri in ("P1", "P2", "P3"):
         check_int(by_pri.get(pri), f"{path}.scenarios.byPriority.{pri}", errors, minimum=0)
+    # `byLevel` (contrat 1.1, ADR 0008) : le niveau decide a la CONCEPTION. Optionnel -- les
+    # manifestes 1.0 restent valides -- mais tout-ou-rien quand il est la, exactement comme le
+    # bloc `design` lui-meme (regle "all-or-nothing" du contrat). Un `byLevel` partiel dirait
+    # une couverture par niveau que personne n'a etablie, ce qui est pire que son absence.
+    if "byLevel" in design:
+        by_lvl = design.get("byLevel")
+        if not isinstance(by_lvl, dict):
+            err(errors, f"{path}.byLevel", "expected object")
+        else:
+            unknown = sorted(set(by_lvl) - {"e2e", "api"})
+            if unknown:
+                err(errors, f"{path}.byLevel",
+                    f"closed key set is {{e2e, api}} (ADR 0008); unknown key(s): {unknown}")
+            for lvl in ("e2e", "api"):
+                check_int(by_lvl.get(lvl), f"{path}.byLevel.{lvl}", errors, minimum=0)
+            total = sc.get("total")
+            summed = sum(v for v in (by_lvl.get("e2e"), by_lvl.get("api"))
+                         if isinstance(v, int) and not isinstance(v, bool))
+            if isinstance(total, int) and not isinstance(total, bool) and not unknown \
+                    and all(isinstance(by_lvl.get(l), int) for l in ("e2e", "api")) \
+                    and summed != total:
+                err(errors, f"{path}.byLevel",
+                    f"sum is {summed} but design.scenarios.total is {total} -- every scenario "
+                    f"carries exactly one level tag (ADR 0008), so the two must match")
     cov = design.get("coverage", {})
     for field in ("acTotal", "acCovered", "reqNegTotal", "reqNegCovered"):
         check_int(cov.get(field), f"{path}.coverage.{field}", errors, minimum=0)

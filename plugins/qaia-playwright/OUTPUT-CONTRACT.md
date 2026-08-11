@@ -31,11 +31,11 @@ producer — fix the source, re-project the manifest, never hand-edit the manife
    source text, credentials, environment URLs, or personal data. PII masking (shared
    contract rule 5) has already happened upstream; the manifest only ever sees placeholders.
 
-## Schema (contract 1.0)
+## Schema (contract 1.1)
 
 ```jsonc
 {
-  "contract": "1.0",                       // SemVer of THIS schema
+  "contract": "1.1",                       // SemVer of THIS schema
   "usId": "US-001",                        // journey key (shared contract)
   "title": "Appointment booking",          // short, non-sensitive
   "status": "review",                       // draft | review | validated
@@ -65,6 +65,11 @@ producer — fix the source, re-project the manifest, never hand-edit the manife
     // l'export comptait les cas, et `aptitude-gate` decidait d'une release sur le premier des
     // deux sans que rien ne dise lequel (2026-08-10). Un cahier de 10 Outlines a 6 exemples fait
     // 60 et non 10 ; tout ratio (negatif, confiance) se calcule sur ce denominateur.
+    "byLevel": { "e2e": 14, "api": 8 },     // 1.1 — ADR 0008, the level DESIGNED per scenario
+    // Cles fermees : `e2e` | `api`, rien d'autre. Somme == `scenarios.total`, meme denominateur
+    // que ci-dessus (un Outline a N exemples compte N). C'est le pendant conception de
+    // `execution.byType` : sans lui, byType est le rangement de l'automaticien et ne se compare
+    // a aucune intention. Optionnel en 1.1 pour ne pas invalider les manifestes 1.0 existants.
     "coverage": { "acTotal": 6, "acCovered": 6,
                   "reqNegTotal": 7, "reqNegCovered": 7,   // ADR 0001 — the real gate
                   "negativeRatio": 0.41 },                 // D20 — reported signal, not a gate
@@ -113,6 +118,12 @@ producer — fix the source, re-project the manifest, never hand-edit the manife
   **not** change `status` — a human does.
 - **`design.coverage.reqNegCovered / reqNegTotal`** is the ADR 0001 negative-path gate (the
   one that blocks). **`negativeRatio`** is the D20 signal — reported, never a threshold.
+- **`design.byLevel`** (1.1, [ADR 0008](https://github.com/QAIA-Project/QAIA/blob/main/docs/adr/0008-test-level-is-a-design-property.md)) carries the level **decided at design time** by
+  `istqb-design` and tagged by `testbook-generate` — closed keys `e2e` / `api`, summing to
+  `design.scenarios.total`. It is the design-side counterpart of `execution.byType`: comparing the
+  two is what makes "12 API conditions designed, 4 automated" sayable, which no QAIA artifact could
+  say before. **Optional**, so 1.0 manifests stay valid; when present it must be complete and
+  consistent — a partial or non-summing `byLevel` is an error, not a hint.
 - **`design` is optional, but all-or-nothing.** Omit it entirely when there is no test book
   (a run-only or traffic-only manifest); do **not** ship a partial `design` block. Two shipped
   fixtures did exactly that and failed this contract's own validator for months (skill-eval
@@ -216,6 +227,11 @@ it needs. Recommended reads:
 - **1.0** — initial contract: `design`, `execution`, `gate`, `openArbitrations`, provenance,
   and `design.knowledgeApplied` (the RAG-in-use provenance, D38). Introduced together
   pre-release, so this is one 1.0 surface rather than a 1.0→1.1 step.
+- **1.1** (2026-08-11) — `design.byLevel`, the test level decided at design time
+  ([ADR 0008](https://github.com/QAIA-Project/QAIA/blob/main/docs/adr/0008-test-level-is-a-design-property.md)). **Additive and optional**: every 1.0 manifest remains valid and no
+  consumer is required to read it. Minor bump per rule 3. Motive: `execution.byType` had shipped
+  in 1.0 with an `api` key that nothing on the design side ever produced — the contract described a
+  split the chain never decided.
 
 Changes are logged here and in [`docs/DECISIONS.md`](https://github.com/QAIA-Project/QAIA/blob/main/docs/DECISIONS.md). A consumer that needs a field a producer
 did not write treats it as absent (degraded mode, shared contract rule 8), never as an error.

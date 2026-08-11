@@ -179,6 +179,25 @@
             }
           }
         },
+        "byLevel": {
+          "type": "object",
+          "description": "Contract 1.1 (ADR 0008) -- the test level decided at DESIGN time, closed keys, summing to design.scenarios.total. Optional so 1.0 manifests stay valid; when present it must be complete.",
+          "required": [
+            "e2e",
+            "api"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "e2e": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "api": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
         "coverage": {
           "type": "object",
           "description": "reqNegCovered/reqNegTotal is the ADR 0001 gate (blocking). negativeRatio (D20) is a reported signal, never a threshold.",

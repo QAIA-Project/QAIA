@@ -28,9 +28,17 @@ Follow the shared contract in `../README.md`. Prerequisites: `03-design.md` and
 - **Preconditions are declarative** ("Given a patient with 3 upcoming appointments"), never a
   click-path. Data seeding belongs to the automation layer: generated tests must run standalone
   outside the session, and environment or credential details never enter the test book.
+- **Test level — exactly one tag per scenario, from the closed list `@e2e` / `@api`**
+  ([ADR 0008](https://github.com/QAIA-Project/QAIA/blob/main/docs/adr/0008-test-level-is-a-design-property.md)). The level is **read from the condition** in `03-design.md`, where
+  `istqb-design` assigned and justified it — it is never re-derived here from the wording of the
+  steps. The criterion, for reference: `@api` when the promise is a clause of the service
+  contract, observable in HTTP without a browser; `@e2e` when it is only observable through the
+  user interface. The `@smoke` journey scenario crosses the UI by definition and carries `@e2e`.
+  **Never two level tags on one scenario** — a scenario needing both verifies two promises through
+  two interfaces, which is an atomicity defect to split, not a tag to add.
 - **Stable IDs** — every scenario tagged `@QAIA-<US-ID>-<NNN>`, NNN never reused even after
   deletion. Plus: `@AC<n>` (traceability), `@P1/@P2/@P3` (priority), `@negative` where
-  applicable, and **exactly one** technique tag from the closed list:
+  applicable, the level tag above, and **exactly one** technique tag from the closed list:
   `@ep @boundary @domain-analysis @decision-table @state-transition @pairwise @crud
   @metamorphic @ai-feature @error-guessing`.
   The single journey scenario carries `@smoke` instead of a technique tag. `@use-case` is
@@ -76,7 +84,9 @@ substance and rejected by the linter** — every cause was a convention this fil
    Feature: <name>                          <- column 0
                                             <- blank line
      # AC1 — <comment, optional>            <- column 2
-     @QAIA-US-004-001 @AC1 @P1              <- column 2, tags on their own line
+     @QAIA-US-004-001 @AC1 @P1 @e2e @ep     <- column 2, tags on their own line
+                                            <-   level tag (@e2e|@api) and technique tag
+                                            <-   are both mandatory, exactly one each
      Scenario: <name>                       <- column 2
        Given <...>                          <- column 4
        When <...>                           <- column 4
