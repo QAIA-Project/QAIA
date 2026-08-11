@@ -146,17 +146,45 @@ coûté trois publications sur quatre.
   politique de sécurité — et un bot ferme toute issue qui ne passe pas par là. #7703 et #7704 ont
   été fermées, étiquetées `invalid-format`. Corps réécrits au format depuis ; **le dépôt ne laisse
   pas l'auteur rouvrir** ce que son bot a fermé.
-- **`pocketbase/pocketbase`** n'a pas de gabarit, mais son `CONTRIBUTING.md` porte un encadré :
-  *« Due to recent LLM spam… LLM contributions are not welcome »*. #7801 a été **supprimée**, et
-  c'était leur droit. Le constat technique tient ; il n'a rien à faire chez eux sous cette forme.
+- **`pocketbase/pocketbase`** n'a pas de gabarit. Son `CONTRIBUTING.md` porte un encadré, et il
+  faut le citer en entier parce que ma première lecture en a tiré la mauvaise conclusion :
+
+  > *« Due to recent LLM spam, **PRs are temporary disabled** and only existing collaborators can
+  > open a PR. If you stumble on a problem that you want to fix, **please consider instead opening
+  > an issue or discussion** with link to your fork *(if not obvious - LLM contributions are not
+  > welcome)*. »*
+
+  **Ce texte n'interdit pas les issues — il en invite explicitement.** Ce qu'il ferme, ce sont les
+  PR. J'en avais conclu « ne rien déposer chez eux », ce qui est faux et ce qui aurait privé le
+  projet d'un canal que le mainteneur ouvre lui-même.
+
+  Ce qui reste vrai : la parenthèse vise les contributions produites par un outil, et **#7801 a été
+  SUPPRIMÉE, pas fermée**. Un mainteneur qui efface a tranché sans ambiguïté, et ce geste pèse plus
+  lourd que ma façon de lire sa parenthèse. Le constat technique tient ; c'est sa **rédaction par
+  un outil** qui n'a rien à faire là, pas le fait de le signaler.
 
 **La divulgation n'était pas l'erreur.** Chaque corps publié se terminait par une note disant d'où
 venait le constat — c'est ce qui a rendu la provenance visible, et c'est délibéré : la cacher aurait
-été pire, et c'est exactement ce que ce mainteneur combat (*« if not obvious »*). L'erreur est
-d'avoir publié sans lire ce que la cible demande.
+été pire, et c'est exactement ce que ce mainteneur combat (*« if not obvious »*).
+
+## La règle, corrigée
+
+Le premier jet de ce protocole disait « lire la politique de contribution **et s'abstenir** si elle
+mentionne les LLM ». C'est une sur-lecture, et elle coûte plus qu'elle ne protège : appliquée à
+PocketBase, elle ferme un canal que le mainteneur ouvre en toutes lettres.
+
+**La règle utile est en deux temps :**
+
+1. **Lire la politique, et distinguer ce qu'elle INTERDIT de ce qu'elle INVITE.** « PRs disabled,
+   open an issue instead » n'est pas une porte fermée : c'est une porte déplacée.
+2. **Ce qui est refusé n'est pas le constat, c'est sa rédaction automatique.** Un constat reproduit
+   et réécrit par un humain qui l'a vérifié lui-même est une contribution ordinaire. C'est le
+   chemin à prendre quand la politique de la cible écarte les contributions produites par un outil
+   — pas l'abstention.
 
 **On vérifie ce qu'on sait devoir vérifier, pas ce que la cible impose.** C'est la même classe que
-les trois périmètres faux du matin.
+les trois périmètres faux du matin — et la sur-lecture qui a suivi est la même faute au miroir :
+appliquer une règle sans vérifier ce qu'elle recouvre.
 
 ## Ce qui n'est pas publiable, et pourquoi c'est écrit ici
 

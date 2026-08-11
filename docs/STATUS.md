@@ -55,14 +55,21 @@ validator.js d'accepter les injections CRLF. 37 cas sur 163 marqués inutilisabl
 vérifie. J'ai publié par l'API sans le suivre. Corps réécrit au format depuis, mais **le dépôt ne
 laisse pas l'auteur rouvrir** ce que son bot a fermé.
 
-`pocketbase` écrit dans son `CONTRIBUTING.md` : *« Due to recent LLM spam… LLM contributions are
-not welcome »*. **Je ne l'avais pas lu.** L'issue a été supprimée, et c'était leur droit. Le
-constat technique tient ; il n'a rien à faire chez eux sous cette forme.
+`pocketbase` écrit dans son `CONTRIBUTING.md` que **les PR sont désactivées** à cause du spam LLM
+et invite explicitement à *« opening an issue or discussion »* à la place, avec la parenthèse
+*« if not obvious - LLM contributions are not welcome »*. **Je ne l'avais pas lu.** L'issue a été
+**supprimée** — pas fermée — et c'était leur droit.
+
+**Et ma première correction était elle-même fausse** : j'en avais conclu « ne rien déposer chez
+eux », alors que le texte ouvre le canal des issues. La sur-lecture aurait fermé une porte que le
+mainteneur tient ouverte. Ce qui est refusé n'est pas le constat, c'est sa **rédaction par un
+outil**.
 
 **La leçon dépasse les deux cas** : j'ai vérifié l'antériorité des *constats* toute la journée — six
-recherches avant chaque publication — et jamais la **politique de contribution** de la cible. On
-vérifie ce qu'on sait devoir vérifier, pas ce que la cible impose. Le protocole de campagne porte
-désormais l'étape manquante.
+recherches avant chaque publication — et jamais la **politique de contribution** de la cible. Puis,
+l'ayant enfin lue, je l'ai appliquée sans vérifier ce qu'elle recouvrait. Deux fautes au miroir. Le
+protocole porte désormais l'étape manquante **et** sa nuance : lire la politique, et distinguer ce
+qu'elle interdit de ce qu'elle invite.
 
 ---
 
