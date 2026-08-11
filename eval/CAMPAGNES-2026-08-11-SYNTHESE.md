@@ -1,4 +1,4 @@
-# Trois campagnes sur du logiciel réel — deux constats publiables, après seize qui ne l'étaient pas
+# Trois campagnes sur du logiciel réel — quatre constats publiables, après seize qui ne l'étaient pas
 
 **2026-08-11.** Après deux échecs de la journée sur des bibliothèques de fonctions pures (zéro
 défaut, seize constats bruts effondrés à la vérification), changement de classe de cible :
@@ -6,7 +6,7 @@ défaut, seize constats bruts effondrés à la vérification), changement de cla
 C'est la forme exacte de la campagne json-server — la seule qui ait jamais produit un effet
 externe dans ce projet.
 
-**Ça a marché.** Deux constats confirmés, reproduits indépendamment, sans antériorité.
+**Ça a marché.** Quatre constats confirmés, reproduits indépendamment, sans antériorité — sur les trois cibles.
 
 ---
 
@@ -63,6 +63,52 @@ Même contrat documenté, deux comportements, dans la même page de référence.
 schémas et clients générés — mais le constat est net et **vérifié indépendamment**.
 **Antériorité** : non trouvée.
 
+### Uptime Kuma — deux constats, et c'est la campagne la plus productive
+
+**Version** : 2.5.0, commit `d9a60df`, publiée le 2026-08-01. Installée, construite et exécutée
+**deux fois indépendamment** — une fois par la campagne, une fois par moi sur un clone neuf.
+
+**D-1 — `responseMaxLength = 0` détruit la réponse au lieu de ne pas la tronquer.**
+
+Le produit affiche à l'utilisateur, dans sa propre chaîne de traduction :
+
+> *« Maximum size of response data to store. **Set to 0 for unlimited.** Larger responses will
+> be truncated. Default: 1024 (1KB) »*
+
+Le champ du formulaire est un `type="number"` que rien n'empêche de mettre à 0. Résultat mesuré
+sur mon clone, corps de 10 caractères **et** de 5 000 :
+
+```
+responseMaxLength=0,    corps 10 chars   -> stocké : "... (truncated)"   0 caractère conservé
+responseMaxLength=0,    corps 5000 chars -> stocké : "... (truncated)"   0 caractère conservé
+responseMaxLength=1024, corps 10 chars   -> stocké : "xxxxxxxxxx"        témoin correct
+```
+
+**« Illimité » signifie « rien ».** Antériorité : les seuls résultats sont les PR qui ont *ajouté*
+la fonctionnalité (#6684, #6192, #6691) — aucun rapport de ce défaut.
+
+**D-2 — une maintenance récurrente saute sa première occurrence si la plage de validité commence
+le jour même.**
+
+Mécanisme **isolé hors du produit**, en trois lignes, sur `croner` 8.1.2 tel que livré :
+
+```js
+new Cron('55 14 * * *', {startAt: 2026-08-11T14:55}).nextRun(depuis 14:54)  ->  2026-08-12
+new Cron('55 14 * * *', {startAt: 2026-08-10T14:55}).nextRun(depuis 14:54)  ->  2026-08-11
+```
+
+`startAt` est une borne **stricte**. Or le produit construit `startAt` à la date de début de
+validité + l'heure de la fenêtre : il tombe donc exactement sur la première occurrence, qui est
+sautée. **Et le formulaire initialise la plage de validité à « maintenant »** — c'est le chemin
+par défaut.
+
+Aucune erreur n'est levée, le statut affiché reste « Scheduled » : l'utilisateur croit sa fenêtre
+en place, et **les notifications ne sont pas suspendues pendant l'intervention**.
+
+*Précision sur ce que j'ai vérifié moi-même* : le **mécanisme**, ci-dessus. Le comportement de
+bout en bout vient de la campagne, qui l'a établi par un A/B côte à côte avec journal serveur
+horodaté. Antériorité : zéro résultat sur le symptôme, chez elle comme chez moi.
+
 ---
 
 ## Ce qui n'est pas publiable, et pourquoi c'est écrit ici
@@ -87,7 +133,7 @@ seize mois** (#6647, fermé : *« not how it is supposed to work »*).
 | | |
 |---|---|
 | Constats bruts sur du logiciel tiers | **~30** |
-| Publiables après vérification | **2** |
+| Publiables après vérification | **4** |
 | Effondrés : notre propre corpus faux | 12 |
 | Effondrés : comportement documenté | 8 |
 | Effondrés : déjà rapportés en amont | 3 |
@@ -103,7 +149,7 @@ c'est exactement la proportion que la passe de réfutation de ce dépôt existe 
 | Terrain | Résultat |
 |---|---|
 | Fonction pure implémentant une norme publiée | **0 défaut**, deux campagnes |
-| Application avec état, promesse en prose | **2 défauts**, deux campagnes sur trois |
+| Application avec état, promesse en prose | **4 défauts**, sur les **trois** campagnes |
 
 Une fonction pure dans une bibliothèque à 23 000 étoiles n'a ni état, ni concurrence, ni
 intégration, ni configuration — et sa spécification est une norme ISO, donc il n'y a rien à
@@ -116,7 +162,8 @@ qu'il était facile à lancer.**
 |---|---|
 | [`pocketbase-2026-08-11/`](pocketbase-2026-08-11/) | ~60 affirmations éprouvées, 64 vérifications, `repro.js` autonome |
 | [`meilisearch-2026-08-11/`](meilisearch-2026-08-11/) | 45 vérifications sur seuils chiffrés, filtres, pagination |
+| [`uptime-kuma-2026-08-11/`](uptime-kuma-2026-08-11/) | 15 promesses éprouvées, 17 sondes rejouables, cible HTTP locale pilotable |
 | [`oracle-vs-validatorjs-2026-08-11/`](oracle-vs-validatorjs-2026-08-11/) | Les deux campagnes à zéro défaut, et l'analyse de pourquoi |
 
-**Rien n'a été publié en amont.** Les deux constats attendent une décision explicite du fondateur,
+**Rien n'a été publié en amont.** Les quatre constats attendent une décision explicite du fondateur,
 sous son identité GitHub.

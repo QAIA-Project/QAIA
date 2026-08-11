@@ -1,0 +1,371 @@
+Uptime Kuma 2.5.0 (commit d9a60dfc73140d15111752e4e8910ed4b54bd9a3) — transcriptions des sondes
+Campagne du 2026-08-11. Hote : Windows 11 26200.8973, Node v24.13.0, npm 11.6.2, croner 8.1.2.
+Instance : http://127.0.0.1:3001 (HOST=127.0.0.1 PORT=3001 DATA_DIR=/c/uk-eval/data UPTIME_KUMA_DB_TYPE=sqlite)
+Cible controlee : http://127.0.0.1:3999 (probe/target.js). Aucun moniteur hors 127.0.0.1.
+
+================================================================
+== p1-N0-run1.txt
+================================================================
+monitor 2 maxretries=0 interval=20 retryInterval=20
+UP established at +0.3s
+target switched to 500 at +0.3s
+--- beats after failure injection ---
+  +-0.3s UP important=true msg="200 - OK"
+  +19.8s DOWN important=true msg="Request failed with status code 500"
+RESULT maxretries=0: pendingBeats=0 expectedPending=0 firstDown=yes downImportant=true
+
+================================================================
+== p1-N2-run1.txt
+================================================================
+monitor 1 maxretries=2 interval=20 retryInterval=20
+UP established at +0.3s
+target switched to 500 at +0.3s
+--- beats after failure injection ---
+  +-0.3s UP important=true msg="200 - OK"
+  +19.8s PENDING important=false msg="Request failed with status code 500"
+  +39.8s PENDING important=false msg="Request failed with status code 500"
+  +59.8s DOWN important=true msg="Request failed with status code 500"
+RESULT maxretries=2: pendingBeats=2 expectedPending=2 firstDown=yes downImportant=true
+  pending spacing (s): 20.0
+  lastPending->DOWN gap (s): 20.0
+
+================================================================
+== p1-N2-i60-r20-run1.txt
+================================================================
+monitor 3 maxretries=2 interval=60 retryInterval=20
+UP established at +0.3s
+target switched to 500 at +0.3s
+--- beats after failure injection ---
+  +-0.3s UP important=true msg="200 - OK"
+  +59.8s PENDING important=false msg="Request failed with status code 500"
+  +79.8s PENDING important=false msg="Request failed with status code 500"
+  +99.8s DOWN important=true msg="Request failed with status code 500"
+RESULT maxretries=2: pendingBeats=2 expectedPending=2 firstDown=yes downImportant=true
+  pending spacing (s): 20.0
+  lastPending->DOWN gap (s): 20.0
+
+================================================================
+== p2-t5-run1.txt
+================================================================
+monitor 4 timeout=5s — UP established
+request sent at 2026-08-11T12:27:29.924Z; DOWN beat received 5.02s later
+DOWN msg = "timeout of 5000ms exceeded"
+RESULT: declared timeout 5s, observed 5.02s, delta 0.02s
+
+================================================================
+== p2-t12-run1.txt
+================================================================
+monitor 5 timeout=12s — UP established
+request sent at 2026-08-11T12:27:57.817Z; DOWN beat received 12.02s later
+DOWN msg = "timeout of 12000ms exceeded"
+RESULT: declared timeout 12s, observed 12.02s, delta 0.02s
+
+================================================================
+== p3-run1.txt
+================================================================
+target: HTTP 503, body {"k":"a needle in the body"}
+
+OK   status 503 vs accepted 200-299
+       expected=DOWN got=DOWN msg="Request failed with status code 503"
+OK   status 503 vs accepted 500-599
+       expected=UP got=UP msg="503 - Service Unavailable"
+OK   status 503 vs accepted 503
+       expected=UP got=UP msg="503 - Service Unavailable"
+OK   status 503 vs accepted 502
+       expected=DOWN got=DOWN msg="Request failed with status code 503"
+OK   upsideDown, reachable+accepted(500-599)
+       expected=DOWN got=DOWN msg="Flip UP to DOWN"
+OK   upsideDown, reachable+rejected(200-299)
+       expected=UP got=UP msg="Request failed with status code 503"
+OK   keyword 'needle' present (case exact)
+       expected=UP got=UP msg="503 - Service Unavailable, keyword is found"
+OK   keyword 'NEEDLE' wrong case -> case-sensitive
+       expected=DOWN got=DOWN msg="503 - Service Unavailable, but keyword is not in [{\"k\":\"a needle in the body\"}]"
+OK   keyword 'needle' inverted
+       expected=DOWN got=DOWN msg="503 - Service Unavailable, but keyword is present in [{\"k\":\"a needle in the body\"}]"
+OK   keyword 'absent' inverted
+       expected=UP got=UP msg="503 - Service Unavailable, keyword not found"
+
+RESULT: 10/10 conform
+Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), file src\win\async.c, line 76
+
+================================================================
+== p4-r2-run1.txt
+================================================================
+notification id 1
+monitor 16 resendInterval=2 interval=20s
+
+DOWN beats (7):
+  #1 +19.8s
+  #2 +39.8s
+  #3 +59.8s
+  #4 +79.8s
+  #5 +99.8s
+  #6 +119.8s
+  #7 +139.8s
+webhook deliveries (4):
+  #1 +19.8s
+  #2 +59.8s
+  #3 +99.8s
+  #4 +139.8s
+
+deliveries fired on DOWN beat numbers: [1, 3, 5, 7]
+expected (initial, then every 2): [1, 3, 5, 7]
+RESULT: CONFORM
+
+================================================================
+== p5-run1.txt
+================================================================
+server local time: Tue Aug 11 2026 14:33:06 GMT+0200 (heure d’été d’Europe centrale)
+
+DIFF manual, active
+       maintenance.status=under-maintenance firstBeat=UP expected=MAINTENANCE msg="200 - OK"
+OK   manual, inactive
+       maintenance.status=inactive firstBeat=UP expected=UP msg="200 - OK"
+DIFF single window covering now
+       maintenance.status=under-maintenance firstBeat=UP expected=MAINTENANCE msg="200 - OK"
+OK   single window in the future
+       maintenance.status=scheduled firstBeat=UP expected=UP msg="200 - OK"
+OK   single window already ended
+       maintenance.status=ended firstBeat=UP expected=UP msg="200 - OK"
+INFO single window covering now but declared in UTC
+       maintenance.status=scheduled firstBeat=UP expected=depends on server tz msg="200 - OK"
+
+RESULT: 2 deviation(s) among the 5 decidable cases
+
+================================================================
+== p5-run2.txt
+================================================================
+server local time: Tue Aug 11 2026 14:33:28 GMT+0200 (heure d’été d’Europe centrale)
+
+OK   manual, active
+       maintenance.status=under-maintenance firstBeat=MAINTENANCE expected=MAINTENANCE msg="Monitor under maintenance"
+OK   manual, inactive
+       maintenance.status=inactive firstBeat=UP expected=UP msg="200 - OK"
+OK   single window covering now
+       maintenance.status=under-maintenance firstBeat=MAINTENANCE expected=MAINTENANCE msg="Monitor under maintenance"
+OK   single window in the future
+       maintenance.status=scheduled firstBeat=UP expected=UP msg="200 - OK"
+OK   single window already ended
+       maintenance.status=ended firstBeat=UP expected=UP msg="200 - OK"
+INFO single window covering now but declared in UTC
+       maintenance.status=scheduled firstBeat=UP expected=depends on server tz msg="200 - OK"
+
+RESULT: 0 deviation(s) among the 5 decidable cases
+
+================================================================
+== p6-run1.txt
+================================================================
+=== A. maxredirects ===
+OK   chain of 2 redirects, maxredirects=0 (documented: redirects disabled)
+       expected=DOWN got=DOWN msg="Request failed with status code 302"
+OK   chain of 2 redirects, maxredirects=1
+       expected=DOWN got=DOWN msg="Maximum number of redirects exceeded"
+OK   chain of 2 redirects, maxredirects=2
+       expected=UP got=UP msg="200 - OK"
+OK   chain of 2 redirects, maxredirects=5
+       expected=UP got=UP msg="200 - OK"
+OK   no redirect, maxredirects=0
+       expected=UP got=UP msg="200 - OK"
+
+=== B. responseMaxLength (body is 5000 chars) ===
+OK   responseMaxLength=1024 (documented default)
+       expected stored chars=1024 got=1024 (len=1039 truncatedMarker=true head="xxxxxxxxxxxx")
+OK   responseMaxLength=100
+       expected stored chars=100 got=100 (len=115 truncatedMarker=true head="xxxxxxxxxxxx")
+DIFF responseMaxLength=0 (documented: unlimited)
+       expected stored chars=5000 got=0 (len=15 truncatedMarker=true head="... (truncat")
+
+RESULT: 1 deviation(s)
+Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), file src\win\async.c, line 76
+
+================================================================
+== p7-run1.txt
+================================================================
+DIFF responseMaxLength=0, body 10 chars
+       expected stored chars=10 got=0 raw="... (truncated)"
+DIFF responseMaxLength=0, body 5000 chars
+       expected stored chars=5000 got=0 raw="... (truncated)"
+OK   responseMaxLength=1024, body 10 chars (control)
+       expected stored chars=10 got=10 raw="xxxxxxxxxx"
+
+RESULT: 2 deviation(s) / 3
+Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), file src\win\async.c, line 76
+
+================================================================
+== p7-run2.txt
+================================================================
+DIFF responseMaxLength=0, body 10 chars
+       expected stored chars=10 got=0 raw="... (truncated)"
+DIFF responseMaxLength=0, body 5000 chars
+       expected stored chars=5000 got=0 raw="... (truncated)"
+OK   responseMaxLength=1024, body 10 chars (control)
+       expected stored chars=10 got=10 raw="xxxxxxxxxx"
+
+RESULT: 2 deviation(s) / 3
+Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), file src\win\async.c, line 76
+
+================================================================
+== p8-run1.txt
+================================================================
+baseline beats: 0:UP 1:UP 2:PENDING 3:PENDING
+
+OK   status OK + JSON query fails, retryOnly=ON
+       expected first failing beat=DOWN got=DOWN msg="JSON query does not pass (comparing bad == good)"
+OK   status OK + JSON query fails, retryOnly=OFF
+       expected first failing beat=PENDING got=PENDING msg="JSON query does not pass (comparing bad == good)"
+OK   server unreachable, retryOnly=ON
+       expected first failing beat=PENDING got=PENDING msg="connect ECONNREFUSED 127.0.0.1:1"
+OK   server unreachable, retryOnly=OFF
+       expected first failing beat=PENDING got=PENDING msg="connect ECONNREFUSED 127.0.0.1:1"
+
+RESULT: 0 deviation(s) / 4
+
+================================================================
+== p9-run1.txt
+================================================================
+OK   plain lowercase  slug="probe-slug-a" accepted=true apiStatus=200 msg="successAdded"
+OK   with hyphen      slug="probe-b-c" accepted=true apiStatus=200 msg="successAdded"
+OK   digits           slug="probe123" accepted=true apiStatus=200 msg="successAdded"
+OK   underscore       slug="probe_d" accepted=false apiStatus=n/a msg="Invalid Slug"
+DIFF uppercase        slug="ProbeE" accepted=true apiStatus=200 msg="successAdded"
+OK   space            slug="probe f" accepted=false apiStatus=n/a msg="Invalid Slug"
+OK   accented letter  slug="probé" accepted=false apiStatus=n/a msg="Invalid Slug"
+OK   slash            slug="probe/g" accepted=false apiStatus=n/a msg="Invalid Slug"
+OK   dot              slug="probe.h" accepted=false apiStatus=n/a msg="Invalid Slug"
+OK   leading hyphen   slug="-probei" accepted=false apiStatus=n/a msg="Invalid Slug"
+OK   empty            slug="" accepted=false apiStatus=n/a msg="Please input all fields"
+
+RESULT: 1 deviation(s): uppercase
+Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), file src\win\async.c, line 76
+
+================================================================
+== p10-run1.txt
+================================================================
+push monitor 48, token M7vgeVIs92r6fT9sEWiepfLhqPRcAjLb, interval 20s
+
+--- unknown token ---
+{"status":404,"body":{"ok":false,"msg":"Monitor not found or not active."}}
+
+--- defaults (no query string) ---
+{"status":200,"body":{"ok":true}}
+  beat: UP msg="OK" ping=null   [documented: status defaults to up, msg defaults to "OK"]
+
+--- status=down ---
+  beat: DOWN msg="bye"
+
+--- msg length ---
+  sent 250 chars -> http 200 {"ok":true} ; stored msg length = 250
+  sent 251 chars -> http 200 {"ok":true} ; stored msg length = 251
+  sent 1000 chars -> http 200 {"ok":true} ; stored msg length = 1000
+  sent 10000 chars -> http 200 {"ok":true} ; stored msg length = 10000
+
+--- ping parsing ---
+  ping="123.5" -> http 200 {"ok":true} ; stored ping = 123.5
+  ping="abc" -> http 200 {"ok":true} ; stored ping = null
+  ping="-1" -> http 404 {"ok":false,"msg":"Invalid ping value. Must be between 0 and 100000000000 ms."} ; stored ping = null
+  ping="1e3" -> http 200 {"ok":true} ; stored ping = 1000
+  ping="" -> http 200 {"ok":true} ; stored ping = null
+
+--- stop pushing: documented 'call this URL every 20 seconds' ---
+  DOWN 21.0s after the last push (interval=20s) msg="No heartbeat in the time window"
+
+================================================================
+== p11-run1.txt
+================================================================
+server local time: Tue Aug 11 2026 14:42:00 GMT+0200 (heure d’été d’Europe centrale)
+
+daily window that already contains now (started 3 min ago, ends in 30 min)
+   timeRange=14:38-15:11  status=unknown  durationMinutes=33  beat=UP  msg="200 - OK"
+daily window starting in 30 min
+   timeRange=15:11-15:41  status=unknown  durationMinutes=30  beat=UP  msg="200 - OK"
+daily window that ended 30 min ago
+   timeRange=13:41-14:11  status=unknown  durationMinutes=30  beat=UP  msg="200 - OK"
+
+================================================================
+== p12-run1.txt
+================================================================
+now=14:43:33  window=14:45-15:05 (recurring-interval, every 1 day)
+  +0.3min  clock=14:43:53  maintenance.status=unknown  lastBeat=UP
+  +0.7min  clock=14:44:13  maintenance.status=unknown  lastBeat=UP
+  +1.0min  clock=14:44:33  maintenance.status=unknown  lastBeat=UP
+  +1.3min  clock=14:44:53  maintenance.status=unknown  lastBeat=UP
+  +1.7min  clock=14:45:13  maintenance.status=unknown  lastBeat=UP
+  +2.0min  clock=14:45:33  maintenance.status=unknown  lastBeat=UP
+  +2.3min  clock=14:45:53  maintenance.status=unknown  lastBeat=UP
+  +2.7min  clock=14:46:13  maintenance.status=unknown  lastBeat=UP
+  +3.0min  clock=14:46:33  maintenance.status=unknown  lastBeat=UP
+  +3.3min  clock=14:46:53  maintenance.status=unknown  lastBeat=UP
+  +3.7min  clock=14:47:13  maintenance.status=unknown  lastBeat=UP
+  +4.0min  clock=14:47:33  maintenance.status=unknown  lastBeat=UP
+  +4.3min  clock=14:47:53  maintenance.status=unknown  lastBeat=UP
+ERR TypeError: Cannot read properties of undefined (reading 'status')
+    at C:\Users\Moretti Cédric\Documents\Claude\QAIA\eval\uptime-kuma-2026-08-11\probe\p12-recurring-fires.js:45:155
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+================================================================
+== p13-run1.txt
+================================================================
+now=14:48:41  window=14:50-15:10  strategy=recurring-interval intervalDay=1
+  right after creation: maintenanceList.status=scheduled
+  +0.3min  clock=14:49:02  maintenanceList.status=scheduled  lastBeat=UP
+  +0.7min  clock=14:49:22  maintenanceList.status=scheduled  lastBeat=UP
+  +1.0min  clock=14:49:43  maintenanceList.status=scheduled  lastBeat=UP
+  +1.4min  clock=14:50:03  maintenanceList.status=scheduled  lastBeat=UP
+  +1.7min  clock=14:50:23  maintenanceList.status=scheduled  lastBeat=UP
+  +2.0min  clock=14:50:44  maintenanceList.status=scheduled  lastBeat=UP
+  +2.4min  clock=14:51:04  maintenanceList.status=scheduled  lastBeat=UP
+  +2.7min  clock=14:51:24  maintenanceList.status=scheduled  lastBeat=UP
+  +3.0min  clock=14:51:44  maintenanceList.status=scheduled  lastBeat=UP
+  +3.4min  clock=14:52:05  maintenanceList.status=scheduled  lastBeat=UP
+  +3.7min  clock=14:52:25  maintenanceList.status=scheduled  lastBeat=UP
+  +4.1min  clock=14:52:45  maintenanceList.status=scheduled  lastBeat=UP
+  +4.4min  clock=14:53:06  maintenanceList.status=scheduled  lastBeat=UP
+  +4.7min  clock=14:53:26  maintenanceList.status=scheduled  lastBeat=UP
+  +5.1min  clock=14:53:46  maintenanceList.status=scheduled  lastBeat=UP
+
+RESULT: monitor entered MAINTENANCE during the window: NO
+
+================================================================
+== p14-run1.txt
+================================================================
+now=14:52:03  daily window=14:55-15:15
+
+  p14-A-validity-starts-today: validity starts 2026-08-11T14:22
+  p14-B-validity-started-yesterday: validity starts 2026-08-10T14:22
+  +0.3min 14:52:23  A: scheduled/UP   B: scheduled/UP
+  +0.7min 14:52:44  A: scheduled/UP   B: scheduled/UP
+  +1.0min 14:53:04  A: scheduled/UP   B: scheduled/UP
+  +1.4min 14:53:24  A: scheduled/UP   B: scheduled/UP
+  +1.7min 14:53:45  A: scheduled/UP   B: scheduled/UP
+  +2.0min 14:54:05  A: scheduled/UP   B: scheduled/UP
+  +2.4min 14:54:25  A: scheduled/UP   B: scheduled/UP
+  +2.7min 14:54:46  A: scheduled/UP   B: scheduled/UP
+  +3.0min 14:55:06  A: scheduled/UP   B: under-maintenance/MAINTENANCE
+  +3.4min 14:55:26  A: scheduled/UP   B: under-maintenance/MAINTENANCE
+  +3.7min 14:55:47  A: scheduled/UP   B: under-maintenance/MAINTENANCE
+  +4.1min 14:56:07  A: scheduled/UP   B: under-maintenance/MAINTENANCE
+  +4.4min 14:56:27  A: scheduled/UP   B: under-maintenance/MAINTENANCE
+  +4.7min 14:56:48  A: scheduled/UP   B: under-maintenance/MAINTENANCE
+  +5.1min 14:57:08  A: scheduled/UP   B: under-maintenance/MAINTENANCE
+  +5.4min 14:57:28  A: scheduled/UP   B: under-maintenance/MAINTENANCE
+  +5.8min 14:57:48  A: scheduled/UP   B: under-maintenance/MAINTENANCE
+  +6.1min 14:58:09  A: scheduled/UP   B: under-maintenance/MAINTENANCE
+
+RESULT p14-A-validity-starts-today: entered MAINTENANCE = NO
+RESULT p14-B-validity-started-yesterday: entered MAINTENANCE = YES
+
+================================================================
+== p15-run1.txt
+================================================================
+effective date range starts TODAY    (startAt == today's occurrence)
+   startAt=2026-08-11T14:55:00  nextRun=Wed Aug 12 2026 14:55:00 GMT+0200 (heure d’été d’Europe centrale)
+effective date range started YESTERDAY
+   startAt=2026-08-10T14:55:00  nextRun=Tue Aug 11 2026 14:55:00 GMT+0200 (heure d’été d’Europe centrale)
+
+croner version: 8.1.2
+
+================================================================
+== extrait du journal serveur, ouverture de fenetre de maintenance (p14)
+================================================================
+[36m2026-08-11T14:55:00+02:00[0m [[34mMAINTENANCE[0m] [36mINFO:[0m Maintenance id: 19 is under maintenance now
