@@ -9,7 +9,22 @@
 **S38, S39, S40** de l'EPIC E5 ([`EPIC-NIVEAUX-ET-LN.md`](EPIC-NIVEAUX-ET-LN.md)) : ADR 0008 (le
 niveau de test décidé à la conception, plus deviné par `automate`), contrat de sortie **1.0 → 1.1**
 (`design.byLevel`), la forme d'un scénario `@api`, ADR 0001 évaluée par niveau, et le **rendu en
-langage naturel vérifié étape par étape** — pas promis, comparé. `make check` : 17 → 23 contrôles.
+langage naturel vérifié étape par étape** — pas promis, comparé. `make check` : 17 → 25 contrôles.
+
+### Les issues manquées depuis le début, mesurées puis outillées
+
+Le fondateur : *« j'ai l'impression que depuis le début du projet on a loupé des issues »*. Mesuré
+plutôt que cru : **82 affirmations de travail ouvert dans `docs/`, 33 seulement citent une issue**
+(40 %) ; **24 des 300 derniers commits déclarent du travail ouvert dans leur corps, 12 sans la
+moindre référence `#N`** — dont sept sous un titre littéral « RESTE OUVERT ».
+
+L'impression était juste, et le mécanisme est nommable : le corps de commit est l'endroit où ce
+dépôt écrit honnêtement ce qu'il n'a pas fait, **et sans destinataire**. Cinq issues ouvertes en fin
+de session ([#106](https://github.com/QAIA-Project/QAIA/issues/106) à
+[#110](https://github.com/QAIA-Project/QAIA/issues/110)), et un contrôle —
+`check_open_work_issue.py` — qui échoue quand un commit déclare du travail ouvert sans citer
+d'issue. Jeu de marqueurs confronté aux 300 derniers commits **avant** d'être retenu : 8 % de
+déclenchement, et « pas encore » écarté à cette étape pour ne pas en faire un bruit de fond.
 
 **Deux applications de démonstration** : `examples/booking-api-demo/` (26 cas API depuis une
 spécification antérieure de 17 jours) et `site-qa/` (QAIA appliquée à sa propre vitrine).

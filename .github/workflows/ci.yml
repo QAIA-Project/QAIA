@@ -84,6 +84,20 @@ jobs:
           # omission happens rather than accumulating a backlog nobody reconciles.
           python eval/tools/check_decision_register.py
 
+      - name: A commit that declares open work must cite an issue
+        run: |
+          set -e
+          # Same family as the check above, measured on 2026-08-11 after the founder said he felt
+          # issues had been missed since the start of the project. He was right: 82 open-work
+          # statements in docs/ with only 40% citing an issue, and 24 of the last 300 commits
+          # carrying an open-work declaration in their body — 12 with no `#N` at all, seven of
+          # them under a heading literally reading "RESTE OUVERT".
+          # A "still open" paragraph in a commit body is read by nobody after the day it is
+          # written. The issue register is what gets re-read.
+          # The selfcheck runs alongside: a control never seen red proves nothing.
+          python eval/tools/check_open_work_issue.py
+          python eval/tools/selfcheck_open_work_issue.py
+
       - name: MCP bridge tests (the answer to "Claude Code only", never run until now)
         run: |
           set -e

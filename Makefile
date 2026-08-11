@@ -13,6 +13,8 @@ check: ## Lance tous les controles que la CI lance (skills, provenance, outillag
 	python eval/tools/lint_skills.py
 	python eval/tools/check_skill_counts.py
 	python eval/tools/check_decision_register.py
+	python eval/tools/check_open_work_issue.py
+	python eval/tools/selfcheck_open_work_issue.py
 	python eval/tools/check_schema_matches_validator.py
 	python eval/tools/check_requirement_drift.py
 	python eval/tools/check_published_copies.py

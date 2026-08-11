@@ -6,6 +6,33 @@ Le développement se déroule en **sprints courts** exécutés en sessions agent
 
 ---
 
+## Reste-à-faire de fin de session — 2026-08-11 — **5 issues ouvertes, et un contrôle pour la suite** 🟢
+
+Le fondateur : *« j'ai l'impression que depuis le début du projet on a loupé des issues »*. **82
+affirmations de travail ouvert dans `docs/`, 33 seulement citent une issue** ; **24 des 300 derniers
+commits en déclarent dans leur corps, 12 sans aucune référence `#N`**. L'impression était juste.
+
+| # | Sujet | Propriétaire |
+|---|---|---|
+| [#106](https://github.com/QAIA-Project/QAIA/issues/106) | Le parseur Gherkin maison de `check_nl_projection.py` casse sur 7 formes valides | agent |
+| [#107](https://github.com/QAIA-Project/QAIA/issues/107) | ADR 0001 par niveau : écrite à quatre endroits, appliquée par aucun contrôle | agent |
+| [#108](https://github.com/QAIA-Project/QAIA/issues/108) | Les deux suites Playwright du jour ne tournent dans aucune CI | agent |
+| [#109](https://github.com/QAIA-Project/QAIA/issues/109) | S40.5 — la lecture par quelqu'un qui n'écrit pas de Gherkin | **fondateur** |
+| [#110](https://github.com/QAIA-Project/QAIA/issues/110) | qaskills.sh — soumettre les 4 préparées, renommer les 2 slugs longs | **fondateur** |
+
+**#109 bloque l'annonce de fin de S40** : la fidélité de la projection est prouvée, son utilité ne
+l'est pas.
+
+**Et la règle, pour que ça ne se reproduise pas** : `check_open_work_issue.py` échoue quand un
+commit déclare du travail ouvert sans citer d'issue (D201). Marqueurs confrontés aux 300 derniers
+commits avant d'être retenus — 8 % de déclenchement.
+
+**Tension à arbitrer, non tranchée ici** : **19 issues ouvertes contre une cible E3.4 de ≤ 6**, et
+cette session en ajoute cinq. 13 datent du 2026-08-10 et n'ont pas bougé. Une passe de tri vaut
+mieux qu'une issue de plus.
+
+---
+
 ## Campagnes externes — 2026-08-11 — **4 issues et 1 commentaire publiés en amont** 🟢
 
 Première fois depuis la campagne json-server du 2026-08-08 que le projet produit un effet hors
