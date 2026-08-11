@@ -9,17 +9,23 @@ const { test, expect } = require('@playwright/test');
 
 const NOW = '2026-08-11T08:00:00Z';
 const TOKEN = { Authorization: 'Bearer valid-token' };
-const VALID = { slotId: 'S1', patientId: 'P1', specialty: 'cardiology', startsAt: '2026-08-12T09:00:00Z' };
+// Q4 tranchee : `format` est normatif (table de derivation d'openapi-ingest). Les donnees
+// nominales etaient 'S1' / 'P1', qui ne sont pas des UUID -- six scenarios affirmaient donc
+// 201 sur un corps que leur propre source declare non conforme. Releve en relecture.
+const SLOT = '11111111-1111-4111-8111-111111111111';
+const SLOT_2 = '99999999-9999-4999-8999-999999999999';
+const PATIENT = '22222222-2222-4222-8222-222222222222';
+const VALID = { slotId: SLOT, patientId: PATIENT, specialty: 'cardiology', startsAt: '2026-08-12T09:00:00Z' };
 
 async function reset(request, appointments = []) {
   const res = await request.post('/test/reset', { data: { appointments, now: NOW } });
   expect(res.status(), 'le harnais de remise à zéro doit répondre 204').toBe(204);
 }
 
-const upcoming = (n, patientId = 'P1') =>
+const upcoming = (n, patientId = PATIENT) =>
   Array.from({ length: n }, (_, i) => ({
     id: `seed-${i}`,
-    slotId: `SEED-${i}`,
+    slotId: `seed-${i}`,
     patientId,
     specialty: 'general',
     startsAt: '2026-08-20T09:00:00Z',
@@ -100,7 +106,7 @@ test('@QAIA-BOOK-API-010 @AC1 a field of the wrong type is refused', async ({ re
 });
 
 test('@QAIA-BOOK-API-011 @AC1 a slot already taken is refused', async ({ request }) => {
-  await reset(request, [{ id: 'seed', slotId: 'S1', patientId: 'PX', specialty: 'general', startsAt: '2026-08-20T09:00:00Z' }]);
+  await reset(request, [{ id: 'seed', slotId: SLOT, patientId: 'PX', specialty: 'general', startsAt: '2026-08-20T09:00:00Z' }]);
   const res = await request.post('/api/appointments', { headers: TOKEN, data: VALID });
   expect(res.status()).toBe(409);
 });
@@ -108,14 +114,14 @@ test('@QAIA-BOOK-API-011 @AC1 a slot already taken is refused', async ({ request
 test('@QAIA-BOOK-API-012 @AC1 @low-confidence a patient with three upcoming appointments is refused', async ({ request }) => {
   // open: Q1 — le plafond ne vit que dans la prose de la description du 422. Défaut sûr appliqué.
   await reset(request, upcoming(3));
-  const res = await request.post('/api/appointments', { headers: TOKEN, data: { ...VALID, slotId: 'S9' } });
+  const res = await request.post('/api/appointments', { headers: TOKEN, data: { ...VALID, slotId: SLOT_2 } });
   expect(res.status()).toBe(422);
 });
 
 test('@QAIA-BOOK-API-013 @AC1 @low-confidence a patient with two upcoming appointments is accepted', async ({ request }) => {
   // open: Q1 — intérieur de la même borne non déclarée.
   await reset(request, upcoming(2));
-  const res = await request.post('/api/appointments', { headers: TOKEN, data: { ...VALID, slotId: 'S9' } });
+  const res = await request.post('/api/appointments', { headers: TOKEN, data: { ...VALID, slotId: SLOT_2 } });
   expect(res.status()).toBe(201);
 });
 
@@ -137,4 +143,20 @@ test('@QAIA-BOOK-API-016 @AC1 @low-confidence a request omitting startsAt is acc
   delete data.startsAt;
   const res = await request.post('/api/appointments', { headers: TOKEN, data });
   expect(res.status()).toBe(201);
+});
+
+test('@QAIA-BOOK-API-017 @AC1 an identifier in UUID form is accepted', async ({ request }) => {
+  const res = await request.post('/api/appointments', { headers: TOKEN, data: VALID });
+  expect(res.status()).toBe(201);
+});
+
+test('@QAIA-BOOK-API-018 @AC1 an identifier that is not a UUID is refused', async ({ request }) => {
+  const res = await request.post('/api/appointments', { headers: TOKEN, data: { ...VALID, slotId: 'not-a-uuid' } });
+  expect(res.status()).toBe(400);
+  expect((await res.json()).field).toBe('slotId');
+});
+
+test('@QAIA-BOOK-API-019 @AC1 a request with no body at all is refused', async ({ request }) => {
+  const res = await request.post('/api/appointments', { headers: TOKEN });
+  expect(res.status()).toBe(400);
 });

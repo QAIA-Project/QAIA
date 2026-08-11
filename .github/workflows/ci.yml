@@ -359,9 +359,9 @@ jobs:
           while IFS= read -r m; do
             found=1
             python eval/tools/validate_manifest.py "$m"
-          done < <(find plugins eval -name 'manifest*.json' -not -path '*/node_modules/*')
+          done < <(find . -name 'manifest*.json' -not -path '*/node_modules/*')
           if [ "$found" -eq 0 ]; then
-            echo "No manifest under plugins/ or eval/ -- nothing to validate"
+            echo "::error::aucun manifest*.json trouve -- ce depot en contient, le perimetre est casse"; exit 1
           fi
 
       - name: Lint Gherkin features (if any)

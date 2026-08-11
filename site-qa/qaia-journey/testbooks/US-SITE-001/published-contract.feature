@@ -39,7 +39,7 @@ Feature: The published site answers what it declares
     And the body declares a sitemap whose URL answers 200
 
   # C4 — the consistency nobody reads across three files
-  @QAIA-US-SITE-001-004 @AC6 @P1 @api @negative @ep
+  @QAIA-US-SITE-001-004 @AC6 @P1 @api @ep
   Scenario: The sitemap lists exactly the published entry points
     # contract: AC6 -- neither more nor less
     When a client requests "/sitemap.xml"
@@ -69,7 +69,7 @@ Feature: The published site answers what it declares
     And the body is longer than 200 characters
 
   # C7 — the second assembly source
-  @QAIA-US-SITE-001-007 @AC5 @P1 @api @negative @ep
+  @QAIA-US-SITE-001-007 @AC5 @P1 @api @ep
   Scenario: The demo is served from the second assembly source
     # contract: pages.yml -- _site/demo/ comes from examples/expense-demo/static-demo/
     When a client requests "/demo/index.html"

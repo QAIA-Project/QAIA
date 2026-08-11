@@ -171,7 +171,7 @@ Gherkin lit sans poser de question sur la forme.
 |---|---|---|
 | **S38 — Le niveau devient une donnée** | A | Chaque scénario du jeu de référence porte `@e2e` ou `@api` ; `design.byLevel` est rempli ; **le linter passe au rouge sur une fixture sans niveau** ; `automate` lit l'étiquette au lieu de deviner. |
 | **S39 — L'API va jusqu'au bout** | B | Une spécification OpenAPI réelle produit un cahier `@api` exécuté **vert**, tracé clause de contrat → condition → scénario → test → résultat ; la porte de refus d'ADR 0001 s'évalue par niveau. |
-| **S40 — Le langage naturel** | C | `testbook.<lang>.md` livré ; `check_nl_projection.py` **prouvé dans les deux sens** (divergence injectée détectée) ; `make check` passe de 12 à 13 contrôles. |
+| **S40 — Le langage naturel** | C | `testbook.<lang>.md` livré ; `check_nl_projection.py` **prouvé dans les deux sens** (divergence injectée détectée) ; un contrôle de plus dans `make check`. |
 | **S41 — La campagne, et la preuve** | D + E | Un `campaign-report.md` agrégeant ≥ 2 US et 2 niveaux, contenant un échec réel, chaque chiffre pointant son manifeste. |
 
 ### S38 — Le niveau devient une donnée
@@ -207,7 +207,7 @@ un linter vert à vide, exactement la panne du 2026-08-10.
 | S40.1 | `testbook-export` : livrable `testbook.<lang>.md`, éclatement des `Outline` en `-eN` | Le fichier existe et compte comme l'XLSX |
 | S40.2 | XLSX : trois colonnes Préconditions / Action / Résultat attendu | Présentes à côté de la colonne Gherkin |
 | S40.3 | `check_nl_projection.py` + **auto-vérification** (`selfcheck_*`, comme les cinq existantes) | Une divergence injectée est détectée et localisée |
-| S40.4 | `make check` : 12 → 13 contrôles, la cible **annonce** ce qu'elle vérifie | Le contrôle ne peut pas passer vert sur un ensemble vide |
+| S40.4 | Un contrôle de plus dans `make check`, la cible **annonce** ce qu'elle vérifie | Le contrôle ne peut pas passer vert sur un ensemble vide |
 | S40.5 | Lecture par quelqu'un qui n'écrit pas de Gherkin | Son retour est publié **tel quel**, y compris s'il est mauvais |
 
 ### S41 — La campagne, et la preuve
@@ -254,6 +254,13 @@ miennes** et n'ont été validées par personne :
 5. **La migration des cahiers existants est dans S38**, pas différée.
 6. **Le rapport de campagne étend `test-plan-and-closure`** plutôt que `report` : il s'adresse à un
    humain qui signe, comme le plan et le bilan ; `report` reste l'enveloppe machine.
+
+> **Correction du 2026-08-11, relevée par une relecture « chef de projet ».** Ce plan annonçait
+> « `make check` passe de 12 à 13 contrôles ». La cible en comptait **17** au moment où le plan a
+> été écrit (`git show 4c85ef0:Makefile`), et 23 après la session. Le chiffre de départ était faux,
+> donc le test de fin qu'il portait n'était pas vérifiable — dans un document dont la partie 1
+> exige une commande derrière chaque chiffre. Corrigé en une formulation qui ne dépend pas d'un
+> compte que personne n'avait vérifié.
 
 *Les commandes de vérification de la partie 1 ont été exécutées le 2026-08-11, et chaque référence
 à un fichier de skill pointe une ligne relue à cette date. Toute affirmation chiffrée qui n'est pas

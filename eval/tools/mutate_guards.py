@@ -53,6 +53,20 @@ MUTATIONS = [
      "substitution : les parametres <x> ne sont plus remplaces",
      'text = text.replace("<%s>" % key, value)', "pass"),
 
+    # PERIMETRE -- ajoutees le 2026-08-11 apres qu'une relecture hostile ait releve que les
+    # quatorze mutations precedentes portaient TOUTES sur la logique de detection et AUCUNE sur
+    # le perimetre. Or la panne reelle du jour etait une panne de perimetre : `site-qa/` cree le
+    # soir, hors du controle ecrit le matin. La campagne ne pouvait pas la voir.
+    ("eval/tools/check_test_levels.py", "eval/tools/selfcheck_test_levels.py",
+     "perimetre : les cahiers vivants de site-qa sont exclus du controle",
+     'FROZEN_EVIDENCE = (', 'FROZEN_EVIDENCE = ("site-qa",) + ('),
+    ("eval/tools/check_test_levels.py", "eval/tools/selfcheck_test_levels.py",
+     "perimetre : le controle ne voit plus aucun cahier",
+     "            yield path", "            continue"),
+    ("eval/tools/check_nl_projection.py", "eval/tools/selfcheck_nl_projection.py",
+     "perimetre : le balayage des paires ne rend plus rien",
+     "        if len(projections) != 1:", "        if True:"),
+
     ("eval/tools/validate_manifest.py", "eval/tools/selfcheck_manifest_bylevel.py",
      "byLevel : la verification de la somme est neutralisee",
      "and summed != total:", "and False:"),
@@ -65,6 +79,18 @@ MUTATIONS = [
 ]
 
 
+def write_atomic(path, text):
+    """Ecrit par fichier temporaire + os.replace.
+
+    `io.open(path, "w")` TRONQUE avant d'ecrire : une interruption dans cette fenetre laissait un
+    garde-fou de ZERO OCTET, et la seule copie de l'original vivait en memoire du processus tue.
+    Releve le 2026-08-11 par une relecture « developpeur ».
+    """
+    tmp = path + ".mutating"
+    io.open(tmp, "w", encoding="utf-8", newline="").write(text)
+    os.replace(tmp, path)
+
+
 def run(cmd):
     p = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, shell=False)
     return p.returncode, (p.stdout + p.stderr)
@@ -75,19 +101,20 @@ def main():
     log.append("Chaque mutation neutralise UNE regle de detection dans un controle.")
     log.append("TUEE = l'auto-verification du controle passe au rouge. SURVIT = personne ne l'aurait vu.")
     log.append("")
-    killed = survived = 0
+    killed = survived = unrunnable = 0
     for target, selfcheck, label, before, after in MUTATIONS:
         original = io.open(target, encoding="utf-8", newline="").read()
         if before not in original:
             print("!! motif introuvable :", label)
             log.append("[ERREUR] motif introuvable : %s" % label)
+            unrunnable += 1
             continue
-        io.open(target, "w", encoding="utf-8", newline="").write(original.replace(before, after, 1))
+        write_atomic(target, original.replace(before, after, 1))
         try:
             code, out = run([sys.executable, selfcheck])
             ok = code != 0
         finally:
-            io.open(target, "w", encoding="utf-8", newline="").write(original)
+            write_atomic(target, original)
         killed += ok
         survived += (not ok)
         first = next((l for l in out.splitlines() if l.strip()), "")
@@ -97,12 +124,33 @@ def main():
                       code, first[:150]))
         print(("TUEE   " if ok else "SURVIT "), label)
     log.append("")
-    log.append("TOTAL : %d candidates, %d executees, %d tuees, %d survivantes"
-               % (len(MUTATIONS), len(MUTATIONS), killed, survived))
-    io.open("eval/mutation-guards-2026-08-11.txt", "w", encoding="utf-8", newline="\n").write(
-        "\n".join(log) + "\n")
-    print("killed", killed, "survived", survived)
+    executed = killed + survived
+    log.append("TOTAL : %d candidates, %d executees, %d tuees, %d survivantes, %d motif(s) "
+               "introuvable(s)" % (len(MUTATIONS), executed, killed, survived, unrunnable))
+    if unrunnable:
+        log.append("ATTENTION : %d mutation(s) n'ont pas pu tourner -- un motif devenu obsolete "
+                   "apres refactor sortait silencieusement du compte, et le TOTAL annoncait quand "
+                   "meme len(MUTATIONS) executees. C'est le « vert a vide » exact, dans l'outil "
+                   "ecrit pour le chasser (corrige le 2026-08-11)." % unrunnable)
+    # REGISTRE, jamais ecrasement. Ce fichier a ete ECRASE une fois, le 2026-08-11 : la passe
+    # precedente y decrivait la seule survivante interessante de la journee, une relance l'a
+    # remplacee par le total final, et le commit qui a emporte la suppression affirmait dans
+    # son message « trace brute conservee des DEUX passages ». Un outil de mesure qui detruit
+    # la mesure precedente est la faute la plus couteuse qu'il puisse commettre, et aucun
+    # controle ne l'aurait vue -- c'est la passe de refutation qui l'a trouvee.
+    journal = "eval/mutation-guards-2026-08-11.txt"
+    previous = ""
+    if os.path.exists(journal):
+        previous = io.open(journal, encoding="utf-8").read().rstrip("\n") + "\n\n"
+        log.insert(0, "## Passe suivante -- les passes precedentes sont conservees ci-dessus")
+        log.insert(1, "")
+    io.open(journal, "w", encoding="utf-8", newline="\n").write(previous + "\n".join(log) + "\n")
+    print("killed", killed, "survived", survived, "unrunnable", unrunnable)
+    # Une campagne qui laisse une survivante ou une mutation non jouee ne peut pas sortir 0 :
+    # aucune automatisation ne pourrait s'appuyer dessus. La survivante legitime s'annote dans
+    # le journal et se retire de la liste, elle ne se tolere pas par le code de sortie.
+    return 1 if (survived or unrunnable) else 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

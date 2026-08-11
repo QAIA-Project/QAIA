@@ -1,3 +1,85 @@
+Campagne mutation sur les garde-fous S38-S40 -- 2026-08-11
+
+## Ce que la PREMIERE passe a trouve, et qui compte plus que le resultat final
+
+Premiere passe : 13 candidates, 13 executees, 12 tuees, **1 SURVIVANTE**.
+
+    [SURVIT] la pile de tags ne remonte plus au-dessus d'un commentaire
+             selfcheck_test_levels.py -> exit=0
+
+Trou reel. La fixture rouge de `check_test_levels.py` ne portait que des scenarios dont les tags
+touchent la ligne `Scenario:`. Or la forme la PLUS COURANTE du depot intercale un commentaire --
+`# condition: AC8-C1`, `# contract: createAppointment · responses.201` -- entre les tags et le
+scenario. Casser la remontee au-dessus d'un commentaire aurait rendu le controle aveugle a la
+moitie des cahiers, et AUCUNE auto-verification ne l'aurait dit.
+
+Corrige : cinquieme cas dans la fixture (tags, commentaire, scenario), que le selfcheck exige
+de voir rester silencieux.
+
+Deuxieme trou, trouve par la meme campagne mais autrement : les regles de `design.byLevel`
+n'avaient d'auto-verification NULLE PART. La campagne a du fabriquer une sonde a la volee pour
+pouvoir muter le validateur -- c'est-a-dire que la regle etait appliquee par le code et prouvee
+par rien de durable. La sonde est devenue `selfcheck_manifest_bylevel.py`, livree et branchee.
+
+## Ce journal a ete efface une fois, et voici comment
+
+La section ci-dessus a disparu du depot entre `d87b9f7` et `2b0950d`, le 2026-08-11 : une relance
+de `mutate_guards.py` a REECRIT le fichier, et `git add -A` a emporte la suppression. Le message
+du commit qui l'a supprimee affirme, mot pour mot : « Trace brute conservee des DEUX passages,
+rouge compris : garder seulement le vert aurait efface le seul resultat qui prouve que la suite
+mord. » La regle a tenu exactement un commit.
+
+Aucun controle ne l'a vue. C'est une passe de refutation en contexte vierge qui l'a trouvee, en
+ouvrant l'emplacement cite au lieu de croire la citation -- ce qui est litteralement sa methode :
+« une affirmation dont l'emplacement cite n'a jamais ete ouvert est refutee par defaut ».
+
+Corrige a la source : l'outil AJOUTE desormais au journal et ne peut plus detruire une passe
+precedente. La section restauree ci-dessus vient de `git show d87b9f7`.
+
+## Passe finale, apres les deux corrections
+
+Chaque mutation neutralise UNE regle de detection dans un controle.
+TUEE = l'auto-verification du controle passe au rouge. SURVIT = personne ne l'aurait vu.
+
+[TUEE  ] niveau absent : la detection de l'absence est neutralisee
+    selfcheck_test_levels.py -> exit=1  ::error::l'auto-verification des niveaux de test echoue.
+[TUEE  ] niveau en double : la detection du doublon est neutralisee
+    selfcheck_test_levels.py -> exit=1  ::error::l'auto-verification des niveaux de test echoue.
+[TUEE  ] etiquette retiree : la table des retirees est videe
+    selfcheck_test_levels.py -> exit=1  ::error::l'auto-verification des niveaux de test echoue.
+[TUEE  ] la pile de tags ne remonte plus au-dessus d'un commentaire
+    selfcheck_test_levels.py -> exit=1  ::error::l'auto-verification des niveaux de test echoue.
+[TUEE  ] etapes : la comparaison verbatim est neutralisee
+    selfcheck_nl_projection.py -> exit=1  ::error::l'auto-verification du rendu en langage naturel echoue.
+[TUEE  ] titre : la comparaison de titre est neutralisee
+    selfcheck_nl_projection.py -> exit=1  ::error::l'auto-verification du rendu en langage naturel echoue.
+[TUEE  ] scenario omis : la boucle des identifiants attendus est neutralisee
+    selfcheck_nl_projection.py -> exit=1  ::error::l'auto-verification du rendu en langage naturel echoue.
+[TUEE  ] bloc en trop : la detection d'un identifiant inconnu est neutralisee
+    selfcheck_nl_projection.py -> exit=1  ::error::l'auto-verification du rendu en langage naturel echoue.
+[TUEE  ] langue : l'en-tete `language:` n'est plus exige
+    selfcheck_nl_projection.py -> exit=1  ::error::l'auto-verification du rendu en langage naturel echoue.
+[TUEE  ] Outline : les `Examples` ne sont plus eclates
+    selfcheck_nl_projection.py -> exit=1  ::error::l'auto-verification du rendu en langage naturel echoue.
+[TUEE  ] substitution : les parametres <x> ne sont plus remplaces
+    selfcheck_nl_projection.py -> exit=1  ::error::l'auto-verification du rendu en langage naturel echoue.
+[TUEE  ] perimetre : les cahiers vivants de site-qa sont exclus du controle
+    selfcheck_test_levels.py -> exit=1  ::error::l'auto-verification des niveaux de test echoue.
+[TUEE  ] perimetre : le controle ne voit plus aucun cahier
+    selfcheck_test_levels.py -> exit=1  Traceback (most recent call last):
+[TUEE  ] perimetre : le balayage des paires ne rend plus rien
+    selfcheck_nl_projection.py -> exit=1  ::error::l'auto-verification du rendu en langage naturel echoue.
+[TUEE  ] byLevel : la verification de la somme est neutralisee
+    selfcheck_manifest_bylevel.py -> exit=1  ::error::le validateur n'applique pas les regles de `design.byLevel`.
+[TUEE  ] byLevel : la liste fermee de cles n'est plus imposee
+    selfcheck_manifest_bylevel.py -> exit=1  ::error::le validateur n'applique pas les regles de `design.byLevel`.
+[TUEE  ] byLevel : le bloc partiel n'est plus refuse
+    selfcheck_manifest_bylevel.py -> exit=1  ::error::le validateur n'applique pas les regles de `design.byLevel`.
+
+TOTAL : 17 candidates, 17 executees, 17 tuees, 0 survivantes, 0 motif(s) introuvable(s)
+
+## Passe suivante -- les passes precedentes sont conservees ci-dessus
+
 Campagne mutation sur les garde-foux S38-S40 -- 2026-08-11
 
 Chaque mutation neutralise UNE regle de detection dans un controle.
@@ -25,6 +107,12 @@ TUEE = l'auto-verification du controle passe au rouge. SURVIT = personne ne l'au
     selfcheck_nl_projection.py -> exit=1  ::error::l'auto-verification du rendu en langage naturel echoue.
 [TUEE  ] substitution : les parametres <x> ne sont plus remplaces
     selfcheck_nl_projection.py -> exit=1  ::error::l'auto-verification du rendu en langage naturel echoue.
+[TUEE  ] perimetre : les cahiers vivants de site-qa sont exclus du controle
+    selfcheck_test_levels.py -> exit=1  ::error::l'auto-verification des niveaux de test echoue.
+[TUEE  ] perimetre : le controle ne voit plus aucun cahier
+    selfcheck_test_levels.py -> exit=1  Traceback (most recent call last):
+[TUEE  ] perimetre : le balayage des paires ne rend plus rien
+    selfcheck_nl_projection.py -> exit=1  ::error::l'auto-verification du rendu en langage naturel echoue.
 [TUEE  ] byLevel : la verification de la somme est neutralisee
     selfcheck_manifest_bylevel.py -> exit=1  ::error::le validateur n'applique pas les regles de `design.byLevel`.
 [TUEE  ] byLevel : la liste fermee de cles n'est plus imposee
@@ -32,4 +120,4 @@ TUEE = l'auto-verification du controle passe au rouge. SURVIT = personne ne l'au
 [TUEE  ] byLevel : le bloc partiel n'est plus refuse
     selfcheck_manifest_bylevel.py -> exit=1  ::error::le validateur n'applique pas les regles de `design.byLevel`.
 
-TOTAL : 14 candidates, 14 executees, 14 tuees, 0 survivantes
+TOTAL : 17 candidates, 17 executees, 17 tuees, 0 survivantes, 0 motif(s) introuvable(s)

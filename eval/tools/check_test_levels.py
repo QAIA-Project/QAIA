@@ -22,8 +22,8 @@ d'atomicite a scinder (ADR 0008), pas une etiquette a ajouter.
 
 ## Ce qui n'est PAS verifie, et pourquoi c'est ecrit ici
 
-Les **artefacts de campagne** -- `eval/baselines/`, `eval/gold-set/`, `eval/goldset-hardened/`,
-les sorties de campagnes horodatees. Ce sont des preuves de ce qui a ete produit a une date. Les
+Les **artefacts de campagne** enumeres dans `FROZEN_EVIDENCE` -- `eval/baselines/`,
+`eval/gold-set/`, les sorties de campagnes horodatees. Ce sont des preuves de ce qui a ete produit a une date. Les
 reecrire pour satisfaire une regle posterieure falsifierait la preuve, et un depot qui retouche ses
 mesures pour faire passer ses portes n'a plus de mesures. L'exclusion est **decidee** (ADR 0008,
 section Consequences), pas subie.
@@ -57,11 +57,29 @@ SCENARIO_RE = re.compile(r"^\s*(Scenario|Scenario Outline)\s*:", re.IGNORECASE)
 TAG_LINE_RE = re.compile(r"^\s*@")
 
 # Les racines des cahiers VIVANTS -- ceux qu'une regle posterieure a le droit de faire evoluer.
-LIVING_ROOTS = (
-    os.path.join(".qaia", "testbooks"),
-    "examples",
-    os.path.join("plugins", "qaia-playwright", "skills"),
-    os.path.join("eval", "tools", "fixtures"),
+# ATTENTION -- cette liste est un PERIMETRE EN DUR, et ce depot s'est deja fait prendre trois
+# fois par un perimetre non mis a jour apres l'ajout d'un dossier : le 2026-07-30 (le lint
+# Gherkin de la CI, panne fondatrice de CLAUDE.md), le 2026-08-10 (deux etapes vertes a vide),
+# et le 2026-08-11 -- ce fichier meme, qui ignorait `site-qa/` cree le soir de son ecriture.
+# Deux cahiers, 26 scenarios, hors du garde-fou construit le matin, sans que rien ne le dise.
+#
+# La regle est donc inversee : ce qui est EXCLU est enumere et justifie, ce qui reste est
+# couvert par defaut. Un nouveau dossier de cahiers entre automatiquement dans le perimetre ;
+# l'en sortir demande une ligne et un motif.
+FROZEN_EVIDENCE = (
+    # Preuves de campagne : reecrites, elles cesseraient d'etre des preuves (ADR 0008).
+    os.path.join("eval", "baselines"),
+    os.path.join("eval", "gold-set"),
+    os.path.join("eval", "goldset-hardened"),
+    os.path.join("eval", "concerns-zone-fixtures"),
+    os.path.join("eval", "gherkin-conformance"),
+    os.path.join("eval", "portability-2026-08-08"),
+    os.path.join("eval", "portability-2026-08-09"),
+    os.path.join("eval", "contract-probe-2026-08-01"),
+    os.path.join("eval", "external-application-2026-08-08"),
+    os.path.join("eval", "openapi-ingest-2026-08-08"),
+    os.path.join("eval", "skill-coverage-wave-2026-07-30"),
+    os.path.join("eval", "skill-eval-campaign-2026-07-29"),
 )
 
 # Preuves gelees : jamais reecrites (ADR 0008). Liste explicite plutot que negative, pour qu'un
@@ -83,7 +101,7 @@ def iter_feature_files(root="."):
             normalized = os.sep + path + os.sep
             if any(marker in normalized for marker in EXCLUDED_MARKERS):
                 continue
-            if not any(path.startswith(living + os.sep) for living in LIVING_ROOTS):
+            if any(path.startswith(frozen + os.sep) for frozen in FROZEN_EVIDENCE):
                 continue
             yield path
 

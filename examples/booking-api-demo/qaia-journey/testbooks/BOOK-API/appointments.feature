@@ -168,3 +168,30 @@ Feature: Creating an appointment through the booking API
     Given an authenticated patient
     When they POST /api/appointments without startsAt
     Then the response status is 201
+
+  # C17, C18 -- open: Q4, le format tenu pour normatif
+  @QAIA-BOOK-API-017 @AC1 @P1 @api @ep
+  Scenario: An identifier conforming to the declared UUID format is accepted
+    # contract: AppointmentCreate.slotId.format -> responses.201
+    # Q4 arbitrated -- the book treated `format: date-time` as binding and `format: uuid` as
+    # decorative. openapi-ingest's derivation table settles it: one conforming, one not.
+    Given an authenticated patient
+    When they POST /api/appointments with a slotId in UUID form
+    Then the response status is 201
+
+  @QAIA-BOOK-API-018 @AC1 @P1 @api @negative @ep
+  Scenario: An identifier that is not a UUID is refused
+    # contract: AppointmentCreate.slotId.format -> responses.400
+    # Q4 arbitrated -- same reading; this is the "one not" half.
+    Given an authenticated patient
+    When they POST /api/appointments with slotId "not-a-uuid"
+    Then the response status is 400
+    And the response body names the field "slotId"
+
+  # C19 -- la regle de refus que l'enumeration avait oubliee
+  @QAIA-BOOK-API-019 @AC1 @P2 @api @negative @ep
+  Scenario: A request with no body at all is refused
+    # contract: createAppointment · requestBody.required: true -> responses.400
+    Given an authenticated patient
+    When they POST /api/appointments with no body
+    Then the response status is 400

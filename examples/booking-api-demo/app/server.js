@@ -17,6 +17,13 @@ const TOKEN = 'valid-token';
 const SPECIALTIES = ['general', 'pediatrics', 'cardiology', 'dermatology'];
 const ALLOWED = ['slotId', 'patientId', 'specialty', 'startsAt', 'note'];
 const REQUIRED = ['slotId', 'patientId', 'specialty'];
+// `format: uuid` est declare sur slotId et patientId par le contrat. Le serveur ne l'appliquait
+// pas : un identifiant quelconque etait accepte. Trouve le 2026-08-11 par le scenario
+// QAIA-BOOK-API-018, ajoute apres qu'une relecture ait releve que le cahier traitait
+// `format: date-time` comme contraignant et `format: uuid` comme decoratif -- le meme mot-cle du
+// meme schema, lu dans deux sens opposes. La question tranchee (Q4), la clause s'applique.
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const UUID_FIELDS = ['slotId', 'patientId'];
 const MAX_UPCOMING = 3;
 const MIN_LEAD_MS = 2 * 60 * 60 * 1000; // "< 2h ahead" — responses.422 of the spec
 
@@ -60,6 +67,9 @@ function validate(body) {
   }
   if (!SPECIALTIES.includes(body.specialty)) {
     return { field: 'specialty', reason: 'enum' };
+  }
+  for (const key of UUID_FIELDS) {
+    if (!UUID_RE.test(body[key])) return { field: key, reason: 'format: uuid' };
   }
   if ('note' in body) {
     if (typeof body.note !== 'string') return { field: 'note', reason: 'type: string' };

@@ -28,7 +28,12 @@ test('@QAIA-US-SITE-001-003 @AC6 robots.txt points at a sitemap that answers', a
   const declared = body.match(/^\s*Sitemap:\s*(\S+)\s*$/im);
   expect(declared, 'robots.txt must declare a Sitemap: line').not.toBeNull();
   // Le robots publie l'URL de PRODUCTION ; on verifie que le chemin qu'elle designe est servi.
-  const sitemapPath = new URL(declared[1]).pathname.replace(/^\/QAIA/, '') || '/sitemap.xml';
+  // Le `|| '/sitemap.xml'` qui terminait cette ligne masquait exactement le cas que le scenario
+  // existe pour attraper : un `Sitemap:` pointant la racine donnait un chemin vide, le test
+  // repartait sur un chemin en dur, trouvait 200, et passait vert alors que robots ne pointait
+  // aucun sitemap. Releve le 2026-08-11 par une relecture « developpeur ».
+  const sitemapPath = new URL(declared[1]).pathname.replace(/^\/QAIA/, '');
+  expect(sitemapPath, 'robots.txt doit designer un chemin de sitemap, pas la racine').toMatch(/\.xml$/);
   const sitemap = await request.get(sitemapPath);
   expect(sitemap.status()).toBe(200);
 });

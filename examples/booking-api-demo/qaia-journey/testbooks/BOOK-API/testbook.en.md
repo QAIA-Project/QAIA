@@ -5,7 +5,7 @@ source: appointments.feature
 
 # Booking API — createAppointment: the test book in plain language
 
-Projection of `appointments.feature`. Same scenarios, same steps, same order — readable without knowing Gherkin. The `.feature` file stays the source of truth; this file is checked against it by `eval/tools/check_nl_projection.py`, which fails if a single step diverges.
+Projection of appointments.feature. Same scenarios, same steps, same order — readable without knowing Gherkin. The .feature file stays the source of truth; this file is checked against it step by step, and a single divergence fails the build.
 
 ### QAIA-BOOK-API-001 · A valid request creates the appointment
 
@@ -410,4 +410,56 @@ Requirement: AC1 · Priority: 3 · Level: API (service contract) · Technique: e
 **Expected result**
 
 4. the response status is 201
+
+### QAIA-BOOK-API-017 · An identifier conforming to the declared UUID format is accepted
+
+Requirement: AC1 · Priority: 1 (highest) · Level: API (service contract) · Technique: equivalence partitioning
+
+**Preconditions**
+
+1. the booking API is reset with no appointment and the clock at "2026-08-11T08:00:00Z"
+2. an authenticated patient
+
+**Action**
+
+3. they POST /api/appointments with a slotId in UUID form
+
+**Expected result**
+
+4. the response status is 201
+
+### QAIA-BOOK-API-018 · An identifier that is not a UUID is refused
+
+Requirement: AC1 · Priority: 1 (highest) · Level: API (service contract) · Refusal path · Technique: equivalence partitioning
+
+**Preconditions**
+
+1. the booking API is reset with no appointment and the clock at "2026-08-11T08:00:00Z"
+2. an authenticated patient
+
+**Action**
+
+3. they POST /api/appointments with slotId "not-a-uuid"
+
+**Expected result**
+
+4. the response status is 400
+5. the response body names the field "slotId"
+
+### QAIA-BOOK-API-019 · A request with no body at all is refused
+
+Requirement: AC1 · Priority: 2 · Level: API (service contract) · Refusal path · Technique: equivalence partitioning
+
+**Preconditions**
+
+1. the booking API is reset with no appointment and the clock at "2026-08-11T08:00:00Z"
+2. an authenticated patient
+
+**Action**
+
+3. they POST /api/appointments with no body
+
+**Expected result**
+
+4. the response status is 400
 

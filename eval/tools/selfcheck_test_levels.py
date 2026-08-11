@@ -91,6 +91,27 @@ def main():
     if in_scope:
         failures.append("la fixture rouge est dans le perimetre du controle : %s" % in_scope)
 
+    # LE PERIMETRE LUI-MEME. La panne du 2026-08-11 n'etait pas une regle de detection cassee :
+    # c'etait un perimetre en dur qui ignorait un dossier cree le soir meme. Aucune des trois
+    # verifications ci-dessus ne l'aurait vue, parce qu'elles portent toutes sur la fixture.
+    # Ces deux assertions portent sur le DEPOT : un cahier vivant connu doit etre dedans, une
+    # preuve gelee connue doit etre dehors.
+    in_scope = [p for p in C.iter_feature_files(".")]
+    living_witness = os.path.join("site-qa", "qaia-journey", "testbooks")
+    frozen_witness = os.path.join("eval", "baselines")
+    if not any(p.startswith(living_witness) for p in in_scope):
+        failures.append("perimetre : aucun cahier sous %s n'est controle -- c'est exactement la "
+                        "panne du 2026-08-11, ou deux cahiers livres le soir etaient hors du "
+                        "garde-fou ecrit le matin" % living_witness)
+    if any(p.startswith(frozen_witness) for p in in_scope):
+        failures.append("perimetre : une preuve gelee (%s) est entree dans le controle -- la "
+                        "reecrire pour satisfaire une regle posterieure la detruirait "
+                        "(ADR 0008)" % frozen_witness)
+    if len(in_scope) < 10:
+        failures.append("perimetre : %d cahier(s) seulement -- ce depot en contient davantage, "
+                        "un controle qui n'en voit presque aucun passe vert sans rien verifier"
+                        % len(in_scope))
+
     if failures:
         print("::error::l'auto-verification des niveaux de test echoue.")
         for line in failures:

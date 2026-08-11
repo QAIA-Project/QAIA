@@ -31,21 +31,31 @@ laquelle la promesse est observable**.
 | C1 | Chaque URL déclarée du site répond 200 | AC5 | `api` | ep | — |
 | C2 | Une URL inconnue ne répond pas 200 | AC5 | `api` | error-guessing | **oui** |
 | C3 | `robots.txt` désigne un sitemap qui répond | AC6 | `api` | ep | — |
-| C4 | L'ensemble des URL du sitemap **est** l'ensemble des points d'entrée publiés | AC6 | `api` | ep | **oui** |
+| C4 | L'ensemble des URL du sitemap **est** l'ensemble des points d'entrée publiés | AC6 | `api` | ep | — |
 | C5 | Chaque page HTML est servie en `text/html` | AC5 | `api` | ep | — |
 | C6 | `llms.txt` est servi et non vide | AC6 | `api` | boundary | — |
-| C7 | `/demo/` est servi — la seconde source d'assemblage est bien là | AC5 | `api` | ep | **oui** |
+| C7 | `/demo/` est servi — la seconde source d'assemblage est bien là | AC5 | `api` | ep | — |
 | C8 | L'accueil énonce ce qui entre et ce qui sort dans la première fenêtre | AC1 | `e2e` | ep | — |
-| C9 | Le statut pré-alpha est visible sur chaque page publique | AC2 | `e2e` | ep | **oui** |
+| C9 | Le statut pré-alpha est visible sur chaque page publique | AC2 | `e2e` | ep | — |
 | C10 | Le bloc d'installation nomme les deux plugins et leur commande | AC3 | `e2e` | ep | — |
 | C11 | L'affirmation de preuve pointe un artefact atteignable | AC4 | `e2e` | ep | — |
-| C12 | Chaque ancre de navigation a une cible existante dans la page | AC5 | `e2e` | ep | **oui** |
+| C12 | Chaque ancre de navigation a une cible existante dans la page | AC5 | `e2e` | ep | — |
 | C13 | Chaque page déclare une langue | AC7 | `e2e` | ep | — |
-| C14 | Les titres des trois pages sont distincts | AC7 | `e2e` | pairwise | **oui** |
+| C14 | Les titres des trois pages sont distincts | AC7 | `e2e` | pairwise | — |
 
-**7 conditions `api`, 7 conditions `e2e`.** Six `[req-neg]` — dont C4 et C14, qui ne sont pas des
-refus de l'application mais des **incohérences entre artefacts** : la classe de défaut qu'aucune
-relecture humaine ne trouve, parce qu'il faut lire trois fichiers en même temps.
+**7 conditions `api`, 7 conditions `e2e`. Une seule `[req-neg]` : C2.**
+
+*Corrigé le 2026-08-11, après relecture.* Six conditions étaient marquées `[req-neg]` et cinq
+scénarios étiquetés `@negative` alors que **leur issue attendue est un succès ou une cohérence**,
+pas un refus. La définition est fermée et elle est dans ce dépôt : *« a scenario whose outcome is
+a refusal, an error, or an explicitly denied access »* — `negative-ratio.md` ajoute même que
+compter les issues normales d'une fonctionnalité qui marche est *« the most common way a ratio
+inflates without anyone intending to cheat »*. C'est exactement ce qui s'était passé : le ratio
+annoncé était **0,31**, il est **0,04**, et l'erreur allait dans le sens qui flatte.
+
+C4, C9, C12 et C14 restent les conditions les plus intéressantes du cahier — ce sont des
+**incohérences entre artefacts**, la classe qu'aucune relecture humaine ne trouve parce qu'il faut
+lire trois fichiers en même temps. Elles n'ont simplement rien à voir avec la porte des refus.
 
 ## Ce que cette conception ne couvre pas, et pourquoi c'est écrit ici
 

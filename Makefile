@@ -35,7 +35,11 @@ check: ## Lance tous les controles que la CI lance (skills, provenance, outillag
 	# J'y avais ajoute `--batch plugins` « pour qu'ils le restent » : l'outil sort 2 sur un
 	# ensemble vide et la CI est passee au rouge. Je l'avais cru inoffensif parce que j'avais
 	# lu `$?` APRES un pipe -- donc le code de `tail`, pas celui de l'outil.
-	python eval/tools/validate_manifest.py --batch eval
+	# Le balayage disait `eval` seul. Les DEUX manifestes en contrat 1.1 -- ceux qui prouvent
+	# le chantier `design.byLevel` -- vivent sous `examples/` et `site-qa/`, donc hors du
+	# validateur ecrit pour eux (releve le 2026-08-11 par une relecture hostile, troisieme
+	# faute de perimetre du meme jour). Le balayage part desormais de la racine.
+	python eval/tools/validate_manifest.py --batch .
 	# Ce qui suit manquait vraiment : la cible se disait « tous les controles que la CI lance »
 	# et en omettait la moitie. Un nouveau venu la voyait verte, poussait, et decouvrait la CI
 	# rouge -- ce qui est pire que pas de cible du tout.

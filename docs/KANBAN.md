@@ -6,6 +6,35 @@ Le développement se déroule en **sprints courts** exécutés en sessions agent
 
 ---
 
+## Sprint 38-39-40 — exécutés le 2026-08-11, puis retournés par sept relecteurs 🟠 EN REVUE
+
+**Livré** : ADR 0008 (le niveau de test décidé à la conception) · contrat de sortie 1.0 → 1.1
+(`design.byLevel`) · trois contrôles neufs avec leurs fixtures rouges · `references/api-steps.md` ·
+ADR 0001 évaluée par niveau (prose) · `automate` lit l'étiquette au lieu de deviner · le rendu en
+langage naturel vérifié étape par étape · `examples/booking-api-demo/` (26 cas API, spec antérieure
+de 17 jours) · `site-qa/` (QAIA appliquée à sa propre vitrine, **un défaut réel trouvé**).
+
+**Puis relu par deux juges du tier et cinq personas, en contexte vierge** — et c'est la relecture
+qui a rapporté le plus : [`REVUE-2026-08-11.md`](REVUE-2026-08-11.md). 4 affirmations réfutées,
+un CONCERNS, un FAIL, **17 défauts corrigés le jour même** dont une traversée de chemin réelle et
+un journal de mesure qui s'effaçait lui-même un commit après avoir promis le contraire.
+
+**La faute qui compte** : trois périmètres faux dans les trois portes construites ce jour-là —
+c'est la panne fondatrice de `CLAUDE.md`, troisième récidive, commise le jour où on la re-cite.
+Corrigée en **inversant la règle** : ce qui est exclu s'énumère, le reste est couvert par défaut.
+
+| Sprint | État réel |
+|---|---|
+| S38 | **atteint**, périmètre corrigé après revue |
+| S39 | **partiel** — S39.3 non outillé (porte par niveau en prose seulement), S39.4 non livré (aucun pipeline instancié), spécification non indépendante |
+| S40 | **bloqué par S40.5** — la lecture par quelqu'un qui n'écrit pas de Gherkin n'a pas eu lieu, et c'est la seule tâche du sprint qui exige quelqu'un d'extérieur |
+| S41 | non commencé |
+
+**Ne pas ouvrir S41 avant d'avoir tranché S40.5** — ouvrir un sprint sur un précédent non terminé
+est exactement le motif que `PLAN-REPRISE.md` reproche au projet depuis le 9 août.
+
+---
+
 ## Backlog — EPIC E6 : générer au-dessus de la user story (spec / feature / epic) ⚪ À CHALLENGER
 
 **Demandée par le fondateur le 2026-08-11.** Aujourd'hui toute la chaîne est indexée sur **une**

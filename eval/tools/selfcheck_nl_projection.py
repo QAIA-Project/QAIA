@@ -87,6 +87,28 @@ def main():
     if in_scope:
         failures.append("les fixtures rouges sont dans le perimetre du controle : %s" % in_scope)
 
+    # LE PERIMETRE, garde comme dans selfcheck_test_levels.py. Toutes les verifications
+    # ci-dessus passent par `check_pair` avec des chemins explicites : elles resteraient vertes
+    # si `find_pairs` cessait de trouver quoi que ce soit. C'est la panne du 2026-08-11 sur le
+    # controle jumeau, ou deux cahiers livres le soir etaient hors du garde-fou du matin.
+    pairs = C.find_pairs(".")
+    # Une paire VALIDE est un couple (liste de .feature, chemin du rendu). Les triplets sont des
+    # signalements d'erreur, pas des paires -- verifier la seule presence d'une chaine dans la
+    # liste laissait passer une mutation qui transformait toutes les paires en erreurs, tout en
+    # gardant les chemins visibles (mesure le 2026-08-11 : mutation survivante).
+    valid = {}
+    for pair in pairs:
+        if len(pair) == 2 and str(pair[1]).endswith(".md"):
+            valid[str(pair[1])] = pair
+    for witness in ("site-qa", "booking-api-demo"):
+        if not any(witness in path for path in valid):
+            failures.append("perimetre : aucune paire VALIDE pour %s -- son rendu n'est compare "
+                            "a rien" % witness)
+    if len(valid) < 2:
+        failures.append("perimetre : %d paire(s) VALIDE(S) -- ce depot en contient au moins "
+                        "deux, un balayage qui n'en voit presque aucune passe vert sans rien "
+                        "verifier" % len(valid))
+
     if failures:
         print("::error::l'auto-verification du rendu en langage naturel echoue.")
         for line in failures:

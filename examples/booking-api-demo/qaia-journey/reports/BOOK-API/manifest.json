@@ -33,31 +33,31 @@
   ],
   "design": {
     "scenarios": {
-      "total": 23,
+      "total": 26,
       "byPriority": {
-        "P1": 11,
-        "P2": 11,
+        "P1": 13,
+        "P2": 12,
         "P3": 1
       },
-      "negative": 14,
+      "negative": 16,
       "smoke": 0,
       "outlines": 3
     },
     "byLevel": {
       "e2e": 0,
-      "api": 23
+      "api": 26
     },
     "coverage": {
       "acTotal": 1,
       "acCovered": 1,
-      "reqNegTotal": 13,
-      "reqNegCovered": 13,
-      "negativeRatio": 0.61
+      "reqNegTotal": 15,
+      "reqNegCovered": 15,
+      "negativeRatio": 0.62
     },
     "confidence": {
       "lowConfidence": 5,
       "openQuestions": 3,
-      "assumptions": 3,
+      "assumptions": 4,
       "simulated": 0
     },
     "techniques": [
@@ -70,16 +70,16 @@
     "knowledgeApplied": []
   },
   "execution": {
-    "total": 23,
-    "passed": 23,
+    "total": 26,
+    "passed": 26,
     "failed": 0,
     "blocked": 0,
     "byType": {
-      "api": 23
+      "api": 26
     },
     "traceability": {
-      "scenariosAutomated": 23,
-      "scenariosTotal": 23
+      "scenariosAutomated": 26,
+      "scenariosTotal": 26
     }
   },
   "openArbitrations": [

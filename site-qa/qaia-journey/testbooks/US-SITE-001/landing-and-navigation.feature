@@ -17,7 +17,7 @@ Feature: The landing page decides whether a visitor tries QAIA
     And they see that a test book and runnable tests come out
 
   # C9 — the one that was red first, and the reason this book exists
-  @QAIA-US-SITE-001-009 @AC2 @P1 @e2e @negative @ep
+  @QAIA-US-SITE-001-009 @AC2 @P1 @e2e @ep
   Scenario Outline: Every public page discloses the pre-alpha status
     # contract: AC2 -- on EVERY page, not only where it is comfortable to say
     Given a visitor opens "<page>"
@@ -47,7 +47,7 @@ Feature: The landing page decides whether a visitor tries QAIA
     Then the link targets the campaign report kept in this repository
 
   # C12
-  @QAIA-US-SITE-001-012 @AC5 @P2 @e2e @negative @ep
+  @QAIA-US-SITE-001-012 @AC5 @P2 @e2e @ep
   Scenario: Every in-page navigation anchor has a target
     Given a visitor opens the home page
     When they consider each navigation anchor
@@ -67,7 +67,7 @@ Feature: The landing page decides whether a visitor tries QAIA
       | /walkthrough.html |
 
   # C14
-  @QAIA-US-SITE-001-014 @AC7 @P3 @e2e @negative @pairwise
+  @QAIA-US-SITE-001-014 @AC7 @P3 @e2e @ep
   Scenario: The three pages carry three different titles
     Given a visitor opens the home page, the comparison page and the walkthrough
     When they compare the browser tab titles

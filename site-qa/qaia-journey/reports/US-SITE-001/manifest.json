@@ -54,7 +54,7 @@
         "P2": 4,
         "P3": 8
       },
-      "negative": 8,
+      "negative": 1,
       "smoke": 0,
       "outlines": 4
     },
@@ -65,9 +65,9 @@
     "coverage": {
       "acTotal": 7,
       "acCovered": 7,
-      "reqNegTotal": 6,
-      "reqNegCovered": 6,
-      "negativeRatio": 0.31
+      "reqNegTotal": 1,
+      "reqNegCovered": 1,
+      "negativeRatio": 0.04
     },
     "confidence": {
       "lowConfidence": 1,
@@ -78,7 +78,6 @@
     "techniques": [
       "ep",
       "boundary",
-      "pairwise",
       "error-guessing"
     ],
     "oracles": [],

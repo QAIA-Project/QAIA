@@ -27,7 +27,7 @@ Requirement: AC1 · Priority: 1 (highest) · Level: end-to-end (user interface) 
 
 ### QAIA-US-SITE-001-009-e1 · Every public page discloses the pre-alpha status
 
-Requirement: AC2 · Priority: 1 (highest) · Level: end-to-end (user interface) · Refusal path · Technique: equivalence partitioning
+Requirement: AC2 · Priority: 1 (highest) · Level: end-to-end (user interface) · Technique: equivalence partitioning
 
 **Preconditions**
 
@@ -44,7 +44,7 @@ Requirement: AC2 · Priority: 1 (highest) · Level: end-to-end (user interface) 
 
 ### QAIA-US-SITE-001-009-e2 · Every public page discloses the pre-alpha status
 
-Requirement: AC2 · Priority: 1 (highest) · Level: end-to-end (user interface) · Refusal path · Technique: equivalence partitioning
+Requirement: AC2 · Priority: 1 (highest) · Level: end-to-end (user interface) · Technique: equivalence partitioning
 
 **Preconditions**
 
@@ -61,7 +61,7 @@ Requirement: AC2 · Priority: 1 (highest) · Level: end-to-end (user interface) 
 
 ### QAIA-US-SITE-001-009-e3 · Every public page discloses the pre-alpha status
 
-Requirement: AC2 · Priority: 1 (highest) · Level: end-to-end (user interface) · Refusal path · Technique: equivalence partitioning
+Requirement: AC2 · Priority: 1 (highest) · Level: end-to-end (user interface) · Technique: equivalence partitioning
 
 **Preconditions**
 
@@ -114,7 +114,7 @@ Requirement: AC4 · Priority: 2 · Level: end-to-end (user interface) · Techniq
 
 ### QAIA-US-SITE-001-012 · Every in-page navigation anchor has a target
 
-Requirement: AC5 · Priority: 2 · Level: end-to-end (user interface) · Refusal path · Technique: equivalence partitioning
+Requirement: AC5 · Priority: 2 · Level: end-to-end (user interface) · Technique: equivalence partitioning
 
 **Preconditions**
 
@@ -182,7 +182,7 @@ Requirement: AC7 · Priority: 3 · Level: end-to-end (user interface) · Techniq
 
 ### QAIA-US-SITE-001-014 · The three pages carry three different titles
 
-Requirement: AC7 · Priority: 3 · Level: end-to-end (user interface) · Refusal path · Technique: combinatorial (pairwise)
+Requirement: AC7 · Priority: 3 · Level: end-to-end (user interface) · Technique: equivalence partitioning
 
 **Preconditions**
 
@@ -344,7 +344,7 @@ Requirement: AC6 · Priority: 2 · Level: API (service contract) · Technique: e
 
 ### QAIA-US-SITE-001-004 · The sitemap lists exactly the published entry points
 
-Requirement: AC6 · Priority: 1 (highest) · Level: API (service contract) · Refusal path · Technique: equivalence partitioning
+Requirement: AC6 · Priority: 1 (highest) · Level: API (service contract) · Technique: equivalence partitioning
 
 **Preconditions**
 
@@ -427,7 +427,7 @@ Requirement: AC6 · Priority: 3 · Level: API (service contract) · Technique: b
 
 ### QAIA-US-SITE-001-007 · The demo is served from the second assembly source
 
-Requirement: AC5 · Priority: 1 (highest) · Level: API (service contract) · Refusal path · Technique: equivalence partitioning
+Requirement: AC5 · Priority: 1 (highest) · Level: API (service contract) · Technique: equivalence partitioning
 
 **Preconditions**
 

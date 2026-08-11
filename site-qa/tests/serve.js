@@ -1,10 +1,18 @@
 #!/usr/bin/env node
-// Sert le site EXACTEMENT comme GitHub Pages le publie : `site/` a la racine, et
-// `examples/expense-demo/static-demo/` sous `/demo/`. La regle vit aussi dans
-// `.github/workflows/pages.yml` (etapes `cp -r`) : c'est une duplication assumee, faute de
-// pouvoir appeler un workflow depuis un test. Ce qui la garde honnete est le scenario
-// QAIA-US-SITE-001-004 -- si les deux assemblages cessent de coincider, le sitemap et
-// l'ensemble publie divergent et le test le dit.
+// Sert le site comme GitHub Pages le publie : `site/` a la racine, et
+// `examples/expense-demo/static-demo/` sous `/demo/`. La regle d'assemblage vit aussi dans
+// `.github/workflows/pages.yml` (etapes `cp -r`), faute de pouvoir appeler un workflow depuis
+// un test.
+//
+// CE QUE CETTE DUPLICATION N'EST PAS COUVERTE PAR -- ecrit ici parce que ce fichier a affirme
+// le contraire jusqu'au 2026-08-11. Il disait que le scenario QAIA-US-SITE-001-004 rattrapait
+// toute divergence. C'est faux, et une relecture l'a demontre par quatre contre-exemples :
+// supprimer l'etape demo de `pages.yml`, y ajouter un troisieme `cp -r`, ou changer le point de
+// montage laissent la suite VERTE et la production cassee -- parce que le test compare le
+// DISQUE au sitemap, et ne lit jamais `pages.yml`.
+// Seul cas reellement couvert : un fichier ajoute ou retire DANS `site/`.
+// Une garantie inventee dans un commentaire est la dette la plus chere : la personne suivante
+// lui fait confiance. Le trou est donc ecrit, pas repare a moitie.
 'use strict';
 
 const http = require('http');
@@ -39,7 +47,11 @@ function resolve(urlPath) {
     let rel = clean.slice(mount.prefix.length);
     if (rel === '' || rel.endsWith('/')) rel += 'index.html';
     const target = path.join(mount.dir, rel);
-    if (!target.startsWith(mount.dir)) return null; // traversee de chemin
+    // `startsWith` sur une chaine nue laissait sortir du montage : `…/QAIA/site` est un prefixe
+    // de `…/QAIA/site-qa`, donc `/../site-qa/tests/serve.js` etait servi -- node_modules compris.
+    // Trouve le 2026-08-11 par une relecture « developpeur », avec la requete qui le prouve.
+    const inside = path.relative(mount.dir, target);
+    if (inside.startsWith('..') || path.isAbsolute(inside)) return null;
     if (fs.existsSync(target) && fs.statSync(target).isFile()) return target;
   }
   return null;
@@ -59,4 +71,4 @@ http
     });
     res.end(body);
   })
-  .listen(PORT, () => console.log(`site served on http://127.0.0.1:${PORT}`));
+  .listen(PORT, '127.0.0.1', () => console.log(`site served on http://127.0.0.1:${PORT}`));
