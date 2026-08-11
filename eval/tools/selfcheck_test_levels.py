@@ -73,9 +73,16 @@ def main():
         elif "2 etiquettes" not in reason_b:
             failures.append("motif inattendu pour le doublon d'etiquettes : %s" % reason_b)
 
-    signalled = " ".join(o[1] for o in offenders)
+    signalled = " ".join(o[1] for o in offenders + retired)
     if "Une seule etiquette" in signalled:
         failures.append("le scenario conforme (@api seul) a ete signale -- faux positif")
+    # Forme reelle du depot : tags, puis commentaire, puis Scenario. Une campagne mutation du
+    # 2026-08-11 a montre que neutraliser la remontee au-dessus d'un commentaire ne faisait
+    # rougir aucune auto-verification -- le controle serait devenu aveugle a la moitie des
+    # cahiers sans que rien ne le signale. C'est la seule mutation survivante des treize.
+    if "separee du scenario par un commentaire" in signalled:
+        failures.append("le scenario dont les tags sont suivis d'un commentaire a ete signale -- "
+                        "faux positif sur la forme la plus courante du depot")
 
     # La fixture rouge doit rester HORS du perimetre du controle lui-meme, sinon `make check`
     # serait rouge en permanence et la preuve deviendrait une panne.

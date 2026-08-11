@@ -27,3 +27,14 @@ Feature: Fixture rouge des niveaux de test
     Given un scenario portant @use-case, retiree par testbook-generate
     When le controle passe
     Then il signale l'etiquette retiree
+
+  @QAIA-FIX-005 @AC1 @P1 @api @ep
+  # Un commentaire entre la ligne de tags et le Scenario -- forme REELLE, employee par
+  # contract-probe et par tout le cahier booking-api-demo. Ajoute le 2026-08-11 apres qu'une
+  # campagne mutation ait montre que neutraliser la remontee au-dessus d'un commentaire ne
+  # faisait rougir AUCUNE auto-verification : le controle serait devenu aveugle a la moitie
+  # des cahiers du depot sans que rien ne le dise.
+  Scenario: Une etiquette separee du scenario par un commentaire -- ne doit PAS etre signale
+    Given un scenario dont les tags sont suivis d'un commentaire
+    When le controle passe
+    Then il ne dit rien de ce scenario

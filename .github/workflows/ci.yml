@@ -271,6 +271,14 @@ jobs:
           python eval/tools/check_nl_projection.py
           python eval/tools/selfcheck_nl_projection.py
 
+      # Les regles de `design.byLevel` (contrat 1.1) avaient ete verifiees le jour de leur
+      # ecriture -- dans une sonde de session, jamais retenue. La campagne mutation du
+      # 2026-08-11 a du la refabriquer pour pouvoir muter le validateur, et c'est ce qui a
+      # rendu le trou visible : la regle etait appliquee par le code et prouvee par rien de
+      # durable. Regle 4bis du contrat partage : une mesure citee pointe une sortie conservee.
+      - name: Le validateur applique vraiment les regles de design.byLevel
+        run: python eval/tools/selfcheck_manifest_bylevel.py
+
       - name: README version claims match the plugin manifests
         run: |
           set -e
