@@ -1,6 +1,6 @@
 ---
-name: ISTQB Technique Selection, Justified
-description: Pick the test design technique each acceptance criterion actually calls for and write the one-sentence reason next to it, then derive the concrete conditions to cover - including the refusal paths that a percentage-based negative target lets you skip.
+name: ISTQB Technique Selection
+description: Pick the test design technique each acceptance criterion actually calls for, write the one-sentence reason next to it, then derive the concrete conditions to cover. Use when coverage has to be defensible to someone else — including the refusal paths a percentage-based negative target lets you skip.
 version: 1.0.0
 author: opaland
 license: MIT

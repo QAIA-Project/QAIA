@@ -1,5 +1,5 @@
 {
-  "_why": "Provenance of skills published to external directories. See eval/tools/check_published_copies.py.",
+  "_why": "Provenance of the standalone skill copies prepared for external directories, and their ACTUAL publication state. See eval/tools/check_published_copies.py (copy vs source in this repo) and eval/tools/check_directory_listing.py (this file vs what the directory really serves).",
   "published": [
     {
       "copy": "docs/outreach/qaskills/ambiguity-hunt/SKILL.md",
@@ -13,7 +13,12 @@
           "path": "plugins/qaia-core/skills/need-understanding/references/ambiguity-passes.md",
           "sha256": "8473b82f34d5b39d35ce8f50442a894ee645c107af7fd123fdecd72c52d85d12"
         }
-      ]
+      ],
+      "state": "live",
+      "live_slug": "requirement-ambiguity-hunt",
+      "live_since": "2026-08-08",
+      "verified_by_directory": false,
+      "install_count_at_2026_08_11": 0
     },
     {
       "copy": "docs/outreach/qaskills/istqb-technique-selection/SKILL.md",
@@ -31,7 +36,9 @@
           "path": "plugins/qaia-core/skills/istqb-design/references/knowledge-conditions.md",
           "sha256": "d87ef13769eb3733d6cbb381803c2203e6edc19a1e37f32129c3f255c0d334f9"
         }
-      ]
+      ],
+      "state": "prepared",
+      "note": "never submitted — the copy exists here only"
     },
     {
       "copy": "docs/outreach/qaskills/generated-test-self-review/SKILL.md",
@@ -41,7 +48,9 @@
           "path": "plugins/qaia-playwright/skills/automate/references/self-review-lint.md",
           "sha256": "6ba1ccd24b3f46c0a1bef3d12762992b28d5cab485734f9bacb4c3fbce932f40"
         }
-      ]
+      ],
+      "state": "prepared",
+      "note": "never submitted — the copy exists here only"
     },
     {
       "copy": "docs/outreach/qaskills/accessibility-audit/SKILL.md",
@@ -59,7 +68,12 @@
           "path": "plugins/qaia-playwright/skills/a11y-audit/references/impact-and-reporting.md",
           "sha256": "225b6569e12c062b8f8bff7de1fcb870583afcc4d8227ef1b068f5d791525b49"
         }
-      ]
+      ],
+      "state": "live",
+      "live_slug": "accessibility-audit-axe-core-plus-the-pass-axe-cannot-do",
+      "live_since": "2026-08-08",
+      "verified_by_directory": false,
+      "install_count_at_2026_08_11": 0
     },
     {
       "copy": "docs/outreach/qaskills/security-surface-checks/SKILL.md",
@@ -73,7 +87,12 @@
           "path": "plugins/qaia-playwright/skills/security-surface/references/protocols.md",
           "sha256": "8a9d9968a543d8e89d0169d73de9540d59e471c058e81329d039767e57c44ec2"
         }
-      ]
+      ],
+      "state": "live",
+      "live_slug": "security-surface-checks-passive-risk-ranked-with-the-mis-runs-named",
+      "live_since": "2026-08-08",
+      "verified_by_directory": false,
+      "install_count_at_2026_08_11": 0
     },
     {
       "copy": "docs/outreach/qaskills/performance-check/SKILL.md",
@@ -83,7 +102,9 @@
           "path": "plugins/qaia-playwright/skills/perf-check/SKILL.md",
           "sha256": "f203a6892116ddf63cdadcfb1b1410c5791ea8cd5c66e925b75d76810652fcfe"
         }
-      ]
+      ],
+      "state": "prepared",
+      "note": "never submitted — the copy exists here only"
     },
     {
       "copy": "docs/outreach/qaskills/visual-regression/SKILL.md",
@@ -93,7 +114,10 @@
           "path": "plugins/qaia-playwright/skills/visual-check/SKILL.md",
           "sha256": "754ba771e21236aa6a49760bdd583dd75e98e7ffd7fe79b98d3af89121d5d583"
         }
-      ]
+      ],
+      "state": "prepared",
+      "note": "never submitted — the copy exists here only"
     }
-  ]
+  ],
+  "_correction_2026_08_11": "This file previously carried `directory: qaskills.sh` on all seven copies, and its own header said 'skills PUBLISHED to external directories'. Four of the seven had never been submitted: they were prepared on 2026-08-08 (commit 6246999) after GO-LIVE.md deliberately recommended starting with three, and the manual submission never happened for the rest. The directory exposes a public API (qaskills.sh/api/skills) that made the claim checkable from day one, and nobody checked it. Two states are now distinguished, and a control verifies them."
 }

@@ -51,6 +51,58 @@ justement ce qui manque.
 d'auto-suffisance du fichier). Si l'une d'elles est incompatible avec MIT + attribution, ne
 soumets pas et dis-le-moi.
 
+## Étape 2 bis — l'état réel, mesuré le 2026-08-11 (et ce qu'il reste à soumettre)
+
+**Trois skills sur sept sont en ligne. Les quatre autres n'ont jamais été soumises** — préparées le
+2026-08-08 après que l'étape 2 ci-dessus ait recommandé de commencer par trois, et le geste manuel
+n'a pas suivi. `SOURCES.json` les déclarait pourtant toutes « publiées » ; corrigé, et
+`eval/tools/check_directory_listing.py` interroge désormais l'API publique de l'annuaire pour que
+l'écart ne puisse plus passer.
+
+**En ligne, 0 installation chacune, `verified: false` :**
+
+| Slug servi par l'annuaire | Problème |
+|---|---|
+| `requirement-ambiguity-hunt` | aucun — slug propre |
+| `accessibility-audit-axe-core-plus-the-pass-axe-cannot-do` | **56 caractères** |
+| `security-surface-checks-passive-risk-ranked-with-the-mis-runs-named` | **67 caractères** |
+
+La médiane des slugs du site est de **20 caractères**, et les entrées les mieux installées sont
+nommées en deux mots d'après leur outil : `playwright-e2e` (422 installations), `playwright-cli`
+(106), `jest-unit` (83), `cypress-e2e` (71). Nos deux longs slugs viennent de titres qui étaient des
+phrases descriptives — l'annuaire les a transformés en slug tels quels.
+
+**Les noms ont été raccourcis dans le dépôt** (le qualificatif est passé dans la description) :
+
+| Copie | Nouveau nom | Slug attendu |
+|---|---|---|
+| `istqb-technique-selection` | ISTQB Technique Selection | `istqb-technique-selection` |
+| `generated-test-self-review` | Generated Test Self-Review | `generated-test-self-review` |
+| `performance-check` | Performance Budget Check | `performance-budget-check` |
+| `visual-regression` | Visual Regression Baselines | `visual-regression-baselines` |
+
+Les quatre slugs attendus ont été **vérifiés libres** sur l'annuaire le 2026-08-11.
+`visual-regression` tout court est **pris** par `thetestingacademy` — d'où le suffixe.
+
+### Ce qui reste manuel, et qui n'appartient qu'au fondateur
+
+1. **Soumettre les quatre** via `qaskills.sh` → *Publish a Skill*. Le corps est prêt dans
+   `docs/outreach/qaskills/<dossier>/SKILL.md`, autonome, MIT.
+2. **Renommer les deux longues** déjà en ligne, si l'interface le permet — `Accessibility Audit` et
+   `Security Surface Checks`. Le nom est déjà corrigé côté dépôt.
+3. **Retéléverser `generated-test-self-review` après soumission** : sa version ici a gagné la
+   classe D10 le 2026-08-11 (la fixture qui invalide l'assertion), et l'API ne permet pas de
+   vérifier le contenu en ligne — seulement la présence.
+4. **Regarder ce que demande `verified`.** Les trois entrées sont `verified: false` pendant que les
+   gros contributeurs sont vérifiés ; il y a probablement une étape qu'on n'a pas franchie.
+
+**À ne pas espérer** : les trois en ligne totalisent **zéro installation** depuis le 2026-08-08.
+C'est cohérent avec le reste des signaux — 0 étoile, 0 fork, 16 visiteurs uniques sur 14 jours — et
+c'est la première métrique d'*usage* que le projet obtienne. Soumettre quatre skills de plus ne la
+changera probablement pas ; ça ferme surtout un écart entre ce que le dépôt affirme et ce qui est.
+
+---
+
 ## Étape 3 — le reste des annuaires (je m'en occupe, sauf blocage)
 
 `claudemarketplaces.com`, `claudepluginhub.com`, `aitmpl.com`, SkillsMP, ClawHub, skills.sh,

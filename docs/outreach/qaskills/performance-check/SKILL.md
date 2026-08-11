@@ -1,6 +1,6 @@
 ---
-name: Performance Check - budgets, concurrency integrity, and the right CT-PT shape
-description: Set a latency budget and say where the number came from, prove a limited resource cannot be oversold under concurrency, then pick the performance test type the question actually calls for - because spike and soak change what green means and are not load with different numbers.
+name: Performance Budget Check
+description: Set a latency budget and say where the number came from, prove a limited resource cannot be oversold under concurrency, and pick the CT-PT test type the question actually calls for. Use when a performance number needs a justification — spike and soak change what green means and are not load with different numbers. Self-hosted targets only.
 version: 1.0.0
 author: opaland
 license: MIT

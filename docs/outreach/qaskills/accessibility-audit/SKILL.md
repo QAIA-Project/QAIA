@@ -1,6 +1,6 @@
 ---
-name: Accessibility Audit - axe-core plus the pass axe cannot do
-description: Run axe-core through Playwright on every key screen, fail on critical and serious only, then run the seven manual checks a DOM scanner structurally cannot perform - because automated tooling detects roughly a third of WCAG success criteria and the other two thirds are what actually stops a disabled user.
+name: Accessibility Audit
+description: axe-core through Playwright on every key screen, failing on critical and serious only, plus the seven manual checks a DOM scanner structurally cannot perform. Use when a WCAG 2.1 AA claim has to survive someone checking it — automated tooling reaches about a third of the success criteria, and the other two thirds are what actually stops a disabled user.
 version: 1.0.0
 author: opaland
 license: MIT

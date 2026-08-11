@@ -1,6 +1,6 @@
 ---
-name: Security Surface Checks - passive, risk-ranked, with the mis-runs named
-description: Run the six passive security checks a QA engineer can own - auth boundaries, IDOR, error handling, user enumeration, headers, ZAP baseline - each as a protocol with its fixture requirement and its well-known way of being run wrong, so a check that tests nothing stops looking like a pass.
+name: Security Surface Checks
+description: The six passive security checks a QA engineer can own — auth boundaries, IDOR, error handling, user enumeration, headers, ZAP baseline — each with its fixture requirement and its well-known way of being run wrong. Use when security coverage must stop being a checkbox: a check that tests nothing stops looking like a pass. Authorized targets only.
 version: 1.0.0
 author: opaland
 license: MIT

@@ -1,6 +1,6 @@
 ---
-name: Visual Regression - a stated tolerance, frozen data, and a first run that is not a pass
-description: Generate Playwright screenshot tests scoped to stable containers with an explicitly chosen tolerance, freeze dynamic content instead of masking it, and treat the first run as baseline creation rather than a green result.
+name: Visual Regression Baselines
+description: Playwright screenshot tests scoped to stable containers with an explicitly chosen tolerance, dynamic content frozen rather than masked, and a first run treated as baseline creation. Use when screenshot tests need to survive a second week — an unstated tolerance and a first run counted as green are why most visual suites get deleted.
 version: 1.0.0
 author: opaland
 license: MIT
