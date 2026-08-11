@@ -1,0 +1,26 @@
+MINIMAL REPRO — 2026-08-11T12:26:47.021Z — pocketbase.exe 0.39.10 (windows_amd64)
+
+Fixture: 3 posts.   A_has_news -> [news]   B_has_tech -> [tech]   C_has_NOTHING -> [] (empty relation)
+
+filter                | matched                                   | C (empty rel) matched? | 2 runs identical
+----------------------------------------------------------------------------------------------------------------
+cats.name ?= "news"   | ["A_has_news"]                            | no                     | true
+cats.name ?!= "news"  | ["B_has_tech","C_has_NOTHING"]            | YES                    | true
+cats.name ?~ "news"   | ["A_has_news"]                            | no                     | true
+cats.name ?!~ "news"  | ["B_has_tech"]                            | no                     | true
+cats.name ?> "news"   | ["B_has_tech"]                            | no                     | true
+cats.name ?>= "news"  | ["A_has_news","B_has_tech"]               | no                     | true
+cats.name ?< "news"   | []                                        | no                     | true
+cats.name ?<= "news"  | ["A_has_news"]                            | no                     | true
+cats.name = "news"    | ["A_has_news"]                            | no                     | true
+cats.name != "news"   | ["B_has_tech","C_has_NOTHING"]            | YES                    | true
+cats.name ~ "news"    | ["A_has_news"]                            | no                     | true
+cats.name !~ "news"   | ["B_has_tech"]                            | no                     | true
+
+Per https://pocketbase.io/docs/api-rules-and-filters/ the eight "?" operators share one gloss:
+  "?!= Any/At least one of NOT equal"   /   "?!~ Any/At least one of NOT Like/Contains"  (etc.)
+
+OBSERVED: of the eight, ?!= alone reports a match for a record whose relation is empty.
+Its match-all counterpart != does the same, while !~ / ?!~ do not.
+A record with zero related items has no item that "is not news", so ?= and ?!= both being
+false for C would be self-consistent; ?= false + ?!= true is not.

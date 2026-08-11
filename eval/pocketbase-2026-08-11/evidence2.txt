@@ -1,0 +1,178 @@
+PocketBase probe pass 2 — 2026-08-11T12:26:46.472Z — pocketbase.exe 0.39.10
+
+### A. Case sensitivity: the doc example "title ~ \"Lorem%\"" is said to return records whose title STARTS WITH "Lorem".
+--------------------------------------------------------------------
+[A1]  (2 identical runs: true)
+  PROMISE : doc example verbatim: title ~ "Lorem%" -> "records where the title field value starts with \"Lorem\""
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=title ~ "Lorem%"
+  STATUS  : 200
+  RESULT  : ["Lorem ipsum","lorem lower"]  (totalItems=2)
+--------------------------------------------------------------------
+[A2]  (2 identical runs: true)
+  PROMISE : "= Equal" — is it case sensitive? (doc does not say)
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=title = "lorem ipsum"
+  STATUS  : 200
+  RESULT  : []  (totalItems=0)
+--------------------------------------------------------------------
+[A3]  (2 identical runs: true)
+  PROMISE : "= Equal" exact case
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=title = "Lorem ipsum"
+  STATUS  : 200
+  RESULT  : ["Lorem ipsum"]  (totalItems=1)
+--------------------------------------------------------------------
+[A4]  (2 identical runs: true)
+  PROMISE : ":lower ... perform lower-case string comparisons" — documented as the way to get case-insensitive matching
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=title:lower = "lorem ipsum"
+  STATUS  : 200
+  RESULT  : ["Lorem ipsum"]  (totalItems=1)
+--------------------------------------------------------------------
+[A5]  (2 identical runs: true)
+  PROMISE : ~ against an upper-case operand
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=title ~ "LOREM"
+  STATUS  : 200
+  RESULT  : ["Lorem ipsum","lorem lower"]  (totalItems=2)
+--------------------------------------------------------------------
+[A6]  (2 identical runs: true)
+  PROMISE : non-ASCII: :lower "by default works only for ASCII characters, unless the ICU extension is loaded"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=title:lower = "éé"
+  STATUS  : 200
+  RESULT  : []  (totalItems=0)
+
+### B. :isset on a collection schema field — doc: "available only for the @request.* fields"
+--------------------------------------------------------------------
+[B1]  (2 identical runs: true)
+  PROMISE : :isset = true on a schema field
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=title:isset = true
+  STATUS  : 200
+  RESULT  : []  (totalItems=0)
+--------------------------------------------------------------------
+[B2]  (2 identical runs: true)
+  PROMISE : :isset = false on a schema field
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=title:isset = false
+  STATUS  : 200
+  RESULT  : []  (totalItems=0)
+--------------------------------------------------------------------
+[B3]  (2 identical runs: true)
+  PROMISE : control: an unknown field is rejected with 400 ("Supported record filter fields: id, + any field from the collection schema")
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=nosuchfield = "x"
+  STATUS  : 400
+  RESULT  : {"data":{},"message":"Something went wrong while processing your request.","status":400}
+--------------------------------------------------------------------
+[B4]  (2 identical runs: true)
+  PROMISE : :changed on a schema field — doc: "available only for the @request.body.* fields"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=title:changed = true
+  STATUS  : 200
+  RESULT  : []  (totalItems=0)
+--------------------------------------------------------------------
+[B5]  (2 identical runs: true)
+  PROMISE : a completely made-up modifier
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=title:nosuchmodifier = true
+  STATUS  : 400
+  RESULT  : {"data":{},"message":"Something went wrong while processing your request.","status":400}
+
+### C. "Any/At least one of" over an EMPTY multi-relation ("100% pure" and "back\\slash" have tags=[])
+--------------------------------------------------------------------
+[C1]  (2 identical runs: true)
+  PROMISE : "?= Any/At least one of Equal"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=tags.label ?= "alpha"
+  STATUS  : 200
+  RESULT  : ["#emptytit","Lorem ipsum","lorem lower"]  (totalItems=3)
+--------------------------------------------------------------------
+[C2]  (2 identical runs: true)
+  PROMISE : "?!= Any/At least one of NOT equal"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=tags.label ?!= "alpha"
+  STATUS  : 200
+  RESULT  : ["#emptytit","100% pure","Lorem ipsum","back\\slash","quote'd \"both\"","under_score"]  (totalItems=6)
+--------------------------------------------------------------------
+[C3]  (2 identical runs: true)
+  PROMISE : "?~ Any/At least one of Like/Contains"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=tags.label ?~ "alph"
+  STATUS  : 200
+  RESULT  : ["#emptytit","Lorem ipsum","lorem lower"]  (totalItems=3)
+--------------------------------------------------------------------
+[C4]  (2 identical runs: true)
+  PROMISE : "?!~ Any/At least one of NOT Like/Contains"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=tags.label ?!~ "alph"
+  STATUS  : 200
+  RESULT  : ["#emptytit","Lorem ipsum","quote'd \"both\"","under_score"]  (totalItems=4)
+--------------------------------------------------------------------
+[C5]  (2 identical runs: true)
+  PROMISE : a tag label that exists on NO record — ?!= must then be true for every record that has >=1 tag
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=tags.label ?!= "zzz"
+  STATUS  : 200
+  RESULT  : ["#emptytit","100% pure","Lorem ipsum","back\\slash","lorem lower","quote'd \"both\"","under_score"]  (totalItems=7)
+--------------------------------------------------------------------
+[C6]  (2 identical runs: true)
+  PROMISE : De Morgan control: records NOT matching ?= "alpha"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=tags.label ?= "alpha"
+  STATUS  : 200
+  RESULT  : ["#emptytit","Lorem ipsum","lorem lower"]  (totalItems=3)
+  ANALYSIS: if ?= excludes the empty-relation records but ?!= includes them, then for those records
+            neither "at least one equal" nor its negation-free counterpart is grounded in an actual item.
+
+### D. expand — doc: "Supports up to 6-levels depth nested relations expansion."
+--------------------------------------------------------------------
+[D1]  (2 identical runs: true)
+  PROMISE : "Supports up to 6-levels depth nested relations expansion." — requesting 1 level(s)
+  REQUEST : GET /api/collections/chain0/records?expand=next
+  STATUS  : 200
+  RESULT  : levels expanded = 1 | deepest label = L1 | status 200
+--------------------------------------------------------------------
+[D5]  (2 identical runs: true)
+  PROMISE : "Supports up to 6-levels depth nested relations expansion." — requesting 5 level(s)
+  REQUEST : GET /api/collections/chain0/records?expand=next.next.next.next.next
+  STATUS  : 200
+  RESULT  : levels expanded = 5 | deepest label = L5 | status 200
+--------------------------------------------------------------------
+[D6]  (2 identical runs: true)
+  PROMISE : "Supports up to 6-levels depth nested relations expansion." — requesting 6 level(s)
+  REQUEST : GET /api/collections/chain0/records?expand=next.next.next.next.next.next
+  STATUS  : 200
+  RESULT  : levels expanded = 6 | deepest label = L6 | status 200
+--------------------------------------------------------------------
+[D7]  (2 identical runs: true)
+  PROMISE : "Supports up to 6-levels depth nested relations expansion." — requesting 7 level(s)
+  REQUEST : GET /api/collections/chain0/records?expand=next.next.next.next.next.next.next
+  STATUS  : 200
+  RESULT  : levels expanded = 6 | deepest label = L6 | status 200
+--------------------------------------------------------------------
+[D8]  (2 identical runs: true)
+  PROMISE : requesting 7 levels — is the excess rejected (400) or silently truncated?
+  REQUEST : GET /api/collections/chain0/records?expand=next.next.next.next.next.next.next
+  STATUS  : 200
+  RESULT  : {"items":[{"collectionId":"pbc_3100150745","collectionName":"chain0","expand":{"next":{"collectionId":"pbc_3486497615","collectionName":"chain1","expand":{"next":{"collectionId":"pbc_1455876853","collectionName":"chain2","expand":{"next":{"collectionId":"pbc_566352483","collectionName":"chain3","expand":{"next":{"collectionId":"pbc_3215282112","collectionName":"chain4","expand":{"next":{"collectio
+
+### E. expand of an unknown relation vs the 400 given for an unknown sort/filter field
+--------------------------------------------------------------------
+[E1]  (2 identical runs: true)
+  PROMISE : unknown expand key
+  REQUEST : GET /api/collections/probe_items/records?perPage=1&expand=nosuchrel
+  STATUS  : 200
+  RESULT  : status 200 expandKeyPresent=false
+--------------------------------------------------------------------
+[E2]  (2 identical runs: true)
+  PROMISE : unknown sort field — doc lists the supported ones
+  REQUEST : GET /api/collections/probe_items/records?perPage=1&sort=nosuchfield
+  STATUS  : 400
+  RESULT  : {"data":{},"message":"Something went wrong while processing your request.","status":400}
+--------------------------------------------------------------------
+[E3]  (2 identical runs: true)
+  PROMISE : expand a NON-relation field
+  REQUEST : GET /api/collections/probe_items/records?perPage=1&expand=title
+  STATUS  : 200
+  RESULT  : status 200 {"items":[{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"svhh9ohloqtek4q","note":"plain","num":10,"opts":["a","b"],"tags":["mz0h1vats01k32n","ul48fgmxqx17axe"],"titl
+
+### F. API rules: @request.query.* / @request.headers.* — doc: "the request query parameters as string values", "All header keys are normalized to lowercase and \"-\" is replaced with \"_\""
+  header X-Token: secret  -> status 200 totalItems=7
+  header x-token: secret  -> status 200 totalItems=7
+  header X-TOKEN: secret  -> status 200 totalItems=7
+  header X-Token: wrong  -> status 200 totalItems=0
+  query "mytoken=abc" -> status 200 totalItems=7
+  query "mytoken=xyz" -> status 200 totalItems=0
+  query "" -> status 200 totalItems=0
+  PROMISE: "the API will return 200 empty items response in case a request doesn't satisfy a listRule"
+
+### G. Documented rule status codes: 200 empty for listRule, 400 createRule, 404 view/update/deleteRule, 403 when locked
+  unsatisfied: list=200 (items=0)  view=404  create=400  update=404  delete=404
+  locked (null): list=403  view=403  create=403  update=403  delete=403
+  EXPECTED per doc: unsatisfied -> list=200(0 items) create=400 view/update/delete=404 ; locked -> all 403

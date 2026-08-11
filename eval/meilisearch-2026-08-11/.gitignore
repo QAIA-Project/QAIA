@@ -1,0 +1,4 @@
+bin/
+*.exe
+verifdb/
+data.ms/

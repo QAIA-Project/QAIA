@@ -1,0 +1,37 @@
+probe pass 5 — 2026-08-11T12:26:46.871Z — pocketbase.exe 0.39.10
+=== 0. Confirming the fixture really is multi-valued (guards against a probe-side schema mistake) ===
+  field opts  type=select  maxSelect=5
+  field tags  type=relation  maxSelect=5
+  record "Lorem ipsum" stored value: opts=["a","b"]  tags=["mz0h1vats01k32n","ul48fgmxqx17axe"]
+  alpha tag id = mz0h1vats01k32n
+
+=== 1. "?= Any/At least one of Equal" on a multi-RELATION field, by id (direct analogue) ===
+  tags ?= "mz0h1vats01k32n"          -> []
+  tags = "mz0h1vats01k32n"           -> []
+  tags.id ?= "mz0h1vats01k32n"       -> ["#emptytit","Lorem ipsum","lorem lower"]
+  expected per doc (any-of alpha): ["#emptytit","Lorem ipsum","lorem lower"]
+
+=== 2. "?= Any/At least one of Equal" on a multi-SELECT field ===
+  opts ?= "a"                        -> []
+  opts ?= "b"                        -> []
+  opts ?= "c"                        -> []
+  opts ?= "pb_x"                     -> []
+  expected per doc for opts ?= "a": ["Lorem ipsum","back\slash","lorem lower"]
+
+=== 3. what DOES retrieve a select option, for comparison ===
+  opts:each = "a"                    status=200 -> ["lorem lower"]
+  opts ~ "a"                         status=200 -> ["Lorem ipsum","back\\slash","lorem lower"]
+  opts ?~ "a"                        status=200 -> ["Lorem ipsum","back\\slash","lorem lower"]
+  opts:each ?= "a"                   status=200 -> ["Lorem ipsum","back\\slash","lorem lower"]
+
+=== 4. reproduction x5 of opts ?= "a" and tags ?= alpha ===
+  run 1: opts ?= "a" -> 0 items   |   tags ?= alpha -> 0 items
+  run 2: opts ?= "a" -> 0 items   |   tags ?= alpha -> 0 items
+  run 3: opts ?= "a" -> 0 items   |   tags ?= alpha -> 0 items
+  run 4: opts ?= "a" -> 0 items   |   tags ?= alpha -> 0 items
+  run 5: opts ?= "a" -> 0 items   |   tags ?= alpha -> 0 items
+
+=== 5. does a SINGLE-valued select behave differently? (maxSelect=1) ===
+  create probe_single: 200
+  one = "a"        -> ["r1"]  (single-valued select stores "a")
+  one ?= "a"       -> ["r1"]  (single-valued select stores "a")

@@ -1,0 +1,37 @@
+probe pass 4 — 2026-08-11T12:26:46.787Z — pocketbase.exe 0.39.10
+fixture opts: "Lorem ipsum"=[a,b]  "lorem lower"=[a]  "100% pure"=[]  "under_score"=[pb_x,pb_y]
+             quote'd=[c]  "#emptytit"=[b,c]  "back\slash"=[a,c]
+
+=== multi-SELECT: "?" operators, doc gloss "Any/At least one of X" ===
+  opts ?= "b"          status=200 stable=true  -> []
+  opts ?= "a"          status=200 stable=true  -> []
+  opts ?!= "a"         status=200 stable=true  -> ["#emptytit","100% pure","Lorem ipsum","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+  opts ?~ "b"          status=200 stable=true  -> ["#emptytit","Lorem ipsum","under_score"]
+  opts ?!~ "b"         status=200 stable=true  -> ["100% pure","back\\slash","lorem lower","quote'd \"both\""]
+  opts ?> "a"          status=200 stable=true  -> []
+  opts ?>= "b"         status=200 stable=true  -> []
+  opts ?< "b"          status=200 stable=true  -> ["#emptytit","100% pure","Lorem ipsum","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+  opts ?<= "a"         status=200 stable=true  -> ["#emptytit","100% pure","Lorem ipsum","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+  opts ?> "b"          status=200 stable=true  -> []
+  opts ?< "c"          status=200 stable=true  -> ["#emptytit","100% pure","Lorem ipsum","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+
+=== multi-SELECT: match-all (no "?") counterparts ===
+  opts = "a"           status=200 stable=true  -> []
+  opts != "a"          status=200 stable=true  -> ["#emptytit","100% pure","Lorem ipsum","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+  opts > "a"           status=200 stable=true  -> []
+  opts < "c"           status=200 stable=true  -> ["#emptytit","100% pure","Lorem ipsum","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+  opts ~ "b"           status=200 stable=true  -> ["#emptytit","Lorem ipsum","under_score"]
+
+=== control: the SAME ordering operators on a SINGLE-valued text field (note) ===
+fixture note: plain / "" / pct / us / q / emptytit / bs
+  note > "p"           status=200 stable=true  -> ["100% pure","Lorem ipsum","quote'd \"both\"","under_score"]
+  note >= "p"          status=200 stable=true  -> ["100% pure","Lorem ipsum","quote'd \"both\"","under_score"]
+  note < "p"           status=200 stable=true  -> ["#emptytit","back\\slash","lorem lower"]
+  note ?> "p"          status=200 stable=true  -> ["100% pure","Lorem ipsum","quote'd \"both\"","under_score"]
+  note ?< "p"          status=200 stable=true  -> ["#emptytit","back\\slash","lorem lower"]
+
+=== control: ordering operators on the multi-RELATION label ===
+  tags.label ?> "alpha"    status=200 stable=true  -> ["#emptytit","Lorem ipsum","quote'd \"both\"","under_score"]
+  tags.label ?>= "beta"    status=200 stable=true  -> ["#emptytit","Lorem ipsum","quote'd \"both\"","under_score"]
+  tags.label ?< "beta"     status=200 stable=true  -> ["#emptytit","Lorem ipsum","lorem lower"]
+  tags.label > "alpha"     status=200 stable=true  -> ["quote'd \"both\"","under_score"]

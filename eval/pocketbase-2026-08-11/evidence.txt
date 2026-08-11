@@ -1,0 +1,618 @@
+PocketBase probe — 2026-08-11T12:26:46.291Z
+health: {"message":"API is healthy.","code":200,"data":{}}
+binary: pocketbase.exe version 0.39.10 (windows_amd64)
+target: http://127.0.0.1:8090  (local, single process)
+
+--------------------------------------------------------------------
+[F01] MATCH   (2 identical runs: true)
+  PROMISE : "= Equal"
+  FILTER  : title = "Lorem ipsum"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=title%20%3D%20%22Lorem%20ipsum%22
+  STATUS  : 200
+  EXPECT  : ["Lorem ipsum"]
+  GOT     : ["Lorem ipsum"]
+--------------------------------------------------------------------
+[F02] MATCH   (2 identical runs: true)
+  PROMISE : "!= NOT equal"
+  FILTER  : title != "Lorem ipsum"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=title%20!%3D%20%22Lorem%20ipsum%22
+  STATUS  : 200
+  EXPECT  : ["#emptytit","100% pure","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+  GOT     : ["#emptytit","100% pure","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+--------------------------------------------------------------------
+[F03] MATCH   (2 identical runs: true)
+  PROMISE : "> Greater than"
+  FILTER  : num > 7
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=num%20%3E%207
+  STATUS  : 200
+  EXPECT  : ["Lorem ipsum","quote'd \"both\""]
+  GOT     : ["Lorem ipsum","quote'd \"both\""]
+--------------------------------------------------------------------
+[F04] MATCH   (2 identical runs: true)
+  PROMISE : ">= Greater than or equal"
+  FILTER  : num >= 7
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=num%20%3E%3D%207
+  STATUS  : 200
+  EXPECT  : ["Lorem ipsum","back\\slash","quote'd \"both\""]
+  GOT     : ["Lorem ipsum","back\\slash","quote'd \"both\""]
+--------------------------------------------------------------------
+[F05] MATCH   (2 identical runs: true)
+  PROMISE : "< Less than"
+  FILTER  : num < 5
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=num%20%3C%205
+  STATUS  : 200
+  EXPECT  : ["#emptytit","100% pure","lorem lower"]
+  GOT     : ["#emptytit","100% pure","lorem lower"]
+--------------------------------------------------------------------
+[F06] MATCH   (2 identical runs: true)
+  PROMISE : "<= Less than or equal"
+  FILTER  : num <= 5
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=num%20%3C%3D%205
+  STATUS  : 200
+  EXPECT  : ["#emptytit","100% pure","lorem lower","under_score"]
+  GOT     : ["#emptytit","100% pure","lorem lower","under_score"]
+--------------------------------------------------------------------
+[F07] MATCH   (2 identical runs: true)
+  PROMISE : OPERAND could be a number; negative numbers compare as numbers
+  FILTER  : num < 0
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=num%20%3C%200
+  STATUS  : 200
+  EXPECT  : ["100% pure"]
+  GOT     : ["100% pure"]
+--------------------------------------------------------------------
+[F10] MATCH   (2 identical runs: true)
+  PROMISE : "~ Like/Contains (if not specified auto wraps the right string OPERAND in a \"%\" for wildcard match)"
+  FILTER  : note ~ "lai"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=note%20~%20%22lai%22
+  STATUS  : 200
+  EXPECT  : ["Lorem ipsum"]
+  GOT     : ["Lorem ipsum"]
+  NOTE    : note="plain" — substring match proves the auto-wrapping on both sides.
+--------------------------------------------------------------------
+[F11] DEVIATION   (2 identical runs: true)
+  PROMISE : Doc example: 'Allow access by anyone and return only the records where the title field value starts with "Lorem" (ex. "Lorem ipsum")' with filter title ~ "Lorem%"
+  FILTER  : title ~ "Lorem%"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=title%20~%20%22Lorem%25%22
+  STATUS  : 200
+  EXPECT  : ["Lorem ipsum"]
+  GOT     : ["Lorem ipsum","lorem lower"]
+  NOTE    : The prose says "starts with Lorem". The fixture also contains "lorem lower" (lower-case l). If it comes back too, the documented example is case-insensitive while the prose is not qualified.
+--------------------------------------------------------------------
+[F12] MATCH   (2 identical runs: true)
+  PROMISE : "!~ NOT Like/Contains"
+  FILTER  : note !~ "lai"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=note%20!~%20%22lai%22
+  STATUS  : 200
+  EXPECT  : ["#emptytit","100% pure","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+  GOT     : ["#emptytit","100% pure","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+--------------------------------------------------------------------
+[F13] OBSERVED-ONLY   (2 identical runs: true)
+  PROMISE : The doc names "%" as THE wildcard character for ~ and never mentions "_" as a wildcard.
+  FILTER  : title ~ "u_der_score"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=title%20~%20%22u_der_score%22
+  STATUS  : 200
+  GOT     : []
+  NOTE    : If "under_score" is returned, "_" is also acting as a single-character wildcard — a behaviour the documentation never states.
+--------------------------------------------------------------------
+[F14] OBSERVED-ONLY   (2 identical runs: true)
+  PROMISE : A literal "%" in the right operand — doc gives no escaping rule.
+  FILTER  : title ~ "100%"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=title%20~%20%22100%25%22
+  STATUS  : 200
+  GOT     : ["100% pure"]
+  NOTE    : OBSERVED-ONLY: doc silent on escaping literal wildcards.
+--------------------------------------------------------------------
+[F15] MATCH   (2 identical runs: true)
+  PROMISE : "= Equal" on a value containing a literal %
+  FILTER  : title = "100% pure"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=title%20%3D%20%22100%25%20pure%22
+  STATUS  : 200
+  EXPECT  : ["100% pure"]
+  GOT     : ["100% pure"]
+--------------------------------------------------------------------
+[M01] MATCH   (2 identical runs: true)
+  PROMISE : "Field expressions with array-like value or nested fields that originate from a source with multiple records will apply a match-all constraint by default."
+  FILTER  : tags.label = "alpha"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=tags.label%20%3D%20%22alpha%22
+  STATUS  : 200
+  EXPECT  : ["lorem lower"]
+  GOT     : ["lorem lower"]
+  NOTE    : Only "lorem lower" has alpha as its ONLY tag. "Lorem ipsum" (alpha+beta) and "#emptytit" (alpha+beta+gamma) must NOT match under a match-all reading.
+--------------------------------------------------------------------
+[M02] MATCH   (2 identical runs: true)
+  PROMISE : "?= Any/At least one of Equal" — doc example: allowed_users.id ?= @request.auth.id
+  FILTER  : tags.label ?= "alpha"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=tags.label%20%3F%3D%20%22alpha%22
+  STATUS  : 200
+  EXPECT  : ["#emptytit","Lorem ipsum","lorem lower"]
+  GOT     : ["#emptytit","Lorem ipsum","lorem lower"]
+--------------------------------------------------------------------
+[M03] OBSERVED-ONLY   (2 identical runs: true)
+  PROMISE : "?!= Any/At least one of NOT equal"
+  FILTER  : tags.label ?!= "alpha"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=tags.label%20%3F!%3D%20%22alpha%22
+  STATUS  : 200
+  GOT     : ["#emptytit","100% pure","Lorem ipsum","back\\slash","quote'd \"both\"","under_score"]
+  NOTE    : OBSERVED-ONLY: prose does not state what "at least one of" yields for records with an EMPTY relation ("100% pure", "back\\slash"). Recording the answer.
+--------------------------------------------------------------------
+[M04] OBSERVED-ONLY   (2 identical runs: true)
+  PROMISE : match-all default applied to != on a multi-relation
+  FILTER  : tags.label != "alpha"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=tags.label%20!%3D%20%22alpha%22
+  STATUS  : 200
+  GOT     : ["100% pure","back\\slash","quote'd \"both\"","under_score"]
+  NOTE    : OBSERVED-ONLY: doc states the match-all default but not its interaction with an empty array.
+--------------------------------------------------------------------
+[M05] MATCH   (2 identical runs: true)
+  PROMISE : ":length modifier could be used to check the number of items in an array field (multiple file, select, relation)"
+  FILTER  : tags:length = 3
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=tags%3Alength%20%3D%203
+  STATUS  : 200
+  EXPECT  : ["#emptytit"]
+  GOT     : ["#emptytit"]
+--------------------------------------------------------------------
+[M06] MATCH   (2 identical runs: true)
+  PROMISE : :length on an empty array field
+  FILTER  : opts:length = 0
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=opts%3Alength%20%3D%200
+  STATUS  : 200
+  EXPECT  : ["100% pure"]
+  GOT     : ["100% pure"]
+--------------------------------------------------------------------
+[M07] OBSERVED-ONLY   (2 identical runs: true)
+  PROMISE : ":each ... apply a condition on each item from the field array" — doc example: someSelectField:each ~ "pb_%"
+  FILTER  : opts:each ~ "pb_%"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=opts%3Aeach%20~%20%22pb_%25%22
+  STATUS  : 200
+  GOT     : ["under_score"]
+  NOTE    : OBSERVED-ONLY on the empty-array record. "under_score" (pb_x,pb_y) must be in the result under any reading; whether "100% pure" (opts=[]) is included is not stated.
+--------------------------------------------------------------------
+[M08] MATCH   (2 identical runs: true)
+  PROMISE : ":lower ... perform lower-case string comparisons ... match existing records with lower-cased title equal to "test" ("Test", "tEsT", etc.)"
+  FILTER  : title:lower = "lorem ipsum"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=title%3Alower%20%3D%20%22lorem%20ipsum%22
+  STATUS  : 200
+  EXPECT  : ["Lorem ipsum"]
+  GOT     : ["Lorem ipsum"]
+--------------------------------------------------------------------
+[M09] OBSERVED-ONLY   (2 identical runs: true)
+  PROMISE : ":isset field modifier is available only for the @request.* fields"
+  FILTER  : title:isset = true
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=title%3Aisset%20%3D%20true
+  STATUS  : 200
+  GOT     : []
+  NOTE    : OBSERVED-ONLY: expecting a rejection since the modifier is documented as @request.*-only.
+--------------------------------------------------------------------
+[N01] OBSERVED-ONLY   (2 identical runs: true)
+  PROMISE : OPERAND could be ... null
+  FILTER  : when = null
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=when%20%3D%20null
+  STATUS  : 200
+  GOT     : ["quote'd \"both\""]
+  NOTE    : OBSERVED-ONLY; "quote'd" has an empty date.
+--------------------------------------------------------------------
+[N02] OBSERVED-ONLY   (2 identical runs: true)
+  PROMISE : OPERAND could be ... a string
+  FILTER  : when = ""
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=when%20%3D%20%22%22
+  STATUS  : 200
+  GOT     : ["quote'd \"both\""]
+  NOTE    : OBSERVED-ONLY.
+--------------------------------------------------------------------
+[N03] MATCH   (2 identical runs: true)
+  PROMISE : OPERAND could be ... true / false
+  FILTER  : flag = true
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=flag%20%3D%20true
+  STATUS  : 200
+  EXPECT  : ["#emptytit","Lorem ipsum","under_score"]
+  GOT     : ["#emptytit","Lorem ipsum","under_score"]
+--------------------------------------------------------------------
+[N04] MATCH   (2 identical runs: true)
+  PROMISE : OPERAND could be ... true / false
+  FILTER  : flag = false
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=flag%20%3D%20false
+  STATUS  : 200
+  EXPECT  : ["100% pure","back\\slash","lorem lower","quote'd \"both\""]
+  GOT     : ["100% pure","back\\slash","lorem lower","quote'd \"both\""]
+--------------------------------------------------------------------
+[N05] MATCH   (2 identical runs: true)
+  PROMISE : text field equality against empty string
+  FILTER  : title = ""
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=title%20%3D%20%22%22
+  STATUS  : 200
+  EXPECT  : ["#emptytit"]
+  GOT     : ["#emptytit"]
+--------------------------------------------------------------------
+[G01] MATCH   (2 identical runs: true)
+  PROMISE : "To group and combine several expressions you can use parenthesis (...), && (AND) and || (OR) tokens." Doc example: @request.auth.id != "" && (status = "active" || status = "pending")
+  FILTER  : num > 6 && (flag = true || title ~ "quote")
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=num%20%3E%206%20%26%26%20(flag%20%3D%20true%20%7C%7C%20title%20~%20%22quote%22)
+  STATUS  : 200
+  EXPECT  : ["Lorem ipsum","quote'd \"both\""]
+  GOT     : ["Lorem ipsum","quote'd \"both\""]
+--------------------------------------------------------------------
+[G02] MATCH   (2 identical runs: true)
+  PROMISE : "Single line comments are also supported: // Example comment."
+  FILTER  : // leading comment
+num > 90
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=%2F%2F%20leading%20comment%0Anum%20%3E%2090
+  STATUS  : 200
+  EXPECT  : ["quote'd \"both\""]
+  GOT     : ["quote'd \"both\""]
+--------------------------------------------------------------------
+[G03] MATCH   (2 identical runs: true)
+  PROMISE : Single line comment placed after an expression
+  FILTER  : num > 90 // trailing comment
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=num%20%3E%2090%20%2F%2F%20trailing%20comment
+  STATUS  : 200
+  EXPECT  : ["quote'd \"both\""]
+  GOT     : ["quote'd \"both\""]
+--------------------------------------------------------------------
+[D01] OBSERVED-ONLY   (2 identical runs: true)
+  PROMISE : "@now - the current datetime as string"
+  FILTER  : when != "" && when < @now
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=when%20!%3D%20%22%22%20%26%26%20when%20%3C%20%40now
+  STATUS  : 200
+  GOT     : ["#emptytit","100% pure","Lorem ipsum","back\\slash","lorem lower","under_score"]
+  NOTE    : OBSERVED-ONLY (time dependent).
+--------------------------------------------------------------------
+[D02] MATCH   (2 identical runs: true)
+  PROMISE : "@yearStart - beginning of the current year as datetime string" (current year 2026)
+  FILTER  : when != "" && when < @yearStart
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=when%20!%3D%20%22%22%20%26%26%20when%20%3C%20%40yearStart
+  STATUS  : 200
+  EXPECT  : ["100% pure"]
+  GOT     : ["100% pure"]
+--------------------------------------------------------------------
+[D03] MATCH   (2 identical runs: true)
+  PROMISE : "@year - @now year number"
+  FILTER  : @year = 2026
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=%40year%20%3D%202026
+  STATUS  : 200
+  EXPECT  : ["#emptytit","100% pure","Lorem ipsum","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+  GOT     : ["#emptytit","100% pure","Lorem ipsum","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+  NOTE    : a constant-true expression must not filter anything out
+--------------------------------------------------------------------
+[D04] OBSERVED-ONLY   (2 identical runs: true)
+  PROMISE : "@todayStart / @todayEnd"
+  FILTER  : when >= @todayStart && when <= @todayEnd
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=when%20%3E%3D%20%40todayStart%20%26%26%20when%20%3C%3D%20%40todayEnd
+  STATUS  : 200
+  GOT     : []
+  NOTE    : OBSERVED-ONLY.
+--------------------------------------------------------------------
+[S01] MATCH   (2 identical runs: true)
+  PROMISE : "strftime(format, [time-value, ...]) returns a date string formatted according to the specified format argument"
+  FILTER  : strftime('%Y-%m', when) = "2026-01"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=strftime('%25Y-%25m'%2C%20when)%20%3D%20%222026-01%22
+  STATUS  : 200
+  EXPECT  : ["Lorem ipsum"]
+  GOT     : ["Lorem ipsum"]
+--------------------------------------------------------------------
+[S02] MATCH   (2 identical runs: true)
+  PROMISE : "The second (time-value) argument is optional ... If not set the function fallbacks to the current datetime."
+  FILTER  : strftime('%Y') = "2026"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=strftime('%25Y')%20%3D%20%222026%22
+  STATUS  : 200
+  EXPECT  : ["#emptytit","100% pure","Lorem ipsum","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+  GOT     : ["#emptytit","100% pure","Lorem ipsum","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+--------------------------------------------------------------------
+[S03] OBSERVED-ONLY   (2 identical runs: true)
+  PROMISE : "If the identifier cannot be resolved and converted to a numeric value, it resolves to null" (geoDistance)
+  FILTER  : geoDistance(num, num, 23.32, 42.69) < 999999
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=geoDistance(num%2C%20num%2C%2023.32%2C%2042.69)%20%3C%20999999
+  STATUS  : 200
+  GOT     : ["#emptytit","100% pure","Lorem ipsum","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+  NOTE    : OBSERVED-ONLY: plain numbers are accepted per the doc ("the accepted arguments could be any plain number or collection field identifier").
+--------------------------------------------------------------------
+[E01] MATCH   (2 identical runs: true)
+  PROMISE : Documented 400 response for an invalid filter: {"status":400,"message":"Something went wrong while processing your request. Invalid filter.","data":{}}
+  FILTER  : this is not a filter
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=this%20is%20not%20a%20filter
+  STATUS  : 400
+  BODY    : {"data":{},"message":"Something went wrong while processing your request.","status":400}
+  NOTE    : checking status AND the documented message shape
+--------------------------------------------------------------------
+[E02] MATCH   (2 identical runs: true)
+  PROMISE : Documented 403: {"status":403,"message":"Only superusers can filter by '@collection.*'"}
+  FILTER  : @collection.probe_tags.label ?= "alpha"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=%40collection.probe_tags.label%20%3F%3D%20%22alpha%22
+  STATUS  : 403
+  BODY    : {"data":{},"message":"Only superusers can filter by @collection.","status":403}
+--------------------------------------------------------------------
+[E03] OBSERVED-ONLY   (2 identical runs: true)
+  PROMISE : Same @collection filter, authenticated AS a superuser, must be allowed
+  FILTER  : @collection.probe_tags.label ?= "alpha"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=%40collection.probe_tags.label%20%3F%3D%20%22alpha%22
+  STATUS  : 200
+  GOT     : ["#emptytit","100% pure","Lorem ipsum","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+  NOTE    : OBSERVED-ONLY.
+--------------------------------------------------------------------
+[E04] MATCH   (2 identical runs: true)
+  PROMISE : "Supported record sort fields: @random, @rowid, id, and any other collection field." — an unsupported one should not silently pass
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=nosuchfield
+  STATUS  : 400
+  BODY    : {"data":{},"message":"Something went wrong while processing your request.","status":400}
+--------------------------------------------------------------------
+[E05] MATCH   (2 identical runs: true)
+  PROMISE : "Supported record filter fields: id, + any field from the collection schema." — an unknown field should not silently pass
+  FILTER  : nosuchfield = "x"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&filter=nosuchfield%20%3D%20%22x%22
+  STATUS  : 400
+  BODY    : {"data":{},"message":"Something went wrong while processing your request.","status":400}
+--------------------------------------------------------------------
+[P01] MATCH   (2 identical runs: true)
+  PROMISE : "perPage Number The max returned records per page (default to 30)."
+  REQUEST : GET /api/collections/probe_items/records
+  STATUS  : 200
+  GOT     : ["#emptytit","100% pure","Lorem ipsum","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+  NOTE    : observed perPage value is printed below
+--------------------------------------------------------------------
+[P02] MATCH   (2 identical runs: true)
+  PROMISE : "page Number The page (aka. offset) of the paginated list (default to 1)."
+  REQUEST : GET /api/collections/probe_items/records
+  STATUS  : 200
+  GOT     : ["#emptytit","100% pure","Lorem ipsum","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+--------------------------------------------------------------------
+[P03] MATCH   (2 identical runs: true)
+  PROMISE : perPage caps the number of returned records; totalItems counts all matches
+  REQUEST : GET /api/collections/probe_items/records?perPage=3&sort=id
+  STATUS  : 200
+  GOT     : ["100% pure","lorem lower","under_score"]
+--------------------------------------------------------------------
+[P04] OBSERVED-ONLY   (2 identical runs: true)
+  PROMISE : page beyond the last page
+  REQUEST : GET /api/collections/probe_items/records?perPage=3&page=99&sort=id
+  STATUS  : 200
+  GOT     : []
+  NOTE    : OBSERVED-ONLY: doc does not state the behaviour past the last page.
+--------------------------------------------------------------------
+[P05] MATCH   (2 identical runs: true)
+  PROMISE : "skipTotal Boolean If it is set the total counts query will be skipped and the response fields totalItems and totalPages will have -1 value."
+  REQUEST : GET /api/collections/probe_items/records?perPage=3&skipTotal=1&sort=id
+  STATUS  : 200
+  GOT     : ["100% pure","lorem lower","under_score"]
+--------------------------------------------------------------------
+[P06] MATCH   (2 identical runs: true)
+  PROMISE : skipTotal=true (boolean spelling)
+  REQUEST : GET /api/collections/probe_items/records?perPage=3&skipTotal=true&sort=id
+  STATUS  : 200
+  GOT     : ["100% pure","lorem lower","under_score"]
+--------------------------------------------------------------------
+[P07] MATCH   (2 identical runs: true)
+  PROMISE : skipTotal=false must NOT skip the totals (documented as "If it is set")
+  REQUEST : GET /api/collections/probe_items/records?perPage=3&skipTotal=false&sort=id
+  STATUS  : 200
+  GOT     : ["100% pure","lorem lower","under_score"]
+  NOTE    : the doc says "If it is set" — the natural reading of skipTotal=false is: do not skip.
+--------------------------------------------------------------------
+[P08] MATCH   (2 identical runs: true)
+  PROMISE : skipTotal=0 must NOT skip the totals
+  REQUEST : GET /api/collections/probe_items/records?perPage=3&skipTotal=0&sort=id
+  STATUS  : 200
+  GOT     : ["100% pure","lorem lower","under_score"]
+--------------------------------------------------------------------
+[P09] OBSERVED-ONLY   (2 identical runs: true)
+  PROMISE : perPage=0 — doc gives no rule
+  REQUEST : GET /api/collections/probe_items/records?perPage=0&sort=id
+  STATUS  : 200
+  GOT     : ["#emptytit","100% pure","Lorem ipsum","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+  NOTE    : OBSERVED-ONLY.
+--------------------------------------------------------------------
+[P10] OBSERVED-ONLY   (2 identical runs: true)
+  PROMISE : perPage negative — doc gives no rule
+  REQUEST : GET /api/collections/probe_items/records?perPage=-1&sort=id
+  STATUS  : 200
+  GOT     : ["#emptytit","100% pure","Lorem ipsum","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+  NOTE    : OBSERVED-ONLY.
+--------------------------------------------------------------------
+[P11] OBSERVED-ONLY   (2 identical runs: true)
+  PROMISE : page=0 — doc gives no rule
+  REQUEST : GET /api/collections/probe_items/records?perPage=3&page=0&sort=id
+  STATUS  : 200
+  GOT     : ["100% pure","lorem lower","under_score"]
+  NOTE    : OBSERVED-ONLY.
+--------------------------------------------------------------------
+[T01] MATCH   (2 identical runs: true)
+  PROMISE : "Add - / + (default) in front of the attribute for DESC / ASC order, eg. ?sort=-created,id"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=-num
+  STATUS  : 200
+  GOT     : ["#emptytit","100% pure","Lorem ipsum","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+--------------------------------------------------------------------
+[T02] MATCH   (2 identical runs: true)
+  PROMISE : "+ (default)" — an explicit + prefix means ASC
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=%2Bnum
+  STATUS  : 200
+  GOT     : ["#emptytit","100% pure","Lorem ipsum","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+--------------------------------------------------------------------
+[T03] MATCH   (2 identical runs: true)
+  PROMISE : "Supported record sort fields: @random, @rowid, id"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=@rowid
+  STATUS  : 200
+  GOT     : ["#emptytit","100% pure","Lorem ipsum","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+--------------------------------------------------------------------
+[T04] UNSTABLE   (2 identical runs: false)
+  PROMISE : "Supported record sort fields: @random"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=@random
+  STATUS  : 200
+  GOT     : ["#emptytit","100% pure","Lorem ipsum","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+  NOTE    : intentionally NOT compared across runs — @random is documented as random, so instability here is expected and is not a finding.
+--------------------------------------------------------------------
+[X01] MATCH   (2 identical runs: true)
+  PROMISE : "expand ... The expanded relations will be appended to the record under the expand property (e.g. \"expand\": {\"relField1\": {...}, ...})"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&expand=tags&filter=title%20%3D%20%22Lorem%20ipsum%22
+  STATUS  : 200
+  GOT     : ["Lorem ipsum"]
+--------------------------------------------------------------------
+[X02] OBSERVED-ONLY   (2 identical runs: true)
+  PROMISE : expand of a relation field that is empty for that record
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&expand=tags&filter=title%20%3D%20%22100%25%20pure%22
+  STATUS  : 200
+  GOT     : ["100% pure"]
+  NOTE    : OBSERVED-ONLY: doc does not state whether an empty relation yields an absent or empty expand key.
+--------------------------------------------------------------------
+[X03] OBSERVED-ONLY   (2 identical runs: true)
+  PROMISE : expand of a non-existing relation field — doc gives no rule
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&expand=nosuchrel
+  STATUS  : 200
+  GOT     : ["#emptytit","100% pure","Lorem ipsum","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+  NOTE    : OBSERVED-ONLY.
+--------------------------------------------------------------------
+[C01] MATCH   (2 identical runs: true)
+  PROMISE : "fields String Comma separated string of the fields to return in the JSON response (by default returns all fields)."
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&fields=title,num
+  STATUS  : 200
+  GOT     : ["#undefined","100% pure","Lorem ipsum","back\\slash","lorem lower","quote'd \"both\"","under_score"]
+--------------------------------------------------------------------
+[C02] OBSERVED-ONLY   (2 identical runs: true)
+  PROMISE : ":excerpt(maxLength, withEllipsis?) Returns a short plain text version of the field string value. Ex.: ?fields=*,description:excerpt(200,true)"
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&fields=title%3Aexcerpt(4%2Ctrue)&filter=title%20%3D%20%22Lorem%20ipsum%22
+  STATUS  : 200
+  GOT     : ["Lore..."]
+  NOTE    : OBSERVED-ONLY: the doc does not say whether maxLength counts the ellipsis. Recording the exact string.
+--------------------------------------------------------------------
+[C03] OBSERVED-ONLY   (2 identical runs: true)
+  PROMISE : :excerpt without the ellipsis flag
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&fields=title%3Aexcerpt(4)&filter=title%20%3D%20%22Lorem%20ipsum%22
+  STATUS  : 200
+  GOT     : ["Lore"]
+  NOTE    : OBSERVED-ONLY.
+--------------------------------------------------------------------
+[C04] MATCH   (2 identical runs: true)
+  PROMISE : "* targets all keys from the specific depth level" — ?fields=*,expand.relField.name
+  REQUEST : GET /api/collections/probe_items/records?perPage=100&sort=id&expand=tags&fields=*%2Cexpand.tags.label&filter=title%20%3D%20%22Lorem%20ipsum%22
+  STATUS  : 200
+  GOT     : ["Lorem ipsum"]
+
+==================== RAW BODIES FOR OBSERVED-ONLY CHECKS ====================
+
+[F11] /api/collections/probe_items/records?perPage=100&sort=id&filter=title%20~%20%22Lorem%25%22
+{"items":[{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"m3wk8g6c1m9bv33","note":"","num":0,"opts":["a"],"tags":["mz0h1vats01k32n"],"title":"lorem lower","when":"2026-02-15 10:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"svhh9ohloqtek4q","note":"plain","num":10,"opts":["a","b"],"tags":["mz0h1vats01k32n","ul48fgmxqx17axe"],"title":"Lorem ipsum","when":"2026-01-15 10:00:00.000Z"}],"page":1,"perPage":100,"totalItems":2,"totalPages":1}
+
+[F13] /api/collections/probe_items/records?perPage=100&sort=id&filter=title%20~%20%22u_der_score%22
+{"items":[],"page":1,"perPage":100,"totalItems":0,"totalPages":0}
+
+[F14] /api/collections/probe_items/records?perPage=100&sort=id&filter=title%20~%20%22100%25%22
+{"items":[{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"6oizky944t8in2p","note":"pct","num":-5,"opts":[],"tags":[],"title":"100% pure","when":"2025-12-31 23:59:59.000Z"}],"page":1,"perPage":100,"totalItems":1,"totalPages":1}
+
+[M03] /api/collections/probe_items/records?perPage=100&sort=id&filter=tags.label%20%3F!%3D%20%22alpha%22
+{"items":[{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"6oizky944t8in2p","note":"pct","num":-5,"opts":[],"tags":[],"title":"100% pure","when":"2025-12-31 23:59:59.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"r7acuexyivl3ti4","note":"us","num":5,"opts":["pb_x","pb_y"],"tags":["xobqyec68z93jmw"],"title":"under_score","when":"2026-03-01 00:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"svhh9ohloqtek4q","note":"plain","num":10,"opts":["a","b"],"tags":["mz0h1vats01k32n","ul48fgmxqx17axe"],"title":"Lorem ipsum","when":"2026-01-15 10:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"ut5lctnvuru4amw","note":"bs","num":7,"opts":["a","c"],"tags":[],"title":"back\\slash","when":"2026-05-01 12:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"x4wuq59bs0oweyg","note":"q","num":100,"opts":["c"],"tags":["ul48fgmxqx17axe","xobqyec68z93jmw"],"title":"quote'd \"both\"","when":""},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"z3qn2sjkjdlfcaw","note":"emptytit","num":2,"opts":["b","c"],"tags":["mz0h1vats01k32n","ul48fgmxqx17axe","xobqyec68z93jmw"],"title":"","when":"2026-04-01 12:00:00.000Z"}],"page":1,"perPage":100,"totalItems":6,"totalPages":1}
+
+[M04] /api/collections/probe_items/records?perPage=100&sort=id&filter=tags.label%20!%3D%20%22alpha%22
+{"items":[{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"6oizky944t8in2p","note":"pct","num":-5,"opts":[],"tags":[],"title":"100% pure","when":"2025-12-31 23:59:59.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"r7acuexyivl3ti4","note":"us","num":5,"opts":["pb_x","pb_y"],"tags":["xobqyec68z93jmw"],"title":"under_score","when":"2026-03-01 00:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"ut5lctnvuru4amw","note":"bs","num":7,"opts":["a","c"],"tags":[],"title":"back\\slash","when":"2026-05-01 12:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"x4wuq59bs0oweyg","note":"q","num":100,"opts":["c"],"tags":["ul48fgmxqx17axe","xobqyec68z93jmw"],"title":"quote'd \"both\"","when":""}],"page":1,"perPage":100,"totalItems":4,"totalPages":1}
+
+[M07] /api/collections/probe_items/records?perPage=100&sort=id&filter=opts%3Aeach%20~%20%22pb_%25%22
+{"items":[{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"r7acuexyivl3ti4","note":"us","num":5,"opts":["pb_x","pb_y"],"tags":["xobqyec68z93jmw"],"title":"under_score","when":"2026-03-01 00:00:00.000Z"}],"page":1,"perPage":100,"totalItems":1,"totalPages":1}
+
+[M09] /api/collections/probe_items/records?perPage=100&sort=id&filter=title%3Aisset%20%3D%20true
+{"items":[],"page":1,"perPage":100,"totalItems":0,"totalPages":0}
+
+[N01] /api/collections/probe_items/records?perPage=100&sort=id&filter=when%20%3D%20null
+{"items":[{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"x4wuq59bs0oweyg","note":"q","num":100,"opts":["c"],"tags":["ul48fgmxqx17axe","xobqyec68z93jmw"],"title":"quote'd \"both\"","when":""}],"page":1,"perPage":100,"totalItems":1,"totalPages":1}
+
+[N02] /api/collections/probe_items/records?perPage=100&sort=id&filter=when%20%3D%20%22%22
+{"items":[{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"x4wuq59bs0oweyg","note":"q","num":100,"opts":["c"],"tags":["ul48fgmxqx17axe","xobqyec68z93jmw"],"title":"quote'd \"both\"","when":""}],"page":1,"perPage":100,"totalItems":1,"totalPages":1}
+
+[D01] /api/collections/probe_items/records?perPage=100&sort=id&filter=when%20!%3D%20%22%22%20%26%26%20when%20%3C%20%40now
+{"items":[{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"6oizky944t8in2p","note":"pct","num":-5,"opts":[],"tags":[],"title":"100% pure","when":"2025-12-31 23:59:59.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"m3wk8g6c1m9bv33","note":"","num":0,"opts":["a"],"tags":["mz0h1vats01k32n"],"title":"lorem lower","when":"2026-02-15 10:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"r7acuexyivl3ti4","note":"us","num":5,"opts":["pb_x","pb_y"],"tags":["xobqyec68z93jmw"],"title":"under_score","when":"2026-03-01 00:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"svhh9ohloqtek4q","note":"plain","num":10,"opts":["a","b"],"tags":["mz0h1vats01k32n","ul48fgmxqx17axe"],"title":"Lorem ipsum","when":"2026-01-15 10:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"ut5lctnvuru4amw","note":"bs","num":7,"opts":["a","c"],"tags":[],"title":"back\\slash","when":"2026-05-01 12:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"z3qn2sjkjdlfcaw","note":"emptytit","num":2,"opts":["b","c"],"tags":["mz0h1vats01k32n","ul48fgmxqx17axe","xobqyec68z93jmw"],"title":"","when":"2026-04-01 12:00:00.000Z"}],"page":1,"perPage":100,"totalItems":6,"totalPages":1}
+
+[D04] /api/collections/probe_items/records?perPage=100&sort=id&filter=when%20%3E%3D%20%40todayStart%20%26%26%20when%20%3C%3D%20%40todayEnd
+{"items":[],"page":1,"perPage":100,"totalItems":0,"totalPages":0}
+
+[S03] /api/collections/probe_items/records?perPage=100&sort=id&filter=geoDistance(num%2C%20num%2C%2023.32%2C%2042.69)%20%3C%20999999
+{"items":[{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"6oizky944t8in2p","note":"pct","num":-5,"opts":[],"tags":[],"title":"100% pure","when":"2025-12-31 23:59:59.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"m3wk8g6c1m9bv33","note":"","num":0,"opts":["a"],"tags":["mz0h1vats01k32n"],"title":"lorem lower","when":"2026-02-15 10:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"r7acuexyivl3ti4","note":"us","num":5,"opts":["pb_x","pb_y"],"tags":["xobqyec68z93jmw"],"title":"under_score","when":"2026-03-01 00:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"svhh9ohloqtek4q","note":"plain","num":10,"opts":["a","b"],"tags":["mz0h1vats01k32n","ul48fgmxqx17axe"],"title":"Lorem ipsum","when":"2026-01-15 10:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"ut5lctnvuru4amw","note":"bs","num":7,"opts":["a","c"],"tags":[],"title":"back\\slash","when":"2026-05-01 12:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"x4wuq59bs0oweyg","note":"q","num":100,"opts":["c"],"tags":["ul48fgmxqx17axe","xobqyec68z93jmw"],"title":"quote'd \"both\"","when":""},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"z3qn2sjkjdlfcaw","note":"emptytit","num":2,"opts":["b","c"],"tags":["mz0h1vats01k32n","ul48fgmxqx17axe","xobqyec68z93jmw"],"title":"","when":"2026-04-01 12:00:00.000Z"}],"page":1,"perPage":100,"totalItems":7,"totalPages":1}
+
+[E03] /api/collections/probe_items/records?perPage=100&sort=id&filter=%40collection.probe_tags.label%20%3F%3D%20%22alpha%22
+{"items":[{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"6oizky944t8in2p","note":"pct","num":-5,"opts":[],"tags":[],"title":"100% pure","when":"2025-12-31 23:59:59.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"m3wk8g6c1m9bv33","note":"","num":0,"opts":["a"],"tags":["mz0h1vats01k32n"],"title":"lorem lower","when":"2026-02-15 10:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"r7acuexyivl3ti4","note":"us","num":5,"opts":["pb_x","pb_y"],"tags":["xobqyec68z93jmw"],"title":"under_score","when":"2026-03-01 00:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"svhh9ohloqtek4q","note":"plain","num":10,"opts":["a","b"],"tags":["mz0h1vats01k32n","ul48fgmxqx17axe"],"title":"Lorem ipsum","when":"2026-01-15 10:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"ut5lctnvuru4amw","note":"bs","num":7,"opts":["a","c"],"tags":[],"title":"back\\slash","when":"2026-05-01 12:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"x4wuq59bs0oweyg","note":"q","num":100,"opts":["c"],"tags":["ul48fgmxqx17axe","xobqyec68z93jmw"],"title":"quote'd \"both\"","when":""},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"z3qn2sjkjdlfcaw","note":"emptytit","num":2,"opts":["b","c"],"tags":["mz0h1vats01k32n","ul48fgmxqx17axe","xobqyec68z93jmw"],"title":"","when":"2026-04-01 12:00:00.000Z"}],"page":1,"perPage":100,"totalItems":7,"totalPages":1}
+
+[P04] /api/collections/probe_items/records?perPage=3&page=99&sort=id
+{"items":[],"page":99,"perPage":3,"totalItems":7,"totalPages":3}
+
+[P09] /api/collections/probe_items/records?perPage=0&sort=id
+{"items":[{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"6oizky944t8in2p","note":"pct","num":-5,"opts":[],"tags":[],"title":"100% pure","when":"2025-12-31 23:59:59.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"m3wk8g6c1m9bv33","note":"","num":0,"opts":["a"],"tags":["mz0h1vats01k32n"],"title":"lorem lower","when":"2026-02-15 10:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"r7acuexyivl3ti4","note":"us","num":5,"opts":["pb_x","pb_y"],"tags":["xobqyec68z93jmw"],"title":"under_score","when":"2026-03-01 00:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"svhh9ohloqtek4q","note":"plain","num":10,"opts":["a","b"],"tags":["mz0h1vats01k32n","ul48fgmxqx17axe"],"title":"Lorem ipsum","when":"2026-01-15 10:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"ut5lctnvuru4amw","note":"bs","num":7,"opts":["a","c"],"tags":[],"title":"back\\slash","when":"2026-05-01 12:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"x4wuq59bs0oweyg","note":"q","num":100,"opts":["c"],"tags":["ul48fgmxqx17axe","xobqyec68z93jmw"],"title":"quote'd \"both\"","when":""},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"z3qn2sjkjdlfcaw","note":"emptytit","num":2,"opts":["b","c"],"tags":["mz0h1vats01k32n","ul48fgmxqx17axe","xobqyec68z93jmw"],"title":"","when":"2026-04-01 12:00:00.000Z"}],"page":1,"perPage":30,"totalItems":7,"totalPages":1}
+
+[P10] /api/collections/probe_items/records?perPage=-1&sort=id
+{"items":[{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"6oizky944t8in2p","note":"pct","num":-5,"opts":[],"tags":[],"title":"100% pure","when":"2025-12-31 23:59:59.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"m3wk8g6c1m9bv33","note":"","num":0,"opts":["a"],"tags":["mz0h1vats01k32n"],"title":"lorem lower","when":"2026-02-15 10:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"r7acuexyivl3ti4","note":"us","num":5,"opts":["pb_x","pb_y"],"tags":["xobqyec68z93jmw"],"title":"under_score","when":"2026-03-01 00:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"svhh9ohloqtek4q","note":"plain","num":10,"opts":["a","b"],"tags":["mz0h1vats01k32n","ul48fgmxqx17axe"],"title":"Lorem ipsum","when":"2026-01-15 10:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"ut5lctnvuru4amw","note":"bs","num":7,"opts":["a","c"],"tags":[],"title":"back\\slash","when":"2026-05-01 12:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"x4wuq59bs0oweyg","note":"q","num":100,"opts":["c"],"tags":["ul48fgmxqx17axe","xobqyec68z93jmw"],"title":"quote'd \"both\"","when":""},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"z3qn2sjkjdlfcaw","note":"emptytit","num":2,"opts":["b","c"],"tags":["mz0h1vats01k32n","ul48fgmxqx17axe","xobqyec68z93jmw"],"title":"","when":"2026-04-01 12:00:00.000Z"}],"page":1,"perPage":30,"totalItems":7,"totalPages":1}
+
+[P11] /api/collections/probe_items/records?perPage=3&page=0&sort=id
+{"items":[{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"6oizky944t8in2p","note":"pct","num":-5,"opts":[],"tags":[],"title":"100% pure","when":"2025-12-31 23:59:59.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"m3wk8g6c1m9bv33","note":"","num":0,"opts":["a"],"tags":["mz0h1vats01k32n"],"title":"lorem lower","when":"2026-02-15 10:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"r7acuexyivl3ti4","note":"us","num":5,"opts":["pb_x","pb_y"],"tags":["xobqyec68z93jmw"],"title":"under_score","when":"2026-03-01 00:00:00.000Z"}],"page":1,"perPage":3,"totalItems":7,"totalPages":3}
+
+[X02] /api/collections/probe_items/records?perPage=100&sort=id&expand=tags&filter=title%20%3D%20%22100%25%20pure%22
+{"items":[{"collectionId":"pbc_2241248077","collectionName":"probe_items","expand":{},"flag":false,"id":"6oizky944t8in2p","note":"pct","num":-5,"opts":[],"tags":[],"title":"100% pure","when":"2025-12-31 23:59:59.000Z"}],"page":1,"perPage":100,"totalItems":1,"totalPages":1}
+
+[X03] /api/collections/probe_items/records?perPage=100&sort=id&expand=nosuchrel
+{"items":[{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"6oizky944t8in2p","note":"pct","num":-5,"opts":[],"tags":[],"title":"100% pure","when":"2025-12-31 23:59:59.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"m3wk8g6c1m9bv33","note":"","num":0,"opts":["a"],"tags":["mz0h1vats01k32n"],"title":"lorem lower","when":"2026-02-15 10:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"r7acuexyivl3ti4","note":"us","num":5,"opts":["pb_x","pb_y"],"tags":["xobqyec68z93jmw"],"title":"under_score","when":"2026-03-01 00:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"svhh9ohloqtek4q","note":"plain","num":10,"opts":["a","b"],"tags":["mz0h1vats01k32n","ul48fgmxqx17axe"],"title":"Lorem ipsum","when":"2026-01-15 10:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"ut5lctnvuru4amw","note":"bs","num":7,"opts":["a","c"],"tags":[],"title":"back\\slash","when":"2026-05-01 12:00:00.000Z"},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":false,"id":"x4wuq59bs0oweyg","note":"q","num":100,"opts":["c"],"tags":["ul48fgmxqx17axe","xobqyec68z93jmw"],"title":"quote'd \"both\"","when":""},{"collectionId":"pbc_2241248077","collectionName":"probe_items","flag":true,"id":"z3qn2sjkjdlfcaw","note":"emptytit","num":2,"opts":["b","c"],"tags":["mz0h1vats01k32n","ul48fgmxqx17axe","xobqyec68z93jmw"],"title":"","when":"2026-04-01 12:00:00.000Z"}],"page":1,"perPage":100,"totalItems":7,"totalPages":1}
+
+[C02] /api/collections/probe_items/records?perPage=100&sort=id&fields=title%3Aexcerpt(4%2Ctrue)&filter=title%20%3D%20%22Lorem%20ipsum%22
+{"items":[{"title":"Lore..."}],"page":1,"perPage":100,"totalItems":1,"totalPages":1}
+
+[C03] /api/collections/probe_items/records?perPage=100&sort=id&fields=title%3Aexcerpt(4)&filter=title%20%3D%20%22Lorem%20ipsum%22
+{"items":[{"title":"Lore"}],"page":1,"perPage":100,"totalItems":1,"totalPages":1}
+
+==================== SUMMARY ====================
+{"MATCH":42,"DEVIATION":1,"OBSERVED-ONLY":20,"UNSTABLE":1}
+MATCH         F01  title = "Lorem ipsum"
+MATCH         F02  title != "Lorem ipsum"
+MATCH         F03  num > 7
+MATCH         F04  num >= 7
+MATCH         F05  num < 5
+MATCH         F06  num <= 5
+MATCH         F07  num < 0
+MATCH         F10  note ~ "lai"
+DEVIATION     F11  title ~ "Lorem%"
+MATCH         F12  note !~ "lai"
+OBSERVED-ONLY F13  title ~ "u_der_score"
+OBSERVED-ONLY F14  title ~ "100%"
+MATCH         F15  title = "100% pure"
+MATCH         M01  tags.label = "alpha"
+MATCH         M02  tags.label ?= "alpha"
+OBSERVED-ONLY M03  tags.label ?!= "alpha"
+OBSERVED-ONLY M04  tags.label != "alpha"
+MATCH         M05  tags:length = 3
+MATCH         M06  opts:length = 0
+OBSERVED-ONLY M07  opts:each ~ "pb_%"
+MATCH         M08  title:lower = "lorem ipsum"
+OBSERVED-ONLY M09  title:isset = true
+OBSERVED-ONLY N01  when = null
+OBSERVED-ONLY N02  when = ""
+MATCH         N03  flag = true
+MATCH         N04  flag = false
+MATCH         N05  title = ""
+MATCH         G01  num > 6 && (flag = true || title ~ "quote")
+MATCH         G02  // leading comment
+num > 90
+MATCH         G03  num > 90 // trailing comment
+OBSERVED-ONLY D01  when != "" && when < @now
+MATCH         D02  when != "" && when < @yearStart
+MATCH         D03  @year = 2026
+OBSERVED-ONLY D04  when >= @todayStart && when <= @todayEnd
+MATCH         S01  strftime('%Y-%m', when) = "2026-01"
+MATCH         S02  strftime('%Y') = "2026"
+OBSERVED-ONLY S03  geoDistance(num, num, 23.32, 42.69) < 999999
+MATCH         E01  this is not a filter
+MATCH         E02  @collection.probe_tags.label ?= "alpha"
+OBSERVED-ONLY E03  @collection.probe_tags.label ?= "alpha"
+MATCH         E04  /api/collections/probe_items/records?perPage=100&sort=nosuchfield
+MATCH         E05  nosuchfield = "x"
+MATCH         P01  /api/collections/probe_items/records
+MATCH         P02  /api/collections/probe_items/records
+MATCH         P03  /api/collections/probe_items/records?perPage=3&sort=id
+OBSERVED-ONLY P04  /api/collections/probe_items/records?perPage=3&page=99&sort=id
+MATCH         P05  /api/collections/probe_items/records?perPage=3&skipTotal=1&sort=id
+MATCH         P06  /api/collections/probe_items/records?perPage=3&skipTotal=true&sort=id
+MATCH         P07  /api/collections/probe_items/records?perPage=3&skipTotal=false&sort=id
+MATCH         P08  /api/collections/probe_items/records?perPage=3&skipTotal=0&sort=id
+OBSERVED-ONLY P09  /api/collections/probe_items/records?perPage=0&sort=id
+OBSERVED-ONLY P10  /api/collections/probe_items/records?perPage=-1&sort=id
+OBSERVED-ONLY P11  /api/collections/probe_items/records?perPage=3&page=0&sort=id
+MATCH         T01  /api/collections/probe_items/records?perPage=100&sort=-num
+MATCH         T02  /api/collections/probe_items/records?perPage=100&sort=%2Bnum
+MATCH         T03  /api/collections/probe_items/records?perPage=100&sort=@rowid
+UNSTABLE      T04  /api/collections/probe_items/records?perPage=100&sort=@random
+MATCH         X01  /api/collections/probe_items/records?perPage=100&sort=id&expand=tags&filter=title%20%3D%20%22Lorem%20ipsum%22
+OBSERVED-ONLY X02  /api/collections/probe_items/records?perPage=100&sort=id&expand=tags&filter=title%20%3D%20%22100%25%20pure%22
+OBSERVED-ONLY X03  /api/collections/probe_items/records?perPage=100&sort=id&expand=nosuchrel
+MATCH         C01  /api/collections/probe_items/records?perPage=100&sort=id&fields=title,num
+OBSERVED-ONLY C02  /api/collections/probe_items/records?perPage=100&sort=id&fields=title%3Aexcerpt(4%2Ctrue)&filter=title%20%3D%20%22Lorem%20ipsum%22
+OBSERVED-ONLY C03  /api/collections/probe_items/records?perPage=100&sort=id&fields=title%3Aexcerpt(4)&filter=title%20%3D%20%22Lorem%20ipsum%22
+MATCH         C04  /api/collections/probe_items/records?perPage=100&sort=id&expand=tags&fields=*%2Cexpand.tags.label&filter=title%20%3D%20%22Lorem%20ipsum%22

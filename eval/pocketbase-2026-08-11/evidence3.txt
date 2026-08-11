@@ -1,0 +1,46 @@
+PocketBase probe pass 3 — 2026-08-11T12:26:46.684Z — pocketbase.exe 0.39.10
+Question: for a record whose multi-valued field is EMPTY, does an "Any/At least one of X"
+operator report a match? The documentation gives all 8 of them the same gloss, so the
+answer must be the same for all 8.
+
+=== A. multi-RELATION (tags), empty for: ["100% pure","back\\slash"] ===
+  ?=  Any/At least one of Equal                 tags.label ?= "alpha"        -> empty-relation records matched: 0/2 []   (stable=true, total=3)
+  ?!= Any/At least one of NOT equal             tags.label ?!= "alpha"       -> empty-relation records matched: 2/2 ["100% pure","back\\slash"]   (stable=true, total=6)
+  ?~  Any/At least one of Like/Contains         tags.label ?~ "alph"         -> empty-relation records matched: 0/2 []   (stable=true, total=3)
+  ?!~ Any/At least one of NOT Like/Contains     tags.label ?!~ "alph"        -> empty-relation records matched: 0/2 []   (stable=true, total=4)
+  ?>  Any/At least one of Greater than          tags.label ?> "alpha"        -> empty-relation records matched: 0/2 []   (stable=true, total=4)
+  ?>= Any/At least one of Greater or equal      tags.label ?>= "alpha"       -> empty-relation records matched: 0/2 []   (stable=true, total=5)
+  ?<  Any/At least one of Less than             tags.label ?< "alpha"        -> empty-relation records matched: 0/2 []   (stable=true, total=0)
+  ?<= Any/At least one of Less or equal         tags.label ?<= "alpha"       -> empty-relation records matched: 0/2 []   (stable=true, total=3)
+
+=== B. same operators on a multi-SELECT (opts), empty for: ["100% pure"] ===
+  ?=  Any/At least one of Equal                 opts ?= "alpha"              -> "100% pure" matched: false   (stable=true, total=0)
+  ?!= Any/At least one of NOT equal             opts ?!= "alpha"             -> "100% pure" matched: true   (stable=true, total=7)
+  ?~  Any/At least one of Like/Contains         opts ?~ "alph"               -> "100% pure" matched: false   (stable=true, total=0)
+  ?!~ Any/At least one of NOT Like/Contains     opts ?!~ "alph"              -> "100% pure" matched: true   (stable=true, total=7)
+  ?>  Any/At least one of Greater than          opts ?> "alpha"              -> "100% pure" matched: false   (stable=true, total=0)
+  ?>= Any/At least one of Greater or equal      opts ?>= "alpha"             -> "100% pure" matched: false   (stable=true, total=0)
+  ?<  Any/At least one of Less than             opts ?< "alpha"              -> "100% pure" matched: true   (stable=true, total=7)
+  ?<= Any/At least one of Less or equal         opts ?<= "alpha"             -> "100% pure" matched: true   (stable=true, total=7)
+
+=== C. control: the match-all (non-"?") counterparts on the same empty relation ===
+  tags.label = "alpha"         -> empty-relation records matched: 0/2   (total=1)
+  tags.label != "alpha"        -> empty-relation records matched: 2/2   (total=4)
+  tags.label ~ "alph"          -> empty-relation records matched: 0/2   (total=1)
+  tags.label !~ "alph"         -> empty-relation records matched: 0/2   (total=2)
+
+=== D. control: the SAME operators on a value present on no record at all (no empty-set involved) ===
+  tags.label ?= "zzz"          -> []  (total=0)
+  tags.label ?!= "zzz"         -> ["#emptytit","100% pure","Lorem ipsum","back\\slash","lorem lower","quote'd \"both\"","under_score"]  (total=7)
+  tags.label ?~ "zzz"          -> []  (total=0)
+  tags.label ?!~ "zzz"         -> ["#emptytit","Lorem ipsum","lorem lower","quote'd \"both\"","under_score"]  (total=5)
+
+=== E. reproduction, 5 consecutive runs of the two operators that disagree ===
+  run 1: ?!=  empty-rel matched=2/2  total=6   |   ?!~  empty-rel matched=0/2  total=4
+  run 2: ?!=  empty-rel matched=2/2  total=6   |   ?!~  empty-rel matched=0/2  total=4
+  run 3: ?!=  empty-rel matched=2/2  total=6   |   ?!~  empty-rel matched=0/2  total=4
+  run 4: ?!=  empty-rel matched=2/2  total=6   |   ?!~  empty-rel matched=0/2  total=4
+  run 5: ?!=  empty-rel matched=2/2  total=6   |   ?!~  empty-rel matched=0/2  total=4
+
+CONCLUSION SHAPE: ?!= counts an empty array as "at least one of them is not alpha";
+?!~ does not. The documentation words them identically.

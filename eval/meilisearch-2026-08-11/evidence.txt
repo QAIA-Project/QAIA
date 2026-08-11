@@ -1,0 +1,234 @@
+================================================================================
+QAIA campaign - Meilisearch defect hunt - raw evidence
+Date        : 2026-08-11
+Binary      : meilisearch-windows-amd64.exe v1.53.0
+             released 2026-08-10T09:15:27Z, commit 979167f13b5f53c8a4e0bd3b3a0edddf37a2e137
+Host        : Windows 11, 127.0.0.1, self-hosted, no Docker, no Meilisearch Cloud
+Oracle      : https://www.meilisearch.com/docs/ (prose + published API reference)
+================================================================================
+
+### /version as served by the instance under test
+{"commitSha":"979167f13b5f53c8a4e0bd3b3a0edddf37a2e137","commitDate":"2026-08-10T08:29:59.000000000Z","pkgVersion":"1.53.0"}
+
+################################################################################
+# RUN 2 - instance A (127.0.0.1:7700, DB reused across runs)
+################################################################################
+
+Meilisearch 1.53.0  commit 979167f13b5f53c8a4e0bd3b3a0edddf37a2e137  built 2026-08-10T08:29:59.000000000Z
+Probe run at 2026-08-11T12:22:12.339Z
+
+Building fixtures...
+Fixtures ready.
+
+=== PROBE 1: typo tolerance thresholds ===
+  [PASS] TYPO-01-len4-1typo  expected=0 hits (len 4, 1 typo) actual=0 hits
+  [PASS] TYPO-02-len5-1typo  expected=1 hit (len 5, 1 typo) actual=1 hits
+  [PASS] TYPO-03-len8-1typo  expected=1 hit (len 8, 1 typo) actual=1 hits
+  [PASS] TYPO-04-len8-2typos  expected=0 hits (len 8, 2 typos) actual=0 hits
+  [PASS] TYPO-05-len9-2typos  expected=1 hit (len 9, 2 typos) actual=1 hits
+  [PASS] TYPO-06-firstchar-len5  expected=0 hits (len 5, first-char typo = 2 typos) actual=0 hits
+  [PASS] TYPO-07-firstchar-len9  expected=1 hit (len 9, first-char typo = 2 typos, allowed) actual=1 hits
+  [PASS] TYPO-08-bound-255  expected=accepted (255 is the documented max) actual=accepted
+  [PASS] TYPO-09-bound-256  expected=rejected (256 > documented max 255) actual=rejected
+  [PASS] TYPO-10-oneTypo-gt-twoTypos  expected=rejected (oneTypo must be <= twoTypos) actual=rejected (invalid_settings_typo_tolerance)
+
+=== PROBE 2: pagination and maxTotalHits ===
+  [PASS] PAG-01-default-limit  expected=20 hits actual=20 hits
+  [PASS] PAG-02-limit-1000  expected=1000 hits actual=1000 hits
+  [PASS] PAG-03-limit-1001  expected=at most 1000 hits (or a 400 rejecting limit > maxTotalHits) actual=status=200 1000 hits
+  [PASS] PAG-04-offset-995  expected=5 hits (1000 - 995) actual=5 hits
+  [PASS] PAG-05-offset-999  expected=1 hit actual=1 hits
+  [PASS] PAG-06-offset-1000  expected=0 hits (offset cannot go beyond maxTotalHits) actual=0 hits
+  [DEVIATION] PAG-07-estimatedTotalHits  expected=estimatedTotalHits <= 1000 actual=estimatedTotalHits=1200
+             promise: "Maximum number of search results Meilisearch can return. Limit and offset cannot go beyond this value."
+  [DEVIATION] PAG-08-page10  expected=100 hits, totalHits<=1000, totalPages<=10 actual=hits=100 totalHits=1200 totalPages=12
+             promise: "Maximum number of search results Meilisearch can return. Limit and offset cannot go beyond this value."
+  [PASS] PAG-09-page11  expected=0 hits (past the 1000-result cap) actual=0 hits
+  [PASS] PAG-10-page-0  expected=either 0 hits or a 400 — page 0 does not exist in a 1-indexed scheme actual=status=200 hits=0
+  [PASS] PAG-11-precedence  expected=3 hits and totalHits present (offset/limit ignored) actual=hits=3 totalHits=1200 firstId=1
+  [PASS] PAG-12-raised-cap  expected=1200 hits after maxTotalHits=1200 actual=1200 hits
+  [DEVIATION] PAG-13-cap-zero-accepted  expected=HTTP 2xx — 0 is inside the documented range [0, ...] actual=status=400 "Invalid value at `.maxTotalHits`: a non-zero integer value lower than `18446744073709551615` was expected, but found a zero"
+             promise: "maxTotalHits ... default: 1000, example: 1000, minimum: 0"
+
+=== PROBE 3: filter operator semantics ===
+  [PASS] FILT-01-undeclared  expected=HTTP 4xx refusal actual=status=400 code=invalid_search_filter
+  [PASS] FILT-02-eq-case  expected=same id set for "action" and "ACTION" actual=[1,3,9] vs [1,3,9]
+  [PASS] FILT-03-eq-array  expected=id 9 included actual=[1,3,9]
+  [PASS] FILT-04-eq-no-null  expected=ids 4 (null) and 6 ([]) absent actual=[1,3,9]
+  [PASS] FILT-05-neq-complement  expected=|= action| + |!= action| == 10 (every document is on exactly one side) actual=|=|=3 [1,3,9] |!=|=7 [2,4,5,6,7,8,10] union=[1,2,3,4,5,6,7,8,9,10]
+  [PASS] FILT-06-not-eq-vs-neq  expected=`NOT cat = action` == `cat != action` actual=[2,4,5,6,7,8,10] vs [2,4,5,6,7,8,10]
+  [PASS] FILT-07-exists  expected=ids 1-7,9,10 present (all but id 8), i.e. null/""/[]/{} count as existing actual=[1,2,3,4,5,6,7,9,10]
+  [PASS] FILT-08-is-empty  expected=exactly ids 5 (""), 6 ([]), 7 ({}) actual=[5,6,7]
+  [PASS] FILT-09-is-null  expected=exactly id 4 actual=[4]
+  [PASS] FILT-10-to-equivalence  expected=`num 80 TO 89` == `num >= 80 AND num <= 89` actual=[1,2,3] vs [1,2,3]
+  [PASS] FILT-11-and-precedence  expected=`a AND b OR c` == `(a AND b) OR c` actual=[3,10] vs [3,10]
+  [PASS] FILT-12-in-equivalence  expected=`cat IN [action, comedy]` == `cat = action OR cat = comedy` actual=[1,3,9,10] vs [1,3,9,10]
+
+=== PROBE 4: rankingScoreThreshold ===
+  observed scores: [1,0.9998719918074757,0.9743983614951357,0.6666666666666666,0.3333333333333333]
+  [PASS] SCORE-01-hits-filtered  expected=3 hits with score >= 0.9743983614951357 actual=3 hits
+  [PASS] SCORE-02-estimated-total  expected=estimatedTotalHits == 3 actual=estimatedTotalHits=3
+  [PASS] SCORE-03-total-hits  expected=totalHits == 3 actual=totalHits=3 totalPages=1
+  [PASS] SCORE-04-thr-0  expected=HTTP 2xx (inside 0.0-1.0) actual=status=200 5 hits
+  [PASS] SCORE-05-thr-1  expected=HTTP 2xx (inside 0.0-1.0) actual=status=200 1 hits
+  [PASS] SCORE-06-thr-above-1  expected=HTTP 4xx (outside 0.0-1.0) actual=status=400 invalid_search_ranking_score_threshold
+  [PASS] SCORE-07-thr-below-0  expected=HTTP 4xx (outside 0.0-1.0) actual=status=400 invalid_search_ranking_score_threshold
+
+=== PROBE 5: faceting maxValuesPerFacet ===
+  [PASS] FACET-01-default-100  expected=100 facet values returned (the default cap) actual=100 values
+  [PASS] FACET-02-zero-accepted  expected=HTTP 2xx — 0 is inside the documented range actual=status=202 accepted
+  [PASS] FACET-03-zero-effect  expected=0 facet values when maxValuesPerFacet=0 actual=0 values
+
+===== SUMMARY =====
+checks=45  matched=42  deviations=3
+
+DEVIATION PAG-07-estimatedTotalHits
+  promise : Maximum number of search results Meilisearch can return. Limit and offset cannot go beyond this value.
+  expected: estimatedTotalHits <= 1000
+  actual  : estimatedTotalHits=1200
+
+DEVIATION PAG-08-page10
+  promise : Maximum number of search results Meilisearch can return. Limit and offset cannot go beyond this value.
+  expected: 100 hits, totalHits<=1000, totalPages<=10
+  actual  : hits=100 totalHits=1200 totalPages=12
+
+DEVIATION PAG-13-cap-zero-accepted
+  promise : maxTotalHits ... default: 1000, example: 1000, minimum: 0
+  expected: HTTP 2xx — 0 is inside the documented range [0, ...]
+  actual  : status=400 "Invalid value at `.maxTotalHits`: a non-zero integer value lower than `18446744073709551615` was expected, but found a zero"
+
+################################################################################
+
+# RUN 3 - instance B (127.0.0.1:7701, FRESH process, FRESH empty DB)
+
+# Identical outcome => the three deviations are not state-dependent.
+
+################################################################################
+
+
+Meilisearch 1.53.0  commit 979167f13b5f53c8a4e0bd3b3a0edddf37a2e137  built 2026-08-10T08:29:59.000000000Z
+Probe run at 2026-08-11T12:22:44.527Z
+
+Building fixtures...
+Fixtures ready.
+
+=== PROBE 1: typo tolerance thresholds ===
+  [PASS] TYPO-01-len4-1typo  expected=0 hits (len 4, 1 typo) actual=0 hits
+  [PASS] TYPO-02-len5-1typo  expected=1 hit (len 5, 1 typo) actual=1 hits
+  [PASS] TYPO-03-len8-1typo  expected=1 hit (len 8, 1 typo) actual=1 hits
+  [PASS] TYPO-04-len8-2typos  expected=0 hits (len 8, 2 typos) actual=0 hits
+  [PASS] TYPO-05-len9-2typos  expected=1 hit (len 9, 2 typos) actual=1 hits
+  [PASS] TYPO-06-firstchar-len5  expected=0 hits (len 5, first-char typo = 2 typos) actual=0 hits
+  [PASS] TYPO-07-firstchar-len9  expected=1 hit (len 9, first-char typo = 2 typos, allowed) actual=1 hits
+  [PASS] TYPO-08-bound-255  expected=accepted (255 is the documented max) actual=accepted
+  [PASS] TYPO-09-bound-256  expected=rejected (256 > documented max 255) actual=rejected
+  [PASS] TYPO-10-oneTypo-gt-twoTypos  expected=rejected (oneTypo must be <= twoTypos) actual=rejected (invalid_settings_typo_tolerance)
+
+=== PROBE 2: pagination and maxTotalHits ===
+  [PASS] PAG-01-default-limit  expected=20 hits actual=20 hits
+  [PASS] PAG-02-limit-1000  expected=1000 hits actual=1000 hits
+  [PASS] PAG-03-limit-1001  expected=at most 1000 hits (or a 400 rejecting limit > maxTotalHits) actual=status=200 1000 hits
+  [PASS] PAG-04-offset-995  expected=5 hits (1000 - 995) actual=5 hits
+  [PASS] PAG-05-offset-999  expected=1 hit actual=1 hits
+  [PASS] PAG-06-offset-1000  expected=0 hits (offset cannot go beyond maxTotalHits) actual=0 hits
+  [DEVIATION] PAG-07-estimatedTotalHits  expected=estimatedTotalHits <= 1000 actual=estimatedTotalHits=1200
+             promise: "Maximum number of search results Meilisearch can return. Limit and offset cannot go beyond this value."
+  [DEVIATION] PAG-08-page10  expected=100 hits, totalHits<=1000, totalPages<=10 actual=hits=100 totalHits=1200 totalPages=12
+             promise: "Maximum number of search results Meilisearch can return. Limit and offset cannot go beyond this value."
+  [PASS] PAG-09-page11  expected=0 hits (past the 1000-result cap) actual=0 hits
+  [PASS] PAG-10-page-0  expected=either 0 hits or a 400 — page 0 does not exist in a 1-indexed scheme actual=status=200 hits=0
+  [PASS] PAG-11-precedence  expected=3 hits and totalHits present (offset/limit ignored) actual=hits=3 totalHits=1200 firstId=1
+  [PASS] PAG-12-raised-cap  expected=1200 hits after maxTotalHits=1200 actual=1200 hits
+  [DEVIATION] PAG-13-cap-zero-accepted  expected=HTTP 2xx — 0 is inside the documented range [0, ...] actual=status=400 "Invalid value at `.maxTotalHits`: a non-zero integer value lower than `18446744073709551615` was expected, but found a zero"
+             promise: "maxTotalHits ... default: 1000, example: 1000, minimum: 0"
+
+=== PROBE 3: filter operator semantics ===
+  [PASS] FILT-01-undeclared  expected=HTTP 4xx refusal actual=status=400 code=invalid_search_filter
+  [PASS] FILT-02-eq-case  expected=same id set for "action" and "ACTION" actual=[1,3,9] vs [1,3,9]
+  [PASS] FILT-03-eq-array  expected=id 9 included actual=[1,3,9]
+  [PASS] FILT-04-eq-no-null  expected=ids 4 (null) and 6 ([]) absent actual=[1,3,9]
+  [PASS] FILT-05-neq-complement  expected=|= action| + |!= action| == 10 (every document is on exactly one side) actual=|=|=3 [1,3,9] |!=|=7 [2,4,5,6,7,8,10] union=[1,2,3,4,5,6,7,8,9,10]
+  [PASS] FILT-06-not-eq-vs-neq  expected=`NOT cat = action` == `cat != action` actual=[2,4,5,6,7,8,10] vs [2,4,5,6,7,8,10]
+  [PASS] FILT-07-exists  expected=ids 1-7,9,10 present (all but id 8), i.e. null/""/[]/{} count as existing actual=[1,2,3,4,5,6,7,9,10]
+  [PASS] FILT-08-is-empty  expected=exactly ids 5 (""), 6 ([]), 7 ({}) actual=[5,6,7]
+  [PASS] FILT-09-is-null  expected=exactly id 4 actual=[4]
+  [PASS] FILT-10-to-equivalence  expected=`num 80 TO 89` == `num >= 80 AND num <= 89` actual=[1,2,3] vs [1,2,3]
+  [PASS] FILT-11-and-precedence  expected=`a AND b OR c` == `(a AND b) OR c` actual=[3,10] vs [3,10]
+  [PASS] FILT-12-in-equivalence  expected=`cat IN [action, comedy]` == `cat = action OR cat = comedy` actual=[1,3,9,10] vs [1,3,9,10]
+
+=== PROBE 4: rankingScoreThreshold ===
+  observed scores: [1,0.9998719918074757,0.9743983614951357,0.6666666666666666,0.3333333333333333]
+  [PASS] SCORE-01-hits-filtered  expected=3 hits with score >= 0.9743983614951357 actual=3 hits
+  [PASS] SCORE-02-estimated-total  expected=estimatedTotalHits == 3 actual=estimatedTotalHits=3
+  [PASS] SCORE-03-total-hits  expected=totalHits == 3 actual=totalHits=3 totalPages=1
+  [PASS] SCORE-04-thr-0  expected=HTTP 2xx (inside 0.0-1.0) actual=status=200 5 hits
+  [PASS] SCORE-05-thr-1  expected=HTTP 2xx (inside 0.0-1.0) actual=status=200 1 hits
+  [PASS] SCORE-06-thr-above-1  expected=HTTP 4xx (outside 0.0-1.0) actual=status=400 invalid_search_ranking_score_threshold
+  [PASS] SCORE-07-thr-below-0  expected=HTTP 4xx (outside 0.0-1.0) actual=status=400 invalid_search_ranking_score_threshold
+
+=== PROBE 5: faceting maxValuesPerFacet ===
+  [PASS] FACET-01-default-100  expected=100 facet values returned (the default cap) actual=100 values
+  [PASS] FACET-02-zero-accepted  expected=HTTP 2xx — 0 is inside the documented range actual=status=202 accepted
+  [PASS] FACET-03-zero-effect  expected=0 facet values when maxValuesPerFacet=0 actual=0 values
+
+===== SUMMARY =====
+checks=45  matched=42  deviations=3
+
+DEVIATION PAG-07-estimatedTotalHits
+  promise : Maximum number of search results Meilisearch can return. Limit and offset cannot go beyond this value.
+  expected: estimatedTotalHits <= 1000
+  actual  : estimatedTotalHits=1200
+
+DEVIATION PAG-08-page10
+  promise : Maximum number of search results Meilisearch can return. Limit and offset cannot go beyond this value.
+  expected: 100 hits, totalHits<=1000, totalPages<=10
+  actual  : hits=100 totalHits=1200 totalPages=12
+
+DEVIATION PAG-13-cap-zero-accepted
+  promise : maxTotalHits ... default: 1000, example: 1000, minimum: 0
+  expected: HTTP 2xx — 0 is inside the documented range [0, ...]
+  actual  : status=400 "Invalid value at `.maxTotalHits`: a non-zero integer value lower than `18446744073709551615` was expected, but found a zero"
+
+################################################################################
+
+# MINIMAL STANDALONE REPRODUCTION (curl only, 3 documents, no probe.js)
+
+################################################################################
+
+
+### MINIMAL STANDALONE REPRO (no probe.js), fresh index 'repro' on http://127.0.0.1:7701
+$ meilisearch --version
+meilisearch 1.53.0
+
+$ curl -X POST .../indexes  -d '{"uid":"repro","primaryKey":"id"}'
+{"taskUid":23,"indexUid":"repro","status":"enqueued","type":"indexCreation","enqueuedAt":"2026-08-11T12:23:12.2060663Z"}
+
+# add 3 documents
+{"taskUid":24,"indexUid":"repro","status":"enqueued","type":"documentAdditionOrUpdate","enqueuedAt":"2026-08-11T12:23:12.2295199Z"}
+
+$ curl -X PATCH .../settings/pagination -d '{"maxTotalHits":2}'
+{"taskUid":25,"indexUid":"repro","status":"enqueued","type":"settingsUpdate","enqueuedAt":"2026-08-11T12:23:15.2769134Z"}
+$ curl .../settings/pagination   (read back)
+{"maxTotalHits":2}
+
+--- FINDING A1: page-based metadata ignores maxTotalHits ---
+$ curl -X POST .../search -d '{"q":"","page":1,"hitsPerPage":1}'
+{"hits":[{"id":1}],"query":"","processingTimeMs":0,"hitsPerPage":1,"page":1,"totalPages":3,"totalHits":3,"requestUid":"019ff0c6-f460-77a0-b36b-edfccfad587e"}
+  -> totalHits/totalPages should be 2/2 (cap=2); observed 3/3
+$ curl -X POST .../search -d '{"q":"","page":3,"hitsPerPage":1}'   (the 3rd page it advertises)
+{"hits":[],"query":"","processingTimeMs":0,"hitsPerPage":1,"page":3,"totalPages":3,"totalHits":3,"requestUid":"019ff0c6-f476-7ad3-b09d-fc3e7bffe5b5"}
+  -> advertised page 3 is empty
+
+--- FINDING A2: offset/limit estimatedTotalHits ignores maxTotalHits ---
+$ curl -X POST .../search -d '{"q":""}'
+{"hits":[{"id":1},{"id":2}],"query":"","processingTimeMs":0,"limit":20,"offset":0,"estimatedTotalHits":3,"requestUid":"019ff0c6-f48b-71e0-8b81-eed63163f3d5"}
+  -> hits capped at 2 (correct), estimatedTotalHits 3 (uncapped)
+
+--- FINDING B: maxTotalHits=0 rejected though schema says minimum: 0 ---
+$ curl -X PATCH .../settings/pagination -d '{"maxTotalHits":0}'
+{"message":"Invalid value at `.maxTotalHits`: a non-zero integer value lower than `18446744073709551615` was expected, but found a zero","code":"invalid_settings_pagination","type":"invalid_request","link":"https://docs.meilisearch.com/errors#invalid_settings_pagination"}
+HTTP 400
+$ curl -X PATCH .../settings/faceting  -d '{"maxValuesPerFacet":0}'   (same documented 'minimum: 0')
+{"taskUid":26,"indexUid":"repro","status":"enqueued","type":"settingsUpdate","enqueuedAt":"2026-08-11T12:23:18.4577608Z"}
+HTTP 202
+  -> the two settings share the documented lower bound 0; only one accepts it

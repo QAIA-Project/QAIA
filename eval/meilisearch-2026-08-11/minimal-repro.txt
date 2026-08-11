@@ -1,0 +1,36 @@
+### MINIMAL STANDALONE REPRO (no probe.js), fresh index 'repro' on http://127.0.0.1:7701
+$ meilisearch --version
+meilisearch 1.53.0
+
+$ curl -X POST .../indexes  -d '{"uid":"repro","primaryKey":"id"}'
+{"taskUid":23,"indexUid":"repro","status":"enqueued","type":"indexCreation","enqueuedAt":"2026-08-11T12:23:12.2060663Z"}
+
+# add 3 documents
+{"taskUid":24,"indexUid":"repro","status":"enqueued","type":"documentAdditionOrUpdate","enqueuedAt":"2026-08-11T12:23:12.2295199Z"}
+
+$ curl -X PATCH .../settings/pagination -d '{"maxTotalHits":2}'
+{"taskUid":25,"indexUid":"repro","status":"enqueued","type":"settingsUpdate","enqueuedAt":"2026-08-11T12:23:15.2769134Z"}
+$ curl .../settings/pagination   (read back)
+{"maxTotalHits":2}
+
+--- FINDING A1: page-based metadata ignores maxTotalHits ---
+$ curl -X POST .../search -d '{"q":"","page":1,"hitsPerPage":1}'
+{"hits":[{"id":1}],"query":"","processingTimeMs":0,"hitsPerPage":1,"page":1,"totalPages":3,"totalHits":3,"requestUid":"019ff0c6-f460-77a0-b36b-edfccfad587e"}
+  -> totalHits/totalPages should be 2/2 (cap=2); observed 3/3
+$ curl -X POST .../search -d '{"q":"","page":3,"hitsPerPage":1}'   (the 3rd page it advertises)
+{"hits":[],"query":"","processingTimeMs":0,"hitsPerPage":1,"page":3,"totalPages":3,"totalHits":3,"requestUid":"019ff0c6-f476-7ad3-b09d-fc3e7bffe5b5"}
+  -> advertised page 3 is empty
+
+--- FINDING A2: offset/limit estimatedTotalHits ignores maxTotalHits ---
+$ curl -X POST .../search -d '{"q":""}'
+{"hits":[{"id":1},{"id":2}],"query":"","processingTimeMs":0,"limit":20,"offset":0,"estimatedTotalHits":3,"requestUid":"019ff0c6-f48b-71e0-8b81-eed63163f3d5"}
+  -> hits capped at 2 (correct), estimatedTotalHits 3 (uncapped)
+
+--- FINDING B: maxTotalHits=0 rejected though schema says minimum: 0 ---
+$ curl -X PATCH .../settings/pagination -d '{"maxTotalHits":0}'
+{"message":"Invalid value at `.maxTotalHits`: a non-zero integer value lower than `18446744073709551615` was expected, but found a zero","code":"invalid_settings_pagination","type":"invalid_request","link":"https://docs.meilisearch.com/errors#invalid_settings_pagination"}
+HTTP 400
+$ curl -X PATCH .../settings/faceting  -d '{"maxValuesPerFacet":0}'   (same documented 'minimum: 0')
+{"taskUid":26,"indexUid":"repro","status":"enqueued","type":"settingsUpdate","enqueuedAt":"2026-08-11T12:23:18.4577608Z"}
+HTTP 202
+  -> the two settings share the documented lower bound 0; only one accepts it
