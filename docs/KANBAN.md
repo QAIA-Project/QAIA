@@ -6,6 +6,33 @@ Le développement se déroule en **sprints courts** exécutés en sessions agent
 
 ---
 
+## Backlog — EPIC E6 : générer au-dessus de la user story (spec / feature / epic) ⚪ À CHALLENGER
+
+**Demandée par le fondateur le 2026-08-11.** Aujourd'hui toute la chaîne est indexée sur **une**
+user story : `<US-ID>` est la clé de `.qaia/state/`, de `.qaia/testbooks/`, de `.qaia/reports/`,
+et le manifeste porte `usId` en champ **requis** du contrat de sortie. Une spécification, une
+feature ou une epic ne se traitent qu'en les découpant à la main en N user stories, et rien ne
+recolle les N résultats.
+
+**Ce que ça demande, et qui n'est pas mince** :
+
+| Point dur | Pourquoi ce n'est pas qu'un renommage |
+|---|---|
+| `usId` est requis en 1.x | Passer à un `scopeId` + `scopeKind` (`us` \| `feature` \| `epic` \| `spec`) touche le champ le plus lu du contrat — arbitrage 1.x additif *ou* 2.0, à trancher, pas à improviser |
+| L'unité d'atomicité change de sens | À l'échelle d'une epic, « un scénario = un comportement » tient toujours, mais « couverture des AC » n'a plus de dénominateur unique |
+| Le risque de délayage | Une epic ingérée d'un bloc produit un cahier générique — c'est exactement le défaut que `test-plan-and-closure` refuse déjà (« remplissage de gabarit ») |
+| La déduplication devient centrale | Deux US d'une même feature partagent des règles ; sans dédup, le cahier d'epic est N cahiers empilés |
+
+**Lien avec E5** : le rapport de campagne (S41) agrège déjà N US en un document. **C'est la moitié
+lecture du problème.** E6 est la moitié génération. Faire S41 d'abord donne une mesure de ce que
+l'agrégation coûte avant de décider comment la génération doit être découpée.
+
+**Statut : à challenger avant d'être planifiée** — valeur / effort / critère d'acceptation, comme
+tout ce qui entre dans ce board. Ordonnée **après E5**, non par principe mais parce que S41
+produira l'information qui manque pour la cadrer.
+
+---
+
 ## Sprints 38 à 41 — EPIC E5, deux niveaux, deux langues, une campagne (2026-08-11) ⚪ PLANIFIÉ
 
 Plan complet : [`EPIC-NIVEAUX-ET-LN.md`](EPIC-NIVEAUX-ET-LN.md). Demande du fondateur — terminer les
