@@ -7,7 +7,7 @@ Feature: Validation feedback in the signing screen (US-002, AC8)
     And "physician@demo" is a prescribing physician without the "pediatric specialist" role
     And patient "P1" is 30 years old with no renal insufficiency flag
 
-  @QAIA-US-002-026 @AC8 @P3 @use-case @smoke
+  @QAIA-US-002-026 @AC8 @P3 @e2e @use-case @smoke
   # condition: C26 — priority P3 — the single scenario-based test of this US
   Scenario: A prescriber sees the verdict in the signing screen without a page reload
     Given "physician@demo" is on the signing screen for a prescription of "DRUG-A" to "P1"
@@ -16,7 +16,7 @@ Feature: Validation feedback in the signing screen (US-002, AC8)
     And the rule identifier that produced it is shown
     And the page is not reloaded
 
-  @QAIA-US-002-027 @AC8 @P3 @ep
+  @QAIA-US-002-027 @AC8 @P3 @e2e @ep
   # condition: C27 — priority P3
   Scenario: A prescription breaking two rules at once reports both rule identifiers
     Given "P1" has already received 61 mg of "DRUG-A" in the last 24 hours

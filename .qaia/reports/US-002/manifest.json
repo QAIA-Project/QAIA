@@ -1,5 +1,5 @@
 {
-  "contract": "1.0",
+  "contract": "1.1",
   "usId": "US-002",
   "title": "Prescription dosage validation",
   "status": "draft",
@@ -87,6 +87,7 @@
       "smoke": 1,
       "outlines": 0
     },
+    "byLevel": { "e2e": 28, "api": 0 },
     "coverage": {
       "acTotal": 8,
       "acCovered": 8,

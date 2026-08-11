@@ -3,21 +3,21 @@ Feature: Create appointment — API contract oracle (POST /api/appointments)
   # issue #16). Every scenario cites the operation and the spec element it is grounded in.
   # Expected statuses come from the contract's documented `responses`, not from extrapolation.
 
-  @QAIA-SHOP-DEMO-201 @P1 @oracle:openapi
+  @QAIA-SHOP-DEMO-201 @P1 @oracle:openapi @api
   Scenario: Valid request creates the appointment
     # oracle: openapi createAppointment 201
     Given an authenticated patient and an available slot
     When they POST a body with slotId, patientId and specialty "cardiology"
     Then the API responds 201
 
-  @QAIA-SHOP-DEMO-202 @P1 @negative @oracle:openapi @error-guessing
+  @QAIA-SHOP-DEMO-202 @P1 @negative @oracle:openapi @api @error-guessing
   Scenario: Unauthenticated request is refused
     # oracle: openapi createAppointment security -> 401
     Given no bearer token
     When they POST a valid appointment body
     Then the API responds 401
 
-  @QAIA-SHOP-DEMO-203 @P1 @negative @oracle:openapi @decision-table
+  @QAIA-SHOP-DEMO-203 @P1 @negative @oracle:openapi @api @decision-table
   Scenario Outline: Omitting a required field is rejected
     # oracle: openapi createAppointment requestBody.required -> 400
     Given an authenticated patient
@@ -30,28 +30,28 @@ Feature: Create appointment — API contract oracle (POST /api/appointments)
       | patientId |
       | specialty |
 
-  @QAIA-SHOP-DEMO-204 @P2 @negative @oracle:openapi @ep
+  @QAIA-SHOP-DEMO-204 @P2 @negative @oracle:openapi @api @ep
   Scenario: A specialty outside the enum is rejected
     # oracle: openapi createAppointment specialty.enum -> 400
     Given an authenticated patient
     When they POST specialty "astrology"
     Then the API responds 400
 
-  @QAIA-SHOP-DEMO-205 @P2 @negative @oracle:openapi @boundary
+  @QAIA-SHOP-DEMO-205 @P2 @negative @oracle:openapi @api @boundary
   Scenario: A note longer than 280 characters is rejected
     # oracle: openapi createAppointment note.maxLength=280 -> 400
     Given an authenticated patient
     When they POST a note of 281 characters
     Then the API responds 400
 
-  @QAIA-SHOP-DEMO-206 @P2 @negative @oracle:openapi @oracle:iso-8601 @boundary
+  @QAIA-SHOP-DEMO-206 @P2 @negative @oracle:openapi @oracle:iso-8601 @api @boundary
   Scenario: An impossible startsAt date is rejected
     # oracle: openapi createAppointment startsAt.format=date-time -> chains to ISO 8601 oracle -> 400
     Given an authenticated patient
     When they POST startsAt "2023-02-29T10:00:00Z"
     Then the API responds 400
 
-  @QAIA-SHOP-DEMO-207 @P1 @negative @oracle:openapi @state-transition
+  @QAIA-SHOP-DEMO-207 @P1 @negative @oracle:openapi @api @state-transition
   Scenario: Booking an already-taken slot loses the race
     # oracle: openapi createAppointment 409
     Given a slot just booked by another patient
