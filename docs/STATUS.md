@@ -52,8 +52,14 @@ validator.js d'accepter les injections CRLF. 37 cas sur 163 marqués inutilisabl
 **Deux échecs de procédure, et ils sont à moi.**
 
 `uptime-kuma` impose un gabarit d'issue (`bug_report.yml`, quatre champs obligatoires) qu'un bot
-vérifie. J'ai publié par l'API sans le suivre. Corps réécrit au format depuis, mais **le dépôt ne
-laisse pas l'auteur rouvrir** ce que son bot a fermé.
+vérifie. J'ai publié par l'API sans le suivre. **Seul #7703 a vu son corps réécrit** au format —
+#7704 non, et je l'ai pourtant résumé au pluriel. Le dépôt ne laisse pas l'auteur rouvrir ce que
+son bot a fermé.
+
+**Arrêt décidé le 2026-08-11.** Le bot invite à redéposer via le gabarit ; ce n'est pas un refus
+définitif, et je l'avais encore lu comme tel — troisième refus sur-interprété de la journée. On
+s'arrête par arbitrage, pas par contrainte : trois échecs sur quatre publications, deux fermetures
+automatiques du même compte en une heure. Les constats restent documentés et rejouables.
 
 `pocketbase` écrit dans son `CONTRIBUTING.md` que **les PR sont désactivées** à cause du spam LLM
 et invite explicitement à *« opening an issue or discussion »* à la place, avec la parenthèse

@@ -144,8 +144,18 @@ coûté trois publications sur quatre.
 
 - **`louislam/uptime-kuma`** impose `bug_report.yml` — quatre champs obligatoires, une case de
   politique de sécurité — et un bot ferme toute issue qui ne passe pas par là. #7703 et #7704 ont
-  été fermées, étiquetées `invalid-format`. Corps réécrits au format depuis ; **le dépôt ne laisse
-  pas l'auteur rouvrir** ce que son bot a fermé.
+  été fermées, étiquetées `invalid-format`. **Seul le corps de #7703 a été réécrit** au format —
+  après l'échec de réouverture je me suis arrêté sans traiter #7704, et j'ai pourtant résumé au
+  pluriel. Corrigé ici. Le dépôt ne laisse de toute façon pas l'auteur rouvrir ce que son bot a
+  fermé.
+
+  **Décision du fondateur, 2026-08-11 : on s'arrête là.** Le message du bot invite pourtant à
+  redéposer via le gabarit — ce n'est pas un refus définitif, et je l'avais lu comme tel, vingt
+  minutes après avoir consigné exactement cette faute sur PocketBase. **Trois refus lus comme plus
+  larges qu'ils ne l'étaient, en une journée.** L'arrêt n'est donc pas une contrainte, c'est un
+  arbitrage : quatre publications, trois échecs, deux fermetures automatiques du même compte en une
+  heure — un cinquième dépôt se lirait comme de l'insistance quel que soit son format. Les deux
+  constats restent documentés et rejouables ici ; ils ne se périment pas.
 - **`pocketbase/pocketbase`** n'a pas de gabarit. Son `CONTRIBUTING.md` porte un encadré, et il
   faut le citer en entier parce que ma première lecture en a tiré la mauvaise conclusion :
 
