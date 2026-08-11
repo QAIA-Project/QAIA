@@ -51,7 +51,13 @@ test('get_skill_content refuses a path-traversal id', async () => {
 
 test('get_output_contract reads the real contract doc', async () => {
   const content = await getOutputContract();
-  assert.match(content, /contract 1\.0/);
+  // Le numero de version est DELIBEREMENT hors de l'assertion. Il etait epingle a `contract 1.0`
+  // et a fait rougir la CI au premier bump mineur (1.1, ADR 0008, 2026-08-11) -- alors que ce
+  // test ne verifie pas la version : il verifie que le pont lit le vrai fichier. Epingler un
+  // nombre qui bouge par conception, c'est la meme classe de faute que les cinq regles dupliquees
+  // corrigees le 2026-08-09 : une seconde copie d'un fait qui finit par diverger.
+  assert.match(content, /## Schema \(contract \d+\.\d+\)/);
+  assert.match(content, /qaia-score/); // preuve que c'est le fichier vivant, pas un cache
 });
 
 test('score_feature: a well-formed feature scores reasonably and is NOT FAIL', async () => {
