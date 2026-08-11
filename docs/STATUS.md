@@ -1,5 +1,71 @@
 # QAIA — état du projet & prompt de reprise
 
+## Session du 2026-08-11 — EPIC E5, sept relecteurs, cinq campagnes externes
+
+**24 commits, 8 CI vérifiées, 2 rouges attrapées et corrigées.** Décisions au registre : D197-D200.
+
+### Livré
+
+**S38, S39, S40** de l'EPIC E5 ([`EPIC-NIVEAUX-ET-LN.md`](EPIC-NIVEAUX-ET-LN.md)) : ADR 0008 (le
+niveau de test décidé à la conception, plus deviné par `automate`), contrat de sortie **1.0 → 1.1**
+(`design.byLevel`), la forme d'un scénario `@api`, ADR 0001 évaluée par niveau, et le **rendu en
+langage naturel vérifié étape par étape** — pas promis, comparé. `make check` : 17 → 23 contrôles.
+
+**Deux applications de démonstration** : `examples/booking-api-demo/` (26 cas API depuis une
+spécification antérieure de 17 jours) et `site-qa/` (QAIA appliquée à sa propre vitrine).
+
+### Ce que la relecture a coûté, et c'est le vrai résultat
+
+**Sept relecteurs en contexte vierge** — deux juges du tier, cinq personas. **4 affirmations
+réfutées, 17 défauts corrigés le jour même**, dont deux de mes propres messages de commit. Verdicts :
+CONCERNS 15/20 et **FAIL 13/20**.
+
+**Trois relecteurs ont trouvé la même chose indépendamment : les trois portes construites ce jour-là
+avaient toutes un périmètre faux.** C'est la panne fondatrice de `CLAUDE.md`, **troisième récidive,
+le jour où le dépôt la re-cite dans trois fichiers**. Corrigée en inversant la règle : ce qui est
+exclu s'énumère, le reste est couvert par défaut.
+
+**Et le journal de mutation s'était effacé lui-même** — le commit qui promet « trace brute
+conservée, première passe incluse » est suivi de celui qui supprime ces 24 lignes. La règle a tenu
+un commit. Trouvé par la passe de réfutation, aucun contrôle ne pouvait le voir.
+
+### Cinq campagnes sur du logiciel tiers — la cible décide, pas la méthode
+
+| Terrain | Résultat |
+|---|---|
+| Bibliothèques de fonctions pures (validator.js, deux angles) | **0 défaut** |
+| Applications avec état (PocketBase, Meilisearch, Uptime Kuma) | **4 constats publiables** |
+
+**~30 constats bruts, 4 publiables — un sur quinze.** Dont **12 causés par notre propre corpus
+d'oracles**, qui stockait les caractères de contrôle sous forme d'images Unicode et faisait accuser
+validator.js d'accepter les injections CRLF. 37 cas sur 163 marqués inutilisables, contrôle ajouté.
+
+### Le publiable, et ce qu'il est devenu — à lire avant la prochaine campagne
+
+| Signalement | Résultat |
+|---|---|
+| `mwinteringham/restful-booker#58` | **ouverte** |
+| `meilisearch#6482` (commentaire) | publié |
+| `louislam/uptime-kuma#7703` et `#7704` | **fermées par un bot**, étiquetées `invalid-format` |
+| `pocketbase/pocketbase#7801` | **supprimée par le mainteneur** |
+
+**Deux échecs de procédure, et ils sont à moi.**
+
+`uptime-kuma` impose un gabarit d'issue (`bug_report.yml`, quatre champs obligatoires) qu'un bot
+vérifie. J'ai publié par l'API sans le suivre. Corps réécrit au format depuis, mais **le dépôt ne
+laisse pas l'auteur rouvrir** ce que son bot a fermé.
+
+`pocketbase` écrit dans son `CONTRIBUTING.md` : *« Due to recent LLM spam… LLM contributions are
+not welcome »*. **Je ne l'avais pas lu.** L'issue a été supprimée, et c'était leur droit. Le
+constat technique tient ; il n'a rien à faire chez eux sous cette forme.
+
+**La leçon dépasse les deux cas** : j'ai vérifié l'antériorité des *constats* toute la journée — six
+recherches avant chaque publication — et jamais la **politique de contribution** de la cible. On
+vérifie ce qu'on sait devoir vérifier, pas ce que la cible impose. Le protocole de campagne porte
+désormais l'étape manquante.
+
+---
+
 ## Revue à cinq personas — 2026-08-09 (fin de sprint 34)
 
 Cinq relectures indépendantes du dépôt, chacune avec un contexte vierge et un seul rôle :

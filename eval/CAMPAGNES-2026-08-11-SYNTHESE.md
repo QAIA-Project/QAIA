@@ -130,6 +130,34 @@ horodaté. Antériorité : zéro résultat sur le symptôme, chez elle comme che
 
 ---
 
+## L'étape du protocole qui manquait, et que deux dépôts ont fait payer
+
+**Avant de publier quoi que ce soit chez un tiers, lire sa politique de contribution et ses
+gabarits d'issue.** Cette étape n'existait pas ; elle existe maintenant, parce que son absence a
+coûté trois publications sur quatre.
+
+| Ce qui a été vérifié six fois | Ce qui ne l'a jamais été |
+|---|---|
+| l'antériorité du constat dans le tracker | `CONTRIBUTING.md` de la cible |
+| la reproductibilité, deux fois minimum | `.github/ISSUE_TEMPLATE/` et ses champs obligatoires |
+| la sévérité bornée par la preuve | la politique du projet sur les contributions automatisées |
+
+- **`louislam/uptime-kuma`** impose `bug_report.yml` — quatre champs obligatoires, une case de
+  politique de sécurité — et un bot ferme toute issue qui ne passe pas par là. #7703 et #7704 ont
+  été fermées, étiquetées `invalid-format`. Corps réécrits au format depuis ; **le dépôt ne laisse
+  pas l'auteur rouvrir** ce que son bot a fermé.
+- **`pocketbase/pocketbase`** n'a pas de gabarit, mais son `CONTRIBUTING.md` porte un encadré :
+  *« Due to recent LLM spam… LLM contributions are not welcome »*. #7801 a été **supprimée**, et
+  c'était leur droit. Le constat technique tient ; il n'a rien à faire chez eux sous cette forme.
+
+**La divulgation n'était pas l'erreur.** Chaque corps publié se terminait par une note disant d'où
+venait le constat — c'est ce qui a rendu la provenance visible, et c'est délibéré : la cacher aurait
+été pire, et c'est exactement ce que ce mainteneur combat (*« if not obvious »*). L'erreur est
+d'avoir publié sans lire ce que la cible demande.
+
+**On vérifie ce qu'on sait devoir vérifier, pas ce que la cible impose.** C'est la même classe que
+les trois périmètres faux du matin.
+
 ## Ce qui n'est pas publiable, et pourquoi c'est écrit ici
 
 **Meilisearch — `totalHits`/`totalPages` ignorent `maxTotalHits`.** Réel, reproductible, et
