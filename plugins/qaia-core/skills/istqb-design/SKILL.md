@@ -99,7 +99,9 @@ what was considered and excluded: `references/technique-notes.md`.
 3. **Negative pressure — the refusal-path coverage gate.** For every rule that can refuse, error
    or deny, mark the corresponding condition as a **required-negative** (`[req-neg]` in
    `03-design.md`). These are what the coverage gate enforces downstream: **not a percentage, a
-   checklist** — every refusal, error and denial path must end up with a scenario. Rationale:
+   checklist** — every refusal, error and denial path must end up with a scenario **at that
+   condition's own level** (step 2b): a `[req-neg]` marked `[level: api]` is discharged by an
+   `@api` scenario, never by a UI scenario showing an error message. Rationale:
    `https://github.com/QAIA-Project/QAIA/blob/main/docs/adr/0001-negative-coverage-gate.md`.
 
 3b. **Standardized domains → oracle (optional).** If an AC touches a standardized domain

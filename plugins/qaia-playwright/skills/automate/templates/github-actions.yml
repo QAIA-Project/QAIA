@@ -29,14 +29,32 @@ jobs:
           cache-dependency-path: tests/package-lock.json
 
       - run: npm ci
+
+      # Le projet `api` tourne AVANT l'installation du navigateur, et sans lui : ses tests
+      # passent par APIRequestContext, aucun moteur n'entre dans leur resultat (ADR 0008 --
+      # le niveau est decide a la conception, `automate` le lit). Deux effets : le retour
+      # arrive plus vite sur la moitie de la suite qui n'a pas besoin de 200 Mo de navigateur,
+      # et une suite 100 % API n'installe jamais Chromium.
+      # `|| [ $? -eq 1 ]` n'est PAS ecrit ici a dessein : un projet `api` absent fait sortir
+      # Playwright en erreur, et c'est le bon comportement -- une etape qui passerait verte sur
+      # un projet inexistant est exactement la panne de porte vide corrigee deux fois en 2026.
+      - name: Run the api project (no browser)
+        run: npx playwright test --project=api --grep-invert "@quarantine"
+
       - run: npx playwright install --with-deps chromium
 
       # Retry/quarantine policy (T2): 0 automatic retries (masking instability would hide the
       # exact signal qaia-playwright:flaky-detect exists to surface). A test tagged @quarantine
       # by a human after a flaky-detect finding is excluded from the blocking run below but
       # still executed and reported separately, so it stays visible instead of disappearing.
-      - name: Run Playwright suite (excludes @quarantine)
-        run: npx playwright test --grep-invert "@quarantine"
+      # Les projets a moteur, nommes explicitement pour que le projet `api` ne soit pas rejoue
+      # une seconde fois sous navigateur. `automate` ne garde ici QUE les projets que le
+      # `playwright.config.js` genere declare reellement -- une ligne `--project=` pointant un
+      # projet inexistant fait echouer Playwright, ce qui est preferable a un oubli silencieux.
+      - name: Run the browser projects (excludes @quarantine)
+        run: >
+          npx playwright test --grep-invert "@quarantine"
+          --project=e2e-desktop --project=e2e-mobile --project=a11y --project=visual
 
       - name: Run quarantined tests (non-blocking, reported separately)
         if: ${{ !cancelled() }}

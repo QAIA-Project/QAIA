@@ -95,15 +95,29 @@ Two architectural choices are fixed, not renegotiated per run:
    specific gap against the specific scenarios it blocks, and let the user decide (add a
    `data-testid`, expose a seed endpoint). Same honesty posture as a blocked-for-assertion
    scenario.
-3. **Derive page objects** from the UI the scenarios touch. In Claude Code, use Playwright MCP to
-   explore the running app and build reliable selectors, within documented exploration limits
-   (how many pages, how deep, how snapshots are filtered). API-only scenarios use Playwright's
-   request context — no page object.
+3. **Derive page objects** from the UI the `@e2e` scenarios touch. In Claude Code, use Playwright
+   MCP to explore the running app and build reliable selectors, within documented exploration
+   limits (how many pages, how deep, how snapshots are filtered). **`@api` scenarios get no page
+   object**: they use `APIRequestContext` (`request` fixture / `request.newContext`), no browser
+   is launched, and no selector is derived for them. Exploring the UI on their behalf is wasted
+   session budget and produces page objects nothing calls.
 4. **Generate** `pages/*.js`, `fixtures.js`, `*.spec.js`, `playwright.config.js`, mirroring the
    proven `examples/medibook/tests/` structure: POM-as-fixtures, projects split by type
    (e2e-desktop / e2e-mobile emulation / api), `getByRole`/`getByTestId` selectors, `workers`
    set per the shared-SUT rule. One spec block per Gherkin scenario, its title carrying the
    scenario ID + AC tag.
+
+   **The split is the level tag, mechanically** (step 1b): `@api` → the `api` project, declared
+   with **no `browserName` and no device descriptor**, its specs grouped in `api.*.spec.js`;
+   `@e2e` → `e2e-desktop`, plus `e2e-mobile` only where the compatibility reference says the
+   engine can change the answer. An `api` project carrying a browser engine is the defect this
+   split exists to prevent: it multiplies request-only tests by an engine matrix that cannot
+   change their result — in `examples/expense-demo` that would be 40 of 45 scenarios paying for
+   three browsers each.
+
+   An `@api` spec asserts the **status first**, then the body, then the headers, mirroring the
+   scenario's own order (`qaia-core:testbook-generate/references/api-steps.md`). A generated API
+   test whose only assertion is on a body field passes on a 500 that happens to return JSON.
 5. **Self-review before writing** — a mechanical anti-sycophancy lint on the generator's own
    output, run before each spec reaches disk. It catches tautological comparisons, contentless
    `expect()` calls, weak-by-construction matchers on lazy locators, and scenarios whose `Then`

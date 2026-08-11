@@ -21,7 +21,7 @@
       "derived_from": [
         {
           "path": "plugins/qaia-core/skills/istqb-design/SKILL.md",
-          "sha256": "959cd416cab5c1c313719a4ffededbd886c01d33e397d47d7edf52a84962a93f"
+          "sha256": "e655b26c23da883c8169b74501d86d5a9f077ac0a3db2a5fcd150a754413b501"
         },
         {
           "path": "plugins/qaia-core/skills/istqb-design/references/coverage-expansion.md",

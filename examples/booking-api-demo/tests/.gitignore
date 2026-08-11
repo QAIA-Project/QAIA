@@ -1,0 +1,8 @@
+node_modules/
+test-results/
+playwright-report/
+# Sorties de run : la copie CONSERVEE est qaia-journey/reports/BOOK-API/junit.xml, celle que le
+# manifeste declare. En garder une seconde ici en ferait deux copies d'une meme mesure, qui
+# divergeraient au premier run non commite -- la faute que ce depot corrige partout ailleurs.
+junit.xml
+results.json

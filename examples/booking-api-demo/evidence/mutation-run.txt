@@ -1,0 +1,45 @@
+Passe mutation sur examples/booking-api-demo/app/server.js -- 2026-08-11
+Chaque mutation inverse ou neutralise UNE clause du contrat implementee par le serveur.
+Une mutation TUEE = la suite passe au rouge. Une SURVIVANTE = la clause n'est pas testee.
+
+[TUEE  ] plafond des rendez-vous a venir : >= devient >
+    exit=1  1) [api] â€º api.appointments.spec.js:108:1 â€º @QAIA-BOOK-API-012 @AC1 @low-confidence a patient with three upcoming appointments is refused | 1 failed
+[TUEE  ] borne maxLength de note : 280 devient 281
+    exit=1  1) [api] â€º api.appointments.spec.js:84:1 â€º @QAIA-BOOK-API-008 @AC1 a note of 281 characters is refused | 1 failed
+[TUEE  ] delai minimal : strict devient large
+    exit=1  1) [api] â€º api.appointments.spec.js:128:1 â€º @QAIA-BOOK-API-015 @AC1 @low-confidence a slot starting in exactly two hours is accepted | 1 failed
+[TUEE  ] enumeration specialty non verifiee
+    exit=1  1) [api] â€º api.appointments.spec.js:67:1 â€º @QAIA-BOOK-API-005 @AC1 a specialty outside the enumeration is refused | 1 failed
+[TUEE  ] authentification desactivee
+    exit=1  1) [api] â€º api.appointments.spec.js:41:3 â€º @QAIA-BOOK-API-002 @AC1 a request presenting "no header" is refused | 3 failed
+[TUEE  ] additionalProperties: false ignore
+    exit=1  1) [api] â€º api.appointments.spec.js:73:1 â€º @QAIA-BOOK-API-006 @AC1 an undeclared property is refused | 1 failed
+[TUEE  ] conflit de creneau ignore
+    exit=1  1) [api] â€º api.appointments.spec.js:102:1 â€º @QAIA-BOOK-API-011 @AC1 a slot already taken is refused | 1 failed
+[SURVIT] champ requis non verifie
+    exit=0    23 passed (691ms)
+
+TOTAL : 8 candidates, 8 executees, 7 tuees, 1 survivantes
+
+## La survivante, analysee plutot que comptee
+
+Mutation 8, « champ requis non verifie » : la boucle qui applique `AppointmentCreate.required`
+est neutralisee. La suite reste verte -- et apres verification, c'est le bon resultat.
+
+Comportement observe sur la MEME requete (corps sans `slotId`), serveur mute puis serveur intact :
+
+  MUTE     : status 400 {"error":"invalid slotId","field":"slotId","clause":"type: string"}
+  ORIGINAL : status 400 {"error":"invalid slotId","field":"slotId","clause":"required"}
+
+Meme statut, meme champ nomme. Deux clauses du schema se recouvrent pour cette entree : un champ
+absent est aussi un champ qui n'est pas une chaine, et la seconde verification rattrape la
+premiere. La seule difference est le champ `clause`, que la specification ne declare NULLE PART.
+
+C'est donc un mutant EQUIVALENT du point de vue du contrat, pas un trou de couverture. Le cahier
+ne peut pas -- et ne doit pas -- le distinguer : asserter `clause` reviendrait a asserter un champ
+que le contrat ne promet pas, ce que `references/api-steps.md` interdit explicitement (« Assert a
+status the specification never declares » / n'asserter que ce que le contrat enonce).
+
+Verdict : 8 candidates, 8 executees, 7 tuees, 1 survivante EQUIVALENTE au contrat, analysee.
+Compter 8/8 aurait ete plus flatteur et faux ; compter 7/8 sans l'analyse aurait signale un trou
+qui n'existe pas.

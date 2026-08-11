@@ -36,6 +36,9 @@ Follow the shared contract in `../README.md`. Prerequisites: `03-design.md` and
   user interface. The `@smoke` journey scenario crosses the UI by definition and carries `@e2e`.
   **Never two level tags on one scenario** — a scenario needing both verifies two promises through
   two interfaces, which is an atomicity defect to split, not a tag to add.
+  **An `@api` scenario has its own shape** — one `When` that is the request, status asserted
+  first, the `# contract:` comment citing the spec clause and not only the AC: `references/api-steps.md`.
+  Written as a shape to copy, for the same measured reason as the emission contract below.
 - **Stable IDs** — every scenario tagged `@QAIA-<US-ID>-<NNN>`, NNN never reused even after
   deletion. Plus: `@AC<n>` (traceability), `@P1/@P2/@P3` (priority), `@negative` where
   applicable, the level tag above, and **exactly one** technique tag from the closed list:
@@ -48,7 +51,13 @@ Follow the shared contract in `../README.md`. Prerequisites: `03-design.md` and
 - **Every scenario cites its condition** (`AC2-C3`) in a comment line — the full chain
   US → AC → condition → scenario.
 - **Negative coverage**: the blocking rule is the `[req-neg]` checklist of [ADR 0001](https://github.com/QAIA-Project/QAIA/blob/main/docs/adr/0001-negative-coverage-gate.md) (the
-  negative-path coverage gate) — every refusal, error or denial path has a scenario. The
+  negative-path coverage gate) — every refusal, error or denial path has a scenario.
+  **The covering scenario must carry the condition's own level** ([ADR 0008](https://github.com/QAIA-Project/QAIA/blob/main/docs/adr/0008-test-level-is-a-design-property.md)): a
+  `[req-neg]` condition marked `[level: api]` is discharged by an `@api` scenario, not by a `@e2e`
+  one that shows an error message on screen. Same gate, made precise — the promise was made
+  through an interface, and covering it elsewhere leaves it unverified where it was made. Until
+  2026-08-11 no level existed, so any scenario discharged any condition and the gate could read
+  green over a contract refusal nobody had exercised in HTTP. The
   **negative ratio is reported as context, never a gate.** Full doctrine, and why this is
   laboured: `references/negative-ratio.md`.
 - **Generating on `[open]` items.** A covered condition flagged `[open]` still gets its

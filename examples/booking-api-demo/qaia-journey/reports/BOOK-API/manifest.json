@@ -1,0 +1,105 @@
+{
+  "contract": "1.1",
+  "usId": "BOOK-API",
+  "title": "createAppointment - POST /api/appointments",
+  "status": "review",
+  "generatedAt": "2026-08-11T00:00:00Z",
+  "base": "qaia-journey",
+  "producers": [
+    {
+      "plugin": "qaia-core",
+      "version": "0.2.6",
+      "skill": "report",
+      "at": "2026-08-11T00:00:00Z"
+    },
+    {
+      "plugin": "qaia-playwright",
+      "version": "0.1.4",
+      "skill": "run-report",
+      "at": "2026-08-11T00:00:00Z"
+    }
+  ],
+  "artifacts": [
+    {
+      "kind": "feature",
+      "format": "gherkin",
+      "path": "testbooks/BOOK-API/appointments.feature"
+    },
+    {
+      "kind": "execution",
+      "format": "junit",
+      "path": "reports/BOOK-API/junit.xml"
+    }
+  ],
+  "design": {
+    "scenarios": {
+      "total": 23,
+      "byPriority": {
+        "P1": 11,
+        "P2": 11,
+        "P3": 1
+      },
+      "negative": 14,
+      "smoke": 0,
+      "outlines": 3
+    },
+    "byLevel": {
+      "e2e": 0,
+      "api": 23
+    },
+    "coverage": {
+      "acTotal": 1,
+      "acCovered": 1,
+      "reqNegTotal": 13,
+      "reqNegCovered": 13,
+      "negativeRatio": 0.61
+    },
+    "confidence": {
+      "lowConfidence": 5,
+      "openQuestions": 3,
+      "assumptions": 3,
+      "simulated": 0
+    },
+    "techniques": [
+      "ep",
+      "boundary"
+    ],
+    "oracles": [
+      "openapi"
+    ],
+    "knowledgeApplied": []
+  },
+  "execution": {
+    "total": 23,
+    "passed": 23,
+    "failed": 0,
+    "blocked": 0,
+    "byType": {
+      "api": 23
+    },
+    "traceability": {
+      "scenariosAutomated": 23,
+      "scenariosTotal": 23
+    }
+  },
+  "openArbitrations": [
+    {
+      "id": "Q1",
+      "kind": "open",
+      "about": "la regle metier du 422 (plafond, delai) n'existe que dans la prose de la description",
+      "sourceCheckpoint": "state/BOOK-API/03-design.md"
+    },
+    {
+      "id": "Q2",
+      "kind": "open",
+      "about": "startsAt optionnel alors que la regle des deux heures en depend",
+      "sourceCheckpoint": "state/BOOK-API/03-design.md"
+    },
+    {
+      "id": "Q3",
+      "kind": "open",
+      "about": "security declaree sans code 403 declare - portee insuffisante non specifiee",
+      "sourceCheckpoint": "state/BOOK-API/03-design.md"
+    }
+  ]
+}

@@ -51,8 +51,12 @@ guessed counts.
    a coverage-by-level statement that nobody established, which is worse than its absence.
 
 2. **Compute the counts** — do not estimate. Every number in the manifest must equal what the
-   artifacts contain: the negative ratio is `@negative` blocks / all blocks (the single
-   definition given by `testbook-generate`), `reqNegCovered/reqNegTotal` is the negative-path
+   artifacts contain: the negative ratio is `@negative` **executable cases** / all executable
+   cases — the same denominator as `scenarios.total`, per the output contract's arbitration of
+   2026-08-10 and the single definition in `testbook-generate/references/negative-ratio.md`. *(This
+   line said "blocks / all blocks" until 2026-08-11: a third copy of a rule the contract had
+   already settled, found by computing the ratio of a real book rather than re-reading the texts.)*
+   `reqNegCovered/reqNegTotal` is the negative-path
    coverage gate of [ADR 0001](https://github.com/QAIA-Project/QAIA/blob/main/docs/adr/0001-negative-coverage-gate.md), `byPriority` sums to
    `total` minus the excluded `@smoke` journey per the counting rules of `testbook-generate`.
 3. **Merge, don't clobber** (contract rule 2). If `manifest.json` already exists, load it,

@@ -73,7 +73,20 @@ one interpretation is worse than a prose-derived one, because its precision is m
 3. **Resolve `$ref`.** A condition that depends on an unresolved reference is not a condition.
 4. **Derive**, per the table above, one operation at a time.
 5. **Run the contradiction pass**, per the four above.
-6. **Emit** the same structure `us-ingest` emits, so `istqb-design` and the rest need no change.
+6. **Emit** the same structure `us-ingest` emits, so `istqb-design` and the rest need no change —
+   plus the two things only this entry point can supply:
+
+   - **`[level: api]` on every derived condition.** A clause of a service contract is observable
+     in HTTP by construction, so the level is not a judgment call here the way it is on prose
+     ([ADR 0008](https://github.com/QAIA-Project/QAIA/blob/main/docs/adr/0008-test-level-is-a-design-property.md)). `istqb-design` may still *raise* a condition to `e2e` — a spec clause whose
+     real promise is what the user sees — but it does so explicitly and with a reason, rather than
+     inheriting a blank.
+   - **The clause reference, not just the operation.** Each condition cites `<operationId> ·
+     <spec element>` — `requestBody.required`, `responses.404`, `security`,
+     `parameters.limit.maximum`. `testbook-generate` carries it into the scenario's `# contract:`
+     comment (`testbook-generate/references/api-steps.md`), which is what makes the chain **spec
+     clause → condition → scenario → test → result** traceable end to end. Citing only the
+     operation stops one link short: it says *where* the promise lives, never *which* promise.
 
 ## What this skill must refuse
 

@@ -1,0 +1,38 @@
+openapi: 3.0.3
+info:
+  title: MediBook Booking API (excerpt)
+  version: "1.0"
+# Illustrative excerpt — the single user-designated project oracle for the booking endpoints.
+# oracle-generate reads ONLY this file; it never calls the live API or resolves external $refs.
+paths:
+  /api/appointments:
+    post:
+      operationId: createAppointment
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppointmentCreate'
+      responses:
+        '201': { description: Created }
+        '400': { description: Malformed body }
+        '401': { description: Unauthenticated }
+        '409': { description: Slot already taken (race lost) }
+        '422': { description: Business rule violated (e.g. > 3 upcoming, < 2h ahead) }
+components:
+  securitySchemes:
+    bearerAuth: { type: http, scheme: bearer }
+  schemas:
+    AppointmentCreate:
+      type: object
+      additionalProperties: false
+      required: [slotId, patientId, specialty]
+      properties:
+        slotId:    { type: string, format: uuid }
+        patientId: { type: string, format: uuid }
+        specialty: { type: string, enum: [general, pediatrics, cardiology, dermatology] }
+        startsAt:  { type: string, format: date-time }
+        note:      { type: string, maxLength: 280 }

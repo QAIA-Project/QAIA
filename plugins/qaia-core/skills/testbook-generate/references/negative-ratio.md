@@ -2,10 +2,19 @@
 
 ## The single definition
 
-- **Numerator** — scenario blocks tagged `@negative`.
-- **Denominator** — all generated scenario blocks.
-- A `Scenario Outline` counts as **1 block**, whatever its number of example rows.
+- **Numerator** — executable cases tagged `@negative`.
+- **Denominator** — all generated executable cases.
+- A `Scenario Outline` counts as **N cases** for N `Examples` rows — the denominator the output
+  contract fixes for every ratio.
 - The `@smoke` journey scenario is **excluded** from both.
+
+> **Corrigé le 2026-08-11.** Ce paragraphe disait « scenario **blocks** » et « a `Scenario Outline`
+> counts as **1 block** », pendant que [`docs/OUTPUT-CONTRACT.md`](https://github.com/QAIA-Project/QAIA/blob/main/docs/OUTPUT-CONTRACT.md) tranchait
+> l'inverse le 2026-08-10, explicitement : *« `total` = les cas exécutables … tout ratio (négatif,
+> confiance) se calcule sur ce dénominateur »*. Deux sources pour une règle, et elles avaient
+> divergé — sur le cahier `booking-api-demo` l'écart valait 0,63 contre 0,61. Le contrat arbitre,
+> parce que c'est lui que le validateur exécute. Trouvé en calculant le ratio d'un vrai cahier
+> plutôt qu'en relisant les deux textes.
 
 Boundary coverage is reported **separately** in the synthesis and never blended into this ratio.
 
@@ -14,6 +23,13 @@ Boundary coverage is reported **separately** in the synthesis and never blended 
 The gate is **ADR 0001**, the required negative-path coverage rule: every refusal, error or
 denial path identified as `[req-neg]` in `03-design.md` has a covering scenario, or an explicit
 user-approved waiver.
+
+**And the covering scenario carries the condition's level** ([ADR 0008](https://github.com/QAIA-Project/QAIA/blob/main/docs/adr/0008-test-level-is-a-design-property.md), 2026-08-11).
+A `[req-neg]` condition marked `[level: api]` is covered by an `@api` scenario; a `@e2e` scenario
+displaying an error message does not discharge it, because the refusal was promised in the
+contract and nothing exercised it there. This is not a second gate and it cannot be padded — it
+adds no number and no threshold. It closes the one way the existing gate could be satisfied
+without verifying the promise it exists to protect.
 
 The ratio is a **happy-path-bias signal**, nothing more. 40 % is the indicative order of
 magnitude a healthy book usually lands on — an observation, not a bar.

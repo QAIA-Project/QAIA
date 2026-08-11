@@ -1,0 +1,50 @@
+<testsuites id="" name="" tests="23" failures="0" skipped="0" errors="0" time="0.7220330000000001">
+<testsuite name="api.appointments.spec.js" timestamp="2026-08-11T07:15:46.890Z" hostname="api" tests="23" failures="0" skipped="0" time="0.097" errors="0">
+<testcase name="@QAIA-BOOK-API-001 @AC1 a valid request creates the appointment" classname="api.appointments.spec.js" time="0.016">
+</testcase>
+<testcase name="@QAIA-BOOK-API-002 @AC1 a request presenting &quot;no header&quot; is refused" classname="api.appointments.spec.js" time="0.004">
+</testcase>
+<testcase name="@QAIA-BOOK-API-002 @AC1 a request presenting &quot;Bearer wrong&quot; is refused" classname="api.appointments.spec.js" time="0.006">
+</testcase>
+<testcase name="@QAIA-BOOK-API-002 @AC1 a request presenting &quot;Basic dXNlcg==&quot; is refused" classname="api.appointments.spec.js" time="0.003">
+</testcase>
+<testcase name="@QAIA-BOOK-API-003 @AC1 omitting &quot;slotId&quot; is refused" classname="api.appointments.spec.js" time="0.008">
+</testcase>
+<testcase name="@QAIA-BOOK-API-003 @AC1 omitting &quot;patientId&quot; is refused" classname="api.appointments.spec.js" time="0.003">
+</testcase>
+<testcase name="@QAIA-BOOK-API-003 @AC1 omitting &quot;specialty&quot; is refused" classname="api.appointments.spec.js" time="0.003">
+</testcase>
+<testcase name="@QAIA-BOOK-API-004 @AC1 specialty &quot;general&quot; is accepted" classname="api.appointments.spec.js" time="0.003">
+</testcase>
+<testcase name="@QAIA-BOOK-API-004 @AC1 specialty &quot;pediatrics&quot; is accepted" classname="api.appointments.spec.js" time="0.006">
+</testcase>
+<testcase name="@QAIA-BOOK-API-004 @AC1 specialty &quot;cardiology&quot; is accepted" classname="api.appointments.spec.js" time="0.003">
+</testcase>
+<testcase name="@QAIA-BOOK-API-004 @AC1 specialty &quot;dermatology&quot; is accepted" classname="api.appointments.spec.js" time="0.003">
+</testcase>
+<testcase name="@QAIA-BOOK-API-005 @AC1 a specialty outside the enumeration is refused" classname="api.appointments.spec.js" time="0.003">
+</testcase>
+<testcase name="@QAIA-BOOK-API-006 @AC1 an undeclared property is refused" classname="api.appointments.spec.js" time="0.007">
+</testcase>
+<testcase name="@QAIA-BOOK-API-007 @AC1 a note of exactly 280 characters is accepted" classname="api.appointments.spec.js" time="0.003">
+</testcase>
+<testcase name="@QAIA-BOOK-API-008 @AC1 a note of 281 characters is refused" classname="api.appointments.spec.js" time="0.003">
+</testcase>
+<testcase name="@QAIA-BOOK-API-009 @AC1 a startsAt that is not a date-time is refused" classname="api.appointments.spec.js" time="0.003">
+</testcase>
+<testcase name="@QAIA-BOOK-API-010 @AC1 a field of the wrong type is refused" classname="api.appointments.spec.js" time="0.003">
+</testcase>
+<testcase name="@QAIA-BOOK-API-011 @AC1 a slot already taken is refused" classname="api.appointments.spec.js" time="0.003">
+</testcase>
+<testcase name="@QAIA-BOOK-API-012 @AC1 @low-confidence a patient with three upcoming appointments is refused" classname="api.appointments.spec.js" time="0.003">
+</testcase>
+<testcase name="@QAIA-BOOK-API-013 @AC1 @low-confidence a patient with two upcoming appointments is accepted" classname="api.appointments.spec.js" time="0.005">
+</testcase>
+<testcase name="@QAIA-BOOK-API-014 @AC1 @low-confidence a slot starting in less than two hours is refused" classname="api.appointments.spec.js" time="0.002">
+</testcase>
+<testcase name="@QAIA-BOOK-API-015 @AC1 @low-confidence a slot starting in exactly two hours is accepted" classname="api.appointments.spec.js" time="0.002">
+</testcase>
+<testcase name="@QAIA-BOOK-API-016 @AC1 @low-confidence a request omitting startsAt is accepted" classname="api.appointments.spec.js" time="0.002">
+</testcase>
+</testsuite>
+</testsuites>
