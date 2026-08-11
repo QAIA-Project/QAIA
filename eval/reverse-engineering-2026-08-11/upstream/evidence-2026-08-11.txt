@@ -33,3 +33,23 @@ Etag: W/"1c-J3EiwfZwVQjKTKvpvazUfTni8fI"
 Nel: {"report_to":"heroku-nel","response_headers":["Via"],"max_age":3600,"success_fraction":0.01,"failure_fraction":0.1}
 Report-To: {"group":"heroku-nel","endpoints":[{"url":"https://nel.heroku.com/reports?s=5yRLOwumO%2BuiA5b3ocwPjCb4%2BWds2o3yZWF1jwdiU%2Fk%3D\u0026sid=c46efe9b-d3d2-4a0c-8c76-bfafa16c5add\u0026ts=1786441251"}],"max_age":3600}
 Reporting-Endpoints: heroku-nel="https://nel.heroku.com/reports?s=5yRLOwumO%2BuiA5b3ocwPjCb4%2BWds2o3yZWF1jwdiU%2Fk%3D&sid=c46efe9b-d3d2-4a0c-8c76-bfafa16c5add&ts=1786441251"
+
+=== VERIFICATION DE SECONDE PASSE, meme jour ===
+Declenchee par la question « tu es sur de tes erreurs ? ». Elle a retire un constat sur trois.
+
+GET /booking/7485 (la reservation creee pour la sonde du filtre)  -> 404, elle n'existe plus
+GET /booking?checkin=2027-07-08  (x3)                             -> [{"bookingid":751}] stable
+GET /booking/751                                                  -> checkin 2026-05-25
+GET /booking?checkin=2026-05-25                                   -> 1 resultat, PAS 751
+GET /booking?checkin=2020-01-01                                   -> nombreux resultats
+GET /booking?checkin=2030-01-01                                   -> []
+
+Conclusion : le filtre fonctionne directionnellement. `models/booking.js` utilise lokijs EN
+MEMOIRE ; l'instance porte ~3618 reservations et ne garantit pas qu'on relise ce qu'on vient
+d'ecrire. Tout constat comparant l'etat entre deux requetes est invalide sur cette cible.
+
+Constats a REQUETE UNIQUE, revérifiés et stables :
+POST /booking -d '{}'                            -> 500
+POST /booking -d '{"firstname":"X"}'             -> 500
+POST /auth {"username":"admin","password":"wrong"} -> 200
+GET /ping                                        -> 201

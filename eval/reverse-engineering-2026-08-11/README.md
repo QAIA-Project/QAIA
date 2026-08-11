@@ -119,6 +119,19 @@ Une méthode qu'on applique pour de bon renvoie ses propres factures. Tous corri
 
 ---
 
+## Une correction, écrite à l'endroit où elle se lit
+
+Un défaut annoncé « vérifié » ne l'était pas. Le filtre `checkin` de restful-booker semblait
+ignorer une réservation qu'on venait de créer ; la vérification de seconde passe a montré que
+**la réservation avait disparu** — l'instance utilise une base en mémoire qui ne garantit pas
+qu'on relise ce qu'on vient d'écrire. Le filtre, lui, fonctionne.
+
+**Sur cette cible, tout constat qui compare l'état entre deux requêtes est invalide par
+construction.** Trois défauts candidats, **un seul publiable** : celui qui tient en une requête.
+Détail dans [`upstream/README.md`](upstream/README.md).
+
+Ce n'est pas un contrôle du dépôt qui l'a attrapé. C'est une question posée à voix haute.
+
 ## Ce que cette expérience ne prouve pas
 
 **Les deux moitiés sortent de la même partie.** Elle mesure ce que la méthode ajoute à *cette*
@@ -142,5 +155,5 @@ toujours pas posée à un humain extérieur, et aucune ligne de ce document n'y 
 | [`20-restfulbooker-03-design.md`](20-restfulbooker-03-design.md) · [`21-restfulbooker.feature`](21-restfulbooker.feature) | 42 conditions, 38 scénarios, 8 opérations sur 8 |
 | [`30-perf-secu-conception.md`](30-perf-secu-conception.md) · [`31-perf-secu-observations.md`](31-perf-secu-observations.md) | Conçu, non exécuté — et pourquoi |
 | [`automation/`](automation/) | La suite générée, exécutée : 76 tests, `junit.xml` conservé |
-| [`upstream/`](upstream/) | Les signalements préparés pour le mainteneur de restful-booker |
+| [`upstream/`](upstream/) | Les signalements — **un publiable sur trois**, et pourquoi les deux autres ont été retirés |
 | [`sources/`](sources/) | La documentation d'API gelée, avec son sha256 |
