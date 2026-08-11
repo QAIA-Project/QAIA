@@ -1,0 +1,70 @@
+# Seconde attaque — code récent et oracles parfaits — validator 13.15.35
+
+## isJson contre JSON.parse (le moteur est l'oracle)
+
+  ECART "null"                    JSON.parse=true  isJson=false
+  ECART "true"                    JSON.parse=true  isJson=false
+  ECART "false"                   JSON.parse=true  isJson=false
+  ECART "1"                       JSON.parse=true  isJson=false
+  ECART "1.5"                     JSON.parse=true  isJson=false
+  ECART "-0"                      JSON.parse=true  isJson=false
+  ECART "\"a\""                   JSON.parse=true  isJson=false
+  ECART "\"\""                    JSON.parse=true  isJson=false
+  ECART "\"\\u0000\""             JSON.parse=true  isJson=false
+  ECART "\"\\ud800\""             JSON.parse=true  isJson=false
+  ECART "1e400"                   JSON.parse=true  isJson=false
+  34 cas, **11 écart(s)**
+
+## isISO31661 — le cas Kosovo, ajouté le 2026-02-06
+
+    isISO31661Alpha2("XK") = false | registre ISO gelé : false
+    isISO31661Alpha2("FR") = true  | registre ISO gelé : true
+    isISO31661Alpha2("UK") = false | registre ISO gelé : false
+    isISO31661Alpha2("EU") = false | registre ISO gelé : false
+    isISO31661Alpha2("XX") = false | registre ISO gelé : false
+    isISO31661Alpha3("XXK") = false | registre ISO gelé : false
+    isISO31661Alpha3("FRA") = true  | registre ISO gelé : true
+    isISO31661Alpha3("GBR") = true  | registre ISO gelé : true
+    isISO31661Alpha3("XXX") = false | registre ISO gelé : false
+
+## isUUID — option `loose`, ajoutée le 2025-04-14
+
+  00000000-0000-0000-0000-000000000000    defaut=true  loose=true
+  a1b2c3d4-e5f6-4789-8abc-def012345678    defaut=true  loose=true
+  A1B2C3D4-E5F6-4789-8ABC-DEF012345678    defaut=true  loose=true
+  a1b2c3d4e5f647898abcdef012345678        defaut=false loose=false
+  a1b2c3d4-e5f6-4789-8abc-def01234567     defaut=false loose=false
+  a1b2c3d4-e5f6-4789-8abc-def0123456789   defaut=false loose=false
+  a1b2c3d4-e5f6-9789-8abc-def012345678    defaut=false loose=true
+  g1b2c3d4-e5f6-4789-8abc-def012345678    defaut=false loose=false
+  a1b2c3d4-e5f6-4789-cabc-def012345678    defaut=false loose=true
+
+## Codes postaux ajoutés en 2025-2026 (AR, JO, MC, BD, PK, TW)
+
+  ≠ AR  C1425DKE  attendu=true  obtenu=THROW
+  ≠ AR  1425      attendu=true  obtenu=THROW
+  ≠ AR  X         attendu=false obtenu=THROW
+  ≠ AR  C1425DK   attendu=false obtenu=THROW
+  ≠ JO  11937     attendu=true  obtenu=THROW
+  ≠ JO  1193      attendu=false obtenu=THROW
+  ≠ JO  119377    attendu=false obtenu=THROW
+    MC  98000     attendu=true  obtenu=true
+    MC  98012     attendu=true  obtenu=true
+    MC  99000     attendu=false obtenu=false
+    MC  9800      attendu=false obtenu=false
+    BD  1000      attendu=true  obtenu=true
+    BD  100       attendu=false obtenu=false
+    BD  10000     attendu=false obtenu=false
+    PK  44000     attendu=true  obtenu=true
+    PK  4400      attendu=false obtenu=false
+
+## isTaxID en-IN (PAN indien) — ajouté le 2026-08-04, il y a une semaine
+
+  ≠ ABCPE1234F   attendu=true  obtenu=THROW:Invalid locale 'en-IN'P = individuel, structure conforme
+  ≠ ABCCE1234F   attendu=true  obtenu=THROW:Invalid locale 'en-IN'C = societe
+  ≠ ABCZE1234F   attendu=false obtenu=THROW:Invalid locale 'en-IN'Z n'est pas un type de detenteur valide
+  ≠ ABCPE1234    attendu=false obtenu=THROW:Invalid locale 'en-IN'trop court
+  ≠ ABCPE12345F  attendu=false obtenu=THROW:Invalid locale 'en-IN'trop long
+  ≠ abcpe1234f   attendu=false obtenu=THROW:Invalid locale 'en-IN'minuscules
+  ≠ ABC1E1234F   attendu=false obtenu=THROW:Invalid locale 'en-IN'chiffre dans la zone alphabetique
+  ≠ ABCPE12341   attendu=false obtenu=THROW:Invalid locale 'en-IN'chiffre en derniere position

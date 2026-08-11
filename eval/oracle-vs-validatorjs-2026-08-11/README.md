@@ -90,3 +90,49 @@ la passe de réfutation de ce dépôt existe pour produire : *91 constats faux c
 
 Ce qui a tenu ici n'est aucun contrôle automatique. C'est d'avoir refait l'expérience avec les
 vrais octets au lieu de croire le corpus.
+
+---
+
+# Seconde attaque : le code récent, et la même conclusion
+
+Après zéro défaut sur le cœur (Luhn, mod-97, ISO), j'ai visé ce qui est statistiquement plus
+fragile : **le code ajouté récemment et les combinaisons d'options**. Cibles tirées du journal
+des commits — `isTaxID en-IN` (ajouté **une semaine** avant), `isISO31661` Kosovo (février),
+`isUUID` option `loose`, `isJSON` « allow any valid JSON value », six locales de codes postaux.
+
+**Zéro défaut, encore.** Et chaque écart apparent s'explique :
+
+| Écart apparent | Explication |
+|---|---|
+| `isJSON("null")` = false | `allow_primitives: false` **par défaut**, documenté |
+| `isJSON("1", {allow_primitives:true})` = false | la doc énumère *'true', 'false' et 'null'* — pas les nombres. `allow_any_value` existe pour ça, **documenté et livré** |
+| `isTaxID(..., 'en-IN')` lève | fonctionnalité **non encore publiée** : absente de 13.15.35 |
+| Kosovo `XK` refusé | conforme à notre registre gelé |
+| 34 « écarts » isJson | **mon erreur** : l'API est `isJSON`, pas `isJson` |
+
+`isUUID` (9 cas, dont version et variante invalides), codes postaux AR/JO/MC/BD/PK (14 cas) :
+**aucun écart**.
+
+## Pourquoi on ne trouve rien, et ce n'est pas la méthode
+
+**J'ai choisi la mauvaise classe de cible, et je l'ai choisie parce qu'elle était facile à
+lancer.** Trois raisons, dans l'ordre d'importance :
+
+1. **Une fonction pure implémentant une norme publiée, dans une bibliothèque à 23 000 étoiles,
+   est le code le plus vérifié de son écosystème.** Mes cas sont exactement ceux que sa suite de
+   tests couvre depuis dix ans.
+2. **Notre avantage ne s'y applique pas.** Ce que QAIA fait mieux qu'un test ordinaire, c'est
+   remonter l'ambiguïté d'une **exigence**, dériver depuis un **contrat en prose**, et attraper
+   la **dérive doc/implémentation**. La spécification d'une fonction pure est une norme publiée :
+   pas d'ambiguïté à remonter, pas de prose qui dérive.
+3. **Les défauts se concentrent où il y a de l'état, de la concurrence, de l'intégration et de la
+   configuration.** Un validateur n'a aucun des quatre.
+
+**Ce qui a marché, les deux fois, avait la forme inverse.** Le défaut json-server : un serveur
+**avec état**, et un écart d'un caractère entre la prose du README et l'implémentation. Le défaut
+du site QAIA : une **incohérence entre trois artefacts** que personne ne lit ensemble.
+
+**Conclusion opérationnelle** : cesser de sonder des bibliothèques. La cible qui vaut le
+déplacement est une **application avec état, auto-hébergée, dont la documentation promet un
+comportement** — la forme exacte de la campagne json-server, la seule qui ait jamais produit un
+effet externe ici.
