@@ -42,6 +42,17 @@ import sys
 
 LEVEL_TAGS = ("@e2e", "@api")
 
+# Etiquettes RETIREES : la doctrine existe, rien ne l'appliquait. `testbook-generate` ecrit que
+# `@use-case` « is retired -- the technique it named no longer exists in the reference taxonomy
+# `istqb-design` follows, so it must not be emitted », et le depot en portait quand meme une
+# occurrence dans son propre cahier US-002 plus cinq dans les copies livrees du contrat de sortie
+# (trouve le 2026-08-11, en migrant les niveaux). Une regle qui ne tient que par l'intention finit
+# dans ce qu'on livre.
+RETIRED_TAGS = {
+    "@use-case": "retiree -- la technique n'existe plus dans la taxonomie que suit `istqb-design` ; "
+                 "le scenario de parcours porte `@smoke` et aucune etiquette de technique",
+}
+
 SCENARIO_RE = re.compile(r"^\s*(Scenario|Scenario Outline)\s*:", re.IGNORECASE)
 TAG_LINE_RE = re.compile(r"^\s*@")
 
@@ -101,6 +112,10 @@ def check_file(path):
                 break
         found = [t for t in tags if t in LEVEL_TAGS]
         name = line.strip()
+        for tag in tags:
+            if tag in RETIRED_TAGS:
+                offenders.append((index + 1, name,
+                                  "etiquette %s : %s" % (tag, RETIRED_TAGS[tag])))
         if len(found) == 0:
             offenders.append((index + 1, name, "aucune etiquette de niveau (@e2e ou @api)"))
         elif len(found) > 1:

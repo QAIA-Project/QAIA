@@ -7,7 +7,7 @@ Feature: Validation feedback in the signing screen (US-002, AC8)
     And "physician@demo" is a prescribing physician without the "pediatric specialist" role
     And patient "P1" is 30 years old with no renal insufficiency flag
 
-  @QAIA-US-002-026 @AC8 @P3 @e2e @use-case @smoke
+  @QAIA-US-002-026 @AC8 @P3 @e2e @smoke
   # condition: C26 — priority P3 — the single scenario-based test of this US
   Scenario: A prescriber sees the verdict in the signing screen without a page reload
     Given "physician@demo" is on the signing screen for a prescription of "DRUG-A" to "P1"

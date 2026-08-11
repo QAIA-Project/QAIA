@@ -47,8 +47,18 @@ def main():
     offenders = C.check_file(FIXTURE)
     failures = []
 
+    retired = [o for o in offenders if "retiree" in o[2]]
+    offenders = [o for o in offenders if "retiree" not in o[2]]
+
+    if len(retired) != 1:
+        failures.append("l'etiquette retiree @use-case devrait etre signalee une fois, "
+                        "signalee %d fois" % len(retired))
+    elif "Une etiquette retiree" not in retired[0][1]:
+        failures.append("signalement de l'etiquette retiree sur le mauvais scenario : %s"
+                        % retired[0][1])
+
     if len(offenders) != 2:
-        failures.append("le controle signale %d scenario(s), 2 attendus : %s"
+        failures.append("le controle signale %d scenario(s) de niveau, 2 attendus : %s"
                         % (len(offenders), [o[1] for o in offenders]))
     else:
         (_, name_a, reason_a), (_, name_b, reason_b) = offenders
@@ -80,8 +90,8 @@ def main():
             print("  " + line)
         return 1
 
-    print("OK: la fixture rouge est vue rouge (absence + doublon), le cas conforme reste "
-          "silencieux, et la fixture est hors perimetre du controle.")
+    print("OK: la fixture rouge est vue rouge (absence, doublon, etiquette retiree), le cas "
+          "conforme reste silencieux, et la fixture est hors perimetre du controle.")
     return 0
 
 

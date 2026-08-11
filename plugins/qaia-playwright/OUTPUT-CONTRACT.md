@@ -74,7 +74,7 @@ producer — fix the source, re-project the manifest, never hand-edit the manife
                   "reqNegTotal": 7, "reqNegCovered": 7,   // ADR 0001 — the real gate
                   "negativeRatio": 0.41 },                 // D20 — reported signal, not a gate
     "confidence": { "lowConfidence": 3, "openQuestions": 2, "assumptions": 4, "simulated": 1 },
-    "techniques": ["ep", "boundary", "decision-table", "state-transition", "use-case"],
+    "techniques": ["ep", "boundary", "decision-table", "state-transition", "pairwise"],
     "oracles": ["luhn", "iso-8601"],        // @oracle:* provenance seen in the book
     "knowledgeApplied": ["BR-KB-004", "BR-KB-011"]  // knowledge-base rules that shaped the book
   },                                        // (D38 RAG-in-use); empty on a rich domain = thin KB signal

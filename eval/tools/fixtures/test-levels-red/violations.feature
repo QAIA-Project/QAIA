@@ -21,3 +21,9 @@ Feature: Fixture rouge des niveaux de test
     Given un scenario portant @api seul
     When le controle passe
     Then il ne dit rien de ce scenario
+
+  @QAIA-FIX-004 @AC1 @P1 @e2e @use-case
+  Scenario: Une etiquette retiree -- doit etre signale
+    Given un scenario portant @use-case, retiree par testbook-generate
+    When le controle passe
+    Then il signale l'etiquette retiree
