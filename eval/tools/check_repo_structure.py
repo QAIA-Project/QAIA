@@ -73,9 +73,19 @@ def output_contract_is_identical_everywhere():
     base = os.path.join(ROOT, "plugins")
     if not os.path.isdir(base):
         return fail("`plugins/` est absent")
-    reference_path = os.path.join(base, "qaia-core", "OUTPUT-CONTRACT.md")
+    # La reference est `docs/OUTPUT-CONTRACT.md`, PAS la copie de `qaia-core`.
+    #
+    # Elle etait `qaia-core`, si bien que les quatre copies de `plugins/` etaient comparees
+    # entre elles et jamais a leur source. Le 2026-08-24, une correction ecrite dans `docs/` a
+    # laisse les quatre copies porter l'affirmation fausse qu'elle corrigeait, et ce controle
+    # est passe au VERT -- il ne pouvait pas voir la seule divergence qui existait.
+    #
+    # C'est la faute que ce fichier documente deux fonctions plus bas (« une copie sans rien qui
+    # la surveille cesse silencieusement de correspondre »), appliquee un cran trop bas : il
+    # surveillait quatre copies sur cinq, et pas celle que le README designe comme la source.
+    reference_path = os.path.join(ROOT, "docs", "OUTPUT-CONTRACT.md")
     if not os.path.isfile(reference_path):
-        return fail("le contrat de reference `qaia-core/OUTPUT-CONTRACT.md` est absent")
+        return fail("le contrat de reference `docs/OUTPUT-CONTRACT.md` est absent")
     reference = io.open(reference_path, encoding="utf-8").read()
     n = 0
     for name in sorted(os.listdir(base)):
@@ -84,7 +94,7 @@ def output_contract_is_identical_everywhere():
             continue
         n += 1
         if io.open(candidate, encoding="utf-8").read() != reference:
-            fail("plugins/%s/OUTPUT-CONTRACT.md diverge de celui de qaia-core" % name)
+            fail("plugins/%s/OUTPUT-CONTRACT.md diverge de docs/OUTPUT-CONTRACT.md" % name)
     print("  ok : %d copie(s) du contrat de sortie, identiques" % n)
 
 

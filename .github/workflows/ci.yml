@@ -346,15 +346,16 @@ jobs:
           # a pointer to docs/ resolved to nothing on their machine (issue #66). Four copies only
           # work if something keeps them honest, and drift between them would be silent: each
           # plugin would be validating against a different contract while claiming to share one.
-          for p in plugins/*/; do
-            name=$(basename "$p")
-            if ! diff -q docs/OUTPUT-CONTRACT.md "$p/OUTPUT-CONTRACT.md" >/dev/null; then
-              echo "::error::$name/OUTPUT-CONTRACT.md has drifted from docs/OUTPUT-CONTRACT.md."
-              diff docs/OUTPUT-CONTRACT.md "$p/OUTPUT-CONTRACT.md" || true
-              exit 1
-            fi
-          done
-          echo "OK: $(ls -d plugins/*/ | wc -l) plugin copies identical to the canonical contract"
+          # Ce controle existait ICI en shell ET dans `check_repo_structure.py` en Python, avec
+          # DEUX REFERENCES DIFFERENTES : le shell comparait a `docs/OUTPUT-CONTRACT.md`, le
+          # Python a la copie de `qaia-core`. Le 2026-08-24, une correction ecrite dans `docs/`
+          # a fait rougir la CI pendant que `make check` restait vert -- chacun avait raison
+          # dans son perimetre, et les deux perimetres n'etaient pas le meme.
+          #
+          # C'est exactement la faute que la consolidation de `check_repo_structure.py` avait
+          # ete ecrite pour fermer, laissee ouverte sur la porte suivante. Un script, appele
+          # des deux endroits : le doublon disparait avec la possibilite qu'il diverge.
+          python eval/tools/check_repo_structure.py
 
       - name: Validate skill fixtures against the shared contract
         run: |
