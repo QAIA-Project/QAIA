@@ -25,7 +25,7 @@ production**. Le second est la seule qui compte à la fin, et il n'a jamais boug
 |---|---|---:|---|
 | `structural_score.py` | 257 cahiers Gherkin, 15 dépôts | 666 → **173** | 2026-08-24 |
 | `automation_score.py` | 7 suites Playwright | 715 → **144** | 2026-08-24 |
-| `spec_suite_drift.py` | 4 projets avec spec OpenAPI | 11 → **3** | 2026-08-24 |
+| `spec_suite_drift.py` | 4 projets avec spec OpenAPI | 11 → **0** (4 × `UNCOMPARABLE`) | 2026-08-24 |
 | `lint_skills.py` | 159 SKILL.md, 12 dépôts | 622 → 159 | 2026-08-09 |
 
 Dans les quatre cas, la baisse n'est pas une perte de sensibilité : c'est du **bruit de
@@ -36,9 +36,19 @@ un rapport qui donne la commande de reproduction.
 
 | | |
 |---|---:|
-| mutations sur les garde-fous | **30** |
-| tuées | **30** |
+| mutations sur les garde-fous | **38** |
+| tuées | **38** |
 | survivantes | **0** |
+| invariants de la porte d'entrée | **9** |
+
+**Et ce que la mutation ne remplace pas.** Le 2026-08-24, trente mutations tuées, cinq invariants
+verts et une CI verte n'ont empêché **ni deux affirmations publiées d'être réfutées, ni six
+régressions du jour de passer**. Trois relecteurs en contexte vierge — réfutation, persona de QA
+lead, relecture développeur — les ont trouvées, et ils ont trouvé des choses **disjointes** : les
+chiffres, l'arithmétique et les périmètres, la confiance.
+
+La mutation vérifie que les gardes gardent ce qu'elles gardent. Elle ne dit rien de ce que
+personne n'a pensé à garder. [Rapport complet →](../eval/refutation-2026-08-24/REPORT.md)
 
 Registre complet : `eval/mutation-guards-2026-08-11.txt` (une entrée par passe, datée du jour où
 elle a tourné). Une survivante ne se tolère pas par le code de sortie : elle s'annote et se
@@ -62,6 +72,7 @@ voir : ils relisent tous le dépôt, jamais son comportement sur ce qu'il n'a pa
 |---|---|
 | [#111](https://github.com/QAIA-Project/QAIA/issues/111) | Trancher le sort d'`automate` : le produit s'arrête-t-il au cahier ou va-t-il jusqu'au code exécutable ? |
 | [#112](https://github.com/QAIA-Project/QAIA/issues/112) | Le barème universel d'automatisation est trop pauvre : 100,0 avec 8 attentes interdites au compteur |
+| [#113](https://github.com/QAIA-Project/QAIA/issues/113) | Doublons faux dans les deux sens, FAIL inexpliqué à 87/100, aucune sortie lisible pour 340 fichiers |
 | #106 – #110 | Reste-à-faire ouvert le 2026-08-11 |
 
 ## Ce qui n'a pas changé, et qu'il ne faut pas oublier
