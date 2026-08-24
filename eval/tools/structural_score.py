@@ -35,6 +35,29 @@ TECHNIQUE_TAGS = {"@ep", "@boundary", "@decision-table", "@state-transition", "@
                    "@ai-feature"}
 PRIORITY_TAGS = {"@p1", "@p2", "@p3"}
 
+# --- traçabilité : une propriété DETECTEE, jamais exigée -------------------------------------
+# `traced` valait « le scenario porte un tag @QAIA-<ID> », ce qui faisait perdre 25 points sur
+# 100 par construction a tout cahier ecrit ailleurs -- 0 PASS sur 244 fichiers etrangers, et un
+# barème incapable de distinguer « ce test est mauvais » de « ce test n'est pas de moi ».
+#
+# Le remede evident (« accepter toute reference d'exigence, pas seulement la notre ») a ete
+# ESSAYE SUR LE CORPUS AVANT D'ETRE ECRIT, et il ne marche pas : sur 410 occurrences de tags
+# dans 257 fichiers etrangers, il n'y a **aucune** reference d'exigence. Les tags du monde reel
+# sont des directives de lanceur -- @javascript (47), @wip, @fixture, @seed_*. La tracabilite
+# par tag n'est pas une propriete universelle du Gherkin : c'est une convention de projet.
+#
+# Donc elle n'est plus une dimension qu'on exige, mais une dimension qu'on DETECTE : notee si
+# le cahier montre une convention de reference, declaree NON EVALUEE sinon -- et le barème se
+# remet a l'echelle sur les trois dimensions qui transferent, au lieu de noter zero la
+# quatrieme. Aucun drapeau a passer : l'outil s'adapte au materiau, ce n'est plus au materiau
+# de s'adapter a l'outil.
+#
+# Le motif exige une amorce d'AU MOINS DEUX MAJUSCULES puis un chiffre quelque part : calibre
+# contre les 126 tags distincts du corpus etranger pour ne declencher sur aucun (@tag1,
+# @beforetag1, @scenarioTag1, @gpl3 sont en minuscules ou a casse mixte et sont donc exclus),
+# tout en reconnaissant @QAIA-US-004-009, @AC1, @REQ-5, @JIRA-1234, @US-4.
+REQ_REF_RE = re.compile(r"@[A-Z]{2,}[-_:]?[A-Za-z0-9_-]*\d")
+
 MARKER_RE = re.compile(r"\[\s*(?:À|A)\s*D[EÉ]FINIR[^\]]*\]|\bTODO\b|\bFIXME\b|<\s*placeholder\s*>|\bXXX\b|\bTBD\b", re.I)
 # XXX/TBD are also legitimate literal test data (e.g. ISO 4217's reserved "no currency" code is
 # literally "XXX") -- found by running the scorer on a real generated .feature (2026-07-29 pilot
@@ -207,18 +230,29 @@ def parse_scenarios(text):
             elif k in ("given", "when", "soit", "quand", "etant donné", "etant donnée"): in_then = False
     return scen
 
-def score_feature(path, declared_acs=None, source_text=None, third_party=False):
-    """`third_party=True` note un cahier Gherkin que QAIA n'a pas genere.
+def score_feature(path, declared_acs=None, source_text=None, profile="universal",
+                  third_party=None):
+    """Note un cahier Gherkin. Le barème UNIVERSEL est le chemin par defaut.
 
-    Deux des regles de ce fichier encodent des conventions PROPRES a ce projet : le tag de
-    priorite `@P1/@P2/@P3` et le tag de technique issu d'une liste fermee. Aucune des deux
-    n'existe dans Gherkin. Appliquees a un cahier ecrit ailleurs, elles produisent un constat
-    par scenario et noient tout le reste -- 463 constats sur 618 lors de la premiere mesure
-    sur 244 fichiers etrangers.
+    `profile="universal"` (defaut) ne juge que ce qui est vrai de tout test, quel qu'en soit
+    l'auteur : le scenario a-t-il un resultat attendu, ce resultat est-il verifiable, les
+    etapes sont-elles completes, le cahier repete-t-il la meme forme sans rien tester de neuf.
+    La tracabilite y est DETECTEE, jamais exigee (cf. REQ_REF_RE).
 
-    En mode tiers, elles sont **exclues et dites exclues**, jamais notees zero : un zero se
-    lirait comme une mauvaise note pour avoir refuse nos conventions.
+    `profile="qaia"` ajoute par-dessus les conventions de ce projet -- tag de priorite
+    `@P1/@P2/@P3`, tag de technique issu d'une liste fermee. Elles n'existent pas en Gherkin :
+    appliquees a un cahier ecrit ailleurs elles produisent un constat par scenario et noient
+    tout le reste (493 constats sur 666 mesures sur le corpus etranger).
+
+    L'inversion est le coeur de la refonte du 2026-08-24. L'ancien defaut appliquait nos
+    conventions a tout le monde et l'exception `--third-party` etait a demander : un outil qui
+    juge ne peut pas avoir « ce test n'est pas de moi » cable dans son chemin par defaut.
+
+    `third_party` est conserve comme ALIAS DEPRECIE pour les appelants existants : `True` ->
+    profil universel (desormais le defaut), `False` -> profil `qaia` (l'ancien defaut).
     """
+    if third_party is not None:
+        profile = "universal" if third_party else "qaia"
     try:
         text = open(path, encoding="utf-8").read()
     except (IOError, OSError) as exc:
@@ -228,6 +262,7 @@ def score_feature(path, declared_acs=None, source_text=None, third_party=False):
         raise SystemExit(2)
     scen = parse_scenarios(text)
     findings = []
+    notes = []   # etats et non-defauts : jamais melanges aux constats
     # ZERO scenario extrait : on ne note pas. Le `or 1` ci-dessous rendait une note sur un
     # denominateur invente, donc un 20/100 FAIL muet sur un cahier parfaitement valide dont on
     # n'avait simplement pas su lire les mots-cles -- `Example:` et `Scenario Template:` l'ont
@@ -239,7 +274,8 @@ def score_feature(path, declared_acs=None, source_text=None, third_party=False):
                 "outlines": 0, "unmappableDialect": 0,
                 "scoreable": False, "score": None, "gate": "UNSCORED", "forced_stop": False,
                 "readability": None, "completeness": None, "coherence": None,
-                "traceability": None, "penalties": {}, "tag_audit": {},
+                "traceability": None, "traceabilityAssessed": False, "profile": profile,
+                "notes": [], "penalties": {}, "tag_audit": {},
                 "findings": ["not scoreable: no scenario could be extracted from this file. "
                              "It may use Gherkin keywords this scorer does not know, a "
                              "localisation it does not carry, or contain no scenario at all. "
@@ -280,7 +316,7 @@ def score_feature(path, declared_acs=None, source_text=None, third_party=False):
         s = scen[i]
         return bool(s["then"]) and i not in empty_then_i and i not in hollow_i and i not in vague_i and any(ASSERT_RE.search(t) for t in s["then"])
     def covers(s): return covers_i(scen.index(s))
-    traced = [s for s in scen if any(re.match(r"@QAIA-", t) for t in s["tags"])]
+    traced = [s for s in scen if any(REQ_REF_RE.match(t) for t in s["tags"])]
     ac_linked = [s for s in scen if any(re.search(r"@AC[:_-]?\w+|@QAIA-\w+-\d+", t) for t in s["tags"])]
 
     # fabrication sniffer: technical literals present in a step but not in the source (if given)
@@ -357,17 +393,15 @@ def score_feature(path, declared_acs=None, source_text=None, third_party=False):
     coherence = 20 * (1 - (len(truncated_i | empty_then_i) / n))
     traceability = 25 * (len(traced) / n) * (0.6 + 0.4 * (len(ac_linked) / n))
 
-    if third_party:
-        # `traceability` = « le scenario porte un tag @QAIA-<ID> ». Aucun cahier ecrit ailleurs
-        # n'en a, donc 25 des 100 points etaient perdus par construction : sur 244 fichiers
-        # etrangers, `traceability` valait **0 partout**, et le score median tombait a 57 pour
-        # des livres qui n'ont jamais adopte nos conventions.
-        # On remet a l'echelle les trois dimensions qui transferent, au lieu de noter zero la
-        # quatrieme -- meme correction que pour `automation_score`, un etage plus haut.
-        raw = (readability + completeness + coherence) * 100.0 / 75.0
-        traceability = 0.0
-    else:
+    # La tracabilite se DETECTE (cf. REQ_REF_RE) : notee quand le cahier montre une convention
+    # de reference, retiree du denominateur quand il n'en montre aucune. Un cahier qui ne trace
+    # pas n'est pas note zero sur ce point : il est declare non evalue, ce qui est la verite.
+    traceability_assessed = bool(traced)
+    if traceability_assessed:
         raw = readability + completeness + coherence + traceability
+    else:
+        raw = (readability + completeness + coherence) * 100.0 / 75.0
+        traceability = None
     marker_pen = min(25, 5 * len(markers))
     sniffer_pen = min(25, 5 * len(sniffer_hits))
     redundancy_pen = min(15, 3 * len(redundant_scenarios))
@@ -397,14 +431,24 @@ def score_feature(path, declared_acs=None, source_text=None, third_party=False):
     if vague: findings.append(f"vague/non-verifiable Then (C2): {vague}")
     if truncated: findings.append(f"truncated step(s): {truncated}")
     if redundant_groups: findings.append(f"pesticide paradox: {len(redundant_groups)} near-duplicate group(s) (same Given/When shape) → -{redundancy_pen}: {redundant_groups[:3]}")
-    if no_priority and not third_party:
-        findings.append(f"missing priority tag (@P1/@P2/@P3): {no_priority}")
-    if technique_hits and not third_party:
-        findings.append(f"technique tag count != 1 from the closed list: {technique_hits}")
-    if third_party:
-        findings.append("third-party book: the @P1/@P2/@P3 and technique tags are QAIA "
-                        "conventions and were EXCLUDED, not scored zero. This score judges "
-                        "Gherkin structure only and is not comparable with a QAIA score.")
+    # @P1/@P2/@P3 et le tag de technique sont des conventions de CE projet -- elles n'existent
+    # pas en Gherkin. Elles ne comptaient deja pas dans le score, mais elles produisaient 493
+    # constats sur les 666 d'un corpus etranger : un bruit qui noyait les 159 constats reels.
+    # Elles ne sont donc plus emises que sous le profil `qaia`, demande explicitement.
+    if profile == "qaia":
+        if no_priority:
+            findings.append(f"missing priority tag (@P1/@P2/@P3): {no_priority}")
+        if technique_hits:
+            findings.append(f"technique tag count != 1 from the closed list: {technique_hits}")
+    if not traceability_assessed:
+        # Un ETAT, pas un defaut : il va dans `notes`, pas dans `findings`. Mis dans `findings`
+        # il gonflait le compte de 247 sur un corpus de 257 fichiers -- le meme bruit que celui
+        # qu'on venait de retirer, reintroduit par la correction elle-meme. Un constat nomme un
+        # defaut ; tout le reste se dit ailleurs, sinon « nombre de constats » ne veut plus rien
+        # dire et la mesure qui juge la refonte devient inutilisable.
+        notes.append("traceability NOT ASSESSED: this book carries no requirement-reference "
+                     "tag convention. The dimension was removed from the denominator, NOT "
+                     "scored zero -- the other three were rescaled to 100.")
 
     return {
         "file": os.path.basename(path), "scenarios": len(scen),
@@ -418,9 +462,12 @@ def score_feature(path, declared_acs=None, source_text=None, third_party=False):
         "unmappableDialect": len([1 for i, s in enumerate(scen)
                                   if s["steps"] and all(k == "*" for k, _ in s["steps"])]),
         "readability": round(readability, 1), "completeness": round(completeness, 1),
-        "coherence": round(coherence, 1), "traceability": round(traceability, 1),
+        "coherence": round(coherence, 1),
+        "traceability": round(traceability, 1) if traceability is not None else None,
+        "traceabilityAssessed": traceability_assessed, "profile": profile,
         "penalties": {"markers": marker_pen, "sniffer": sniffer_pen, "redundancy": redundancy_pen},
         "score": score, "gate": gate, "forced_stop": forced_stop, "findings": findings,
+        "notes": notes,
         "tag_audit": tag_audit,
     }
 
@@ -434,10 +481,25 @@ def main():
             except Exception: pass
     args = sys.argv[1:]
     if not args: print(__doc__); sys.exit(1)
-    tp = "--third-party" in args
-    if tp: args = [a for a in args if a != "--third-party"]
+    profile = "universal"
+    if "--profile" in args:
+        i = args.index("--profile")
+        profile = args[i + 1]
+        if profile not in ("universal", "qaia"):
+            print("BROKEN: --profile attend `universal` ou `qaia`, pas %r" % profile,
+                  file=sys.stderr)
+            raise SystemExit(2)
+        args = args[:i] + args[i + 2:]
+    if "--third-party" in args:
+        # Alias deprecie : ce qu'il demandait est devenu le defaut le 2026-08-24. Conserve pour
+        # ne pas casser les appelants, et il le DIT -- un drapeau devenu sans effet qui reste
+        # silencieux laisse croire a son lecteur qu'il fait encore quelque chose.
+        print("NOTE: --third-party est deprecie -- le barème universel est desormais le defaut. "
+              "Utilisez `--profile qaia` pour ajouter les conventions de ce projet.",
+              file=sys.stderr)
+        args = [a for a in args if a != "--third-party"]
     if args[0] == "--batch":
-        rows = [score_feature(f, third_party=tp)
+        rows = [score_feature(f, profile=profile)
                 for f in sorted(glob.glob(os.path.join(args[1], "*.feature")))]
         for r in rows: print(json.dumps(r, ensure_ascii=False))
         return
@@ -450,7 +512,7 @@ def main():
         except (IOError, OSError) as exc:
             print("BROKEN: --source %s illisible -- %s" % (_src_path, exc), file=sys.stderr)
             raise SystemExit(2)
-    print(json.dumps(score_feature(path, declared, source, third_party=tp),
+    print(json.dumps(score_feature(path, declared, source, profile=profile),
                      ensure_ascii=False, indent=2))
 
 if __name__ == "__main__":

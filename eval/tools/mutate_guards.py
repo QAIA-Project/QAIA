@@ -12,7 +12,7 @@ reelle. Cette campagne mute la LOGIQUE DE DETECTION de chaque controle et exige 
 passe au rouge. Une mutation qui survit designe une regle que le controle croit appliquer et
 n'applique pas.
 """
-import io, os, subprocess, sys, json
+import datetime, io, os, subprocess, sys, json
 
 ROOT = os.getcwd()
 
@@ -76,6 +76,29 @@ MUTATIONS = [
     ("eval/tools/validate_manifest.py", "eval/tools/selfcheck_manifest_bylevel.py",
      "byLevel : le bloc partiel n'est plus refuse",
      'for lvl in ("e2e", "api"):', "for lvl in ():"),
+
+    # BAREME UNIVERSEL -- ajoutees le 2026-08-24 avec la phase 1 de la refonte. Elles visent le
+    # defaut qui a coute le plus cher au projet (0 PASS sur 244 cahiers etrangers) et que les
+    # 25 controles existants n'ont jamais pu voir. `check_universal_default.py` est son propre
+    # selfcheck : il MESURE la propriete sur des cahiers reels au lieu de relire une regle.
+    ("eval/tools/structural_score.py", "eval/tools/check_universal_default.py",
+     "tracabilite : la dimension est de nouveau NOTEE ZERO au lieu d'etre retiree",
+     "        raw = (readability + completeness + coherence) * 100.0 / 75.0\n"
+     "        traceability = None",
+     "        raw = readability + completeness + coherence\n"
+     "        traceability = 0.0"),
+    ("eval/tools/structural_score.py", "eval/tools/check_universal_default.py",
+     "tracabilite : la detection revient a n'accepter que la convention maison",
+     'REQ_REF_RE = re.compile(r"@[A-Z]{2,}[-_:]?[A-Za-z0-9_-]*\\d")',
+     'REQ_REF_RE = re.compile(r"@QAIA-")'),
+    ("eval/tools/structural_score.py", "eval/tools/check_universal_default.py",
+     "profil : les conventions maison sont de nouveau imposees par defaut",
+     '    if profile == "qaia":\n        if no_priority:',
+     "    if True:\n        if no_priority:"),
+    ("eval/tools/structural_score.py", "eval/tools/check_universal_default.py",
+     "profil : le defaut bascule sur `qaia` a l'insu de l'appelant",
+     'def score_feature(path, declared_acs=None, source_text=None, profile="universal",',
+     'def score_feature(path, declared_acs=None, source_text=None, profile="qaia",'),
 ]
 
 
@@ -97,7 +120,12 @@ def run(cmd):
 
 
 def main():
-    log = ["Campagne mutation sur les garde-foux S38-S40 -- %s" % "2026-08-11", ""]
+    # La date etait ECRITE EN DUR (« 2026-08-11 »), si bien que toute passe ulterieure
+    # s'archivait sous une date a laquelle elle n'avait pas eu lieu. Un registre dont
+    # les entrees mentent sur leur date ne prouve plus dans quel ordre les choses se
+    # sont passees -- ce qui est la seule chose qu'un registre serve a prouver.
+    today = datetime.date.today().isoformat()
+    log = ["Campagne mutation sur les garde-fous -- passe du %s" % today, ""]
     log.append("Chaque mutation neutralise UNE regle de detection dans un controle.")
     log.append("TUEE = l'auto-verification du controle passe au rouge. SURVIT = personne ne l'aurait vu.")
     log.append("")
@@ -142,7 +170,7 @@ def main():
     previous = ""
     if os.path.exists(journal):
         previous = io.open(journal, encoding="utf-8").read().rstrip("\n") + "\n\n"
-        log.insert(0, "## Passe suivante -- les passes precedentes sont conservees ci-dessus")
+        log.insert(0, "## Passe du %s -- les passes precedentes sont conservees ci-dessus" % today)
         log.insert(1, "")
     io.open(journal, "w", encoding="utf-8", newline="\n").write(previous + "\n".join(log) + "\n")
     print("killed", killed, "survived", survived, "unrunnable", unrunnable)

@@ -49,6 +49,7 @@ check: ## Lance tous les controles que la CI lance (skills, provenance, outillag
 	# plugins/, contrat de sortie identique partout -- etaient ecrites en shell dans ci.yml
 	# seulement. Les recopier ici en aurait fait une deuxieme copie a maintenir, la faute meme
 	# qu'on venait de corriger sur le perimetre Gherkin. Un script, appele des deux endroits.
+	python eval/tools/check_universal_default.py
 	python eval/tools/check_repo_structure.py
 	@echo "--- tests du pont MCP ---"
 	@cd mcp-bridge && npm ci --no-audit --no-fund --silent && npm test

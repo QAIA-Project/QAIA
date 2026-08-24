@@ -42,6 +42,16 @@ jobs:
           # peut etre eprouve sur une machine sans `make` -- celle ou ce depot est ecrit.
           python eval/tools/check_repo_structure.py
 
+      - name: Le bareme universel est bien le defaut
+        run: |
+          set -e
+          # Porte d'ENTREE de la refonte du 2026-08-24 : elle MESURE, sur des cahiers reels,
+          # que le chemin par defaut ne penalise pas un cahier pour n'etre pas QAIA -- le
+          # defaut qui rendait 0 PASS sur 244 cahiers ecrits ailleurs, et qu'aucun des 25
+          # controles existants ne pouvait voir parce que tous relisent le depot, jamais son
+          # comportement sur du materiau etranger.
+          python eval/tools/check_universal_default.py
+
       - name: Check skill frontmatter
         run: |
           set -e
