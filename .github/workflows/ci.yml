@@ -51,6 +51,12 @@ jobs:
           # controles existants ne pouvait voir parce que tous relisent le depot, jamais son
           # comportement sur du materiau etranger.
           python eval/tools/check_universal_default.py
+          # La couche prompt pilote le noyau et rien ne les reliait : quand l'inversion du
+          # 2026-08-24 a deprecie `--third-party`, quatre skills livrees ont continue de
+          # l'ordonner, et une page ordonnait encore de RE-IMPLEMENTER un scoreur livre
+          # depuis quinze jours. Le depot gardait ses outils, ses copies et ses comptes --
+          # jamais l'accord entre ce qu'une skill promet et ce que l'outil accepte.
+          python eval/tools/check_skill_cli_claims.py
 
       - name: Check skill frontmatter
         run: |

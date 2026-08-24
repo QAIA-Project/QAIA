@@ -50,6 +50,7 @@ check: ## Lance tous les controles que la CI lance (skills, provenance, outillag
 	# seulement. Les recopier ici en aurait fait une deuxieme copie a maintenir, la faute meme
 	# qu'on venait de corriger sur le perimetre Gherkin. Un script, appele des deux endroits.
 	python eval/tools/check_universal_default.py
+	python eval/tools/check_skill_cli_claims.py
 	python eval/tools/check_repo_structure.py
 	@echo "--- tests du pont MCP ---"
 	@cd mcp-bridge && npm ci --no-audit --no-fund --silent && npm test

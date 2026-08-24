@@ -38,14 +38,24 @@ in `../README.md`. It is the LLM-judge of the project, packaged as an installabl
    - **In Claude Code**: run the shipped scorer, do not re-implement it —
      `python "${CLAUDE_PLUGIN_ROOT}/scripts/structural_score.py" --batch <folder of .feature files>`
 
-     **Is this book ours? Decide before you run, and add `--third-party` when it is not.** The
-     test is mechanical: a book QAIA generated carries at least one `@QAIA-*` tag; a foreign one
-     carries none. Without the flag, `traceability` (25 points) is lost **by construction** —
-     no book written elsewhere uses our tag convention — and the `@P1/@P2/@P3` and technique tags
-     are scored zero instead of being excluded. Measured on a real foreign book: **46/100 FAIL
-     without the flag, 67/100 CONCERNS with it**. Twenty-one points and a reversed verdict, on the
-     same file. Say which mode you applied in the report: a 67 in third-party mode and a 67 in
-     QAIA mode do not mean the same thing.
+     **There is no mode to decide any more, and asking for one is now wrong.** Until 2026-08-24
+     this skill told you to add `--third-party` for a book QAIA did not write. That flag is
+     deprecated and does nothing: the **universal scale is the default**, and traceability is
+     *detected* rather than demanded — measured when the book shows a requirement-reference
+     convention (`@JIRA-1234`, `@REQ-77`, `@AC1`, `@QAIA-US-004-009` all count equally), declared
+     `NOT ASSESSED` and removed from the denominator when it shows none. Never scored zero.
+
+     Why the change: pointed at 257 Gherkin books written elsewhere, the old default returned
+     **0 PASS** and 493 of its 666 findings were about QAIA conventions that do not exist in
+     Gherkin. A tool whose job is to judge cannot have "this is not mine" wired into its default
+     path.
+
+     **`--profile qaia` is the opt-in overlay**, and only for a book that has adopted our
+     conventions: it adds the `@P1/@P2/@P3` and technique-tag findings, and it *requires*
+     traceability instead of detecting it. Ask for it only when the book carries `@QAIA-*` tags.
+
+     Read `traceabilityAssessed` and `negativeRatioAssessed` in the JSON before quoting either
+     number: a `null` means "not measurable here", never "zero".
      (standard library only; JSON on stdout). It ships inside the plugin as of 2026-08-09; before
      that this skill asked you to materialise the algorithm in session, so two runs on the same
      file could legitimately disagree. **The algorithm below documents what the scorer does; it is

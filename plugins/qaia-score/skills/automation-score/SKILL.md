@@ -52,7 +52,7 @@ averaging them hides whichever is worse.
 
 ```bash
 python "${CLAUDE_PLUGIN_ROOT}/scripts/automation_score.py" \
-  --tests-dir <suite> --testbook <test book> [--third-party] [--skip-mutation]
+  --tests-dir <suite> --testbook <test book> [--profile universal|qaia] [--skip-mutation]
 ```
 
 It prints JSON on stdout and exits 1 as soon as a finding is blocking. Standard library only.

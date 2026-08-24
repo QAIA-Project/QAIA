@@ -24,13 +24,23 @@ a first-class use case, not an afterthought.
    Full algorithm, how to run it, and the trap of running the sniffer blind:
    `references/structural-pass.md`.
 
-   **This skill's whole point is auditing books QAIA did not write — so decide the mode first.**
-   A book QAIA generated carries at least one `@QAIA-*` tag; a foreign one carries none. On a
-   foreign book the structural pass must run in **third-party mode** (`--third-party` when using
-   the shipped scorer of `qaia-score`): the tag-based traceability budget is unwinnable by
-   construction, and the priority and technique tags are QAIA conventions, not quality. Measured
-   on a real foreign book: **46/100 FAIL** scored as if it were ours, **67/100 CONCERNS** scored
-   as what it is. Report which mode was applied — a verdict that does not say cannot be read.
+   **This skill's whole point is auditing books QAIA did not write — and since 2026-08-24 there
+   is no mode to decide.** The universal scale is the default. Traceability and the negative
+   ratio are *detected*: measured when the book shows the convention, declared `NOT ASSESSED` and
+   removed from the denominator when it does not. Never scored zero — a zero reads as a bad mark
+   for declining our conventions, which is not a quality judgement.
+
+   Any requirement-reference convention counts equally: `@JIRA-1234`, `@REQ-77`, `@AC1` and
+   `@QAIA-US-004-009` all earn the same credit on the same book. This was **not** true until
+   2026-08-24, when a refutation pass found a foreign-tagged book scoring 78/CONCERNS where the
+   identical QAIA-tagged book scored 88/PASS.
+
+   Do **not** pass `--third-party`: it is deprecated and does nothing. `--profile qaia` is the
+   opt-in overlay, for books that carry `@QAIA-*` tags — it adds the priority and technique-tag
+   findings and *requires* traceability rather than detecting it.
+
+   Before quoting any number from the JSON, read its `…Assessed` flag: `null` means "not
+   measurable on this book", never "zero".
 
    This number is **reported alongside** the checklist below and **never averaged into it**.
 
