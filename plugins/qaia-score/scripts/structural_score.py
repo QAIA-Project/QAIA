@@ -428,6 +428,18 @@ def score_feature(path, declared_acs=None, source_text=None, profile="universal"
     # Donc il ne penalise plus que l'inambigu -- le texte STRICTEMENT identique, 159 paires sur
     # 852 -- et signale tout le reste. Un detecteur qui facture un jugement qu'il ne peut pas
     # rendre est pire que muet : il a l'autorite d'un chiffre.
+    #
+    # LE FAUX NEGATIF (#113) EST UNE LIMITE MESUREE, PAS UN OUBLI. Deux scenarios copies-colles
+    # dont le `When` derive d'un mot (`ajoute <val>` / `ajoute l'article <val>`) ont un shape_key
+    # different et ne sont donc jamais compares. La piste « similarite Jaccard » a ete MESUREE sur
+    # 224 cahiers reels avant d'etre ecrite (eval/universal-default-2026-08-24/REDUNDANCY-FALSENEG.md) :
+    # a tout seuil, les faux positifs (paires metamorphiques a litteraux differents) depassent les
+    # vrais copies-colles ; et meme filtre par litteraux identiques + `Then` identique + inclusion
+    # de jetons, le split reste ~50/50 -- `cucumber -q` vs `cucumber -x -q` (l'option testee) et
+    # `reference` vs `comparison screenshot directory` passent tous les filtres. Le signal qui
+    # separe copie-colle et couverture deliberee est SEMANTIQUE, pas textuel. Un signalement a
+    # ~50 % de precision porterait « l'autorite d'un chiffre » sur un jugement qu'il ne peut pas
+    # rendre : on nomme la limite ici plutot que d'ajouter un detecteur bruite.
     def raw_key(s):
         return "\n".join(re.sub(r"\s+", " ", t).strip().lower() for _kw, t in s["steps"])
 
