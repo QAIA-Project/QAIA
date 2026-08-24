@@ -88,7 +88,7 @@ stops wherever a human has to decide.
 ```
 
 [`plugins/qaia-core/CATALOGUE.md`](plugins/qaia-core/CATALOGUE.md) maps *"I want to X → use Y"*
-across all 37 skills. Worked examples with their real output are in [`examples/`](examples/).
+across all 33 skills. Worked examples with their real output are in [`examples/`](examples/).
 
 ## What separates it, and what does not
 
@@ -116,8 +116,8 @@ has ever run it end to end**, and what it produces for a real user is unmeasured
 
 ## Status and limits
 
-**Pre-alpha, in active development.** `qaia-core` 0.2.35 (18 skills), `qaia-playwright` 0.1.27
-(14 skills), `qaia-score` 0.2.4 (4 skills), `qaia-testdata` 0.1.3 (1 skill) — **37 skills** — all
+**Pre-alpha, in active development.** `qaia-core` 0.3.0 (17 skills), `qaia-playwright` 0.1.27
+(14 skills), `qaia-score` 0.3.0 (**1 skill**, `judge`), `qaia-testdata` 0.1.3 (1 skill) — **33 skills** — all
 validating `--strict`, proven end-to-end on two independent domains: healthcare
 ([`examples/medibook/`](examples/medibook), 26 tests / 32 executions, all green) and finance/HR
 ([`examples/expense-demo/`](examples/expense-demo), 56 green tests, real bugs found during
@@ -143,7 +143,7 @@ Honest state: [`docs/STATUS-en.md`](docs/STATUS-en.md) (English) · [`docs/STATU
 ## Agents — an opt-in tier
 
 [`agents-tier/`](agents-tier) ships eight named agents. It is **not installed by any plugin** and
-is never a prerequisite — the 37 skills work without it. Only two earn their own context window
+is never a prerequisite — the 33 skills work without it. Only two earn their own context window
 (`camille-judge`, `elian-refuter`), because a producer never grades its own output; the other six
 group a phase behind one name — real ergonomics, no new capability. Two caveats the tier's own
 README documents rather than hides: `tools:` is a request to the harness, not a capability

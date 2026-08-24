@@ -1,7 +1,8 @@
----
-name: testbook-score
-description: Score a QAIA test book against its source US with the ISTQB-grounded 10-dimension rubric (0/1/2 per dimension, /20) plus a top-3 fixes list, and record the score in the standardized run manifest. Read-only over test content - it judges, it never edits. Use to review a generated test book or gate a release candidate.
----
+<!-- Absorbé le 2026-08-24 : cette page était la skill `testbook-score`.
+     Elle n'est plus une unité installable — elle est une étape de `judge`.
+     Le contenu est DÉPLACÉ, pas récrit : ce qui a été éprouvé le reste. -->
+
+> **Ce que cette étape fait.** Score a QAIA test book against its source US with the ISTQB-grounded 10-dimension rubric (0/1/2 per dimension, /20) plus a top-3 fixes list, and record the score in the standardized run manifest. Read-only over test content - it judges, it never edits. Use to review a generated test book or gate a release candidate.
 
 > **Ce que cette skill promet, et depuis quand.** La note vient d'un **programme fige, livre
 > avec le plugin** (`scripts/`), pas d'un algorithme rejoue de memoire : deux passages sur le

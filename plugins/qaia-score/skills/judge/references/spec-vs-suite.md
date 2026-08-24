@@ -1,7 +1,8 @@
----
-name: spec-suite-drift
-description: Compare an OpenAPI specification against the test suite that claims to cover it - pure text, no running application. Reports status codes the suite uses that the spec never declares, error codes the spec promises that no test exercises, and endpoints the suite calls that the spec does not describe. Use when a project has both a formal API spec and an automated suite, and nobody has ever checked that they agree.
----
+<!-- Absorbé le 2026-08-24 : cette page était la skill `spec-suite-drift`.
+     Elle n'est plus une unité installable — elle est une étape de `judge`.
+     Le contenu est DÉPLACÉ, pas récrit : ce qui a été éprouvé le reste. -->
+
+> **Ce que cette étape fait.** Compare an OpenAPI specification against the test suite that claims to cover it - pure text, no running application. Reports status codes the suite uses that the spec never declares, error codes the spec promises that no test exercises, and endpoints the suite calls that the spec does not describe. Use when a project has both a formal API spec and an automated suite, and nobody has ever checked that they agree.
 
 > **Ce que cette skill promet, et depuis quand.** La note vient d'un **programme fige, livre
 > avec le plugin** (`scripts/`), pas d'un algorithme rejoue de memoire : deux passages sur le

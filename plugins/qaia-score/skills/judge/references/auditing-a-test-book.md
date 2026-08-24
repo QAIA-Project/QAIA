@@ -1,7 +1,8 @@
----
-name: testbook-validate
-description: Audit an existing Gherkin test book (QAIA-generated or not) against the QAIA quality checklist - atomicity, coverage, negative ratio, traceability, ambiguity honesty - and produce a scored conformity report with a PASS/CONCERNS/FAIL gate decision. Use when the user wants a quality assessment of a test book.
----
+<!-- Absorbé le 2026-08-24 : cette page était la skill `testbook-validate`.
+     Elle n'est plus une unité installable — elle est une étape de `judge`.
+     Le contenu est DÉPLACÉ, pas récrit : ce qui a été éprouvé le reste. -->
+
+> **Ce que cette étape fait.** Audit an existing Gherkin test book (QAIA-generated or not) against the QAIA quality checklist - atomicity, coverage, negative ratio, traceability, ambiguity honesty - and produce a scored conformity report with a PASS/CONCERNS/FAIL gate decision. Use when the user wants a quality assessment of a test book.
 
 # testbook-validate — audit any test book
 

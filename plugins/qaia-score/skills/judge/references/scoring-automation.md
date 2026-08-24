@@ -1,7 +1,8 @@
----
-name: automation-score
-description: Score QAIA-generated Playwright test code on two separate tracks - a deterministic static pass plus a mutation pass that inverts each assertion and requires it to go red, then a 6-dimension LLM rubric for what no machine can see. Read-only over code - it judges, it never edits. Use to review generated automation before it is trusted, or to check whether a suite's assertions are load-bearing at all.
----
+<!-- Absorbé le 2026-08-24 : cette page était la skill `automation-score`.
+     Elle n'est plus une unité installable — elle est une étape de `judge`.
+     Le contenu est DÉPLACÉ, pas récrit : ce qui a été éprouvé le reste. -->
+
+> **Ce que cette étape fait.** Score QAIA-generated Playwright test code on two separate tracks - a deterministic static pass plus a mutation pass that inverts each assertion and requires it to go red, then a 6-dimension LLM rubric for what no machine can see. Read-only over code - it judges, it never edits. Use to review generated automation before it is trusted, or to check whether a suite's assertions are load-bearing at all.
 
 # automation-score — the judge of generated test code
 

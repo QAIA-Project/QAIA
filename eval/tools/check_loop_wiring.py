@@ -29,10 +29,14 @@ P = os.path.join
 
 # (nom, source, cible, ce que la source doit nommer, ce que la cible doit nommer)
 LOOPS = [
+    # `spec-suite-drift` a ete absorbee par `judge` le 2026-08-24. La boucle reste la meme --
+    # une suite renvoie a la specification, la specification renvoie a l'application -- mais son
+    # extremite porte un autre nom de fichier. Un controle de cablage dont un bout pointe un
+    # fichier disparu ne verifie plus la boucle : il annonce sa propre panne.
     ("B  suite -> specification",
-     P("plugins", "qaia-score", "skills", "spec-suite-drift", "SKILL.md"),
+     P("plugins", "qaia-score", "skills", "judge", "references", "spec-vs-suite.md"),
      P("plugins", "qaia-playwright", "skills", "contract-probe", "SKILL.md"),
-     ["contract-probe"], ["spec-suite-drift"]),
+     ["contract-probe"], ["judge"]),
 
     ("C  defaut -> connaissance",
      P("plugins", "qaia-playwright", "skills", "confirm-fix", "SKILL.md"),

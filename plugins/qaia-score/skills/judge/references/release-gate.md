@@ -1,7 +1,8 @@
----
-name: aptitude-gate
-description: Decide release readiness of a QAIA test book or run - PASS / CONCERNS / FAIL / WAIVED - from the rubric score, hard coverage gates (AC, ADR 0001 negative-path), pending human arbitrations, and any execution results, recording the verdict and reasons in the standardized run manifest. Scores only - it judges readiness, it never edits test content. Use to gate a candidate before hand-off or CI.
----
+<!-- Absorbé le 2026-08-24 : cette page était la skill `aptitude-gate`.
+     Elle n'est plus une unité installable — elle est une étape de `judge`.
+     Le contenu est DÉPLACÉ, pas récrit : ce qui a été éprouvé le reste. -->
+
+> **Ce que cette étape fait.** Decide release readiness of a QAIA test book or run - PASS / CONCERNS / FAIL / WAIVED - from the rubric score, hard coverage gates (AC, ADR 0001 negative-path), pending human arbitrations, and any execution results, recording the verdict and reasons in the standardized run manifest. Scores only - it judges readiness, it never edits test content. Use to gate a candidate before hand-off or CI.
 
 # aptitude-gate — release-readiness verdict
 

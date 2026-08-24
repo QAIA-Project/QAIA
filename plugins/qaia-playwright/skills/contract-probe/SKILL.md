@@ -15,7 +15,7 @@ those promises under conditions a happy-path test never tries. **Its oracle is t
 documentation** — that is what separates it from the other skills that touch a running app, and
 the one-line-per-skill comparison lives in the catalogue map rather than here.
 
-**Its other half is `qaia-score:spec-suite-drift`.** This skill asks whether the *application*
+**Its other half is `qaia-score:judge`** (its `references/spec-vs-suite.md` step, formerly the standalone `spec-suite-drift` skill)**.** This skill asks whether the *application*
 keeps the documented promises; that one asks whether the *test suite* even mentions them. The two
 questions look alike and fail apart: a suite can be perfectly green against an application that
 honours a contract neither of them has read the same way. Run the drift check first — it is pure

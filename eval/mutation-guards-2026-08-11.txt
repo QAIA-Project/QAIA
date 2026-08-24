@@ -1051,3 +1051,93 @@ TUEE = l'auto-verification du controle passe au rouge. SURVIT = personne ne l'au
     check_universal_default.py -> exit=1  check_universal_default :
 
 TOTAL : 40 candidates, 40 executees, 40 tuees, 0 survivantes, 0 motif(s) introuvable(s)
+
+## Passe du 2026-08-24 -- les passes precedentes sont conservees ci-dessus
+
+Campagne mutation sur les garde-fous -- passe du 2026-08-24
+
+Chaque mutation neutralise UNE regle de detection dans un controle.
+TUEE = l'auto-verification du controle passe au rouge. SURVIT = personne ne l'aurait vu.
+
+[TUEE  ] niveau absent : la detection de l'absence est neutralisee
+    selfcheck_test_levels.py -> exit=1  ::error::l'auto-verification des niveaux de test echoue.
+[TUEE  ] niveau en double : la detection du doublon est neutralisee
+    selfcheck_test_levels.py -> exit=1  ::error::l'auto-verification des niveaux de test echoue.
+[TUEE  ] etiquette retiree : la table des retirees est videe
+    selfcheck_test_levels.py -> exit=1  ::error::l'auto-verification des niveaux de test echoue.
+[TUEE  ] la pile de tags ne remonte plus au-dessus d'un commentaire
+    selfcheck_test_levels.py -> exit=1  ::error::l'auto-verification des niveaux de test echoue.
+[TUEE  ] etapes : la comparaison verbatim est neutralisee
+    selfcheck_nl_projection.py -> exit=1  ::error::l'auto-verification du rendu en langage naturel echoue.
+[TUEE  ] titre : la comparaison de titre est neutralisee
+    selfcheck_nl_projection.py -> exit=1  ::error::l'auto-verification du rendu en langage naturel echoue.
+[TUEE  ] scenario omis : la boucle des identifiants attendus est neutralisee
+    selfcheck_nl_projection.py -> exit=1  ::error::l'auto-verification du rendu en langage naturel echoue.
+[TUEE  ] bloc en trop : la detection d'un identifiant inconnu est neutralisee
+    selfcheck_nl_projection.py -> exit=1  ::error::l'auto-verification du rendu en langage naturel echoue.
+[TUEE  ] langue : l'en-tete `language:` n'est plus exige
+    selfcheck_nl_projection.py -> exit=1  ::error::l'auto-verification du rendu en langage naturel echoue.
+[TUEE  ] Outline : les `Examples` ne sont plus eclates
+    selfcheck_nl_projection.py -> exit=1  ::error::l'auto-verification du rendu en langage naturel echoue.
+[TUEE  ] substitution : les parametres <x> ne sont plus remplaces
+    selfcheck_nl_projection.py -> exit=1  ::error::l'auto-verification du rendu en langage naturel echoue.
+[TUEE  ] perimetre : les cahiers vivants de site-qa sont exclus du controle
+    selfcheck_test_levels.py -> exit=1  ::error::l'auto-verification des niveaux de test echoue.
+[TUEE  ] perimetre : le controle ne voit plus aucun cahier
+    selfcheck_test_levels.py -> exit=1  Traceback (most recent call last):
+[TUEE  ] perimetre : le balayage des paires ne rend plus rien
+    selfcheck_nl_projection.py -> exit=1  ::error::l'auto-verification du rendu en langage naturel echoue.
+[TUEE  ] byLevel : la verification de la somme est neutralisee
+    selfcheck_manifest_bylevel.py -> exit=1  ::error::le validateur n'applique pas les regles de `design.byLevel`.
+[TUEE  ] byLevel : la liste fermee de cles n'est plus imposee
+    selfcheck_manifest_bylevel.py -> exit=1  ::error::le validateur n'applique pas les regles de `design.byLevel`.
+[TUEE  ] byLevel : le bloc partiel n'est plus refuse
+    selfcheck_manifest_bylevel.py -> exit=1  ::error::le validateur n'applique pas les regles de `design.byLevel`.
+[TUEE  ] tracabilite : la dimension est de nouveau NOTEE ZERO au lieu d'etre retiree
+    check_universal_default.py -> exit=1  check_universal_default :
+[TUEE  ] tracabilite : la detection revient a n'accepter que la convention maison
+    check_universal_default.py -> exit=1  check_universal_default :
+[TUEE  ] profil : les conventions maison sont de nouveau imposees par defaut
+    check_universal_default.py -> exit=1  check_universal_default :
+[TUEE  ] profil : le defaut bascule sur `qaia` a l'insu de l'appelant
+    check_universal_default.py -> exit=1  check_universal_default :
+[TUEE  ] budget : les quatre dimensions redeviennent inconditionnelles
+    selfcheck_automation_score.py -> exit=1  selfcheck_automation_score: 6 FAILURE(S)
+[TUEE  ] tracabilite : la detection revient a n'accepter que la convention maison
+    selfcheck_automation_score.py -> exit=1  selfcheck_automation_score: 1 FAILURE(S)
+[TUEE  ] profil : le defaut bascule sur `qaia` a l'insu de l'appelant
+    selfcheck_automation_score.py -> exit=1  selfcheck_automation_score: 8 FAILURE(S)
+[TUEE  ] constats : ceux de convention remontent meme pour une dimension non evaluee
+    selfcheck_automation_score.py -> exit=1  selfcheck_automation_score: 1 FAILURE(S)
+[TUEE  ] portee : le score ne dit plus qu'il est etroit
+    selfcheck_automation_score.py -> exit=1  selfcheck_automation_score: 1 FAILURE(S)
+[TUEE  ] parse vide : le refus de rendre un verdict est neutralise
+    selfcheck_spec_suite_drift.py -> exit=1  selfcheck_spec_suite_drift: 7 FAILURE(S)
+[TUEE  ] parse vide : zero fichier lu n'est plus une raison de se taire
+    selfcheck_spec_suite_drift.py -> exit=1  selfcheck_spec_suite_drift: 1 FAILURE(S)
+[TUEE  ] parse vide : aucun code HTTP reconnu n'est plus une raison de se taire
+    selfcheck_spec_suite_drift.py -> exit=1  selfcheck_spec_suite_drift: 1 FAILURE(S)
+[TUEE  ] comptage : les fichiers illisibles ne sont plus comptes
+    selfcheck_spec_suite_drift.py -> exit=1  selfcheck_spec_suite_drift: 1 FAILURE(S)
+[TUEE  ] tracabilite : le facteur reserve a nos identifiants revient sur le chemin universel
+    check_universal_default.py -> exit=1  check_universal_default :
+[TUEE  ] falaise : detecter une convention peut de nouveau faire baisser le score
+    check_universal_default.py -> exit=1  check_universal_default :
+[TUEE  ] profil qaia : la tracabilite n'y est plus exigee
+    check_universal_default.py -> exit=1  check_universal_default :
+[TUEE  ] motif : le separateur redevient facultatif et reprend @HTML5, @IE11
+    check_universal_default.py -> exit=1  check_universal_default :
+[TUEE  ] motif : les deux outils du noyau divergent de nouveau
+    check_universal_default.py -> exit=1  check_universal_default :
+[TUEE  ] selecteurs : la precondition dure saute de nouveau sous le profil qaia
+    selfcheck_automation_score.py -> exit=1  selfcheck_automation_score: 2 FAILURE(S)
+[TUEE  ] parse vide : la suite sans test rend de nouveau un verdict
+    selfcheck_automation_score.py -> exit=1  Traceback (most recent call last):
+[TUEE  ] ratio negatif : un zero faux revient a la place du non-evalue
+    check_universal_default.py -> exit=1  check_universal_default :
+[TUEE  ] redondance : une paire de valeurs limites redevient un doublon facture
+    check_universal_default.py -> exit=1  check_universal_default :
+[TUEE  ] redondance : le detecteur est eteint au lieu d'etre affine
+    check_universal_default.py -> exit=1  check_universal_default :
+
+TOTAL : 40 candidates, 40 executees, 40 tuees, 0 survivantes, 0 motif(s) introuvable(s)

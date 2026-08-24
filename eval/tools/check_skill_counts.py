@@ -45,7 +45,11 @@ import sys
 # trouves perimes de 6 a 20 versions correctifs -- 0.2.14 pour 0.2.34, 0.1.8 pour 0.1.27.
 # Un README de plugin est LIVRE a l'utilisateur : il est plus visible que le README racine.
 PLUGIN_README = "plugins/%s/README.md"
-PLUGIN_STATUS = re.compile(r"\*\*Status:\s*([0-9]+\.[0-9]+\.[0-9]+),\s*(\d{1,3})\s+skills\.\*\*")
+# `skill` au singulier accepte : la fusion du 2026-08-24 a ramene `qaia-score` a UNE skill, et
+# le motif n'acceptait que « skills ». Un controle qui impose une faute de grammaire pour se
+# taire finit par etre contourne plutot que corrige.
+PLUGIN_STATUS = re.compile(
+    r"\*\*Status:\s*([0-9]+\.[0-9]+\.[0-9]+),\s*(\d{1,3})\s+skills?\.\*\*")
 
 TOTAL_SCANNED = [
     "README.md",
@@ -96,6 +100,24 @@ TOTAL_CLAIM = [
     #    phrase entiere plutot que le nombre.
     re.compile(r"skills\s+over\s+there,\s*(\d{1,4})\s+here", re.I),
 ]
+
+# Un chiffre PERIME mais DATE n'est pas une erreur : c'est de l'histoire.
+#
+# Ce controle conseillait deja, dans son message d'echec, de « reecrire la phrase pour qu'elle
+# porte sa date au lieu de se lire comme actuelle » -- et se declenchait quand meme, parce que
+# rien n'implementait cette echappatoire. **Son conseil n'etait pas applicable.** Un controle qui
+# demande une chose impossible apprend a son lecteur a le contourner, pas a lui obeir. Releve le
+# 2026-08-24 en essayant de suivre le conseil.
+#
+# La date doit SUIVRE le nombre de pres (40 caracteres) : « 37 skills du 2026-08-11 » passe,
+# « 37 skills [...trois lignes...] mis a jour le 2026-08-11 » non. Sans cette proximite,
+# n'importe quelle date presente dans le document couvrirait n'importe quel chiffre perime.
+_DATE_NEAR = re.compile(r"\b(?:du|le|on|as of|au)?\s*\(?\d{4}-\d{2}-\d{2}", re.I)
+
+
+def _dated(line, pos):
+    return bool(_DATE_NEAR.search(line[pos:pos + 40]))
+
 
 # Deux formes reelles : "`qaia-core` 0.2.34, 17 skills" dans le bandeau de statut, et
 # "plugins/qaia-core/ | Core plugin: ... (17 skills," dans la carte du depot. La seconde a ete
@@ -165,7 +187,7 @@ def main():
             for rx in TOTAL_CLAIM:
                 for m in rx.finditer(line):
                     checked += 1
-                    if int(m.group(1)) != total:
+                    if int(m.group(1)) != total and not _dated(line, m.end()):
                         stale.append((path, i, "total", m.group(0).strip(), total))
             for rx in PER_PLUGIN:
                 for m in rx.finditer(line):
