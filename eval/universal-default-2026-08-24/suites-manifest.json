@@ -1,0 +1,102 @@
+{
+ "_retrieved": null,
+ "_why": "suites Playwright ecrites par d'autres, pour mesurer le barème d'automatisation hors de sa propre production",
+ "repos": [
+  {
+   "repo": "realworld-apps/realworld",
+   "status": "ok",
+   "branch": "main",
+   "suite_dir": "specs/e2e",
+   "files": 13,
+   "playwright_specs": 12,
+   "sha256": "b997316914bd4776",
+   "stars": 84134
+  },
+  {
+   "repo": "solidcouch/solidcouch",
+   "status": "ok",
+   "branch": "main",
+   "suite_dir": "e2e",
+   "files": 8,
+   "playwright_specs": 8,
+   "sha256": "24a8d7396b58f5a7",
+   "stars": 31
+  },
+  {
+   "repo": "valhalla/web-app",
+   "status": "not-playwright",
+   "files": 27
+  },
+  {
+   "repo": "openplayerjs/openplayerjs",
+   "status": "not-playwright",
+   "files": 33
+  },
+  {
+   "repo": "mxfng/drumhaus",
+   "status": "ok",
+   "branch": "main",
+   "suite_dir": "e2e",
+   "files": 18,
+   "playwright_specs": 17,
+   "sha256": "f566c0198017322b",
+   "stars": 151
+  },
+  {
+   "repo": "kukhariev/ngx-uploadx",
+   "status": "not-playwright",
+   "files": 28
+  },
+  {
+   "repo": "accordproject/template-playground",
+   "status": "ok",
+   "branch": "main",
+   "suite_dir": "e2e",
+   "files": 4,
+   "playwright_specs": 4,
+   "sha256": "69349a153ca3fbbb",
+   "stars": 71
+  },
+  {
+   "repo": "scaljeri/oh-my-mock",
+   "status": "not-playwright",
+   "files": 19
+  },
+  {
+   "repo": "dbcls/sparqlist",
+   "status": "ok",
+   "branch": "main",
+   "suite_dir": "e2e",
+   "files": 4,
+   "playwright_specs": 4,
+   "sha256": "b9f7e9637744d968",
+   "stars": 15
+  },
+  {
+   "repo": "vnglst/koenvangilst.nl",
+   "status": "ok",
+   "branch": "main",
+   "suite_dir": "e2e",
+   "files": 10,
+   "playwright_specs": 10,
+   "sha256": "bbd0f709fb5af945",
+   "stars": 61
+  },
+  {
+   "repo": "COVESA/ifex-viewer",
+   "status": "ok",
+   "branch": "main",
+   "suite_dir": "e2e",
+   "files": 2,
+   "playwright_specs": 1,
+   "sha256": "6030d4455dc6ef88",
+   "stars": 26
+  },
+  {
+   "repo": "chicio/chicio-blog",
+   "status": "not-playwright",
+   "files": 32
+  }
+ ],
+ "_files": 59
+}

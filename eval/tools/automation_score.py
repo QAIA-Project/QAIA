@@ -230,6 +230,18 @@ TEST_DECL = re.compile(
 DECLARED_PLACEHOLDER = ("skip", "fixme", "fail")
 QAIA_TAG = re.compile(r"@?\bQAIA[-A-Za-z0-9_]*-\d+\b")
 FEATURE_TAG = re.compile(r"@(QAIA[-A-Za-z0-9_]*-\d+)\b")
+# Une reference d'exigence, dans N'IMPORTE QUELLE convention -- pas seulement la notre.
+#
+# `QAIA_TAG` seul faisait qu'une suite tierce IMPECCABLEMENT tracee par ses propres
+# identifiants (`JIRA-1234`, `REQ-77`, `PROJ-12`) etait comptee comme non tracee. Exclure la
+# dimension, comme le fait desormais le budget conditionnel, evite de la punir -- mais ne lui
+# rend toujours pas ce qu'elle merite. Les deux corrections sont necessaires : l'une ne
+# penalise plus, l'autre credite.
+#
+# Le separateur est OBLIGATOIRE avant les chiffres, ce qui ecarte `HTML5`, `CSS3`, `OAuth2` --
+# des mots de titre, pas des references. Il autorise les segments intermediaires, pour que
+# `QAIA-US-004-009` corresponde comme `JIRA-1234`.
+REQ_REF = re.compile(r"@?\b[A-Z]{2,}(?:[-_][A-Za-z0-9]+)*[-_]\d+\b")
 
 
 # A `//` line comment is prose, not code. Stripping it before pattern matching was added
@@ -347,8 +359,32 @@ def split_tests(text):
 
 
 def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=frozenset(),
-                 third_party=False):
-    """`third_party=True` scores a suite QAIA did not generate.
+                 profile="universal", third_party=None):
+    """Scores a Playwright suite. The UNIVERSAL budget is the default path.
+
+    Inverted on 2026-08-24, one floor above the same fix applied to `structural_score.py`.
+    Three of the four budget lines encode QAIA's own conventions, and applying them to a suite
+    that never adopted them measures allegiance, not quality. The old design made that the
+    default and put the exception behind `--third-party`; a tool whose job is to judge cannot
+    have "this is not mine" wired into its default path.
+
+    Each budget line is now CONDITIONAL on the suite showing the convention it measures:
+
+      - `traceability` is scored only if at least one test carries a requirement reference.
+      - `pom_as_fixtures` is scored only if the suite shows a page-object structure at all.
+      - `robust_selectors` is scored only if the suite uses role-based locators somewhere. A
+        suite that uses none is NOT graded down: we cannot distinguish "deliberately chose CSS"
+        from "does not know better", and the difference is real -- see below.
+
+    The applicable lines are rescaled onto 100 and the excluded ones are NAMED, never zeroed.
+
+    `profile="qaia"` restores the convention lines as mandatory, for suites this project
+    generated -- where they ARE the contract.
+
+    `third_party` is kept as a DEPRECATED alias: True -> universal (now the default),
+    False -> qaia (the old default).
+
+    The original note, kept because it is the evidence:
 
     Three of the four budget lines encode QAIA's own conventions: POM-as-fixtures and tag
     traceability are mandated by `automate` SKILL.md, and the selector rule assumes CSS
@@ -371,6 +407,13 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
     tests_with_real_assertion = 0
     selector_role = 0
     selector_raw = 0
+    if third_party is not None:
+        profile = "universal" if third_party else "qaia"
+    # Les constats qui n'existent que parce que la suite n'a pas adopte NOS conventions sont mis
+    # de cote pendant le balayage, puis reintegres seulement si la dimension correspondante
+    # s'avere applicable (ou si le profil `qaia` est demande). Ils ne peuvent pas etre filtres au
+    # fil du balayage : l'applicabilite de la tracabilite ne se connait qu'a la fin.
+    convention_findings = {"selector": [], "traceability": [], "pom": []}
     tagged_tests = 0
     ids_per_test = []
     seen_ids = set()
@@ -453,9 +496,9 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
             _code = code_of(line)  # du code commente n'est pas un selecteur (B16/B17)
             if RAW_SELECTOR.search(_code) or XPATH_SELECTOR.search(_code):
                 selector_raw += 1
-                if not third_party:
-                    findings.append({"kind": "fragile-selector", "file": rel, "line": i,
-                                     "detail": line.strip()[:160], "blocking": False})
+                convention_findings["selector"].append(
+                    {"kind": "fragile-selector", "file": rel, "line": i,
+                     "detail": line.strip()[:160], "blocking": False})
             if ROLE_SELECTOR.search(code_of(line)):
                 selector_role += 1
 
@@ -520,9 +563,16 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
                                              "returning a different value",
                                  "blocking": False})
 
+            # La tracabilite se compte sur TOUTE reference d'exigence ; le recoupement avec le
+            # cahier de tests, lui, ne vaut que pour NOS identifiants. Un `JIRA-1234` compte
+            # donc comme trace, mais n'est jamais declare « pendant » faute de figurer dans un
+            # cahier QAIA -- sans cette separation, noter une suite tierce en fournissant un
+            # cahier aurait signale chacun de ses identifiants comme invente.
             tag = QAIA_TAG.search(title)
-            if tag:
+            ref = tag or REQ_REF.search(title)
+            if ref:
                 tagged_tests += 1
+            if tag:
                 sid = tag.group(0).lstrip("@")
                 seen_ids.add(sid)
                 # Un identifiant par TEST : `seen_ids` est un ensemble et perd la multiplicite,
@@ -535,17 +585,22 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
                                                "carries no trace of it: a red here is "
                                                "indistinguishable from a regression",
                                      "blocking": True})
-            elif not third_party:
-                findings.append({"kind": "untraceable-test", "file": rel, "line": start,
-                                 "detail": "no @QAIA-<ID> in the test title: " + title[:120],
-                                 "blocking": False})
+            if not ref:
+                # `else:` ici se serait raccroche a `if tag:` et aurait declare non tracable un
+                # test parfaitement trace par une convention etrangere. La condition est donc
+                # ecrite en toutes lettres plutot que deduite de la branche precedente.
+                convention_findings["traceability"].append(
+                    {"kind": "untraceable-test", "file": rel, "line": start,
+                     "detail": "no requirement reference in the test title: " + title[:120],
+                     "blocking": False})
 
         if has_pages_dir and fixtures_path:
             uses_fixtures = re.search(r"require\s*\(\s*['\"].*fixtures|from\s+['\"].*fixtures", text)
             if not uses_fixtures:
-                findings.append({"kind": "pom-bypassed", "file": rel, "line": 1,
-                                 "detail": "pages/ and fixtures exist but this spec does not import the fixtures",
-                                 "blocking": False})
+                convention_findings["pom"].append(
+                    {"kind": "pom-bypassed", "file": rel, "line": 1,
+                     "detail": "pages/ and fixtures exist but this spec does not import the fixtures",
+                     "blocking": False})
 
     # Page objects / fixtures: selectors and waits count here too.
     for path in support_files:
@@ -568,14 +623,14 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
             _code = code_of(line)  # du code commente n'est pas un selecteur (B16/B17)
             if RAW_SELECTOR.search(_code) or XPATH_SELECTOR.search(_code):
                 selector_raw += 1
-                if not third_party:
-                    findings.append({"kind": "fragile-selector", "file": rel, "line": i,
-                                     "detail": line.strip()[:160], "blocking": False})
+                convention_findings["selector"].append(
+                    {"kind": "fragile-selector", "file": rel, "line": i,
+                     "detail": line.strip()[:160], "blocking": False})
             if ROLE_SELECTOR.search(code_of(line)):
                 selector_role += 1
 
-    if (not has_pages_dir or not fixtures_path) and not third_party:
-        findings.append({"kind": "pom-missing", "file": ".", "line": 0,
+    if not has_pages_dir or not fixtures_path:
+        convention_findings["pom"].append({"kind": "pom-missing", "file": ".", "line": 0,
                          "detail": "automate SKILL.md mandates POM-as-fixtures (pages/ + fixtures.js); "
                                    + ("pages/ missing" if not has_pages_dir else "fixtures file missing"),
                          "blocking": False})
@@ -634,43 +689,102 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
     else:
         robust_selectors = round(25 * pct(selector_role, selectors_total), 1)
 
-    if third_party:
-        # Only the dimensions that transfer. Assertion substance is 30 of the 100-point budget;
-        # rescaling it to 100 keeps the number comparable ACROSS third-party suites while making
-        # it plainly incomparable with a QAIA score — which it must be, since it answers a
-        # narrower question. The three dropped lines are reported as excluded, never as zeros:
-        # a zero would read as a failing grade for declining to adopt our conventions.
-        budget = {"substantive_assertions": round(100 * pct(tests_with_real_assertion, tests_total), 1)}
-        findings.append({"kind": "third-party-mode", "file": ".", "line": 0,
-                         "detail": "third-party suite: pom_as_fixtures, traceability and "
-                                   "robust_selectors are QAIA conventions and were EXCLUDED from "
-                                   "the budget, not scored zero. This score judges assertion "
-                                   "substance only and is not comparable with a QAIA score.",
-                         "blocking": False})
+    # --- budget CONDITIONNEL : une dimension se note quand la suite la montre ------------
+    #
+    # L'ancien code avait deux budgets figes -- le notre, et un budget « tiers » reduit a une
+    # seule ligne qu'il fallait demander par un drapeau. Les deux se trompaient : le premier
+    # notait l'allegeance a nos conventions, le second jetait trois dimensions meme quand la
+    # suite les satisfaisait parfaitement. Une suite tierce impeccablement tracee par ses
+    # propres identifiants n'en tirait aucun credit.
+    #
+    # Desormais chaque ligne porte sa condition d'applicabilite, et le budget se remet a
+    # l'echelle sur celles qui s'appliquent. Une dimension exclue est NOMMEE, jamais notee zero.
+    WEIGHTS = {"substantive_assertions": 30.0, "robust_selectors": 25.0,
+               "pom_as_fixtures": 20.0, "traceability": 25.0}
+
+    applicable = {"substantive_assertions": True}
+    excluded = {}
+
+    # Selecteurs : notes seulement si la suite emploie des localisateurs par role QUELQUE PART.
+    # Une suite qui n'en emploie aucun n'est PAS notee a la baisse : on ne peut pas distinguer
+    # « a choisi CSS deliberement » de « ne connait pas mieux ». La difference est reelle --
+    # `realworld-apps/realworld` PUBLIE un contrat de selecteurs CSS (`specs/e2e/SELECTORS.md`)
+    # que toute implementation doit honorer, et l'ancien defaut a produit 279 constats contre
+    # un contrat documente. 279 sur 428 constats, pour une seule ligne de barème.
+    if profile == "qaia" or (selectors_applicable and selector_role > 0):
+        applicable["robust_selectors"] = True
     else:
-        budget = {
-            "substantive_assertions": round(30 * pct(tests_with_real_assertion, tests_total), 1),
-            "robust_selectors": robust_selectors,
-            # Credite sur le CONTENU, pas sur l'existence de deux chemins : un `pages/`
-            # vide et un `fixtures.js` vide encaissaient les 20 points pleins. Moitie pour la
-            # structure presente, moitie pour des objets de page qui portent effectivement des
-            # localisateurs -- c'est ce que la dimension pretend mesurer (B12).
-            "pom_as_fixtures": (10.0 if (has_pages_dir and fixtures_path) else 0.0)
-                               + (10.0 if pom_has_locators else 0.0),
-            # Un test dont le tag ne resout aucun scenario ne compte plus comme trace.
-            # `tagged_tests` compte des TESTS, `dangling` comptait des IDENTIFIANTS
-            # distincts : dix tests partageant un meme identifiant pendant n'etaient
-            # penalises qu'une fois. On penalise les tests concernes (B14).
-            "traceability": round(25 * pct(max(0, tagged_tests - tests_with_dangling_id),
-                                           tests_total), 1),
-        }
-    if not third_party and not selectors_applicable:
-        # `robust_selectors` pesait 25 des 100 points. On renormalise les trois dimensions
-        # restantes sur 100 pour que la note reste comparable, et on le DIT -- une note
-        # renormalisee en silence serait exactement le genre de chiffre que ce projet refuse.
-        del budget["robust_selectors"]
-        remaining = 75.0
-        budget = dict((k, round(v * 100.0 / remaining, 1)) for k, v in budget.items())
+        excluded["robust_selectors"] = (
+            "no role-based locator anywhere in this suite: we cannot tell a deliberate CSS "
+            "contract from an uninformed choice, so the dimension is NOT ASSESSED rather than "
+            "graded down" if selectors_applicable else
+            "no locator call found at all: the dimension does not apply")
+
+    # Objets de page : notes seulement si la suite montre une structure d'objets de page. POM
+    # est une architecture parmi d'autres ; l'exiger, c'est noter un choix de conception.
+    if profile == "qaia" or has_pages_dir or fixtures_path:
+        applicable["pom_as_fixtures"] = True
+    else:
+        excluded["pom_as_fixtures"] = ("this suite shows no page-object structure: POM is one "
+                                       "architecture among several, NOT ASSESSED")
+
+    # Tracabilite : notee seulement si au moins un test porte une reference d'exigence. Meme
+    # regle qu'un etage plus bas -- une suite qui ne trace pas n'est pas notee zero, elle est
+    # declaree non evaluee. 128 des 428 constats de `realworld` reprochaient a ses tests de
+    # n'etre pas traces vers un cahier de tests QUI N'EXISTE PAS.
+    if profile == "qaia" or tagged_tests > 0:
+        applicable["traceability"] = True
+    else:
+        excluded["traceability"] = ("no test carries a requirement reference: this suite has no "
+                                    "traceability convention to measure, NOT ASSESSED")
+
+    raw_values = {
+        "substantive_assertions": pct(tests_with_real_assertion, tests_total),
+        # `robust_selectors` est deja une note sur 25 : on la ramene en fraction.
+        "robust_selectors": (robust_selectors / 25.0) if selectors_applicable else 0.0,
+        # Credite sur le CONTENU, pas sur l'existence de deux chemins : un `pages/` vide et un
+        # `fixtures.js` vide encaissaient les 20 points pleins. Moitie pour la structure
+        # presente, moitie pour des objets de page qui portent effectivement des localisateurs
+        # -- c'est ce que la dimension pretend mesurer (B12).
+        "pom_as_fixtures": (0.5 if (has_pages_dir and fixtures_path) else 0.0)
+                           + (0.5 if pom_has_locators else 0.0),
+        # Un test dont le tag ne resout aucun scenario ne compte plus comme trace.
+        # `tagged_tests` compte des TESTS, `dangling` comptait des IDENTIFIANTS distincts :
+        # dix tests partageant un meme identifiant pendant n'etaient penalises qu'une fois.
+        # On penalise les tests concernes (B14).
+        "traceability": pct(max(0, tagged_tests - tests_with_dangling_id), tests_total),
+    }
+
+    total_weight = sum(WEIGHTS[k] for k in applicable) or 1.0
+    budget = dict((k, round(raw_values[k] * WEIGHTS[k] * 100.0 / total_weight, 1))
+                  for k in applicable)
+
+    # Les constats de convention ne remontent que pour les dimensions effectivement notees.
+    # Sans cette porte, une suite dont on a decide de ne pas juger les selecteurs recevait
+    # quand meme un constat par selecteur CSS : le score se taisait et les constats criaient.
+    for key, dim in (("selector", "robust_selectors"), ("traceability", "traceability"),
+                     ("pom", "pom_as_fixtures")):
+        if dim in applicable:
+            findings.extend(convention_findings[key])
+
+    # Une dimension non evaluee est un ETAT, pas un defaut : elle va dans `notes`. Mise dans
+    # `findings`, elle rendait « nombre de constats » inutilisable comme mesure -- exactement la
+    # faute commise puis corrigee le meme jour un etage plus bas, dans `structural_score.py`.
+    notes = []
+    for dim, why in sorted(excluded.items()):
+        notes.append({"kind": "dimension-not-assessed", "file": ".", "line": 0,
+                      "detail": "%s EXCLUDED from the budget, not scored zero -- %s. The "
+                                "remaining dimensions were rescaled to 100." % (dim, why)})
+
+    # Le signal reste dit, sans etre affirme comme un defaut. Ne rien dire du tout serait
+    # l'exces inverse : une suite entierement en selecteurs CSS PEUT etre fragile, on ignore
+    # simplement si c'est un choix. On rapporte le fait ; le lecteur tranche.
+    if "robust_selectors" in excluded and selector_raw:
+        notes.append({"kind": "raw-selectors-observed", "file": ".", "line": 0,
+                      "detail": "%d raw CSS/XPath locator(s) observed and NOT counted against "
+                                "this suite. If they are not a deliberate published contract, "
+                                "they are a known fragility -- a judgement only the suite's "
+                                "owner can make." % selector_raw})
 
     score = round(sum(budget.values()), 1)
 
@@ -688,6 +802,20 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
             "scenarios_without_test": len(orphan_scenarios),
         },
         "findings": findings,
+        "notes": notes,
+        "profile": profile,
+        # Un nombre « sur 100 » doit dire ce qu'il couvre. Quand une seule dimension s'applique,
+        # 100,0 signifie « parfait sur la substance des assertions », pas « suite parfaite » --
+        # et `realworld` obtient exactement cela avec huit attentes interdites au compteur. Le
+        # score n'est pas faux, il est ETROIT ; le taire serait la meme faute qu'un verdict
+        # fabrique sur un parse vide.
+        "scoreScope": {
+            "assessed": sorted(applicable),
+            "excluded": sorted(excluded),
+            # Comparable a un autre score seulement si les memes dimensions y sont evaluees.
+            "comparableWith": "profile=%s + dimensions=%s" % (profile, "+".join(sorted(applicable))),
+            "narrow": len(applicable) < 3,
+        },
     }
 
 
@@ -1010,9 +1138,13 @@ def main():
     ap.add_argument("--max-mutations", type=int, default=25, help="cap on mutations (0 = no cap)")
     ap.add_argument("--timeout", type=int, default=300, help="per-run timeout in seconds")
     ap.add_argument("--skip-mutation", action="store_true", help="static track only")
+    ap.add_argument("--profile", choices=("universal", "qaia"), default="universal",
+                    help="`universal` (defaut) ne note qu'une dimension que la suite montre ; "
+                         "`qaia` rend les conventions de ce projet obligatoires (voir la "
+                         "docstring de static_track)")
     ap.add_argument("--third-party", action="store_true",
-                    help="score a suite QAIA did not generate: QAIA-convention rules are excluded "
-                         "from the budget rather than scored zero (see static_track docstring)")
+                    help="DEPRECIE : ce que ce drapeau demandait est devenu le defaut le "
+                         "2026-08-24. Sans effet, conserve pour ne pas casser les appelants.")
     ap.add_argument("--out", help="write JSON here instead of stdout")
     args = ap.parse_args()
 
@@ -1039,8 +1171,15 @@ def main():
                           if p not in support_files]
 
     feature_ids, flagged_ids = collect_feature_ids(args.testbook)
+    profile = args.profile
+    if args.third_party:
+        # Un drapeau devenu sans effet qui reste silencieux laisse croire a son lecteur qu'il
+        # fait encore quelque chose. Il le dit.
+        print("NOTE: --third-party est deprecie -- le budget conditionnel est desormais le "
+              "defaut. Utilisez `--profile qaia` pour imposer les conventions de ce projet.",
+              file=sys.stderr)
     static = static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids,
-                          third_party=args.third_party)
+                          profile=profile)
 
     if args.skip_mutation:
         mutation = {"status": "skipped", "blocker": "--skip-mutation requested",

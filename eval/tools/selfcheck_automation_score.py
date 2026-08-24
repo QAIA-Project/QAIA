@@ -171,9 +171,15 @@ check("collect_feature_ids returns a pair when there is no test book",
 # budget, never scored zero, and the hollow/blocking rules must keep firing regardless.
 import inspect
 sig = inspect.signature(A.static_track).parameters
-check("static_track accepts third_party", "third_party" in sig, True)
-check("third_party defaults to off, so QAIA's own suites keep the full budget",
-      sig["third_party"].default, False)
+check("static_track accepts a profile", "profile" in sig, True)
+# Inverse le 2026-08-24. L'ancien contrat etait : « third_party defaut a off, donc NOS suites
+# gardent le budget complet » -- c'est-a-dire que le budget de ce projet s'appliquait a tout le
+# monde et que l'exception etait a demander. Un outil qui juge ne peut pas avoir « ce n'est pas
+# de moi » dans son chemin par defaut.
+check("le profil UNIVERSEL est le defaut, pas le profil qaia",
+      sig["profile"].default, "universal")
+check("third_party survit comme alias deprecie, sans valeur par defaut imposee",
+      sig["third_party"].default, None)
 
 # --- 5. multi-line expect chains, and suites that are not Playwright at all ------------------
 # Found 2026-08-09 by scanning nine third-party Playwright suites (271 tests). Twenty
@@ -290,7 +296,7 @@ try:
             "});",
         ]))
     specs, _ = A.find_spec_files(_tmp2)
-    kinds = [f["kind"] for f in A.static_track(specs, [], _tmp2, set(), third_party=True)["findings"]]
+    kinds = [f["kind"] for f in A.static_track(specs, [], _tmp2, set(), profile="universal")["findings"]]
     check("a page-object assertion prevents test-without-assertion",
           kinds.count("test-without-assertion"), 0)
     check("a page-object assertion is not mistaken for an empty body",
@@ -312,7 +318,7 @@ try:
             "test.skip('declared as skipped', async ({ page }) => {});",
         ]))
     specs, _ = A.find_spec_files(_tmp2)
-    kinds = [f["kind"] for f in A.static_track(specs, [], _tmp2, set(), third_party=True)["findings"]]
+    kinds = [f["kind"] for f in A.static_track(specs, [], _tmp2, set(), profile="universal")["findings"]]
     check("both undeclared empty bodies are reported", kinds.count("empty-test-body"), 2)
 finally:
     shutil.rmtree(_tmp2, ignore_errors=True)
@@ -356,6 +362,71 @@ try:
     check("with no test book, the rule does not fire", len(silent), 0)
 finally:
     shutil.rmtree(_tmp3, ignore_errors=True)
+
+# --- 8. le budget est CONDITIONNEL : une dimension se note quand la suite la montre ----------
+#
+# Ajoute avec l'inversion du 2026-08-24. Les sept sections precedentes mesurent toutes le
+# comportement sur du materiau QAIA-conforme : elles prouvaient que l'outil ne nous penalise
+# pas, jamais qu'il crediterait quelqu'un d'autre. C'est exactement l'angle mort qui a laisse
+# `realworld` a 30,0/100 pour avoir gagne 30,0 des 30 points qu'il pouvait gagner.
+FOREIGN_SPEC = "\n".join([
+    "import { test, expect } from '@playwright/test';",
+    "test('user can sign in', async ({ page }) => {",
+    "  await page.locator('.login input').fill('a@b.c');",
+    "  await expect(page.locator('.user-nav')).toContainText('a@b.c');",
+    "});",
+])
+TRACED_SPEC = "\n".join([
+    "import { test, expect } from '@playwright/test';",
+    "test('JIRA-1234 the cart total is shown', async ({ page }) => {",
+    "  await expect(page.getByRole('status')).toHaveText('0.00');",
+    "});",
+])
+
+_tmp4 = tempfile.mkdtemp()
+try:
+    with open(os.path.join(_tmp4, "foreign.spec.ts"), "w", encoding="utf-8") as fh:
+        fh.write(FOREIGN_SPEC)
+    specs, _ = A.find_spec_files(_tmp4)
+
+    # Appel SANS argument de profil : c'est le defaut qu'on teste, pas un profil nomme. Le
+    # garde-fou jumeau d'un etage plus bas passait le profil explicitement, et une mutation
+    # basculant le defaut y a survecu.
+    r = A.static_track(specs, [], _tmp4, set())
+    check("le defaut n'evalue pas les dimensions que la suite ne montre pas",
+          sorted(r["scoreScope"]["excluded"]),
+          ["pom_as_fixtures", "robust_selectors", "traceability"])
+    check("...et il ne les note pas zero : elles sont absentes du budget",
+          sorted(r["budget"]), ["substantive_assertions"])
+    check("aucun constat ne reproche a la suite de n'avoir pas nos conventions",
+          [f["kind"] for f in r["findings"]
+           if f["kind"] in ("fragile-selector", "untraceable-test", "pom-missing")], [])
+    check("le score dit qu'il est etroit", r["scoreScope"]["narrow"], True)
+    check("les dimensions exclues sont NOMMEES, en notes et non en constats",
+          sum(1 for n in r["notes"] if n["kind"] == "dimension-not-assessed"), 3)
+    check("les selecteurs bruts observes sont rapportes sans etre imputes",
+          sum(1 for n in r["notes"] if n["kind"] == "raw-selectors-observed"), 1)
+
+    # Le profil `qaia` doit continuer a les imposer : sinon la regle a ete supprimee, pas
+    # deplacee.
+    q = A.static_track(specs, [], _tmp4, set(), profile="qaia")
+    check("le profil qaia impose toujours les quatre dimensions", len(q["budget"]), 4)
+    check("...et redit les constats de convention",
+          any(f["kind"] in ("fragile-selector", "untraceable-test", "pom-missing")
+              for f in q["findings"]), True)
+    check("...et note donc plus bas la meme suite", q["score"] < r["score"], True)
+
+    # Une suite tracee par une convention ETRANGERE doit etre creditee. Sans ce cas, tout ce qui
+    # precede se mesure sur des suites NON tracees, et la detection pourrait n'accepter que la
+    # notre sans que rien ne le voie.
+    with open(os.path.join(_tmp4, "traced.spec.ts"), "w", encoding="utf-8") as fh:
+        fh.write(TRACED_SPEC)
+    specs, _ = A.find_spec_files(_tmp4)
+    t = A.static_track(specs, [], _tmp4, set())
+    check("une tracabilite etrangere (JIRA-1234) est reconnue et notee",
+          "traceability" in t["budget"], True)
+finally:
+    shutil.rmtree(_tmp4, ignore_errors=True)
 
 if failures:
     print("selfcheck_automation_score: %d FAILURE(S)\n" % len(failures))

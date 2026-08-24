@@ -99,6 +99,29 @@ MUTATIONS = [
      "profil : le defaut bascule sur `qaia` a l'insu de l'appelant",
      'def score_feature(path, declared_acs=None, source_text=None, profile="universal",',
      'def score_feature(path, declared_acs=None, source_text=None, profile="qaia",'),
+
+    # Le meme defaut, un etage plus haut. `automation_score.py` le portait EN PREMIER : il a
+    # ete corrige le 2026-08-08 apres 408 constats faux, et `structural_score.py` l'a reproduit
+    # a l'identique le lendemain. Deux outils, deux jours, une lecon ecrite entre les deux.
+    ("eval/tools/automation_score.py", "eval/tools/selfcheck_automation_score.py",
+     "budget : les quatre dimensions redeviennent inconditionnelles",
+     'applicable = {"substantive_assertions": True}',
+     'applicable = {"substantive_assertions": True, "robust_selectors": True,\n'
+     '                  "pom_as_fixtures": True, "traceability": True}'),
+    ("eval/tools/automation_score.py", "eval/tools/selfcheck_automation_score.py",
+     "tracabilite : la detection revient a n'accepter que la convention maison",
+     "            ref = tag or REQ_REF.search(title)", "            ref = tag"),
+    ("eval/tools/automation_score.py", "eval/tools/selfcheck_automation_score.py",
+     "profil : le defaut bascule sur `qaia` a l'insu de l'appelant",
+     '                 profile="universal", third_party=None):',
+     '                 profile="qaia", third_party=None):'),
+    ("eval/tools/automation_score.py", "eval/tools/selfcheck_automation_score.py",
+     "constats : ceux de convention remontent meme pour une dimension non evaluee",
+     "        if dim in applicable:\n            findings.extend(convention_findings[key])",
+     "        if True:\n            findings.extend(convention_findings[key])"),
+    ("eval/tools/automation_score.py", "eval/tools/selfcheck_automation_score.py",
+     "portee : le score ne dit plus qu'il est etroit",
+     '"narrow": len(applicable) < 3,', '"narrow": False,'),
 ]
 
 
