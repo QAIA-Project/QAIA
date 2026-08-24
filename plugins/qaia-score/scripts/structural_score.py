@@ -7,13 +7,19 @@ themselves derived from the founding project's documented failure modes (case US
 100/100 machine vs 58/100 human — an AC "covered" by an unreadable image, a case with no
 expected result, idempotence gaps).
 
-Also detects the "pesticide paradox" (#24 gap harness, mode 3b): near-duplicate scenarios
-whose Given/When shape is identical and only a literal changed, with no distinct assertable
-behavior — the same test repeated under a new name catches nothing new. A real per-value
-behavioral difference (a distinct validation rule, a distinct boundary in the Then) is NOT
-flagged: only steps are compared, so a differing Then on structurally-identical Given/When
-still counts as a duplicate at the step-shape level and is reported for human judgment, not
-auto-failed (unlike C1/C2/sniffer, redundancy alone never forces STOP).
+Also reports the "pesticide paradox" (#24 gap harness, mode 3b): the same test repeated under a
+new name catches nothing new.
+
+**It penalises only byte-for-byte identical steps, and reports everything else.** Measured on
+257 foreign books on 2026-08-24: of the 852 pairs the previous rule charged as duplicates,
+**693 (81 %) differed only by literals** — and once literals are collapsed, a boundary pair and a
+copy-paste are the same text. `Opening new model` / `Opening new controller` / `Opening a new
+job` is an equivalence partition, not a repetition. No text tool can separate "same test, new
+value, no new behaviour" from "distinct values, deliberate coverage": that is a judgement about
+the domain. A detector that charges points for a judgement it cannot make is worse than a silent
+one — it carries the authority of a number.
+
+Redundancy never forces a STOP (unlike C1/C2/sniffer).
 
 NO LLM, NO network — reproducible and auditable, by design.
 
@@ -405,16 +411,39 @@ def score_feature(path, declared_acs=None, source_text=None, profile="universal"
     #
     # Desormais : penalite sur les groupes dont le `Then` est lui aussi equivalent, et simple
     # SIGNALEMENT pour les autres -- ce que le detecteur disait deja faire.
-    shape_groups, then_of = {}, {}
+    # Troisieme affinage du meme detecteur dans la journee, et le seul qui aille jusqu'au bout.
+    #
+    # La regle du matin -- « meme forme ET meme `Then` collapse » -- ratait un fait mesurable :
+    # sur les 852 paires qu'elle comptait comme doublons dans le corpus etranger, **693 (81 %)
+    # ne different QUE par des litteraux**. Or apres reduction des litteraux, une paire de
+    # valeurs limites et un copier-coller sont LE MEME TEXTE. Le detecteur ne les distinguait
+    # donc pas -- il avait seulement l'air de le faire.
+    #
+    # Les exemples reels tranchent la question : « Opening new model » / « Opening new
+    # controller » / « Opening a new job » dans `expanding-snippets`. C'est une partition
+    # d'equivalence, pas une repetition. Aucun outil de texte ne peut trancher entre « meme test,
+    # nouvelle valeur, aucun comportement neuf » et « valeurs distinctes, couverture
+    # deliberee » : c'est un jugement sur le DOMAINE, pas sur le texte.
+    #
+    # Donc il ne penalise plus que l'inambigu -- le texte STRICTEMENT identique, 159 paires sur
+    # 852 -- et signale tout le reste. Un detecteur qui facture un jugement qu'il ne peut pas
+    # rendre est pire que muet : il a l'autorite d'un chiffre.
+    def raw_key(s):
+        return "\n".join(re.sub(r"\s+", " ", t).strip().lower() for _kw, t in s["steps"])
+
+    shape_groups, then_of, raw_of = {}, {}, {}
     for s in scen:
         shape_groups.setdefault(shape_key(s), []).append(s["name"])
         then_of[s["name"]] = "\n".join(normalize_step(t) for t in s["then"])
+        raw_of[s["name"]] = raw_key(s)
     duplicate_groups, variant_groups = [], []
     for names in shape_groups.values():
         if len(names) < 2:
             continue
-        (duplicate_groups if len({then_of[n] for n in names}) == 1
-         else variant_groups).append(names)
+        if len({raw_of[n] for n in names}) == 1:
+            duplicate_groups.append(names)     # texte identique : aucune lecture n'en fait deux tests
+        else:
+            variant_groups.append(names)       # litteraux ou `Then` differents : un humain tranche
     # Pas d'alias : `redundant_groups = duplicate_groups` en etait un, et il ne pilotait que le
     # TEXTE du constat -- la penalite, elle, se calculait a partir de `duplicate_groups`. Une
     # mutation vidant l'alias survivait donc a la campagne : elle changeait ce que le rapport
@@ -574,17 +603,19 @@ def score_feature(path, declared_acs=None, source_text=None, profile="universal"
     if vague: findings.append(f"vague/non-verifiable Then (C2): {vague}")
     if truncated: findings.append(f"truncated step(s): {truncated}")
     if duplicate_groups:
-        findings.append(f"pesticide paradox: {len(duplicate_groups)} duplicate group(s) — same "
-                        f"Given/When shape AND same expected result → -{redundancy_pen}: "
-                        f"{duplicate_groups[:3]}")
+        findings.append(f"pesticide paradox: {len(duplicate_groups)} duplicate group(s) — "
+                        f"BYTE-FOR-BYTE identical steps, not merely a shared shape "
+                        f"→ -{redundancy_pen}: {duplicate_groups[:3]}")
     if variant_groups:
         # SIGNALEMENT, pas constat, et aucune penalite : meme forme mais resultat attendu
         # different, c'est-a-dire ce qu'est une paire de valeurs limites ou une paire
         # nominal/refus. 82 des 225 groupes du corpus etranger sont de cette espece.
-        notes.append("same Given/When shape but DIFFERENT expected results in %d group(s) — this "
-                     "is what a boundary pair or a nominal/refusal pair looks like, so it is "
-                     "reported and NOT penalised. A human decides whether the repetition earns "
-                     "its keep: %s" % (len(variant_groups), variant_groups[:3]))
+        notes.append("same Given/When shape but different literals or different expected results "
+                     "in %d group(s) — reported and NOT penalised. After literals are collapsed, "
+                     "a boundary pair and a copy-paste look identical, so no text tool can tell "
+                     "\"same test, new value\" from \"distinct values, deliberate coverage\": that "
+                     "is a judgement about the domain. A human decides whether the repetition "
+                     "earns its keep: %s" % (len(variant_groups), variant_groups[:3]))
     # @P1/@P2/@P3 et le tag de technique sont des conventions de CE projet -- elles n'existent
     # pas en Gherkin. Elles ne comptaient deja pas dans le score, mais elles produisaient 493
     # constats sur les 666 d'un corpus etranger : un bruit qui noyait les 159 constats reels.

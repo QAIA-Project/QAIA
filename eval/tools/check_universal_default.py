@@ -11,19 +11,46 @@ avait ete ecrite entre les deux.
 Ce controle ne relit pas une regle : il MESURE la propriete, en prenant un cahier reel et en lui
 retirant les conventions de ce projet.
 
-Trois invariants, chacun tombant sur un defaut deja survenu :
+DIX invariants, chacun tombant sur un defaut REELLEMENT SURVENU -- aucun n'est hypothetique, et
+sept ont ete ajoutes le jour meme ou trois relecteurs en contexte vierge ont trouve ce que les
+trois premiers laissaient passer.
 
   I1. Retirer les tags de priorite et de technique ne change PAS le score par defaut.
       (Ils produisaient 493 constats sur 666 sur un corpus etranger.)
 
-  I2. Retirer les tags d'identifiant ne fait pas CHUTER le score par defaut : la tracabilite
-      sort du denominateur au lieu d'etre notee zero.
+  I2. Retirer les tags d'identifiant ne fait pas CHUTER le score : la tracabilite sort du
+      denominateur au lieu d'etre notee zero.
       (Elle valait 25 points sur 100 perdus par construction -- 0 PASS sur 244 fichiers.)
 
   I3. Aucun CONSTAT du chemin par defaut ne nomme une convention de ce projet.
-      (Un constat nomme un defaut ; l'absence d'une convention maison n'en est pas un.)
 
-Exit 0 si les trois tiennent, 1 sinon.
+  I4. Une convention de tracabilite ETRANGERE est reconnue et notee.
+      (I1-I3 se mesurent tous sur nos cahiers : ils prouvaient que l'outil ne nous penalise pas,
+      jamais qu'il crediterait quelqu'un d'autre.)
+
+  I5. Aucun chiffre ne vaut zero faute de convention ; l'absence de mesure est DECLAREE.
+      (`negative_ratio` annoncait 0,0 % sur un cahier plein de tests negatifs. Il ne pese sur
+      aucun score -- il pese sur la confiance dans tous les autres chiffres.)
+
+  I6. Quatre conventions de tracabilite differentes donnent le meme score ET la meme dimension.
+      (Reconnaitre n'est pas crediter : `@JIRA-1234` rendait 78/CONCERNS la ou `@QAIA-...`
+      rendait 88/PASS, sur un cahier par ailleurs identique.)
+
+  I7. DETECTER NE DOIT JAMAIS PUNIR : une tracabilite partielle ne coute aucun point.
+      (Un seul `@HTML5` faisait perdre 21 points et une porte.)
+
+  I8. Le profil `qaia` AJOUTE des exigences, il n'en retire pas.
+      (Il avait cesse d'exiger la tracabilite : un cahier ayant perdu ses identifiants passait
+      de 75/CONCERNS a 100/PASS -- la porte le PROMOUVAIT.)
+
+  I9. Les deux outils du noyau s'accordent sur ce qu'est une reference d'exigence.
+      (Table de 18 cas, testant le COMPORTEMENT et non le texte des motifs.)
+
+  I10. Une paire de valeurs limites n'est pas un doublon, dans les DEUX sens : elle est
+      signalee sans penalite, et un doublon strict reste penalise.
+      (Le detecteur facturait jusqu'a 15 points ce que la profession enseigne d'ecrire.)
+
+Exit 0 si les dix tiennent, 1 sinon.
 """
 import os
 import re
@@ -336,41 +363,64 @@ def main():
     #
     # Trouve par une relectrice en contexte vierge, sur son propre cahier : « il me facture
     # 6 points pour avoir ecrit une paire de valeurs limites ».
-    def pair(then_a, then_b):
+    def pair(then_a, then_b, given_a="499", given_b="501"):
         return "\n".join([
             "Feature: seuil", "",
             "  Scenario: juste en dessous du seuil",
-            "    Given un panier de 499 EUR",
+            "    Given un panier de %s EUR" % given_a,
             "    When l'utilisateur valide",
             "    Then " + then_a, "",
             "  Scenario: juste au-dessus du seuil",
-            "    Given un panier de 501 EUR",
+            "    Given un panier de %s EUR" % given_b,
             "    When l'utilisateur valide",
             "    Then " + then_b, "",
         ])
 
     boundary = score(pair('la commande est acceptee et le total affiche est "499,00 EUR"',
                           'la commande est refusee avec le message "plafond depasse"'))
-    twin = score(pair('le total affiche est "499,00 EUR"', 'le total affiche est "501,00 EUR"'))
+    # La paire dont SEULS les litteraux different. C'est le cas le plus dur, et celui que la
+    # regle du matin facturait encore : apres reduction des litteraux, elle est indiscernable
+    # d'un copier-coller. 693 des 852 paires du corpus etranger sont de cette forme. Elle doit
+    # etre signalee, pas facturee -- « 499 accepte / 501 refuse » et « model / controller » ont
+    # exactement la meme signature textuelle, et seule la premiere est evidemment legitime.
+    literals_only = score(pair('le total affiche est "499,00 EUR"',
+                               'le total affiche est "501,00 EUR"'))
+    # Octet pour octet : memes Given, memes When, memes Then. Ma premiere fixture faisait
+    # varier le Given (499/501) et se croyait « vrai doublon » -- elle ne testait donc pas
+    # le cas qu'elle nommait, et la contre-epreuve passait a cote de son objet.
+    twin = score(pair('le total affiche est "499,00 EUR"',
+                      'le total affiche est "499,00 EUR"',
+                      given_a="499", given_b="499"))
     if boundary["penalties"]["redundancy"]:
         failures.append(
             "I10 : une paire de valeurs limites (meme forme, resultats attendus DIFFERENTS) est "
             "penalisee de %d point(s). C'est ce que la profession enseigne d'ecrire ; le "
             "detecteur doit la SIGNALER, pas la facturer."
             % boundary["penalties"]["redundancy"])
-    elif not any("DIFFERENT expected results" in n for n in boundary.get("notes", [])):
+    elif not any("NOT penalised" in n for n in boundary.get("notes", [])):
         failures.append("I10 : la paire de valeurs limites n'est meme pas signalee -- la "
                         "correction a supprime la detection au lieu de la requalifier.")
     else:
         print("  ok : paire de valeurs limites signalee sans penalite (%d point(s))"
               % boundary["penalties"]["redundancy"])
-    # Contre-epreuve : un VRAI doublon -- meme forme ET meme resultat attendu, au litteral pres --
-    # doit rester penalise. Sans elle, la correction aurait pu simplement eteindre le detecteur.
+    if literals_only["penalties"]["redundancy"]:
+        failures.append(
+            "I10 : une paire ne differant QUE par ses litteraux est penalisee de %d point(s). "
+            "Apres reduction des litteraux elle est indiscernable d'un copier-colle : la "
+            "facturer, c'est rendre un jugement de domaine qu'aucun outil de texte ne peut "
+            "rendre." % literals_only["penalties"]["redundancy"])
+    else:
+        print("  ok : une paire ne differant que par ses litteraux n'est pas penalisee")
+
+    # Contre-epreuve : un VRAI doublon -- des etapes STRICTEMENT identiques, octet pour octet --
+    # doit rester penalise. Sans elle, la correction aurait pu simplement eteindre le detecteur,
+    # ce qui est le risque de tout affinage successif : a force de retirer les cas douteux, il
+    # ne reste rien. Trois affinages le meme jour rendent cette contre-epreuve indispensable.
     if not twin["penalties"]["redundancy"]:
-        failures.append("I10 : un vrai doublon (meme forme ET meme resultat attendu) n'est plus "
+        failures.append("I10 : un doublon strict (etapes identiques octet pour octet) n'est plus "
                         "penalise du tout -- le detecteur a ete eteint, pas affine.")
     else:
-        print("  ok : un vrai doublon reste penalise (%d point(s))"
+        print("  ok : un doublon strict reste penalise (%d point(s))"
               % twin["penalties"]["redundancy"])
 
     # I9 -- les deux outils du noyau s'accordent sur ce qu'est une reference d'exigence.
