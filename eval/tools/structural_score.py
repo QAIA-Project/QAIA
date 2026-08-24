@@ -15,12 +15,26 @@ flagged: only steps are compared, so a differing Then on structurally-identical 
 still counts as a duplicate at the step-shape level and is reported for human judgment, not
 auto-failed (unlike C1/C2/sniffer, redundancy alone never forces STOP).
 
-NO LLM, NO network — reproducible and auditable, by design. This lives in eval/ (it is a
-maintainer measurement tool), NOT in plugins/ (it is not shipped to installers). The plugin
-skills reference the *approach*; this proves it discriminates on a hardened gold set.
+NO LLM, NO network — reproducible and auditable, by design.
+
+This file is the SOURCE. Since the 2026-08-09 decision (ADR 0002) it is also SHIPPED, byte for
+byte, to `plugins/qaia-score/scripts/structural_score.py`, and `check_repo_structure.py` keeps
+the two identical. The docstring said the opposite -- "NOT in plugins/ (it is not shipped to
+installers)" -- for fifteen days after the decision that made it false, and so did
+`docs/OUTPUT-CONTRACT.md`. Found on 2026-08-24 by a first-time reader who followed the prose,
+looked for the file where it said the file was not, and found it there. A comment that contradicts
+the repository is worse than no comment: it is trusted.
 
 Usage: python3 structural_score.py <file.feature> [--acs AC1,AC2,...] [--source src.md]
-       python3 structural_score.py --batch <dir>
+                                                  [--profile universal|qaia]
+       python3 structural_score.py --batch <dir> [--profile universal|qaia]
+
+  --profile universal  (defaut) ne juge que ce qui est vrai de tout cahier, quel qu'en soit
+                       l'auteur. La tracabilite et le ratio negatif y sont DETECTES : mesures
+                       quand le cahier montre la convention, declares non evalues sinon.
+  --profile qaia       ajoute par-dessus les conventions de ce projet (tag de priorite, tag de
+                       technique). Elles n'existent pas en Gherkin : ne le demandez que pour un
+                       cahier qui les a adoptees.
 """
 import re
 import sys, sys, os, json, glob
@@ -85,7 +99,8 @@ HOLLOW_RE = re.compile(
 # corpus-24-depth C5/C10/C18 gap: these evade the original narrow success-word list entirely,
 # scoring completeness down but never surfacing as a named C2 finding (eval/baselines/corpus-24-depth.md).
 VAGUE_RE = re.compile(
-    r"\b(correct(e|ement)?|comme attendu|as expected|works?|fonctionne|r[ée]pond correctement|"
+    r"\b(correct(e|ement|ly)?|comme attendu|as expected|works?|fonctionne|"
+    r"r[ée]pond correctement|responds? correctly|behaves? correctly|works? correctly|"
     r"le syst[eè]me r[ée]pond|properly|ok|sans erreur|no error|success(fully)?|"
     r"appropri[ée]e?(ment)?|appropriately|as appropriate|"
     r"(une\s+)?r[èe]gle\s+d[ée]terministe|deterministic rule|"
@@ -365,14 +380,36 @@ def score_feature(path, declared_acs=None, source_text=None, profile="universal"
     smoke = [s for s in scen if "@smoke" in tags_lower(s)]
     negative = [s for s in scen if "@negative" in tags_lower(s)]
     non_smoke_n = len(scen) - len(smoke) or 1
-    negative_ratio_recomputed = round(100 * len(negative) / non_smoke_n, 1)
+
+    # `negative_scenarios` comptait les scenarios PORTANT LE TAG `@negative`, et le rendait sous
+    # un nom qui promet une mesure. Sur un cahier ecrit ailleurs il annonce donc « ratio negatif
+    # 0,0 % » pour un cahier qui teste les refus a moitie : ce n'est pas une convention
+    # manquante, c'est UN CHIFFRE FAUX presente comme mesure. Mesure du 2026-08-24 : sur
+    # 1 564 scenarios etrangers, **zero** porte ce tag.
+    #
+    # Trouve par une relectrice en contexte vierge jouant une QA lead, pas par un controle.
+    # Elle l'a dit mieux que ce commentaire : « le jour ou je decouvre qu'un des chiffres compte
+    # en realite une convention de tags, je cesse de croire les autres. »
+    #
+    # Meme traitement que la tracabilite : mesure quand la convention est presente, DECLARE NON
+    # EVALUE sinon. Et surtout PAS remplace par une detection semantique du refus -- essayee sur
+    # le corpus, elle rend 13,6 %, un chiffre plus plausible et tout aussi peu verifiable.
+    # Remplacer un chiffre faux par un chiffre fragile n'est pas une correction.
+    negative_convention_present = bool(negative)
+    negative_ratio_recomputed = (round(100 * len(negative) / non_smoke_n, 1)
+                                 if negative_convention_present else None)
     tag_audit = {
-        "missing_priority_tag": no_priority,
-        "technique_tag_violations": technique_hits,
-        "negative_scenarios": len(negative),
+        "negative_scenarios": len(negative) if negative_convention_present else None,
         "non_smoke_scenarios": non_smoke_n,
         "negative_ratio_recomputed_pct": negative_ratio_recomputed,
+        "negativeRatioAssessed": negative_convention_present,
     }
+    # Les deux lignes de convention pure ne sortent que sous le profil qui les demande. Rendues
+    # systematiquement, elles se lisent comme des reproches -- « missing priority tag » sur un
+    # cahier Cucumber ordinaire nomme un manque qui n'en est pas un.
+    if profile == "qaia":
+        tag_audit["missing_priority_tag"] = no_priority
+        tag_audit["technique_tag_violations"] = technique_hits
 
     # --- deterministic /100 (explicit budget, like a real tg_scorer) ---
     readability = 25 * (len([s for s in scen if s["name"] and s["steps"]]) / n)
@@ -440,6 +477,10 @@ def score_feature(path, declared_acs=None, source_text=None, profile="universal"
             findings.append(f"missing priority tag (@P1/@P2/@P3): {no_priority}")
         if technique_hits:
             findings.append(f"technique tag count != 1 from the closed list: {technique_hits}")
+    if not negative_convention_present:
+        notes.append("negative ratio NOT ASSESSED: no scenario carries the @negative tag, so "
+                     "there is no negative-path convention to measure here. The ratio is null, "
+                     "NOT 0.0 -- a zero would be a false number, not a missing convention.")
     if not traceability_assessed:
         # Un ETAT, pas un defaut : il va dans `notes`, pas dans `findings`. Mis dans `findings`
         # il gonflait le compte de 247 sur un corpus de 257 fichiers -- le meme bruit que celui
@@ -480,7 +521,12 @@ def main():
             try: stream.reconfigure(encoding="utf-8")
             except Exception: pass
     args = sys.argv[1:]
-    if not args: print(__doc__); sys.exit(1)
+    if not args or args[0] in ("-h", "--help", "help"):
+        # `--help` etait lu comme un CHEMIN et rendait « BROKEN: --help illisible ». Un outil en
+        # ligne de commande qui traite sa propre demande d'aide comme un fichier introuvable
+        # apprend a son utilisateur qu'il ne l'attendait pas.
+        print(__doc__)
+        sys.exit(0 if args else 1)
     profile = "universal"
     if "--profile" in args:
         i = args.index("--profile")
@@ -499,8 +545,21 @@ def main():
               file=sys.stderr)
         args = [a for a in args if a != "--third-party"]
     if args[0] == "--batch":
-        rows = [score_feature(f, profile=profile)
-                for f in sorted(glob.glob(os.path.join(args[1], "*.feature")))]
+        if len(args) < 2:
+            print("BROKEN: --batch attend un repertoire", file=sys.stderr)
+            raise SystemExit(2)
+        paths = sorted(glob.glob(os.path.join(args[1], "*.feature")))
+        if not paths:
+            # Zero fichier n'est pas zero probleme. Le mode --batch se taisait et sortait 0 :
+            # indiscernable d'un succes, donc un chemin mal ecrit passait pour un depot sain.
+            # C'est le « vert a vide » exact -- dans l'outil qui, FICHIER PAR FICHIER, refuse
+            # deja de noter un parse vide (UNSCORED, #105). La garde existait un niveau trop bas.
+            # Releve par une relectrice en contexte vierge : « si je me trompe de chemin, et sous
+            # Windows ca arrivera, je crois que tout va bien. »
+            print("BROKEN: aucun fichier .feature sous %s -- le perimetre est vide, ce n'est "
+                  "pas un succes" % args[1], file=sys.stderr)
+            raise SystemExit(2)
+        rows = [score_feature(f, profile=profile) for f in paths]
         for r in rows: print(json.dumps(r, ensure_ascii=False))
         return
     declared = None; source = None; path = args[0]

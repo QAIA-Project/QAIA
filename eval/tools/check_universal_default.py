@@ -166,6 +166,47 @@ def main():
               % (name[:34], base["score"], s1["score"], s2["score"],
                  "evaluee" if s2.get("traceabilityAssessed") else "non evaluee"))
 
+    # I5 -- aucun chiffre du chemin par defaut ne doit valoir zero faute de convention.
+    #
+    # `negative_ratio_recomputed_pct` comptait les scenarios portant le tag `@negative` et
+    # rendait le resultat sous un nom qui promet une mesure. Sur un cahier ecrit ailleurs il
+    # annoncait « 0,0 % » -- pas une convention manquante, UN CHIFFRE FAUX. Mesure : sur
+    # 1 564 scenarios etrangers, zero porte ce tag.
+    #
+    # I1-I3 ne pouvaient pas le voir : ils comparent des SCORES, et ce chiffre-la ne pese sur
+    # aucun score. Il pese sur la confiance, ce qu'aucun invariant numerique n'attrape. Trouve
+    # par une relectrice en contexte vierge, pas par un controle -- d'ou cet invariant.
+    numeric_fields = ("negative_ratio_recomputed_pct", "negative_scenarios")
+    for rel in BOOKS[:1]:
+        path = os.path.join(ROOT, rel)
+        if not os.path.isfile(path):
+            continue
+        stripped_neg = re.sub(r"@negative\b", "", open(path, encoding="utf-8").read(), flags=re.I)
+        n = score(stripped_neg)
+        for field in numeric_fields:
+            if n["tag_audit"].get(field) is not None:
+                failures.append(
+                    "I5 %s : `%s` vaut %r sur un cahier sans convention `@negative`. Un chiffre "
+                    "qu'on ne peut pas mesurer se dit null, jamais zero -- un zero se lit comme "
+                    "une mesure et detruit la confiance dans les chiffres voisins."
+                    % (os.path.basename(rel), field, n["tag_audit"][field]))
+        if n["tag_audit"].get("negativeRatioAssessed") is not False:
+            failures.append("I5 %s : l'absence de mesure du ratio negatif n'est pas declaree."
+                            % os.path.basename(rel))
+        if not any("negative ratio NOT ASSESSED" in x for x in n.get("notes", [])):
+            failures.append("I5 %s : rien ne dit au lecteur POURQUOI le ratio est null."
+                            % os.path.basename(rel))
+        # Contre-epreuve : avec la convention presente, le chiffre doit revenir. Sans elle, la
+        # correction aurait supprime la mesure au lieu de la conditionner.
+        b = score(open(path, encoding="utf-8").read())
+        if b["tag_audit"].get("negative_ratio_recomputed_pct") is None:
+            failures.append("I5 %s : le ratio negatif reste null alors que le cahier PORTE des "
+                            "tags @negative -- la mesure a ete supprimee, pas conditionnee."
+                            % os.path.basename(rel))
+        else:
+            print("  ok : ratio negatif mesure=%s%% avec la convention, null sans elle"
+                  % b["tag_audit"]["negative_ratio_recomputed_pct"])
+
     # I4 -- une convention de tracabilite ETRANGERE doit etre reconnue.
     #
     # Les invariants I1-I3 se mesurent tous sur des cahiers de CE depot. Ils prouvent donc

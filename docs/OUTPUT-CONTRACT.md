@@ -241,8 +241,10 @@ did not write treats it as absent (degraded mode, shared contract rule 8), never
 [`docs/schemas/output-contract-v1.schema.json`](https://github.com/QAIA-Project/QAIA/blob/main/docs/schemas/output-contract-v1.schema.json) is a formal JSON Schema (draft 2020-12) copy of
 the rules above, and [`eval/tools/validate_manifest.py`](https://github.com/QAIA-Project/QAIA/blob/main/eval/tools/validate_manifest.py) is a stdlib-only, dependency-free
 validator against the same rules (hand-rolled rather than a generic JSON Schema engine, to stay
-consistent with `structural_score.py`/`second_judge.py`: maintainer eval tooling, never shipped
-to installers). Both are a second, executable copy of this document, not a new source of
+consistent with `structural_score.py`/`second_judge.py`). *Correction du 2026-08-24 : cette
+parenthese disait « maintainer eval tooling, never shipped to installers », ce qui a cesse d'etre
+vrai le 2026-08-09 (ADR 0002) -- les trois scoreurs sont livres dans `plugins/qaia-score/scripts/`
+et une porte les y maintient identiques. `validate_manifest.py`, lui, ne l'est pas.* Both are a second, executable copy of this document, not a new source of
 truth — if they ever disagree with the prose above, the prose wins and the tooling is a bug.
 
 ```
