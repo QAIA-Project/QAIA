@@ -174,6 +174,15 @@ MUTATIONS = [
      "ratio negatif : un zero faux revient a la place du non-evalue",
      "    negative_convention_present = bool(negative)",
      "    negative_convention_present = True"),
+    ("eval/tools/structural_score.py", "eval/tools/check_universal_default.py",
+     "redondance : une paire de valeurs limites redevient un doublon facture",
+     "        (duplicate_groups if len({then_of[n] for n in names}) == 1\n"
+     "         else variant_groups).append(names)",
+     "        duplicate_groups.append(names)"),
+    ("eval/tools/structural_score.py", "eval/tools/check_universal_default.py",
+     "redondance : le detecteur est eteint au lieu d'etre affine",
+     "    redundant_scenarios = [name for group in duplicate_groups for name in group]",
+     "    redundant_scenarios = []"),
 ]
 
 

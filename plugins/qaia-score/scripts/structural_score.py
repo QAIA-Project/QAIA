@@ -391,11 +391,36 @@ def score_feature(path, declared_acs=None, source_text=None, profile="universal"
             if in_then: continue
             gw.append(("and" if k in ("and", "but", "et", "mais") else k, normalize_step(t)))
         return tuple(gw)
-    shape_groups = {}
+    # Un groupe de forme Given/When identique n'est un DOUBLON que si son `Then` l'est aussi.
+    #
+    # Le detecteur penalisait tout groupe de forme identique, jusqu'a -15 points, alors que le
+    # commentaire d'en-tete de ce fichier promet l'inverse : « reported for human judgment, not
+    # auto-failed ». Il facturait donc les paires de valeurs limites et les paires
+    # nominal/refus -- ce que la profession enseigne d'ecrire.
+    #
+    # Mesure avant correction, sur les 257 cahiers etrangers : **225 groupes, dont 82 (36 %) a
+    # `Then` differents**. « Creating a new draft consultation » groupe avec « ... in another
+    # language », « Going from: format.html » avec « render :new, formats: [:js] ». Un tiers des
+    # constats de redondance nommait des comportements distincts.
+    #
+    # Desormais : penalite sur les groupes dont le `Then` est lui aussi equivalent, et simple
+    # SIGNALEMENT pour les autres -- ce que le detecteur disait deja faire.
+    shape_groups, then_of = {}, {}
     for s in scen:
         shape_groups.setdefault(shape_key(s), []).append(s["name"])
-    redundant_groups = [names for names in shape_groups.values() if len(names) > 1]
-    redundant_scenarios = [name for group in redundant_groups for name in group]
+        then_of[s["name"]] = "\n".join(normalize_step(t) for t in s["then"])
+    duplicate_groups, variant_groups = [], []
+    for names in shape_groups.values():
+        if len(names) < 2:
+            continue
+        (duplicate_groups if len({then_of[n] for n in names}) == 1
+         else variant_groups).append(names)
+    # Pas d'alias : `redundant_groups = duplicate_groups` en etait un, et il ne pilotait que le
+    # TEXTE du constat -- la penalite, elle, se calculait a partir de `duplicate_groups`. Une
+    # mutation vidant l'alias survivait donc a la campagne : elle changeait ce que le rapport
+    # DIT sans changer ce que le score FAIT. Deux noms pour une chose, c'est deja un endroit ou
+    # les deux peuvent diverger.
+    redundant_scenarios = [name for group in duplicate_groups for name in group]
 
     # --- independent tag/ratio audit (reported facts, NOT folded into the /100 score) ---
     # This is the mechanical bookkeeping half of the gate (tag presence, ratio) — deliberately
@@ -548,7 +573,18 @@ def score_feature(path, declared_acs=None, source_text=None, profile="universal"
     if empty_then: findings.append(f"no expected result (C2 — a question, not a test): {empty_then}")
     if vague: findings.append(f"vague/non-verifiable Then (C2): {vague}")
     if truncated: findings.append(f"truncated step(s): {truncated}")
-    if redundant_groups: findings.append(f"pesticide paradox: {len(redundant_groups)} near-duplicate group(s) (same Given/When shape) → -{redundancy_pen}: {redundant_groups[:3]}")
+    if duplicate_groups:
+        findings.append(f"pesticide paradox: {len(duplicate_groups)} duplicate group(s) — same "
+                        f"Given/When shape AND same expected result → -{redundancy_pen}: "
+                        f"{duplicate_groups[:3]}")
+    if variant_groups:
+        # SIGNALEMENT, pas constat, et aucune penalite : meme forme mais resultat attendu
+        # different, c'est-a-dire ce qu'est une paire de valeurs limites ou une paire
+        # nominal/refus. 82 des 225 groupes du corpus etranger sont de cette espece.
+        notes.append("same Given/When shape but DIFFERENT expected results in %d group(s) — this "
+                     "is what a boundary pair or a nominal/refusal pair looks like, so it is "
+                     "reported and NOT penalised. A human decides whether the repetition earns "
+                     "its keep: %s" % (len(variant_groups), variant_groups[:3]))
     # @P1/@P2/@P3 et le tag de technique sont des conventions de CE projet -- elles n'existent
     # pas en Gherkin. Elles ne comptaient deja pas dans le score, mais elles produisaient 493
     # constats sur les 666 d'un corpus etranger : un bruit qui noyait les 159 constats reels.

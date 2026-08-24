@@ -326,6 +326,53 @@ def main():
         print("  ok : le profil `qaia` exige la tracabilite (%s contre %s en universel)"
               % (q["score"], s_none["score"]))
 
+    # I10 -- une paire de valeurs limites n'est pas un doublon.
+    #
+    # Le detecteur de redondance penalisait tout groupe de meme forme Given/When, jusqu'a
+    # -15 points, alors que l'en-tete du fichier promet « reported for human judgment, not
+    # auto-failed ». Il facturait donc les paires nominal/refus et les paires de valeurs
+    # limites -- ce que la profession enseigne d'ecrire. Mesure sur le corpus etranger :
+    # 82 des 225 groupes (36 %) avaient des `Then` differents.
+    #
+    # Trouve par une relectrice en contexte vierge, sur son propre cahier : « il me facture
+    # 6 points pour avoir ecrit une paire de valeurs limites ».
+    def pair(then_a, then_b):
+        return "\n".join([
+            "Feature: seuil", "",
+            "  Scenario: juste en dessous du seuil",
+            "    Given un panier de 499 EUR",
+            "    When l'utilisateur valide",
+            "    Then " + then_a, "",
+            "  Scenario: juste au-dessus du seuil",
+            "    Given un panier de 501 EUR",
+            "    When l'utilisateur valide",
+            "    Then " + then_b, "",
+        ])
+
+    boundary = score(pair('la commande est acceptee et le total affiche est "499,00 EUR"',
+                          'la commande est refusee avec le message "plafond depasse"'))
+    twin = score(pair('le total affiche est "499,00 EUR"', 'le total affiche est "501,00 EUR"'))
+    if boundary["penalties"]["redundancy"]:
+        failures.append(
+            "I10 : une paire de valeurs limites (meme forme, resultats attendus DIFFERENTS) est "
+            "penalisee de %d point(s). C'est ce que la profession enseigne d'ecrire ; le "
+            "detecteur doit la SIGNALER, pas la facturer."
+            % boundary["penalties"]["redundancy"])
+    elif not any("DIFFERENT expected results" in n for n in boundary.get("notes", [])):
+        failures.append("I10 : la paire de valeurs limites n'est meme pas signalee -- la "
+                        "correction a supprime la detection au lieu de la requalifier.")
+    else:
+        print("  ok : paire de valeurs limites signalee sans penalite (%d point(s))"
+              % boundary["penalties"]["redundancy"])
+    # Contre-epreuve : un VRAI doublon -- meme forme ET meme resultat attendu, au litteral pres --
+    # doit rester penalise. Sans elle, la correction aurait pu simplement eteindre le detecteur.
+    if not twin["penalties"]["redundancy"]:
+        failures.append("I10 : un vrai doublon (meme forme ET meme resultat attendu) n'est plus "
+                        "penalise du tout -- le detecteur a ete eteint, pas affine.")
+    else:
+        print("  ok : un vrai doublon reste penalise (%d point(s))"
+              % twin["penalties"]["redundancy"])
+
     # I9 -- les deux outils du noyau s'accordent sur ce qu'est une reference d'exigence.
     #
     # Ils ne s'accordaient pas : `@AC1` et `@TC2` etaient reconnus par l'un, refuses par
