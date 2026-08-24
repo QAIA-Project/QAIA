@@ -136,7 +136,7 @@ découvrable séparément.
 `automate` (Gherkin → Playwright exécutable). Le produit s'arrête-t-il au cahier, ou va-t-il
 jusqu'au code qui tourne ? C'est la seule skill supprimée qui porte une preuve externe réelle
 (les deux défauts de `json-server` ont été trouvés par du Playwright généré, pas par le cahier).
-**Traitée en phase 4, pas maintenant.**
+**Traitée en phase 4, pas maintenant** — [#111](https://github.com/QAIA-Project/QAIA/issues/111).
 
 **`agents-tier/` (8 agents) : supprimé.** Son propre README concède que deux seulement méritent une
 fenêtre de contexte et que `tools:` n'est pas une frontière de capacité. Avec un noyau et trois

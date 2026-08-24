@@ -66,7 +66,7 @@ Corrigé à moitié : le résultat porte désormais un champ `scoreScope` qui **
 évaluées, celles exclues, et marque `narrow: true` sous trois dimensions. **Ce n'est pas une
 solution complète** — un lecteur pressé verra toujours 100,0 d'abord. Le vrai remède serait un
 barème universel plus riche : les attentes interdites et les assertions faibles sont des défauts
-chez tout le monde et ne pèsent aujourd'hui sur aucune ligne de budget. **Reste ouvert.**
+chez tout le monde et ne pèsent aujourd'hui sur aucune ligne de budget. **Reste ouvert** — [#112](https://github.com/QAIA-Project/QAIA/issues/112).
 
 ## Limite honnête du corpus
 

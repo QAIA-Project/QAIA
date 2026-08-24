@@ -97,7 +97,8 @@ def run(suite_src):
             print("BROKEN: PyYAML absent -- selfcheck non concluant (pip install pyyaml)",
                   file=sys.stderr)
             sys.exit(2)
-        pairs, seen, all_status = D.scan_suite(tests)
+        pairs, seen, all_status, files_read, files_skipped = D.scan_suite(tests)
+        run.last_counts = (files_read, files_skipped, len(all_status))
         return D.compare(declared, pairs, seen, all_status)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
@@ -146,6 +147,87 @@ check("a navigation route is never reported as an endpoint",
 
 # --- 4. the clean pair: nothing fires ---------------------------------------------------------
 check("an agreeing spec and suite produce no finding", run(CLEAN), [])
+
+# --- 5. un parse vide ne produit JAMAIS de verdict --------------------------------------------
+#
+# Trouve le 2026-08-24 en pointant cet outil sur du logiciel tiers. Un repertoire ne contenant
+# AUCUN fichier de test lisible rendait trois `unexercised-status` affirmatifs : la regle est
+# vraie et vide, l'outil ne mesure plus la suite mais sa propre cecite. Sur quatre projets
+# etrangers, 11 constats sur 11 etaient de cette espece.
+#
+# Le refus vit dans `main()`, donc il se teste par la ligne de commande : le tester au niveau
+# des fonctions aurait valide la logique de comparaison sans jamais toucher la garde.
+import json as _json          # noqa: E402
+import subprocess as _sp      # noqa: E402
+
+_tmp5 = tempfile.mkdtemp()
+try:
+    _spec = os.path.join(_tmp5, "openapi.yml")
+    io.open(_spec, "w", encoding="utf-8", newline="\n").write(SPEC)
+
+    def _run_cli(tests_dir):
+        out = os.path.join(_tmp5, "out.json")
+        p = _sp.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                  "spec_suite_drift.py"),
+                     "--spec", _spec, "--tests-dir", tests_dir, "--json", out],
+                    capture_output=True, text=True)
+        data = _json.load(io.open(out, encoding="utf-8")) if os.path.isfile(out) else None
+        return p.returncode, data
+
+    # (a) repertoire sans le moindre fichier de test
+    _empty = os.path.join(_tmp5, "empty")
+    os.makedirs(_empty)
+    io.open(os.path.join(_empty, "README.md"), "w", encoding="utf-8").write("rien")
+    code, data = _run_cli(_empty)
+    check("un repertoire sans test rend UNCOMPARABLE", data and data["verdict"], "UNCOMPARABLE")
+    check("...et AUCUN constat", data and data["findings"], [])
+    check("...et un code de sortie distinct du vert comme du rouge", code, 3)
+    # Le MOTIF, pas seulement le verdict. Les deux conditions du refus se recouvrent -- zero
+    # fichier lu implique zero code reconnu -- si bien qu'une mutation neutralisant la premiere
+    # survivait : la seconde rattrapait le cas et rendait le meme verdict sous un motif faux.
+    # « Il n'y a pas de suite » et « la suite parle une langue que je ne lis pas » appellent deux
+    # actions differentes chez le lecteur ; les confondre vide le refus de son utilite.
+    check("...et le motif dit qu'il n'y avait AUCUN fichier lisible",
+          bool(data and "aucun fichier de test lisible" in (data["uncomparableReason"] or "")),
+          True)
+
+    # (b) des fichiers de test que ce lecteur ne sait pas lire (Go, Python)
+    _foreign = os.path.join(_tmp5, "foreign")
+    os.makedirs(_foreign)
+    io.open(os.path.join(_foreign, "api_test.go"), "w", encoding="utf-8").write(
+        "package main\nfunc TestBan(t *testing.T) { assertStatus(t, resp, 400) }\n")
+    code, data = _run_cli(_foreign)
+    check("des tests dans un langage non lu rendent UNCOMPARABLE",
+          data and data["verdict"], "UNCOMPARABLE")
+    check("...et ils sont COMPTES comme ignores, pas passes sous silence",
+          bool(data and data["counts"]["suite_files_skipped_unreadable"]), True)
+
+    # (c) des fichiers lus mais dont aucune facon d'affirmer un statut n'est reconnue
+    _idiom = os.path.join(_tmp5, "idiom")
+    os.makedirs(_idiom)
+    io.open(os.path.join(_idiom, "a.spec.ts"), "w", encoding="utf-8").write(
+        "test('ban a user', async () => {\n"
+        "  const res = await api.post('/v1/ban');\n"
+        "  assertOk(res);\n"
+        "});\n")
+    code, data = _run_cli(_idiom)
+    check("un fichier lu sans aucun code HTTP reconnu rend UNCOMPARABLE",
+          data and data["verdict"], "UNCOMPARABLE")
+    check("...et le compte de fichiers LUS le prouve",
+          bool(data and data["counts"]["suite_files_read"]), True)
+    check("...et le motif dit que c'est la FACON D'AFFIRMER qui n'est pas reconnue",
+          bool(data and "AUCUN code HTTP reconnu" in (data["uncomparableReason"] or "")), True)
+
+    # (d) contre-epreuve : une suite lisible doit toujours etre comparee, sinon la garde a
+    # simplement eteint l'outil au lieu de le rendre honnete.
+    _ok = os.path.join(_tmp5, "ok")
+    os.makedirs(_ok)
+    io.open(os.path.join(_ok, "a.spec.ts"), "w", encoding="utf-8", newline="\n").write(DRIFTING)
+    code, data = _run_cli(_ok)
+    check("une suite lisible est bel et bien comparee", data and data["verdict"], "compared")
+    check("...et rend ses ecarts", bool(data and data["findings"]), True)
+finally:
+    shutil.rmtree(_tmp5, ignore_errors=True)
 
 if failures:
     print("selfcheck_spec_suite_drift: %d FAILURE(S)\n" % len(failures))

@@ -122,6 +122,25 @@ MUTATIONS = [
     ("eval/tools/automation_score.py", "eval/tools/selfcheck_automation_score.py",
      "portee : le score ne dit plus qu'il est etroit",
      '"narrow": len(applicable) < 3,', '"narrow": False,'),
+
+    # REFUS SUR PARSE VIDE -- ajoutees le 2026-08-24 avec la campagne de derive. Un repertoire
+    # sans le moindre fichier de test rendait trois `unexercised-status` affirmatifs : la regle
+    # est vraie et vide, l'outil ne mesure plus la suite mais sa propre cecite. Sur quatre
+    # projets tiers, 11 constats sur 11 etaient de cette espece.
+    ("eval/tools/spec_suite_drift.py", "eval/tools/selfcheck_spec_suite_drift.py",
+     "parse vide : le refus de rendre un verdict est neutralise",
+     "    findings = [] if unreadable else compare(declared, pairs, seen_paths, all_status)",
+     "    unreadable = None\n"
+     "    findings = compare(declared, pairs, seen_paths, all_status)"),
+    ("eval/tools/spec_suite_drift.py", "eval/tools/selfcheck_spec_suite_drift.py",
+     "parse vide : zero fichier lu n'est plus une raison de se taire",
+     "    if files_read == 0:", "    if False:"),
+    ("eval/tools/spec_suite_drift.py", "eval/tools/selfcheck_spec_suite_drift.py",
+     "parse vide : aucun code HTTP reconnu n'est plus une raison de se taire",
+     "    elif not all_status:", "    elif False:"),
+    ("eval/tools/spec_suite_drift.py", "eval/tools/selfcheck_spec_suite_drift.py",
+     "comptage : les fichiers illisibles ne sont plus comptes",
+     "                    files_skipped += 1", "                    pass"),
 ]
 
 

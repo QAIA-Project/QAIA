@@ -188,14 +188,30 @@ def collect_blocks(text):
 
 
 def scan_suite(tests_dir):
-    """Retourne (paires, chemins_vus). Une paire est (chemin, code, fichier, ligne, titre)."""
+    """Retourne (paires, chemins_vus, codes_vus, fichiers_lus, fichiers_ignores).
+
+    Une paire est (chemin, code, fichier, ligne, titre).
+
+    Les deux derniers comptes ont ete ajoutes le 2026-08-24 : sans eux, l'outil ne savait pas
+    dire s'il n'avait rien trouve ou rien lu, et rendait des constats affirmatifs sur un
+    repertoire VIDE (cf. la garde dans `compare_or_refuse`).
+    """
     pairs, seen_paths, all_status = [], set(), set()
+    files_read, files_skipped = 0, 0
     for root, dirs, files in os.walk(tests_dir):
         dirs[:] = [d for d in dirs if d not in ("node_modules", ".git")]
         for f in sorted(files):
             if not SPEC_GLOB.search(f):
+                # Un fichier de test que ce lecteur ne sait pas lire (Go, Python, Ruby, Java,
+                # ou un JS qui ne suit pas la convention `.spec.`/`.test.`) n'est pas rien : il
+                # est COMPTE, pour que l'absence de resultat puisse se distinguer de l'absence
+                # de lecture.
+                if f.endswith((".go", ".py", ".rb", ".java", ".kt", ".php", ".cs",
+                               ".js", ".ts", ".mjs", ".cjs")):
+                    files_skipped += 1
                 continue
             path = os.path.join(root, f)
+            files_read += 1
             text = read(path)
             lines = text.split(NL)
             rel = os.path.relpath(path, tests_dir)
@@ -222,7 +238,7 @@ def scan_suite(tests_dir):
                     only = next(iter(here_paths))
                     for status, ln in here_status:
                         pairs.append((only, status, rel, ln, title))
-    return pairs, seen_paths, all_status
+    return pairs, seen_paths, all_status, files_read, files_skipped
 
 
 def compare(declared, pairs, seen_paths, all_status):
@@ -303,18 +319,44 @@ def main():
     declared = load_spec(args.spec)
     if declared is None:
         return 2
-    pairs, seen_paths, all_status = scan_suite(args.tests_dir)
-    findings = compare(declared, pairs, seen_paths, all_status)
+    pairs, seen_paths, all_status, files_read, files_skipped = scan_suite(args.tests_dir)
+
+    # --- refus de rendre un verdict sur un parse vide -----------------------------------------
+    #
+    # Trouve le 2026-08-24 en pointant cet outil sur du logiciel tiers : un repertoire ne
+    # contenant AUCUN fichier de test rendait trois `unexercised-status` affirmatifs. La regle
+    # R2 dit « la specification promet 400 et aucun test ne mentionne ce code » ; sur une suite
+    # que l'outil n'a pas su lire, c'est vrai et vide -- il ne mesure plus la suite, il mesure
+    # sa propre cecite. Les regles R1 et R3, elles, ne peuvent alors PAS se declencher : sur
+    # quatre projets tiers, 11 constats sur 11 etaient des R2 de cette espece.
+    #
+    # C'est l'invariant que `structural_score.py` applique deja (UNSCORED plutot qu'un 20/100
+    # muet) et que celui-ci n'avait pas, parce qu'il n'avait jamais lu qu'un seul projet -- celui
+    # qui a servi a l'ecrire.
+    unreadable = None
+    if files_read == 0:
+        unreadable = ("aucun fichier de test lisible par cet outil (%d ignore(s) : il ne lit "
+                      "que le JS/TS nomme .spec./.test./.e2e.)" % files_skipped)
+    elif not all_status:
+        unreadable = ("%d fichier(s) lu(s), mais AUCUN code HTTP reconnu : la suite emploie "
+                      "vraisemblablement une autre facon d'affirmer un statut que celles que "
+                      "cet outil sait lire" % files_read)
+
+    findings = [] if unreadable else compare(declared, pairs, seen_paths, all_status)
 
     result = {
         "tool": "spec_suite_drift", "version": 1,
         "inputs": {"spec": args.spec, "tests_dir": args.tests_dir},
         "counts": {
             "spec_paths": len(declared),
+            "suite_files_read": files_read,
+            "suite_files_skipped_unreadable": files_skipped,
             "path_status_pairs_in_suite": len(pairs),
             "distinct_status_in_suite": len(all_status),
             "findings": len(findings),
         },
+        "verdict": "UNCOMPARABLE" if unreadable else "compared",
+        "uncomparableReason": unreadable,
         "findings": findings,
     }
 
@@ -324,6 +366,12 @@ def main():
         print("written: %s" % args.json)
     else:
         print(json.dumps(result, indent=2, ensure_ascii=False))
+
+    if unreadable:
+        print(NL + "UNCOMPARABLE : %s." % unreadable, file=sys.stderr)
+        print("Aucun ecart n'est rendu -- un verdict ici mesurerait la cecite de l'outil, pas "
+              "la suite.", file=sys.stderr)
+        return 3
 
     if findings:
         print(NL + "%d ecart(s) entre la specification et la suite :" % len(findings), file=sys.stderr)

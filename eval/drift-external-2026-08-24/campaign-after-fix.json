@@ -1,0 +1,44 @@
+{
+ "repos": [
+  {
+   "repo": "wikimedia/mediawiki-services-cxserver",
+   "branch": "master",
+   "spec": "spec.yaml",
+   "tests_fetched": 19,
+   "exit": 3,
+   "findings": 0,
+   "by_kind": {}
+  },
+  {
+   "repo": "wikimedia/mediawiki-services-push-notifications",
+   "branch": "master",
+   "spec": "spec.yaml",
+   "tests_fetched": 3,
+   "exit": 1,
+   "findings": 3,
+   "by_kind": {
+    "unexercised-status": 3
+   }
+  },
+  {
+   "repo": "jhalter/mobius",
+   "branch": "master",
+   "spec": "api.yaml",
+   "tests_fetched": 57,
+   "exit": 3,
+   "findings": 0,
+   "by_kind": {}
+  },
+  {
+   "repo": "ScottyLabs/cmueats",
+   "branch": "main",
+   "spec": "api.yaml",
+   "tests_fetched": 7,
+   "exit": 3,
+   "findings": 0,
+   "by_kind": {}
+  }
+ ],
+ "excluded": [],
+ "tool_errors": []
+}
