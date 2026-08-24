@@ -27,7 +27,11 @@ the repository is worse than no comment: it is trusted.
 
 Usage: python3 structural_score.py <file.feature> [--acs AC1,AC2,...] [--source src.md]
                                                   [--profile universal|qaia]
-       python3 structural_score.py --batch <dir> [--profile universal|qaia]
+       python3 structural_score.py --batch <dir> [--profile universal|qaia] [--format json|md]
+
+  --format md          rapport lisible par un humain, trie par gravite (mode --batch). Sans lui,
+                       la sortie est du JSON, une ligne par fichier -- utilisable pour trois
+                       fichiers, illisible pour trois cents.
 
   --profile universal  (defaut) ne juge que ce qui est vrai de tout cahier, quel qu'en soit
                        l'auteur. La tracabilite et le ratio negatif y sont DETECTES : mesures
@@ -66,15 +70,21 @@ PRIORITY_TAGS = {"@p1", "@p2", "@p3"}
 # quatrieme. Aucun drapeau a passer : l'outil s'adapte au materiau, ce n'est plus au materiau
 # de s'adapter a l'outil.
 #
-# Le motif exige une amorce d'AU MOINS DEUX MAJUSCULES puis un chiffre quelque part : calibre
-# contre les 126 tags distincts du corpus etranger pour ne declencher sur aucun (@tag1,
-# @beforetag1, @scenarioTag1, @gpl3 sont en minuscules ou a casse mixte et sont donc exclus),
-# tout en reconnaissant @QAIA-US-004-009, @AC1, @REQ-5, @JIRA-1234, @US-4.
-# Deux formes, et le separateur n'est facultatif que pour une liste FERMEE de prefixes.
-# Sans cette restriction, le motif prenait `@HTML5`, `@CSS3`, `@IE11`, `@WCAG21`,
-# `@OAuth2` -- des tags de capacite, pas des references. Le calibrage annonce (« aucun
-# des 126 tags du corpus ne declenche ») etait vrai de CE corpus et faux en general :
-# un echantillon ou une regle ne se declenche jamais ne prouve rien de sa precision.
+# DEUX FORMES, et le separateur n'est facultatif que pour une liste FERMEE de prefixes.
+#
+# La premiere version demandait « deux majuscules puis un chiffre quelque part », et se
+# justifiait ainsi : « calibre contre les 126 tags distincts du corpus etranger pour ne
+# declencher sur aucun ». C'etait vrai de CE corpus et faux en general -- elle prenait `@HTML5`,
+# `@CSS3`, `@IE11`, `@WCAG21`, `@OAuth2`, des tags de capacite qu'aucun cahier reel n'entend
+# comme des references. **Un echantillon ou une regle ne se declenche jamais ne prouve rien de
+# sa precision** ; il prouve seulement qu'on a regarde du cote ou elle ne risquait rien.
+#
+# Le cout etait mesurable : combine au tout-ou-rien de `traceability_assessed`, un unique
+# `@HTML5` faisait perdre 21 points et une porte a un cahier. Trouve par une passe de
+# refutation le 2026-08-24, pas par le calibrage.
+#
+# `check_universal_default.py` (I9) fait passer a ce motif et a son jumeau d'`automation_score`
+# la MEME table de 18 cas, et echoue s'ils divergent : ils divergeaient, sur `@AC1` et `@TC2`.
 REQ_REF_PREFIXES = "AC|US|REQ|TC|FR|NFR|PBI|STORY|EPIC|BUG|ISSUE"
 REQ_REF_RE = re.compile(
     r"@(?:[A-Z]{2,}(?:[-_][A-Za-z0-9]+)*[-_]\d+"       # JIRA-1234, QAIA-US-004-009, US-4
@@ -300,6 +310,7 @@ def score_feature(path, declared_acs=None, source_text=None, profile="universal"
                 "scoreable": False, "score": None, "gate": "UNSCORED", "forced_stop": False,
                 "readability": None, "completeness": None, "coherence": None,
                 "traceability": None, "traceabilityAssessed": False, "profile": profile,
+                "gateReason": "not scoreable: no scenario could be extracted",
                 "notes": [], "penalties": {}, "tag_audit": {},
                 "findings": ["not scoreable: no scenario could be extracted from this file. "
                              "It may use Gherkin keywords this scorer does not know, a "
@@ -497,12 +508,34 @@ def score_feature(path, declared_acs=None, source_text=None, profile="universal"
     # differ on an identical Given/When; a human, not the detector, judges that call).
     forced_stop = (len(markers) + len(sniffer_hits) >= 3) or bool(hollow or empty_then or vague)
     unmappable = [scen[i]["name"] for i in sorted(unmappable_i)]
-    if forced_stop: gate = "FAIL"
-    elif score >= 80: gate = "PASS"
-    elif score >= 60: gate = "CONCERNS"
-    else: gate = "FAIL"
+    # Le JSON posait `"score": 87` et `"gate": "FAIL"` cote a cote sans un mot. Defendable sur le
+    # fond -- un `Then` vide n'est pas un test, quel que soit le score -- mais le lecteur passe
+    # trente secondes a chercher pourquoi, a chaque fichier. Releve par une relectrice en
+    # contexte vierge : « un score et un verdict qui se contredisent ».
+    if forced_stop:
+        gate = "FAIL"
+        causes = []
+        if hollow: causes.append("hollow AC (covered only by an image/table reference)")
+        if empty_then: causes.append("scenario with no expected result")
+        if vague: causes.append("Then that asserts nothing verifiable")
+        if len(markers) + len(sniffer_hits) >= 3:
+            causes.append("3+ unresolved markers or untraceable literals")
+        gate_reason = ("forced STOP regardless of the score (%s) -- these are defects no total "
+                       "can outweigh" % "; ".join(causes))
+    elif score >= 80:
+        gate = "PASS"
+        gate_reason = "score %d >= 80" % score
+    elif score >= 60:
+        gate = "CONCERNS"
+        gate_reason = "score %d in [60, 80)" % score
+    else:
+        gate = "FAIL"
+        gate_reason = "score %d < 60" % score
     # a truncated step is never publishable as-is: cap a would-be PASS at CONCERNS
-    if truncated and gate == "PASS": gate = "CONCERNS"
+    if truncated and gate == "PASS":
+        gate = "CONCERNS"
+        gate_reason = ("score %d would PASS, capped at CONCERNS: a truncated step is not "
+                       "publishable as written" % score)
 
     if markers: findings.append(f"{len(markers)} unresolved marker(s) → -{marker_pen}")
     if sniffer_hits: findings.append(f"fabrication sniffer: {len(sniffer_hits)} untraceable technical literal(s): {sniffer_hits[:3]}")
@@ -555,10 +588,88 @@ def score_feature(path, declared_acs=None, source_text=None, profile="universal"
         "traceability": round(traceability, 1) if traceability is not None else None,
         "traceabilityAssessed": traceability_assessed, "profile": profile,
         "penalties": {"markers": marker_pen, "sniffer": sniffer_pen, "redundancy": redundancy_pen},
-        "score": score, "gate": gate, "forced_stop": forced_stop, "findings": findings,
+        "score": score, "gate": gate, "gateReason": gate_reason,
+        "forced_stop": forced_stop, "findings": findings,
         "notes": notes,
         "tag_audit": tag_audit,
     }
+
+GATE_ORDER = {"FAIL": 0, "CONCERNS": 1, "UNSCORED": 2, "PASS": 3}
+
+
+def render_markdown(rows, where, profile):
+    """Rend un rapport lisible par un humain, trie par gravite.
+
+    Ajoute le 2026-08-24. Le mode `--batch` ne rendait que du JSON, une ligne par fichier. Une
+    relectrice en contexte vierge, QA lead de son etat, l'a dit sans detour : « du JSON brut pour
+    trois fichiers, ca va ; pour les 340 .feature de mon depot, non ». Sans cette sortie, la face
+    « juger » demande a son utilisateur d'ecrire lui-meme son rapport -- c'est-a-dire de faire le
+    travail pour lequel il a installe l'outil.
+
+    Trie par gravite, pas par nom : ce qu'un lecteur veut voir en premier est ce qui bloque.
+    """
+    scored = sorted([r["score"] for r in rows if r.get("score") is not None])
+    gates = {}
+    for r in rows:
+        gates[r["gate"]] = gates.get(r["gate"], 0) + 1
+    out = ["# Audit structurel — %d fichier(s)" % len(rows), ""]
+    out.append("Profil **%s**%s. Aucun LLM, aucun reseau : ce rapport est rejouable a "
+               "l'identique." % (profile,
+                                 " (le barème universel — rien ici n'exige une convention QAIA)"
+                                 if profile == "universal" else
+                                 " (surcouche QAIA demandee explicitement)"))
+    out.append("")
+    out.append("| | |")
+    out.append("|---|---:|")
+    for g in ("PASS", "CONCERNS", "FAIL", "UNSCORED"):
+        if gates.get(g):
+            out.append("| %s | %d |" % (g, gates[g]))
+    if scored:
+        out.append("| score median | %d |" % scored[len(scored) // 2])
+    total_findings = sum(len(r.get("findings", [])) for r in rows)
+    out.append("| constats | %d |" % total_findings)
+    out.append("")
+
+    ordered = sorted(rows, key=lambda r: (GATE_ORDER.get(r["gate"], 9),
+                                          r["score"] if r.get("score") is not None else -1))
+    out.append("| Fichier | Score | Porte | Pourquoi |")
+    out.append("|---|---:|---|---|")
+    for r in ordered:
+        out.append("| `%s` | %s | %s | %s |"
+                   % (r["file"], "—" if r.get("score") is None else r["score"], r["gate"],
+                      (r.get("gateReason") or "")[:110]))
+    out.append("")
+
+    problems = [r for r in ordered if r["gate"] in ("FAIL", "CONCERNS", "UNSCORED")
+                and r.get("findings")]
+    if problems:
+        out.append("## Ce qu'il y a a corriger")
+        out.append("")
+        for r in problems:
+            out.append("### `%s` — %s" % (r["file"], r["gate"]))
+            for f in r["findings"]:
+                out.append("- %s" % f)
+            out.append("")
+
+    # Les etats se disent UNE FOIS, pas une fois par fichier. Repetes 247 fois sur un corpus de
+    # 257, ils noient les constats reels -- la faute meme que l'inversion du barème a corrigee.
+    seen = []
+    for r in rows:
+        for n in r.get("notes", []):
+            key = n.split(":")[0]
+            if key not in seen:
+                seen.append(key)
+    if seen:
+        out.append("## Ce qui n'a pas ete evalue, et pourquoi")
+        out.append("")
+        for r in rows:
+            for n in r.get("notes", []):
+                if n.split(":")[0] in seen:
+                    out.append("- %s" % n)
+                    seen.remove(n.split(":")[0])
+        out.append("")
+    return "\n".join(out)
+
 
 def main():
     # Findings text uses non-ASCII characters (e.g. the "->" arrow); on Windows, stdout defaults
@@ -575,6 +686,14 @@ def main():
         # apprend a son utilisateur qu'il ne l'attendait pas.
         print(__doc__)
         sys.exit(0 if args else 1)
+    fmt = "json"
+    if "--format" in args:
+        i = args.index("--format")
+        fmt = args[i + 1] if len(args) > i + 1 else ""
+        if fmt not in ("json", "md"):
+            print("BROKEN: --format attend `json` ou `md`, pas %r" % fmt, file=sys.stderr)
+            raise SystemExit(2)
+        args = args[:i] + args[i + 2:]
     profile = "universal"
     if "--profile" in args:
         i = args.index("--profile")
@@ -608,7 +727,10 @@ def main():
                   "pas un succes" % args[1], file=sys.stderr)
             raise SystemExit(2)
         rows = [score_feature(f, profile=profile) for f in paths]
-        for r in rows: print(json.dumps(r, ensure_ascii=False))
+        if fmt == "md":
+            print(render_markdown(rows, args[1], profile))
+        else:
+            for r in rows: print(json.dumps(r, ensure_ascii=False))
         return
     declared = None; source = None; path = args[0]
     if "--acs" in args: declared = args[args.index("--acs") + 1].split(",")
