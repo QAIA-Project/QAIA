@@ -11,7 +11,7 @@ optimise le récit de son travail, pas son travail.
 
 | | Valeur | Mesuré le | Comment |
 |---|---:|---|---|
-| **Cahiers étrangers qui passent la porte** | **101 / 257** (39,3 %) | 2026-08-24 | `score_corpus.py` sur le corpus gelé |
+| **Cahiers étrangers qui passent la porte** | **102 / 257** (39,7 %) | 2026-08-24 | `score_corpus.py` sur le corpus gelé |
 | **Utilisateurs réels** | **0** | 2026-08-24 | 1 étoile, 0 fork, 0 watcher, 0 pilote |
 
 Le premier est la première métrique de l'histoire du projet qui **ne dépende pas de sa propre
@@ -23,7 +23,7 @@ production**. Le second est la seule qui compte à la fin, et il n'a jamais boug
 
 | Outil | Matériau étranger | Constats avant / après | Date |
 |---|---|---:|---|
-| `structural_score.py` | 257 cahiers Gherkin, 15 dépôts | 666 → **173** | 2026-08-24 |
+| `structural_score.py` | 257 cahiers Gherkin, 15 dépôts | 666 → **150** | 2026-08-24 |
 | `automation_score.py` | 7 suites Playwright | 715 → **144** | 2026-08-24 |
 | `spec_suite_drift.py` | 4 projets avec spec OpenAPI | 11 → **0** (4 × `UNCOMPARABLE`) | 2026-08-24 |
 | `lint_skills.py` | 159 SKILL.md, 12 dépôts | 622 → 159 | 2026-08-09 |
@@ -36,10 +36,10 @@ un rapport qui donne la commande de reproduction.
 
 | | |
 |---|---:|
-| mutations sur les garde-fous | **38** |
-| tuées | **38** |
+| mutations sur les garde-fous | **40** |
+| tuées | **40** |
 | survivantes | **0** |
-| invariants de la porte d'entrée | **9** |
+| invariants de la porte d'entrée | **10** |
 
 **Et ce que la mutation ne remplace pas.** Le 2026-08-24, trente mutations tuées, cinq invariants
 verts et une CI verte n'ont empêché **ni deux affirmations publiées d'être réfutées, ni six
@@ -74,6 +74,20 @@ voir : ils relisent tous le dépôt, jamais son comportement sur ce qu'il n'a pa
 | [#112](https://github.com/QAIA-Project/QAIA/issues/112) | Le barème universel d'automatisation est trop pauvre : 100,0 avec 8 attentes interdites au compteur |
 | [#113](https://github.com/QAIA-Project/QAIA/issues/113) | Doublons faux dans les deux sens, FAIL inexpliqué à 87/100, aucune sortie lisible pour 340 fichiers |
 | #106 – #110 | Reste-à-faire ouvert le 2026-08-11 |
+
+### La face « juger » est utilisable
+
+Trois blocages nommés par une QA lead en contexte vierge, entre « je l'utiliserais une fois » et
+« je le mettrais en CI » :
+
+| | |
+|---|---|
+| `gateReason` | le JSON posait `score: 87` et `gate: FAIL` côte à côte sans un mot ; la raison est nommée, et pour un arrêt forcé elle nomme la **cause**, pas le seuil |
+| `--format md` | rapport trié par gravité, 3,6 lignes par fichier. Sans lui, juger demandait à l'utilisateur d'écrire lui-même son rapport |
+| doublons | un groupe n'est un doublon que si son résultat attendu l'est aussi. **36 % des constats** nommaient des paires de valeurs limites — facturées jusqu'à 15 points |
+
+Reste un faux négatif entier : le détecteur ne trouve que les doublons qu'un humain ne produit
+jamais. Mesuré, documenté, ouvert (#113).
 
 ## Ce qui n'a pas changé, et qu'il ne faut pas oublier
 
