@@ -70,7 +70,17 @@ PRIORITY_TAGS = {"@p1", "@p2", "@p3"}
 # contre les 126 tags distincts du corpus etranger pour ne declencher sur aucun (@tag1,
 # @beforetag1, @scenarioTag1, @gpl3 sont en minuscules ou a casse mixte et sont donc exclus),
 # tout en reconnaissant @QAIA-US-004-009, @AC1, @REQ-5, @JIRA-1234, @US-4.
-REQ_REF_RE = re.compile(r"@[A-Z]{2,}[-_:]?[A-Za-z0-9_-]*\d")
+# Deux formes, et le separateur n'est facultatif que pour une liste FERMEE de prefixes.
+# Sans cette restriction, le motif prenait `@HTML5`, `@CSS3`, `@IE11`, `@WCAG21`,
+# `@OAuth2` -- des tags de capacite, pas des references. Le calibrage annonce (« aucun
+# des 126 tags du corpus ne declenche ») etait vrai de CE corpus et faux en general :
+# un echantillon ou une regle ne se declenche jamais ne prouve rien de sa precision.
+REQ_REF_PREFIXES = "AC|US|REQ|TC|FR|NFR|PBI|STORY|EPIC|BUG|ISSUE"
+REQ_REF_RE = re.compile(
+    r"@(?:[A-Z]{2,}(?:[-_][A-Za-z0-9]+)*[-_]\d+"       # JIRA-1234, QAIA-US-004-009, US-4
+    r"|(?:" + REQ_REF_PREFIXES + r")\d+)")             # @AC1, @REQ5 -- liste FERMEE
+# Sensible a la casse, volontairement : `@html5` n'est pas une convention d'exigence, et une
+# regle insensible a la casse reprendrait tout ce que la liste fermee vient d'ecarter.
 
 MARKER_RE = re.compile(r"\[\s*(?:À|A)\s*D[EÉ]FINIR[^\]]*\]|\bTODO\b|\bFIXME\b|<\s*placeholder\s*>|\bXXX\b|\bTBD\b", re.I)
 # XXX/TBD are also legitimate literal test data (e.g. ISO 4217's reserved "no currency" code is
@@ -332,6 +342,15 @@ def score_feature(path, declared_acs=None, source_text=None, profile="universal"
         return bool(s["then"]) and i not in empty_then_i and i not in hollow_i and i not in vague_i and any(ASSERT_RE.search(t) for t in s["then"])
     def covers(s): return covers_i(scen.index(s))
     traced = [s for s in scen if any(REQ_REF_RE.match(t) for t in s["tags"])]
+    # `ac_linked` ne reconnaissait QUE `@AC...` et `@QAIA-...`. Comme il porte le facteur 0,4 de
+    # la formule de tracabilite, un cahier etranger PARFAITEMENT trace plafonnait a 60 % de la
+    # dimension : 78/CONCERNS pour `@JIRA-1234` la ou `@QAIA-US-004-009` rendait 88/PASS, sur un
+    # cahier par ailleurs identique. Le defaut que la refonte pretend supprimer, conserve a
+    # l'echelle 0,4 -- et la garde ne pouvait pas le voir, elle n'exigeait qu'un credit NON NUL,
+    # jamais un credit EGAL. Trouve par une passe de refutation, pas par un controle.
+    #
+    # Le raffinement « la reference pointe un critere d'acceptation » est une convention de ce
+    # projet : il reste, mais sous le profil qui le revendique.
     ac_linked = [s for s in scen if any(re.search(r"@AC[:_-]?\w+|@QAIA-\w+-\d+", t) for t in s["tags"])]
 
     # fabrication sniffer: technical literals present in a step but not in the source (if given)
@@ -428,16 +447,45 @@ def score_feature(path, declared_acs=None, source_text=None, profile="universal"
     else:
         completeness = 30 * completeness_base
     coherence = 20 * (1 - (len(truncated_i | empty_then_i) / n))
-    traceability = 25 * (len(traced) / n) * (0.6 + 0.4 * (len(ac_linked) / n))
+    # Le facteur 0,4 recompense « la reference pointe un critere d'acceptation », ce qui se
+    # reconnait a `@AC...` ou `@QAIA-...` : une convention de CE projet. Applique a tout le
+    # monde, il plafonnait un cahier etranger PARFAITEMENT trace a 60 % de la dimension --
+    # 78/CONCERNS pour `@JIRA-1234` la ou `@QAIA-US-004-009` rendait 88/PASS sur un cahier
+    # par ailleurs identique. Le raffinement reste, sous le profil qui le revendique.
+    if profile == "qaia":
+        traceability = 25 * (len(traced) / n) * (0.6 + 0.4 * (len(ac_linked) / n))
+    else:
+        traceability = 25 * (len(traced) / n)
 
     # La tracabilite se DETECTE (cf. REQ_REF_RE) : notee quand le cahier montre une convention
     # de reference, retiree du denominateur quand il n'en montre aucune. Un cahier qui ne trace
     # pas n'est pas note zero sur ce point : il est declare non evalue, ce qui est la verite.
-    traceability_assessed = bool(traced)
+    # Sous le profil `qaia`, la tracabilite est EXIGEE : un cahier de ce projet qui perd ses
+    # identifiants doit etre retrograde, c'est meme la raison d'etre de la dimension. Le
+    # rendre « non evalue » l'aurait promu de 75/CONCERNS a 100/PASS, dans le sens qui ne
+    # pardonne pas -- releve par une relecture developpeur en contexte vierge.
+    traceability_assessed = bool(traced) or profile == "qaia"
+    rescaled = (readability + completeness + coherence) * 100.0 / 75.0
     if traceability_assessed:
-        raw = readability + completeness + coherence + traceability
+        scored = readability + completeness + coherence + traceability
+        if profile == "qaia":
+            raw = scored
+        else:
+            # DETECTER NE DOIT JAMAIS PUNIR. Le tout-ou-rien faisait qu'un unique tag sur
+            # quatre scenarios basculait la dimension en « evaluee » et faisait perdre
+            # 21 points et une porte -- l'adoption PARTIELLE punie plus durement que l'absence
+            # totale. Le maximum des deux lectures supprime la falaise par construction : la
+            # tracabilite ne peut qu'ajouter des points sur le chemin universel, jamais en
+            # retirer. Sanctionner une tracabilite incomplete reste le travail du profil `qaia`,
+            # ou elle est une exigence et non une observation.
+            raw = max(scored, rescaled)
+            if rescaled > scored:
+                notes.append(
+                    "partial traceability: %d of %d scenarios carry a requirement reference. "
+                    "The dimension was scored but DID NOT lower the result -- detecting a "
+                    "convention must never cost points." % (len(traced), n))
     else:
-        raw = (readability + completeness + coherence) * 100.0 / 75.0
+        raw = rescaled
         traceability = None
     marker_pen = min(25, 5 * len(markers))
     sniffer_pen = min(25, 5 * len(sniffer_hits))

@@ -428,6 +428,46 @@ try:
 finally:
     shutil.rmtree(_tmp4, ignore_errors=True)
 
+# --- 9. deux verdicts qu'il ne faut jamais rendre ---------------------------------------------
+#
+# Ajoutes le 2026-08-24 apres une relecture developpeur en contexte vierge. Les deux mutations
+# correspondantes ONT SURVECU a la campagne : la section 8 ne couvrait ni la suite purement API
+# ni le repertoire vide.
+API_SPEC = "\n".join([
+    "import { test, expect } from '@playwright/test';",
+    "test('@QAIA-US-001-001 le solde est renvoye', async ({ request }) => {",
+    "  const r = await request.get('/v1/balance');",
+    "  expect(r.status()).toBe(200);",
+    "});",
+])
+_tmp9 = tempfile.mkdtemp()
+try:
+    # (a) Une suite PUREMENT API n'a aucun localisateur. `selectors_applicable` est une
+    # precondition DURE : la court-circuiter sous `qaia` rendait la dimension applicable avec
+    # une valeur brute de 0, et faisait chuter de 73,3 a 55,0 le cas normal d'une suite QAIA
+    # generee sur une US d'API -- une regression de note sur la production propre du projet.
+    with open(os.path.join(_tmp9, "api.spec.ts"), "w", encoding="utf-8") as fh:
+        fh.write(API_SPEC)
+    specs, _ = A.find_spec_files(_tmp9)
+    for prof in ("universal", "qaia"):
+        r = A.static_track(specs, [], _tmp9, set(), profile=prof)
+        check("suite API (%s) : la dimension selecteurs est EXCLUE, pas notee zero" % prof,
+              "robust_selectors" in r["budget"], False)
+        check("suite API (%s) : et l'exclusion est dite" % prof,
+              any(n["kind"] == "dimension-not-assessed" and "robust_selectors" in n["detail"]
+                  for n in r["notes"]), True)
+
+    # (b) Un repertoire sans le moindre test ne rend pas « 0,0 » : `pct()` rend 0.0 quand le
+    # denominateur est nul, ce qui transformait un `--tests-dir` mal pointe en verdict.
+    empty = A.static_track([], [], _tmp9, set())
+    check("aucun test : le score est null, pas 0.0", empty["score"], None)
+    check("aucun test : la porte est UNSCORED", empty["gate"], "UNSCORED")
+    check("aucun test : aucun constat n'est rendu", empty["findings"], [])
+    check("aucun test : et la raison est dite",
+          any(n["kind"] == "suite-unreadable" for n in empty["notes"]), True)
+finally:
+    shutil.rmtree(_tmp9, ignore_errors=True)
+
 if failures:
     print("selfcheck_automation_score: %d FAILURE(S)\n" % len(failures))
     for f in failures:

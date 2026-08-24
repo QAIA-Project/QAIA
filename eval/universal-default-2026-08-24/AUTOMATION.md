@@ -48,9 +48,22 @@ empreinte par dépôt).
 | `vnglst/koenvangilst.nl` | 76,5 | 38 | 2 | 42,1 | 72 |
 | **médiane / total** | **87,0** | **144** | | **47,8** | **715** |
 
-**571 des 715 constats — 80 % — ne nommaient aucun défaut.** Ils constataient l'absence de nos
+**571 des 715 constats ne nommaient aucun défaut.** Ils constataient l'absence de nos
 conventions. Les 144 qui restent sont des signaux qui transfèrent : sélecteurs fragiles là où la
 suite emploie par ailleurs des rôles, attentes interdites, assertions faibles.
+
+**Le « 80 % » est un ratio agrégé, et il est porté par une seule suite.** Réfutation en contexte
+vierge, vérifiée : `realworld` fournit 401 des 571 constats retirés, soit 70 % du total. Les trois
+lectures du même retrait :
+
+| | |
+|---|---:|
+| agrégé (somme sur somme) | **79,9 %** |
+| médian par suite | **62,5 %** |
+| agrégé hors `realworld` | **57,6 %** (295 → 125) |
+
+« 80 % de bruit » n'est donc pas une propriété des suites étrangères — c'est une propriété de
+`realworld`, et le chiffre à retenir pour une suite quelconque est plutôt **~60 %**.
 
 Non-régression sur notre propre suite : **95,3 dans les deux profils**, quatre dimensions
 applicables — nos suites montrent les rôles, les objets de page et la traçabilité, donc rien ne

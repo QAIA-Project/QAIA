@@ -158,13 +158,23 @@ def main():
         if os.path.isfile(out_json):
             try:
                 data = json.load(open(out_json, encoding="utf-8"))
-                fnd = data.get("findings", data.get("drift", []))
-                entry["findings"] = len(fnd)
-                kinds = {}
-                for f in fnd:
-                    k = f.get("kind", f.get("rule", "?"))
-                    kinds[k] = kinds.get(k, 0) + 1
-                entry["by_kind"] = kinds
+                # UNCOMPARABLE n'est PAS « zero constat ». La campagne lisait `findings` sans
+                # jamais regarder `verdict`, si bien qu'un depot que l'outil n'a pas su lire
+                # entrait dans le total au meme titre qu'un depot sans derive -- la confusion
+                # exacte que cette campagne existe pour trouver ailleurs, commise sur elle-meme.
+                # Releve par une relecture developpeur en contexte vierge.
+                if data.get("verdict") == "UNCOMPARABLE":
+                    entry["findings"] = None
+                    entry["uncomparable"] = data.get("uncomparableReason")
+                    entry["counts"] = data.get("counts")
+                else:
+                    fnd = data.get("findings", data.get("drift", []))
+                    entry["findings"] = len(fnd)
+                    kinds = {}
+                    for f in fnd:
+                        k = f.get("kind", f.get("rule", "?"))
+                        kinds[k] = kinds.get(k, 0) + 1
+                    entry["by_kind"] = kinds
             except Exception as exc:
                 entry["parse_error"] = str(exc)
         else:
@@ -176,17 +186,26 @@ def main():
             report["tool_errors"].append({"repo": repo, "exit": proc.returncode,
                                           "stderr": (proc.stderr or "")[-400:]})
         report["repos"].append(entry)
-        print("  %-42s %3d tests, exit=%s, constats=%s %s"
-              % (repo[:40], got, proc.returncode, entry.get("findings"),
-                 entry.get("by_kind", "")))
+        verdict = ("INCOMPARABLE" if entry.get("uncomparable")
+                   else ("erreur d'outil" if entry.get("findings") is None
+                         else "%d constat(s) %s" % (entry["findings"], entry.get("by_kind", ""))))
+        print("  %-42s %3d tests, exit=%s, %s" % (repo[:40], got, proc.returncode, verdict))
 
     json.dump(report, open(os.path.join(work, "_campaign.json"), "w", encoding="utf-8"),
               indent=1, ensure_ascii=False)
-    ran = [r for r in report["repos"] if r.get("findings") is not None]
-    print("\n%d depot(s) vises, %d ecarte(s), %d analyse(s), %d erreur(s) d'outil"
-          % (len(repos), len(report["excluded"]), len(ran), len(report["tool_errors"])))
-    if ran:
-        print("constats totaux : %d" % sum(r["findings"] for r in ran))
+    compared = [r for r in report["repos"] if r.get("findings") is not None]
+    uncomparable = [r for r in report["repos"] if r.get("uncomparable")]
+    report["summary"] = {"targeted": len(repos), "excluded": len(report["excluded"]),
+                         "compared": len(compared), "uncomparable": len(uncomparable),
+                         "tool_errors": len(report["tool_errors"]),
+                         "findings_total": sum(r["findings"] for r in compared)}
+    print("\n%d depot(s) vises, %d ecarte(s) avant analyse, %d COMPARE(S), %d INCOMPARABLE(S), "
+          "%d erreur(s) d'outil"
+          % (len(repos), len(report["excluded"]), len(compared), len(uncomparable),
+             len(report["tool_errors"])))
+    print("constats totaux : %d  (sur les %d depots comparables SEULEMENT -- un depot "
+          "incomparable n'entre pas dans ce total, dans un sens ni dans l'autre)"
+          % (report["summary"]["findings_total"], len(compared)))
 
 
 if __name__ == "__main__":

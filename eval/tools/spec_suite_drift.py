@@ -341,6 +341,21 @@ def main():
         unreadable = ("%d fichier(s) lu(s), mais AUCUN code HTTP reconnu : la suite emploie "
                       "vraisemblablement une autre facon d'affirmer un statut que celles que "
                       "cet outil sait lire" % files_read)
+    elif not pairs:
+        # Le seuil etait pose sur `all_status` -- « au moins un code HTTP vu QUELQUE PART ».
+        # Une passe de refutation a montre que c'etait le mauvais seuil : le seul depot declare
+        # comparable sur quatre le devait a un `418` et un `500` litteraux dans un test unitaire
+        # d'un formateur de log, qui n'emet aucune requete vers aucun des huit chemins de la
+        # specification. Retirer ce seul fichier faisait basculer le depot en UNCOMPARABLE.
+        #
+        # Le diagnostic du rapport designait pourtant `pairs` : les regles R1 et R3 en ont
+        # besoin, et R2 n'a de sens que si la suite exerce reellement l'API. Un seuil franchi
+        # par du bruit lexical n'est pas une preuve d'exercice. Verdict correct sur les quatre
+        # depots de la campagne : quatre UNCOMPARABLE, zero constat.
+        unreadable = ("%d fichier(s) lu(s) et %d code(s) HTTP reconnu(s), mais AUCUNE paire "
+                      "chemin<->code : rien ne rattache ces codes a un point d'entree de la "
+                      "specification. Des litteraux de statut dans un test unitaire ne prouvent "
+                      "pas que la suite exerce l'API" % (files_read, len(all_status)))
 
     findings = [] if unreadable else compare(declared, pairs, seen_paths, all_status)
 

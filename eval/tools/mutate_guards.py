@@ -83,14 +83,12 @@ MUTATIONS = [
     # selfcheck : il MESURE la propriete sur des cahiers reels au lieu de relire une regle.
     ("eval/tools/structural_score.py", "eval/tools/check_universal_default.py",
      "tracabilite : la dimension est de nouveau NOTEE ZERO au lieu d'etre retiree",
-     "        raw = (readability + completeness + coherence) * 100.0 / 75.0\n"
-     "        traceability = None",
-     "        raw = readability + completeness + coherence\n"
-     "        traceability = 0.0"),
+     "        raw = rescaled\n        traceability = None",
+     "        raw = readability + completeness + coherence\n        traceability = 0.0"),
     ("eval/tools/structural_score.py", "eval/tools/check_universal_default.py",
      "tracabilite : la detection revient a n'accepter que la convention maison",
-     'REQ_REF_RE = re.compile(r"@[A-Z]{2,}[-_:]?[A-Za-z0-9_-]*\\d")',
-     'REQ_REF_RE = re.compile(r"@QAIA-")'),
+     'REQ_REF_PREFIXES = "AC|US|REQ|TC|FR|NFR|PBI|STORY|EPIC|BUG|ISSUE"',
+     'REQ_REF_PREFIXES = "QAIA"'),
     ("eval/tools/structural_score.py", "eval/tools/check_universal_default.py",
      "profil : les conventions maison sont de nouveau imposees par defaut",
      '    if profile == "qaia":\n        if no_priority:',
@@ -141,6 +139,41 @@ MUTATIONS = [
     ("eval/tools/spec_suite_drift.py", "eval/tools/selfcheck_spec_suite_drift.py",
      "comptage : les fichiers illisibles ne sont plus comptes",
      "                    files_skipped += 1", "                    pass"),
+
+    # REFUTATION -- ajoutees le 2026-08-24 apres que trois relecteurs en contexte vierge aient
+    # trouve onze defauts que les 30 mutations precedentes et les cinq invariants de la garde
+    # laissaient tous passer. Six etaient des regressions introduites le jour meme.
+    ("eval/tools/structural_score.py", "eval/tools/check_universal_default.py",
+     "tracabilite : le facteur reserve a nos identifiants revient sur le chemin universel",
+     "    if profile == \"qaia\":\n        traceability = 25 * (len(traced) / n) * "
+     "(0.6 + 0.4 * (len(ac_linked) / n))\n    else:\n        traceability = 25 * (len(traced) / n)",
+     "    traceability = 25 * (len(traced) / n) * (0.6 + 0.4 * (len(ac_linked) / n))"),
+    ("eval/tools/structural_score.py", "eval/tools/check_universal_default.py",
+     "falaise : detecter une convention peut de nouveau faire baisser le score",
+     "            raw = max(scored, rescaled)", "            raw = scored"),
+    ("eval/tools/structural_score.py", "eval/tools/check_universal_default.py",
+     "profil qaia : la tracabilite n'y est plus exigee",
+     "    traceability_assessed = bool(traced) or profile == \"qaia\"",
+     "    traceability_assessed = bool(traced)"),
+    ("eval/tools/structural_score.py", "eval/tools/check_universal_default.py",
+     "motif : le separateur redevient facultatif et reprend @HTML5, @IE11",
+     '    r"@(?:[A-Z]{2,}(?:[-_][A-Za-z0-9]+)*[-_]\\d+"',
+     '    r"@(?:[A-Z]{2,}[-_]?[A-Za-z0-9_-]*\\d+"'),
+    ("eval/tools/automation_score.py", "eval/tools/check_universal_default.py",
+     "motif : les deux outils du noyau divergent de nouveau",
+     '                     r"|(?:AC|US|REQ|TC|FR|NFR|PBI|STORY|EPIC|BUG|ISSUE)\\d+)\\b")',
+     '                     r")\\b")'),
+    ("eval/tools/automation_score.py", "eval/tools/selfcheck_automation_score.py",
+     "selecteurs : la precondition dure saute de nouveau sous le profil qaia",
+     '    if selectors_applicable and (profile == "qaia" or selector_role > 0):',
+     '    if profile == "qaia" or (selectors_applicable and selector_role > 0):'),
+    ("eval/tools/automation_score.py", "eval/tools/selfcheck_automation_score.py",
+     "parse vide : la suite sans test rend de nouveau un verdict",
+     "    if tests_total == 0:", "    if False:"),
+    ("eval/tools/structural_score.py", "eval/tools/check_universal_default.py",
+     "ratio negatif : un zero faux revient a la place du non-evalue",
+     "    negative_convention_present = bool(negative)",
+     "    negative_convention_present = True"),
 ]
 
 

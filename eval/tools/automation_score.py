@@ -241,7 +241,13 @@ FEATURE_TAG = re.compile(r"@(QAIA[-A-Za-z0-9_]*-\d+)\b")
 # Le separateur est OBLIGATOIRE avant les chiffres, ce qui ecarte `HTML5`, `CSS3`, `OAuth2` --
 # des mots de titre, pas des references. Il autorise les segments intermediaires, pour que
 # `QAIA-US-004-009` corresponde comme `JIRA-1234`.
-REQ_REF = re.compile(r"@?\b[A-Z]{2,}(?:[-_][A-Za-z0-9]+)*[-_]\d+\b")
+#
+# Deux formes, identiques a `REQ_REF_RE` de `structural_score.py` -- et l'identite n'est pas
+# laissee a la bonne volonte : `check_universal_default.py` fait passer aux deux motifs la MEME
+# table de cas et echoue s'ils divergent. Ils divergeaient : `@AC1` et `@TC2` etaient reconnus
+# d'un cote et pas de l'autre, pour la meme notion, dans deux outils du meme noyau.
+REQ_REF = re.compile(r"@?\b(?:[A-Z]{2,}(?:[-_][A-Za-z0-9]+)*[-_]\d+"
+                     r"|(?:AC|US|REQ|TC|FR|NFR|PBI|STORY|EPIC|BUG|ISSUE)\d+)\b")
 
 
 # A `//` line comment is prose, not code. Stripping it before pattern matching was added
@@ -674,6 +680,28 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
     def pct(num, den):
         return 0.0 if den == 0 else num / den
 
+    # --- refus de rendre un verdict sur un parse vide -----------------------------------------
+    #
+    # `pct()` rend 0,0 quand le denominateur est nul, si bien qu'un `--tests-dir` mal pointe
+    # rendait « score 0,0 » -- un verdict affirmatif sur un repertoire ou l'outil n'a rien lu.
+    # `structural_score.py` refuse deja cela (UNSCORED, #105) et `spec_suite_drift.py` depuis
+    # ce matin (UNCOMPARABLE) ; l'outil frere du meme diff ne le faisait pas. Troisieme etage
+    # du meme escalier, corrige au troisieme passage.
+    if tests_total == 0:
+        why = ("no test found: %d spec file(s) scanned" % len(spec_files) if spec_files
+               else "no Playwright spec file found under this directory")
+        return {
+            "score": None, "gate": "UNSCORED", "budget": {},
+            "counts": {"spec_files": len(spec_files), "tests": 0},
+            "findings": [], "notes": [{"kind": "suite-unreadable", "file": ".", "line": 0,
+                                       "detail": why + " -- no score is emitted, a number here "
+                                                 "would measure this tool's blindness, not the "
+                                                 "suite"}],
+            "profile": profile,
+            "scoreScope": {"assessed": [], "excluded": [], "narrow": True,
+                           "comparableWith": None},
+        }
+
     selectors_total = selector_role + selector_raw
     selectors_applicable = selectors_total > 0
     if selectors_total == 0:
@@ -711,7 +739,14 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
     # `realworld-apps/realworld` PUBLIE un contrat de selecteurs CSS (`specs/e2e/SELECTORS.md`)
     # que toute implementation doit honorer, et l'ancien defaut a produit 279 constats contre
     # un contrat documente. 279 sur 428 constats, pour une seule ligne de barème.
-    if profile == "qaia" or (selectors_applicable and selector_role > 0):
+    # `selectors_applicable` (au moins un localisateur quelque part) est une precondition DURE,
+    # dans les deux profils. En la court-circuitant sous `qaia`, la dimension devenait applicable
+    # avec une valeur brute de 0 : une suite Playwright PUREMENT API -- le cas normal d'une suite
+    # generee sur une US d'API, qui n'a aucun localisateur -- passait de 73,3 a 55,0. Une
+    # regression de note sur la production propre du projet, et le constat `no-selector-detected`
+    # continuait d'affirmer « was not penalised » dans le rapport ou elle venait d'etre notee
+    # zero. Releve par une relecture developpeur en contexte vierge.
+    if selectors_applicable and (profile == "qaia" or selector_role > 0):
         applicable["robust_selectors"] = True
     else:
         excluded["robust_selectors"] = (

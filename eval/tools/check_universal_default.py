@@ -248,6 +248,112 @@ def main():
         print("  ok : une tracabilite etrangere (@JIRA-1234, @REQ-77) est reconnue et notee %s"
               % f["traceability"])
 
+    # I6 -- EGALITE des conventions, pas seulement reconnaissance.
+    #
+    # I4 n'exigeait qu'un credit NON NUL. Il passait au vert a 15/25, c'est-a-dire pendant que
+    # `@JIRA-1234` rendait 78/CONCERNS la ou `@QAIA-US-004-009` rendait 88/PASS sur un cahier
+    # PAR AILLEURS IDENTIQUE -- dix points et une porte, pour n'avoir pas adopte notre
+    # convention. Le defaut que toute la refonte pretend supprimer, conserve a l'echelle 0,4
+    # par le facteur `ac_linked`. Trouve par une passe de refutation, invisible pour I1-I5.
+    #
+    # Reconnaitre n'est pas crediter. L'invariant compare des SCORES, pas des booleens.
+    def book(tag_template):
+        out = ["Feature: panier", ""]
+        for i in range(4):
+            out += ["  " + tag_template.replace("#", str(i)),
+                    "  Scenario: le montant %d est accepte" % i,
+                    "    Given un panier de %d EUR" % i,
+                    "    When l'utilisateur valide",
+                    '    Then le total affiche est "%d,00 EUR"' % i, ""]
+        return "\n".join(out)
+
+    conventions = {"QAIA": "@QAIA-US-004-00#", "JIRA": "@JIRA-123#",
+                   "REQ": "@REQ-#", "AC": "@AC#"}
+    results = dict((k, score(book(v))) for k, v in conventions.items())
+    scores = dict((k, r["score"]) for k, r in results.items())
+    # La DIMENSION, pas seulement le score final. Comparer les scores seuls ne suffit pas : la
+    # protection anti-falaise (I7) plafonne le resultat par le rebasement, si bien qu'un credit
+    # de tracabilite reduit peut etre masque sur un cahier dont les autres dimensions sont
+    # bonnes. Une mutation retablissant le facteur reserve a nos identifiants a survecu
+    # exactement comme cela, le 2026-08-24 : elle ne se voyait pas sur ce cahier-la, et se
+    # serait vue sur un cahier moins bien note ailleurs.
+    dims = dict((k, r["traceability"]) for k, r in results.items())
+    if len(set(dims.values())) != 1:
+        failures.append(
+            "I6 : la dimension `traceability` differe selon la convention -- %s. Le chemin par "
+            "defaut credite notre convention plus que celle des autres, meme quand le score "
+            "final n'en laisse rien paraitre."
+            % ", ".join("%s=%s" % kv for kv in sorted(dims.items())))
+    elif len(set(scores.values())) != 1:
+        failures.append(
+            "I6 : le meme cahier note differemment selon la convention de tracabilite -- %s."
+            % ", ".join("%s=%s" % kv for kv in sorted(scores.items())))
+    else:
+        print("  ok : quatre conventions de tracabilite, un seul score (%s) et une seule "
+              "dimension (%s)" % (list(scores.values())[0], list(dims.values())[0]))
+
+    # I7 -- DETECTER NE DOIT JAMAIS PUNIR.
+    #
+    # `traceability_assessed = bool(traced)` etait un tout-ou-rien : un UNIQUE tag sur quatre
+    # scenarios basculait la dimension en « evaluee » et faisait perdre 21 points et une porte.
+    # L'adoption PARTIELLE etait punie plus durement que l'absence totale -- et un simple
+    # `@HTML5`, tag de capacite navigateur, suffisait a la declencher.
+    none_ref = book("@smoke")
+    partial = none_ref.replace("  @smoke", "  @JIRA-1234", 1)
+    s_none, s_part = score(none_ref), score(partial)
+    if s_part["score"] < s_none["score"]:
+        failures.append(
+            "I7 : une reference d'exigence sur quatre scenarios FAIT BAISSER le score (%s -> "
+            "%s). Detecter une convention ne doit jamais couter de points -- sanctionner une "
+            "tracabilite incomplete est le travail du profil `qaia`, pas du chemin par defaut."
+            % (s_none["score"], s_part["score"]))
+    else:
+        print("  ok : une tracabilite partielle ne coute aucun point (%s -> %s)"
+              % (s_none["score"], s_part["score"]))
+
+    # I8 -- le profil `qaia` AJOUTE des exigences, il n'en retire pas.
+    #
+    # `traceability_assessed` etait calcule hors de toute condition de profil : un cahier QAIA
+    # ayant perdu ses identifiants passait de 75/CONCERNS a 100/PASS. La porte ecrite pour
+    # attraper une perte de tracabilite dans notre propre production la PROMOUVAIT.
+    q = score(none_ref, profile="qaia")
+    if q["traceability"] is None or q["score"] >= s_none["score"]:
+        failures.append(
+            "I8 : sous le profil `qaia`, un cahier sans aucun identifiant note %s (universel : "
+            "%s) avec traceability=%r. Le profil qui revendique la convention doit l'EXIGER."
+            % (q["score"], s_none["score"], q["traceability"]))
+    else:
+        print("  ok : le profil `qaia` exige la tracabilite (%s contre %s en universel)"
+              % (q["score"], s_none["score"]))
+
+    # I9 -- les deux outils du noyau s'accordent sur ce qu'est une reference d'exigence.
+    #
+    # Ils ne s'accordaient pas : `@AC1` et `@TC2` etaient reconnus par l'un, refuses par
+    # l'autre, pour la meme notion. Deux definitions manuscrites de la meme regle dans deux
+    # fichiers, sans rien pour les tenir d'accord -- la faute que ce depot ferme partout
+    # ailleurs. La table ci-dessous est le contrat : elle teste le COMPORTEMENT, pas le texte
+    # des motifs, donc les deux implementations restent libres et verifiables.
+    TABLE = [("@QAIA-US-004-009", True), ("@JIRA-1234", True), ("@REQ-77", True),
+             ("@US-4", True), ("@AC1", True), ("@TC2", True), ("@PROJ-12", True),
+             ("@HTML5", False), ("@CSS3", False), ("@IE11", False), ("@WCAG21", False),
+             ("@OAuth2", False), ("@P1", False), ("@wip", False), ("@smoke", False),
+             ("@javascript", False), ("@seed_users", False), ("@tag1", False)]
+    try:
+        import automation_score as _A
+        for tag, expected in TABLE:
+            a = bool(structural_score.REQ_REF_RE.match(tag))
+            b = bool(_A.REQ_REF.search(tag))
+            if a != expected or b != expected:
+                failures.append(
+                    "I9 %s : attendu %s, structural_score=%s automation_score=%s"
+                    % (tag, expected, a, b))
+        if not any(f.startswith("I9 ") for f in failures):
+            print("  ok : les deux outils s'accordent sur les %d cas de la table de reference"
+                  % len(TABLE))
+    except ImportError as exc:
+        failures.append("I9 : automation_score introuvable, l'accord des deux motifs n'est pas "
+                        "verifie -- %s" % exc)
+
     # Le profil `qaia`, lui, DOIT continuer a dire ces constats : sinon la surcouche opt-in ne
     # sert plus a rien et la correction aurait supprime la regle au lieu de la deplacer.
     if BOOKS:

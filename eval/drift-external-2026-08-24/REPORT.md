@@ -72,16 +72,46 @@ Deux compteurs nouveaux — `suite_files_read`, `suite_files_skipped_unreadable`
 visible dans le JSON, ce qui manquait pour que quiconque s'en aperçoive. Code de sortie **3**,
 distinct du vert (0) comme du rouge (1) : une CI ne doit pas lire un refus comme un succès.
 
-## Après correctif
+## Après correctif — et la première version du correctif était fausse
 
-| | avant | après |
-|---|---:|---:|
-| constats rendus | 11 | **3** |
-| dépôts déclarés comparables | 4 | **1** |
+**Première version, publiée puis réfutée le jour même.** Le seuil avait été posé sur
+`all_status` — « au moins un code HTTP vu **quelque part** » — et laissait donc
+`push-notifications` comparable avec 3 constats. Une passe de réfutation en contexte vierge a
+montré que ces 3 constats sont **de la même espèce que les 11** :
 
-Seul `wikimedia/mediawiki-services-push-notifications` reste comparable — le seul dont l'outil a
-effectivement lu des codes HTTP (2 codes distincts). **Ses 3 constats sont les seuls des onze qui
-disent quelque chose sur le projet cible.**
+```
+"counts": { "spec_paths": 8, "suite_files_read": 3,
+            "path_status_pairs_in_suite": 0, "distinct_status_in_suite": 2 }
+```
+
+`path_status_pairs_in_suite: 0` — c'est-à-dire **le symptôme exact que ce rapport identifie
+comme la définition de la cécité**, deux sections plus haut. Les « 2 codes reconnus » sont un
+`418` et un `500` littéraux dans un test unitaire du formateur de log `errForLog`, qui n'émet
+aucune requête vers aucun des huit chemins de la spécification. Retirer ce seul fichier faisait
+basculer le dépôt en `UNCOMPARABLE`.
+
+**La garde avait été posée sur la mauvaise grandeur.** Le diagnostic désignait `pairs` — R1 et R3
+en ont besoin, et R2 n'a de sens que si la suite exerce réellement l'API. Un seuil franchi par du
+bruit lexical n'est pas une preuve d'exercice.
+
+| | avant | 1er correctif | **correctif tenu** |
+|---|---:|---:|---:|
+| constats rendus | 11 | 3 | **0** |
+| dépôts comparables | 4 | 1 | **0** |
+| dépôts incomparables | 0 | 3 | **4** |
+
+**Le verdict honnête sur cette campagne est donc : quatre dépôts, quatre `UNCOMPARABLE`, zéro
+constat.** L'outil n'a rien trouvé — parce qu'il ne sait pas lire ces suites, et il le dit
+désormais au lieu de rendre onze phrases vraies et vides.
+
+*Défaut mineur également relevé* : « 11 constats sur 4 projets » — `cmueats` en rendait 0. C'était
+11 sur 3.
+
+**Et la campagne elle-même confondait les deux.** `drift_campaign.py` lisait `findings` sans
+jamais regarder `verdict` : un dépôt illisible entrait dans le total au même titre qu'un dépôt
+sans dérive — **la confusion exacte que cette campagne existe pour trouver ailleurs, commise sur
+elle-même**. Corrigé : le résumé distingue désormais comparés / incomparables / erreurs d'outil,
+et le total des constats porte explicitement sur les seuls dépôts comparables.
 
 ## Ce que la campagne a coûté en méthode, et qui est à moi
 
