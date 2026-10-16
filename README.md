@@ -12,6 +12,9 @@
 as Claude Code plugins that run inside *your* session. No API key, no backend, no data leaving
 your session beyond what you already send to Claude.
 
+**▶ [Try it live](https://qaia-project.github.io/QAIA/try.html)** — paste a Gherkin test book and
+watch QAIA judge it. A high score can still fail; the demo shows why.
+
 ## The whole product in one screen
 
 One acceptance criterion from [`eval/gold-set/US-004-expense-approval.md`](eval/gold-set/US-004-expense-approval.md):

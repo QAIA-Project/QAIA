@@ -11,6 +11,9 @@ exécutables en sortie** — sous forme de plugins Claude Code qui tournent dans
 Pas de clé API, pas de backend, aucune donnée ne quitte votre session au-delà de ce que vous
 envoyez déjà à Claude.
 
+**▶ [Essayer en ligne](https://qaia-project.github.io/QAIA/try.html)** — colle un cahier Gherkin
+et regarde QAIA le juger. Un score élevé peut quand même échouer ; la démo montre pourquoi.
+
 ## Le produit entier en un écran
 
 Un critère d'acceptation, tiré de [`eval/gold-set/US-004-expense-approval.md`](eval/gold-set/US-004-expense-approval.md)
