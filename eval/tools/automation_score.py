@@ -63,6 +63,32 @@ FORBIDDEN_WAITS = [
     (re.compile(r"waitForLoadState\s*\(\s*['\"]networkidle"), "waitForLoadState(networkidle)"),
 ]
 
+# Une attente interdite COMPTE dans le score, dans les deux profils. Jusqu'au #112 elle n'etait
+# qu'un constat non bloquant : `realworld` marquait 100,0 avec huit `waitForTimeout` au compteur
+# parce que la seule dimension applicable (substance des assertions) etait parfaite. Un nombre
+# « sur 100 » qui ignore huit fragilites temporelles ne dit pas la verite, meme en se declarant
+# ETROIT -- c'est le reproche exact de #112.
+#
+# Ce n'est PAS une convention de ce projet qu'on imposerait aux autres : la doc Playwright
+# elle-meme proscrit `waitForTimeout` (« never wait for a timeout in production ») et deconseille
+# `networkidle`. La penalite transfere donc hors de notre production, ce qu'exige la porte
+# d'entree du barème universel.
+#
+# Mesure sur materiau etranger AVANT d'ecrire la regle (eval/universal-default-2026-08-24/
+# FORBIDDEN-WAIT-PENALTY.md) : sur huit suites tierces, deux en portent -- `realworld` (8 sur
+# 128 tests) et `solidcouch/messages` (3 sur 3) -- et marquaient 100,0 toutes les deux ; les six
+# autres (drumhaus, sparqlist, playwright-mcp, saucedemo, reverse-eng, external-app) en ont zero
+# et gardent leur note au point pres. Une attente interdite est rare dans une bonne suite, donc
+# la penalite ne frappe pas la suite ordinaire ; quand elle frappe, c'est une fragilite reelle.
+#
+# Deduction, pas dimension de budget : une dimension-fraction (tests sans attente / tests) rend
+# la penalite negligeable sur une grande suite -- 8 sur 128 couterait ~0,2 point et laisserait
+# `realworld` a ~98, ce qui ne corrige rien. Une deduction par occurrence, plafonnee, mord des
+# la premiere attente et sature : fragilite n'est pas mensonge (les constats bloquants s'occupent
+# des assertions creuses), donc une suite n'est jamais ramenee a zero pour cela seul.
+WAIT_PENALTY_PER = 2.0    # points retires par attente interdite
+WAIT_PENALTY_CAP = 20.0   # plafond : une suite par ailleurs parfaite plafonne a 80,0
+
 # Assertions that can never fail, whatever the app does. Blocking.
 # Une assertion dont le SUJET est un litteral -- `expect(true)`, `expect(3)`, `expect('abc')`,
 # ou une propriete d'un litteral comme `expect('1234567890'.length)` -- ne peut pas echouer :
@@ -821,10 +847,28 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
                                 "they are a known fragility -- a judgement only the suite's "
                                 "owner can make." % selector_raw})
 
-    score = round(sum(budget.values()), 1)
+    budget_score = round(sum(budget.values()), 1)
+
+    # #112 : les attentes interdites sortent du compteur et entrent dans le score. Deja relevees
+    # comme constats (non bloquantes : fragilite, pas mensonge), elles plafonnent desormais la
+    # note -- aucune suite n'est « parfaite » tant qu'elle en porte une. Plafonnee a WAIT_PENALTY_CAP
+    # pour ne jamais annihiler une suite forte par ailleurs ; jamais sous zero.
+    forbidden_wait_count = sum(1 for f in findings if f["kind"] == "forbidden-wait")
+    wait_penalty = round(min(WAIT_PENALTY_CAP, forbidden_wait_count * WAIT_PENALTY_PER), 1)
+    score = round(max(0.0, budget_score - wait_penalty), 1)
+    if forbidden_wait_count:
+        notes.append({"kind": "forbidden-wait-penalty", "file": ".", "line": 0,
+                      "detail": "%d forbidden wait(s) (waitForTimeout / networkidle) -- temporal "
+                                "fragility that Playwright's own docs proscribe, not a QAIA "
+                                "convention. -%.1f pt (capped at %.1f): budget %.1f -> score %.1f. "
+                                "Each wait is listed as a `forbidden-wait` finding."
+                                % (forbidden_wait_count, wait_penalty, WAIT_PENALTY_CAP,
+                                   budget_score, score)})
 
     return {
         "score": score,
+        "budgetScore": budget_score,
+        "waitPenalty": wait_penalty,
         "budget": budget,
         "counts": {
             "spec_files": len(spec_files),
@@ -833,6 +877,7 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
             "role_selectors": selector_role,
             "raw_selectors": selector_raw,
             "tagged_tests": tagged_tests,
+            "forbidden_waits": forbidden_wait_count,
             "testbook_scenarios": len(feature_ids),
             "scenarios_without_test": len(orphan_scenarios),
         },
@@ -840,10 +885,9 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
         "notes": notes,
         "profile": profile,
         # Un nombre « sur 100 » doit dire ce qu'il couvre. Quand une seule dimension s'applique,
-        # 100,0 signifie « parfait sur la substance des assertions », pas « suite parfaite » --
-        # et `realworld` obtient exactement cela avec huit attentes interdites au compteur. Le
-        # score n'est pas faux, il est ETROIT ; le taire serait la meme faute qu'un verdict
-        # fabrique sur un parse vide.
+        # 100,0 signifie « parfait sur la substance des assertions », pas « suite parfaite ». La
+        # note reste ETROITE sur ce que le budget couvre ; mais depuis #112 une attente interdite
+        # en est DEDUITE, si bien que `realworld` ne marque plus 100,0 avec huit au compteur.
         "scoreScope": {
             "assessed": sorted(applicable),
             "excluded": sorted(excluded),

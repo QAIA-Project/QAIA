@@ -468,6 +468,71 @@ try:
 finally:
     shutil.rmtree(_tmp9, ignore_errors=True)
 
+# --- 10. #112 : une attente interdite est DEDUITE du score, dans les deux profils -------------
+#
+# `realworld` marquait 100,0 avec huit `waitForTimeout` au compteur : parfait sur la seule
+# dimension applicable (substance des assertions), et huit fragilites temporelles ignorees. La
+# section 8 prouve qu'on ne penalise pas une convention etrangere ; celle-ci prouve qu'on penalise
+# bien une fragilite UNIVERSELLE (la doc Playwright proscrit `waitForTimeout`/`networkidle`), donc
+# qu'aucune suite n'est « parfaite » tant qu'elle en porte. Mesure prealable sur huit suites
+# tierces : eval/universal-default-2026-08-24/FORBIDDEN-WAIT-PENALTY.md.
+WAITY_SPEC = "\n".join([
+    "import { test, expect } from '@playwright/test';",
+    "test('sign in then read the greeting', async ({ page }) => {",
+    "  await expect(page.locator('.user-nav')).toContainText('a@b.c');",
+    "  await page.waitForTimeout(5000);",
+    "  await page.waitForTimeout(1000);",
+    "});",
+])
+CLEAN_SPEC = "\n".join([
+    "import { test, expect } from '@playwright/test';",
+    "test('sign in then read the greeting', async ({ page }) => {",
+    "  await expect(page.locator('.user-nav')).toContainText('a@b.c');",
+    "});",
+])
+_tmp10 = tempfile.mkdtemp()
+try:
+    with open(os.path.join(_tmp10, "waity.spec.ts"), "w", encoding="utf-8") as fh:
+        fh.write(WAITY_SPEC)
+    specs, _ = A.find_spec_files(_tmp10)
+    w = A.static_track(specs, [], _tmp10, set())
+    check("substance parfaite mais budget plein", w["budgetScore"], 100.0)
+    check("#112 : deux attentes interdites comptees", w["counts"]["forbidden_waits"], 2)
+    check("#112 : elles sont DEDUITES, donc le score n'est plus 100,0", w["score"] < 100.0, True)
+    check("#112 : -2 pt par attente", w["waitPenalty"], 4.0)
+    check("#112 : budget - penalite = score", w["score"], round(w["budgetScore"] - w["waitPenalty"], 1))
+    check("#112 : la deduction est NOMMEE en note",
+          any(n["kind"] == "forbidden-wait-penalty" for n in w["notes"]), True)
+    # Les attentes restent des constats (non bloquants), pas seulement une note.
+    check("#112 : chaque attente reste un constat forbidden-wait",
+          sum(1 for f in w["findings"] if f["kind"] == "forbidden-wait"), 2)
+    # Meme regle sous `qaia` : une attente interdite est universelle, pas une tolerance de profil.
+    wq = A.static_track(specs, [], _tmp10, set(), profile="qaia")
+    check("#112 : la penalite s'applique aussi sous le profil qaia", wq["waitPenalty"], 4.0)
+
+    # Zero attente : le score ne bouge pas d'un iota (la suite ordinaire n'est pas frappee).
+    with open(os.path.join(_tmp10, "waity.spec.ts"), "w", encoding="utf-8") as fh:
+        fh.write(CLEAN_SPEC)
+    specs, _ = A.find_spec_files(_tmp10)
+    c = A.static_track(specs, [], _tmp10, set())
+    check("zero attente : aucune penalite", c["waitPenalty"], 0.0)
+    check("zero attente : score == budget", c["score"], c["budgetScore"])
+
+    # Le plafond tient : une suite truffee d'attentes n'est jamais ramenee a zero (fragilite
+    # n'est pas mensonge ; les constats bloquants s'occupent des assertions creuses).
+    flood = "\n".join(["import { test, expect } from '@playwright/test';",
+                       "test('t', async ({ page }) => {",
+                       "  await expect(page.locator('.x')).toContainText('y');"]
+                      + ["  await page.waitForTimeout(100);"] * 40 + ["});"])
+    with open(os.path.join(_tmp10, "waity.spec.ts"), "w", encoding="utf-8") as fh:
+        fh.write(flood)
+    specs, _ = A.find_spec_files(_tmp10)
+    f = A.static_track(specs, [], _tmp10, set())
+    check("plafond : 40 attentes ne depassent pas WAIT_PENALTY_CAP", f["waitPenalty"], A.WAIT_PENALTY_CAP)
+    check("plafond : le score reste strictement positif", f["score"] > 0.0, True)
+finally:
+    shutil.rmtree(_tmp10, ignore_errors=True)
+
 if failures:
     print("selfcheck_automation_score: %d FAILURE(S)\n" % len(failures))
     for f in failures:

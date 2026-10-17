@@ -85,6 +85,18 @@ estimate, not the scorer's verdict**.
 | POM-as-fixtures | 20 | specs import the fixtures rather than driving `page` directly |
 | Traceability | 25 | tests carrying a `@QAIA-<US>-<NNN>` tag, and test book scenarios having a test |
 
+In the `universal` profile each line is **conditional** — scored only if the suite shows the
+convention it measures (a role selector somewhere, a page-object structure, a requirement
+reference), the rest rescaled onto 100, the excluded lines *named* rather than zeroed. `--profile
+qaia` makes all four mandatory.
+
+**Deducted from the score (not a budget line), in both profiles:** every forbidden fixed wait
+(`waitForTimeout`, `networkidle`) costs 2 pt, capped at 20. Playwright's own docs proscribe them,
+so this is a universal temporal fragility, not a QAIA convention — a suite is never *perfect*
+while it carries one, but it is never driven to zero for it either (fragility is not falsity).
+Each wait is also listed as a `forbidden-wait` finding (`#112`; the prior foreign measurement is
+at https://github.com/QAIA-Project/QAIA/blob/main/eval/universal-default-2026-08-24/FORBIDDEN-WAIT-PENALTY.md).
+
 **Findings that are blocking regardless of score:**
 
 - a test whose scenario has a `Then` but whose body contains **zero** assertions;
@@ -92,7 +104,6 @@ estimate, not the scorer's verdict**.
   itself);
 - `.toBeDefined()` / `.not.toBeNull()` on a locator handle — always truthy, since locators are
   lazy;
-- a forbidden fixed wait (`waitForTimeout`) standing in for a real condition;
 - **a scenario the test book flagged as resting on an open question (`@low-confidence`,
   `# open: Q…`) whose test carries no trace of the flag.** The severity is not in the code, it is
   in what happens the day that test goes red: the reader cannot tell *the open question just got
