@@ -21,6 +21,7 @@ check: ## Lance tous les controles que la CI lance (skills, provenance, outillag
 	python eval/tools/selfcheck_automation_score.py
 	python eval/tools/selfcheck_spec_suite_drift.py
 	python eval/tools/check_loop_wiring.py
+	python eval/tools/check_router_coverage.py
 	python eval/tools/check_oracle_library.py
 	python eval/tools/check_agents_tier.py
 	python eval/tools/check_retired_framing.py

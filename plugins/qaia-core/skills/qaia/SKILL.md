@@ -25,7 +25,8 @@ Repeat until the tester's goal is met or they stop:
 
    **Journey** — `us-review`, `need-understanding`, `rag-build`, `istqb-design`,
    `oracle-generate`, `prioritize`, `testbook-generate`, `report`, `testbook-export`,
-   `testbook-validate`, `feedback`, `test-plan-and-closure` (the two artefacts a manager signs).
+   `feedback`, `test-plan-and-closure` (the two artefacts a manager signs). Auditing or scoring
+   an existing book is `judge`, in `qaia-score` (below).
 
    **Beyond `qaia-core` — check what is installed before proposing it.** This plugin installs
    alone and cannot assume the others are present, but staying silent about them is worse: it
@@ -37,8 +38,9 @@ Repeat until the tester's goal is met or they stop:
      `defect-report`, `impact-select`, `confirm-fix`, `flaky-detect`, `locator-repair`,
      `a11y-audit`, `perf-check`, `security-surface`, `visual-check`,
      `usability-heuristic-review`, `contract-probe`, `traffic-replay`)
-   - scoring and release readiness → `qaia-score` (`testbook-score`, `aptitude-gate`,
-     `automation-score`, `spec-suite-drift`)
+   - scoring, auditing a book or suite, and release readiness → `qaia-score` (`judge` — scores a
+     test book, a Playwright suite, or a spec-versus-suite pair, whoever wrote it, and returns a
+     PASS/CONCERNS/FAIL gate with its reason named)
    - concrete test data for a book whose scenarios carry bare literals → `qaia-testdata`
      (`dataset-generate`)
 
