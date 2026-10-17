@@ -506,6 +506,17 @@ def score_feature(path, declared_acs=None, source_text=None, profile="universal"
     if profile == "qaia":
         tag_audit["missing_priority_tag"] = no_priority
         tag_audit["technique_tag_violations"] = technique_hits
+        # #99 part 1: the tag audit is ADVISORY -- it is NOT in the /100 budget and NOT a penalty.
+        # Correcting the tags does not move the score (measured: 14 violations fixed -> same 86,0).
+        # A reader must be told so, or "N technique_tag_violations" reads as a scored defect and
+        # "fix the findings, the score rises" becomes a false promise. Said here, in the output.
+        if technique_hits or no_priority:
+            notes.append(
+                "tag audit is ADVISORY and does not affect the score: %d scenario(s) miss a "
+                "technique tag, %d miss a priority tag. A technique named in the design step but "
+                "not tagged is a traceability hint for the author, not a structural defect -- "
+                "fixing the tags will not change the number."
+                % (len(technique_hits), len(no_priority)))
 
     # --- deterministic /100 (explicit budget, like a real tg_scorer) ---
     readability = 25 * (len([s for s in scen if s["name"] and s["steps"]]) / n)
