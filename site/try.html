@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Try QAIA — watch a test book get judged (and see why a 100 can still fail)</title>
+<meta name="description" content="Pick a Gherkin test book, see QAIA's deterministic scorer rate it: score, PASS/CONCERNS/FAIL gate, and the exact finding. A high structural score can still fail — here is why.">
+<link rel="canonical" href="https://qaia-project.github.io/QAIA/try.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Try QAIA — watch a test book get judged">
+<meta property="og:description" content="A high score can still fail. Pick a test book and see QAIA's deterministic verdict, with the exact reason named.">
+<meta property="og:url" content="https://qaia-project.github.io/QAIA/try.html">
+<meta property="og:image" content="https://qaia-project.github.io/QAIA/og-try.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://qaia-project.github.io/QAIA/og-try.png">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧪</text></svg>">
+<style>
+  :root{
+    --bg:#fbfbfd; --fg:#16181d; --muted:#5c6270; --line:#e2e5ec; --card:#fff;
+    --accent:#3b5bdb; --on-accent:#fff; --accent-soft:#eef1fe;
+    --ok:#127a4b; --ok-soft:#e7f6ee; --warn:#8a5a00; --warn-soft:#fdf6e3; --bad:#c0392b; --bad-soft:#fbeceb;
+    --code-bg:#f4f5f8; --shadow:0 1px 2px rgba(16,18,25,.05),0 8px 24px -12px rgba(16,18,25,.18);
+  }
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+    --bg:#0e1014; --fg:#e8eaf0; --muted:#98a0b0; --line:#242833; --card:#161a21;
+    --accent:#7d94ff; --on-accent:#0e1014; --accent-soft:#1a2039;
+    --ok:#4ec98a; --ok-soft:#10241a; --warn:#e0b055; --warn-soft:#241f12; --bad:#ef6a5e; --bad-soft:#2a1512;
+    --code-bg:#12151b; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -12px rgba(0,0,0,.6);
+  }}
+  :root[data-theme="dark"]{
+    --bg:#0e1014; --fg:#e8eaf0; --muted:#98a0b0; --line:#242833; --card:#161a21;
+    --accent:#7d94ff; --on-accent:#0e1014; --accent-soft:#1a2039;
+    --ok:#4ec98a; --ok-soft:#10241a; --warn:#e0b055; --warn-soft:#241f12; --bad:#ef6a5e; --bad-soft:#2a1512;
+    --code-bg:#12151b; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -12px rgba(0,0,0,.6);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--fg);
+    font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;overflow-x:hidden}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code,pre,.mono{font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+  header.site{border-bottom:1px solid var(--line);position:sticky;top:0;
+    background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);z-index:10}
+  header.site .wrap{display:flex;align-items:center;gap:20px;height:56px}
+  .brand{font-weight:700;font-size:19px;color:var(--fg)}
+  .brand span{color:var(--accent)}
+  nav.top{display:flex;gap:18px;margin-left:auto;flex-wrap:wrap;font-size:14.5px;align-items:center}
+  nav.top a{color:var(--muted)} nav.top a:hover{color:var(--fg);text-decoration:none}
+  nav.top a.on{color:var(--fg);font-weight:600}
+  .lang{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .lang button{border:0;background:var(--card);color:var(--muted);font-size:12.5px;font-weight:700;
+    padding:4px 9px;cursor:pointer}
+  .lang button.on{background:var(--accent);color:var(--on-accent)}
+  .hero{padding:56px 0 28px}
+  .pill{display:inline-flex;align-items:center;gap:8px;font-size:13px;padding:5px 12px;border-radius:999px;
+    border:1px solid var(--line);background:var(--card);color:var(--muted);margin-bottom:20px}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--warn)}
+  h1{font-size:clamp(30px,5vw,46px);line-height:1.08;letter-spacing:-.02em;margin:.1em 0 .35em;font-weight:800}
+  .lede{font-size:clamp(17px,2.4vw,20px);color:var(--muted);max-width:44ch}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;border:1px solid transparent;
+    font-size:15px;font-weight:600;cursor:pointer;transition:transform .05s}
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{background:var(--accent);color:var(--on-accent)}
+  .btn-ghost{border-color:var(--line);color:var(--fg);background:var(--card)}
+  .lab{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:14px 0 8px;align-items:start}
+  @media (max-width:860px){.lab{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+  .chip{font-size:13px;padding:6px 11px;border-radius:999px;border:1px solid var(--line);background:var(--bg);
+    color:var(--muted);cursor:pointer;transition:.12s}
+  .chip:hover{border-color:var(--accent);color:var(--fg)}
+  .chip.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+  textarea{width:100%;min-height:270px;resize:vertical;background:var(--code-bg);color:var(--fg);
+    border:1px solid var(--line);border-radius:10px;padding:13px 14px;font:13px/1.6 ui-monospace,Menlo,Consolas,monospace}
+  .verdict{min-height:270px;display:flex;flex-direction:column}
+  .score-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .score{font-size:58px;font-weight:800;letter-spacing:-.03em;line-height:1}
+  .score small{font-size:20px;color:var(--muted);font-weight:600}
+  .gate{font-size:14px;font-weight:800;letter-spacing:.06em;padding:7px 14px;border-radius:10px;text-transform:uppercase}
+  .gate.PASS{background:var(--ok-soft);color:var(--ok)}
+  .gate.CONCERNS{background:var(--warn-soft);color:var(--warn)}
+  .gate.FAIL{background:var(--bad-soft);color:var(--bad)}
+  .reason{margin:14px 0 6px;font-size:15px;color:var(--fg)}
+  .findings{list-style:none;padding:0;margin:10px 0 0;display:flex;flex-direction:column;gap:8px}
+  .findings li{font-size:14px;padding:10px 12px;border-radius:9px;border-left:3px solid var(--bad);
+    background:var(--bad-soft);color:var(--fg)}
+  .findings li.ok{border-left-color:var(--ok);background:var(--ok-soft)}
+  .findings li.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+  .src-tag{font-size:12px;color:var(--muted);margin-top:auto;padding-top:14px}
+  .src-tag.auth{color:var(--ok)}
+  .two-nums{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+  @media (max-width:520px){.two-nums{grid-template-columns:1fr}}
+  .num{border:1px solid var(--line);border-radius:10px;padding:12px}
+  .num .k{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+  .num .v{font-weight:700;font-size:15px;margin-top:2px}
+  section.band{padding:40px 0;border-top:1px solid var(--line);margin-top:40px}
+  h2{font-size:clamp(22px,3.4vw,30px);letter-spacing:-.015em;margin:0 0 .5em;font-weight:800}
+  .story{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media (max-width:760px){.story{grid-template-columns:1fr}}
+  .story .card h3{margin:0 0 6px;font-size:16px}
+  .story .mval{font-size:34px;font-weight:800;line-height:1}
+  .note{background:var(--warn-soft);border:1px solid var(--line);border-left:3px solid var(--warn);
+    border-radius:8px;padding:14px 16px;color:var(--fg);font-size:14.5px;margin-top:16px}
+  pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;
+    font-size:13.5px;line-height:1.55;margin:10px 0 0}
+  footer{border-top:1px solid var(--line);margin-top:48px;padding:26px 0;color:var(--muted);font-size:14px}
+  .cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+</style>
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="./">QA<span>IA</span></a>
+    <nav class="top">
+      <a href="./walkthrough.html" data-i="nav_walk">Walkthrough</a>
+      <a href="./try.html" class="on" data-i="nav_try">Try it</a>
+      <a href="https://github.com/QAIA-Project/QAIA">GitHub</a>
+      <span class="lang"><button data-lang="en">EN</button><button data-lang="fr">FR</button></span>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <span class="pill"><span class="dot"></span> <span data-i="pill"></span></span>
+    <h1><span data-i="h1a"></span><br><span data-i="h1b"></span></h1>
+    <p class="lede" data-i="lede"></p>
+  </section>
+
+  <div class="chips" id="chips"></div>
+  <div class="lab">
+    <div>
+      <textarea id="book" spellcheck="false" aria-label="Gherkin test book"></textarea>
+      <div class="cta-row">
+        <button class="btn btn-primary" id="judge" data-i="judgeBtn"></button>
+        <button class="btn btn-ghost" id="clear" data-i="clearBtn"></button>
+      </div>
+    </div>
+    <div class="card verdict" id="verdict"></div>
+  </div>
+
+  <section class="band" id="why">
+    <h2 data-i="whyTitle"></h2>
+    <p class="lede" style="max-width:62ch" data-i="whyLede"></p>
+    <div class="story">
+      <div class="card">
+        <h3 data-i="machineSaw"></h3>
+        <div class="mval" style="color:var(--ok)">100<small style="font-size:18px">/100</small></div>
+        <p style="color:var(--muted);font-size:14.5px;margin:.4em 0 0" data-i="machineDesc"></p>
+      </div>
+      <div class="card">
+        <h3 data-i="testerFound"></h3>
+        <div class="mval" style="color:var(--bad)">58<small style="font-size:18px">/100</small></div>
+        <p style="color:var(--muted);font-size:14.5px;margin:.4em 0 0" data-i="testerDesc"></p>
+      </div>
+    </div>
+    <div class="note" data-i="whyNote"></div>
+  </section>
+
+  <section class="band" id="real">
+    <h2 data-i="realTitle"></h2>
+    <p class="lede" style="max-width:62ch" data-i="realLede"></p>
+    <pre id="installPre"></pre>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://github.com/QAIA-Project/QAIA" data-i="getBtn"></a>
+      <a class="btn btn-ghost" href="./walkthrough.html" data-i="walkBtn"></a>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap"><span data-i="footer"></span></div></footer>
+
+<script>
+const T = {
+  en:{
+    nav_walk:"Walkthrough", nav_try:"Try it",
+    pill:"Pre-alpha — and it says so",
+    h1a:"A test book can score 100", h1b:"and still be worthless.",
+    lede:"Pick one below. QAIA's deterministic scorer rates it, names the gate, and points at the exact scenario — the way a senior tester would.",
+    judgeBtn:"Judge it →", clearBtn:"Blank slate",
+    whyTitle:"Why a high score can still FAIL",
+    whyLede:"The structural score measures form. A human measures meaning. QAIA reports both, and never lets the first hide the second — the lesson of a real documented case.",
+    machineSaw:"🤖 What the machine saw", machineDesc:"Nine scenarios, perfect structure, every acceptance criterion linked. On paper, flawless.",
+    testerFound:"🧐 What a tester found", testerDesc:"One AC was “covered” only by an unreadable image. One case had no expected result — a question, not a test. Gaps a 100 hides.",
+    whyNote:"QAIA turns those two failures into forced-STOP detectors (C1 hollow coverage, C2 no verifiable outcome): the structural score can be high, but the gate still reads FAIL. A number you can replay, and a reason you can act on — never a model quietly grading its own homework.",
+    realTitle:"Score your own, for real", realLede:"The box above gives an instant preview. The verdict that counts comes from the pinned, reproducible scorer inside QAIA — run on your own books, in your own session, no API key.",
+    install:"/plugin marketplace add QAIA-Project/QAIA\n/plugin install qaia-score@qaia\n/reload-plugins\n\n# then, in Claude Code:\n#   \"judge the test book in ./features — is it any good?\"",
+    getBtn:"Get QAIA on GitHub", walkBtn:"See the full walkthrough",
+    footer:"The preview in your browser is a teaser. The binding verdict is the pinned scorer — that is the whole point.",
+    authTag:"✓ Authoritative — QAIA's pinned deterministic scorer (reproducible by anyone).",
+    previewTag:"⚠ Browser preview only — install QAIA for the binding /100 verdict.",
+    k1:"Structural score", v1:"Deterministic · replayable", k2:"Who decides", v2:"Gate, not a model's mood",
+    emptyPrompt:"Paste a Gherkin book and press <b>Judge it</b>.",
+    pv_bad:"Preview: a forced-STOP defect is present (hollow coverage or no verifiable outcome).",
+    pv_warn:"Preview: nothing fatal, but worth a look.",
+    pv_ok:"Preview: nothing obvious caught — nice.",
+    pv_none:"No scenario found — is this a Gherkin book?", pv_nothing:"Nothing to score yet.",
+    pv_noclean:"No obvious defect in this quick preview."
+  },
+  fr:{
+    nav_walk:"Parcours", nav_try:"Essayer",
+    pill:"Pré-alpha — et ça l'assume",
+    h1a:"Un cahier peut scorer 100", h1b:"et ne rien valoir.",
+    lede:"Choisis-en un. Le scoreur déterministe de QAIA le note, nomme la porte, et pointe le scénario fautif — comme le ferait un testeur senior.",
+    judgeBtn:"Juge-le →", clearBtn:"Page blanche",
+    whyTitle:"Pourquoi un score élevé peut quand même ÉCHOUER",
+    whyLede:"Le score structurel mesure la forme. L'humain mesure le sens. QAIA rend les deux, et ne laisse jamais le premier masquer le second — la leçon d'un cas réel documenté.",
+    machineSaw:"🤖 Ce que la machine a vu", machineDesc:"Neuf scénarios, structure parfaite, chaque critère d'acceptation relié. Sur le papier, irréprochable.",
+    testerFound:"🧐 Ce qu'un testeur a trouvé", testerDesc:"Un critère « couvert » seulement par une image illisible. Un cas sans résultat attendu — une question, pas un test. Des trous qu'un 100 masque.",
+    whyNote:"QAIA transforme ces deux échecs en détecteurs à arrêt forcé (C1 couverture creuse, C2 résultat non vérifiable) : le score structurel peut être haut, la porte reste FAIL. Un nombre qu'on peut rejouer, une raison sur laquelle agir — jamais un modèle qui se note en douce.",
+    realTitle:"Note les tiens, pour de vrai", realLede:"La zone ci-dessus donne un aperçu instantané. Le verdict qui compte vient du scoreur épinglé et reproductible de QAIA — sur tes propres cahiers, dans ta session, sans clé API.",
+    install:"/plugin marketplace add QAIA-Project/QAIA\n/plugin install qaia-score@qaia\n/reload-plugins\n\n# puis, dans Claude Code :\n#   « juge le cahier de test dans ./features — il vaut quoi ? »",
+    getBtn:"QAIA sur GitHub", walkBtn:"Voir le parcours complet",
+    footer:"L'aperçu dans ton navigateur est un teaser. Le verdict qui fait foi, c'est le scoreur épinglé — c'est tout l'intérêt.",
+    authTag:"✓ Fait foi — scoreur déterministe épinglé de QAIA (rejouable par quiconque).",
+    previewTag:"⚠ Aperçu navigateur — installe QAIA pour le verdict /100 qui fait foi.",
+    k1:"Score structurel", v1:"Déterministe · rejouable", k2:"Qui décide", v2:"La porte, pas l'humeur d'un modèle",
+    emptyPrompt:"Colle un cahier Gherkin et clique <b>Juge-le</b>.",
+    pv_bad:"Aperçu : un défaut à arrêt forcé est présent (couverture creuse ou résultat non vérifiable).",
+    pv_warn:"Aperçu : rien de fatal, mais à regarder.",
+    pv_ok:"Aperçu : rien d'évident détecté — joli.",
+    pv_none:"Aucun scénario trouvé — est-ce bien du Gherkin ?", pv_nothing:"Rien à noter pour l'instant.",
+    pv_noclean:"Aucun défaut évident dans cet aperçu rapide."
+  }
+};
+
+const EX = {
+  good:{ score:100, gate:"PASS", auth:true,
+    label:{en:"Clean book",fr:"Cahier propre"},
+    reason:{en:"Every AC covered by a scenario that really asserts, each one traceable. No defect.",
+            fr:"Chaque critère couvert par un scénario qui affirme vraiment, chacun traçable. Aucun défaut."},
+    findings:[{k:"ok",t:{en:"3 ACs, 3 scenarios, all traced to @QAIA-* IDs; a positive, a boundary and a refusal.",
+                         fr:"3 critères, 3 scénarios, tous tracés à des ID @QAIA-* ; un nominal, une borne, un refus."}}],
+    book:`# ACs: AC1,AC2,AC3
+@QAIA-BILL-001 @AC1
+Scenario: Majoration MCS appliquée pour un patient de 80 ans ou plus
+  Given un patient âgé de 82 ans suivi par un médecin non traitant en secteur 1
+  When la facturation de la consultation est calculée
+  Then le montant inclut la majoration MCS de 5.00 EUR
+  And le statut de la facture est "VALIDATED"
+
+@QAIA-BILL-002 @AC2
+Scenario: Pas de majoration MCS sous le seuil d'âge
+  Given un patient âgé de 79 ans en secteur 1
+  When la facturation de la consultation est calculée
+  Then le montant n'inclut pas la majoration MCS
+  And le total est égal à 25.00 EUR
+
+@QAIA-BILL-003 @AC3
+Scenario: Refus si secteur non autorisé
+  Given un praticien en secteur non conventionné
+  When la facturation est soumise
+  Then la requête est rejetée avec le statut HTTP 422`},
+
+  hollow:{ score:85, gate:"FAIL", auth:true,
+    label:{en:"Covered by an image (C1)",fr:"Couvert par une image (C1)"},
+    reason:{en:"Forced STOP. The structural score is high (85), but one AC is “covered” only by a reference to an image — a hollow test.",
+            fr:"Arrêt forcé. Le score structurel est haut (85), mais un critère est « couvert » seulement par un renvoi à une image — un test creux."},
+    findings:[{k:"bad",t:{en:"‘Barème des majorations conforme au tableau’ — the Then defers to «l’image en annexe». Nothing is actually asserted, so the AC is not covered (C1).",
+                          fr:"‘Barème des majorations conforme au tableau’ — le Then renvoie à «l’image en annexe». Rien n’est réellement affirmé : le critère n’est pas couvert (C1)."}}],
+    book:`# ACs: AC1,AC2
+@QAIA-BILL-001 @AC1
+Scenario: Barème des majorations conforme au tableau
+  Given un patient éligible aux majorations
+  When la facturation est calculée
+  Then les montants correspondent au tableau de l'image en annexe
+
+@QAIA-BILL-002 @AC2
+Scenario: Refus hors secteur
+  Given un praticien en secteur non conventionné
+  When la facturation est soumise
+  Then la requête est rejetée avec le statut HTTP 422`},
+
+  noexpected:{ score:70, gate:"FAIL", auth:true,
+    label:{en:"No expected result (C2)",fr:"Sans résultat attendu (C2)"},
+    reason:{en:"Forced STOP. The Then asserts nothing verifiable — it is a question dressed as a test.",
+            fr:"Arrêt forcé. Le Then n’affirme rien de vérifiable — c’est une question déguisée en test."},
+    findings:[{k:"bad",t:{en:"‘Calcul de la facturation’ — Then «le système répond correctement»: no value, no state, no status. (C2)",
+                          fr:"‘Calcul de la facturation’ — Then «le système répond correctement» : ni valeur, ni état, ni statut. (C2)"}},
+              {k:"bad",t:{en:"‘Soumission de la facture’ — Then «cela fonctionne comme attendu»: nothing to check. (C2)",
+                          fr:"‘Soumission de la facture’ — Then «cela fonctionne comme attendu» : rien à vérifier. (C2)"}}],
+    book:`# ACs: AC1,AC2
+@QAIA-BILL-001 @AC1
+Scenario: Calcul de la facturation
+  Given un patient de 82 ans
+  When la facturation est calculée
+  Then le système répond correctement
+
+@QAIA-BILL-002 @AC2
+Scenario: Soumission de la facture
+  Given une facture valide
+  When elle est soumise
+  Then cela fonctionne comme attendu`},
+
+  fabrication:{ score:75, gate:"CONCERNS", auth:true,
+    label:{en:"Invented data",fr:"Données inventées"},
+    reason:{en:"Unresolved placeholders cost points. With the source requirement attached, the anti-fabrication sniffer also flags untraceable technical values and the gate drops to FAIL.",
+            fr:"Les marqueurs non résolus coûtent des points. Avec l’exigence source, le renifleur anti-fabrication signale aussi des valeurs techniques non traçables et la porte tombe à FAIL."},
+    findings:[{k:"warn",t:{en:"2 unresolved markers: [À DÉFINIR PAR LE TESTEUR], TODO — −5.",
+                           fr:"2 marqueurs non résolus : [À DÉFINIR PAR LE TESTEUR], TODO — −5."}},
+              {k:"bad",t:{en:"With a source: http://tarif-prod-07.internal:8453, 137.50 EUR, TARIF-9987 trace to nothing → fabrication → FAIL.",
+                         fr:"Avec une source : http://tarif-prod-07.internal:8453, 137.50 EUR, TARIF-9987 ne tracent à rien → fabrication → FAIL."}}],
+    book:`# ACs: AC1,AC2
+@QAIA-BILL-001 @AC1
+Scenario: Appel du service de tarification
+  Given le service de tarification sur http://tarif-prod-07.internal:8453
+  When on POST la consultation avec le montant 137.50 EUR
+  Then la réponse contient le code TARIF-9987
+  And le statut est HTTP 200
+
+@QAIA-BILL-002 @AC2
+Scenario: Seuil de majoration
+  Given un patient de [À DÉFINIR PAR LE TESTEUR] ans
+  When la facturation est calculée
+  Then le montant inclut la majoration TODO`},
+
+  redundant:{ score:91, gate:"PASS", auth:true, signal:true,
+    label:{en:"Pesticide paradox",fr:"Paradoxe du pesticide"},
+    reason:{en:"PASS, with a signal — never a forced STOP. Three scenarios share the same Given/When shape; only a literal changes. No new partition is tested.",
+            fr:"PASS, avec un signal — jamais un arrêt forcé. Trois scénarios partagent la même forme Given/When ; seule une valeur change. Aucune nouvelle partition testée."},
+    findings:[{k:"warn",t:{en:"Same shape ×3 (only the age changes) — reported for human judgment, −9. Not failed: a boundary set and a copy-paste read as the same text, and that is a judgement about the domain.",
+                           fr:"Même forme ×3 (seul l’âge change) — signalé pour jugement humain, −9. Pas d’échec : un jeu de bornes et un copier-coller se lisent pareil, et c’est un jugement sur le domaine."}}],
+    book:`# ACs: AC1
+@QAIA-BILL-001 @AC1
+Scenario: Majoration à 80 ans
+  Given un patient de 80 ans
+  When la facturation est calculée
+  Then le montant inclut la majoration MCS
+
+@QAIA-BILL-002 @AC1
+Scenario: Majoration à 85 ans
+  Given un patient de 85 ans
+  When la facturation est calculée
+  Then le montant inclut la majoration MCS
+
+@QAIA-BILL-003 @AC1
+Scenario: Majoration à 90 ans
+  Given un patient de 90 ans
+  When la facturation est calculée
+  Then le montant inclut la majoration MCS`}
+};
+
+const ORDER = ["good","hollow","noexpected","fabrication","redundant"];
+let LANG = "en";
+try{ const s=localStorage.getItem("qaia_lang"); if(s==="fr"||s==="en") LANG=s;
+     else if((navigator.language||"").toLowerCase().startsWith("fr")) LANG="fr"; }catch(e){}
+
+const chipsEl=document.getElementById("chips"), bookEl=document.getElementById("book"), verdictEl=document.getElementById("verdict");
+let current=null, dirty=false, lastPreview=null;
+
+function applyLang(){
+  const t=T[LANG];
+  document.documentElement.lang=LANG;
+  document.querySelectorAll("[data-i]").forEach(el=>{ const k=el.getAttribute("data-i"); if(t[k]!=null){ if(k==="emptyPrompt") el.innerHTML=t[k]; else el.textContent=t[k]; } });
+  document.getElementById("installPre").textContent=t.install;
+  document.querySelectorAll(".lang button").forEach(b=>b.classList.toggle("on",b.dataset.lang===LANG));
+  // chips
+  [...chipsEl.children].forEach(c=>{ c.firstChild.nodeValue=EX[c.dataset.k].label[LANG]; });
+  // re-render current verdict in the new language
+  if(current && !dirty) render(EX[current], true);
+  else if(lastPreview) render(lastPreview, false);
+  else verdictEl.innerHTML='<p style="color:var(--muted);margin:auto;text-align:center">'+t.emptyPrompt+'</p>';
+}
+function setLang(l){ LANG=l; try{localStorage.setItem("qaia_lang",l);}catch(e){} applyLang(); }
+document.querySelectorAll(".lang button").forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
+
+ORDER.forEach(k=>{ const b=document.createElement("button"); b.className="chip"; b.dataset.k=k;
+  b.appendChild(document.createTextNode(EX[k].label[LANG])); b.onclick=()=>load(k); chipsEl.appendChild(b); });
+
+function load(k){ current=k; dirty=false; lastPreview=null; bookEl.value=EX[k].book;
+  [...chipsEl.children].forEach(c=>c.classList.toggle("on",c.dataset.k===k)); render(EX[k], true); }
+bookEl.addEventListener("input",()=>{ dirty=true; [...chipsEl.children].forEach(c=>c.classList.remove("on")); });
+document.getElementById("clear").onclick=()=>{ current=null;dirty=true;lastPreview=null;bookEl.value="";
+  [...chipsEl.children].forEach(c=>c.classList.remove("on"));
+  verdictEl.innerHTML='<p style="color:var(--muted);margin:auto;text-align:center">'+T[LANG].emptyPrompt+'</p>'; };
+document.getElementById("judge").onclick=()=>{
+  if(current && !dirty){ render(EX[current], true); return; }
+  lastPreview=preview(bookEl.value); render(lastPreview, false); };
+
+function preview(text){
+  const scen=splitScenarios(text), F=[]; let stop=false;
+  if(!scen.length) return {score:null,gate:"CONCERNS",auth:false,reasonKey:"pv_none",findings:[{k:"warn",tk:"pv_nothing"}]};
+  scen.forEach(s=>{
+    const then=s.then.join(" ").toLowerCase(), gw=(s.given.concat(s.when)).join(" ");
+    if(/\[\s*(à|a)\s*d[eé]finir|todo|fixme|<\s*placeholder\s*>|\bxxx\b|\btbd\b/i.test(s.raw)) F.push({k:"warn",lit:(LANG==="fr"?`‘${s.name}’ — marqueur non résolu.`:`‘${s.name}’ — unresolved placeholder.`)});
+    if(!s.then.length){ F.push({k:"bad",lit:(LANG==="fr"?`‘${s.name}’ — aucun Then : pas un test. (C2)`:`‘${s.name}’ — no Then at all: not a test. (C2)`)}); stop=true; return; }
+    if(/\b(voir|see|cf\.?|selon|according to)\b.*(image|tableau|table|screenshot|capture|annexe|maquette)/i.test(then)){ F.push({k:"bad",lit:(LANG==="fr"?`‘${s.name}’ — le Then renvoie à une image/un tableau : couverture creuse. (C1)`:`‘${s.name}’ — Then defers to an image/table: hollow coverage. (C1)`)}); stop=true; }
+    else if(!/\d|"[^"]+"|status|http|=|égal|equal|contient|contains|affiche|displays|rejet|reject|\b(est|is)\b/i.test(then) && /correct|comme attendu|as expected|works?|fonctionne|properly|sans erreur|ok\b/i.test(then)){ F.push({k:"bad",lit:(LANG==="fr"?`‘${s.name}’ — le Then n’affirme rien de vérifiable. (C2)`:`‘${s.name}’ — Then asserts nothing verifiable. (C2)`)}); stop=true; }
+    if(/(…|\.\.\.|\bet|\bla)\s*$/i.test(gw) || s.when.some(w=>w.split(/\s+/).length<2)) F.push({k:"warn",lit:(LANG==="fr"?`‘${s.name}’ — un pas semble tronqué.`:`‘${s.name}’ — a step looks truncated.`)});
+    if(!s.tags.some(t=>/@QAIA-|@[A-Z]{2,}-?\d/.test(t))) F.push({k:"warn",lit:(LANG==="fr"?`‘${s.name}’ — pas d’@ID stable : non traçable.`:`‘${s.name}’ — no stable @ID: not traceable.`)});
+  });
+  const bad=F.some(f=>f.k==="bad");
+  return {score:null, gate:bad?"FAIL":(F.length?"CONCERNS":"PASS"), auth:false,
+    reasonKey: bad?"pv_bad":(F.length?"pv_warn":"pv_ok"),
+    findings: F.length?F:[{k:"ok",tk:"pv_noclean"}]};
+}
+function splitScenarios(text){
+  const out=[]; let cur=null,inThen=false,tags=[];
+  text.split("\n").forEach(raw=>{ const l=raw.trim();
+    if(l.startsWith("@")){ tags=tags.concat(l.split(/\s+/)); return; }
+    let m=l.match(/^(Scenario Outline|Scenario Template|Scenario|Scénario|Example|Exemple)\s*:\s*(.*)/i);
+    if(m){ if(cur)out.push(cur); cur={name:m[2]||"(unnamed)",raw:"",given:[],when:[],then:[],tags}; tags=[]; inThen=false; return; }
+    if(!cur) return; cur.raw+=" "+l;
+    let s=l.match(/^(Given|When|Then|And|But|Soit|Quand|Alors|Et|Mais)\b(.*)/i);
+    if(s){ const k=s[1].toLowerCase(), t=(s[2]||"").trim();
+      if(k==="then"||k==="alors"){inThen=true;cur.then.push(t);}
+      else if(k==="given"||k==="soit"){inThen=false;cur.given.push(t);}
+      else if(k==="when"||k==="quand"){inThen=false;cur.when.push(t);}
+      else { (inThen?cur.then:cur.when).push(t); } }
+  });
+  if(cur)out.push(cur); return out;
+}
+
+function fText(f){ return f.t ? f.t[LANG] : (f.tk ? T[LANG][f.tk] : f.lit); }
+function render(v, auth){
+  const t=T[LANG];
+  const scoreHtml = v.score==null ? '<div class="score" style="color:var(--muted)">–<small>/100</small></div>'
+    : '<div class="score" id="sc">0<small>/100</small></div>';
+  const gateTxt = v.signal ? "PASS ·signal" : v.gate;
+  const reasonTxt = v.reason ? v.reason[LANG] : T[LANG][v.reasonKey];
+  verdictEl.innerHTML = `
+    <div class="score-row">${scoreHtml}<span class="gate ${v.gate}">${gateTxt}</span></div>
+    <p class="reason">${reasonTxt}</p>
+    <ul class="findings">${v.findings.map(f=>`<li class="${f.k||'bad'}">${fText(f)}</li>`).join("")}</ul>
+    ${auth?`<div class="two-nums">
+      <div class="num"><div class="k">${t.k1}</div><div class="v">${t.v1}</div></div>
+      <div class="num"><div class="k">${t.k2}</div><div class="v">${t.v2}</div></div></div>`:""}
+    <div class="src-tag ${auth?'auth':''}">${auth? t.authTag : t.previewTag}</div>`;
+  if(v.score!=null){ animate(document.getElementById("sc"), v.score); }
+}
+function animate(el,target){ let n=0; const step=Math.max(1,Math.round(target/28));
+  const id=setInterval(()=>{ n+=step; if(n>=target){n=target;clearInterval(id);} el.firstChild.nodeValue=n; },16); }
+
+applyLang();
+load("hollow");
+</script>
+</body>
+</html>

@@ -428,6 +428,18 @@ def score_feature(path, declared_acs=None, source_text=None, profile="universal"
     # Donc il ne penalise plus que l'inambigu -- le texte STRICTEMENT identique, 159 paires sur
     # 852 -- et signale tout le reste. Un detecteur qui facture un jugement qu'il ne peut pas
     # rendre est pire que muet : il a l'autorite d'un chiffre.
+    #
+    # LE FAUX NEGATIF (#113) EST UNE LIMITE MESUREE, PAS UN OUBLI. Deux scenarios copies-colles
+    # dont le `When` derive d'un mot (`ajoute <val>` / `ajoute l'article <val>`) ont un shape_key
+    # different et ne sont donc jamais compares. La piste « similarite Jaccard » a ete MESUREE sur
+    # 224 cahiers reels avant d'etre ecrite (eval/universal-default-2026-08-24/REDUNDANCY-FALSENEG.md) :
+    # a tout seuil, les faux positifs (paires metamorphiques a litteraux differents) depassent les
+    # vrais copies-colles ; et meme filtre par litteraux identiques + `Then` identique + inclusion
+    # de jetons, le split reste ~50/50 -- `cucumber -q` vs `cucumber -x -q` (l'option testee) et
+    # `reference` vs `comparison screenshot directory` passent tous les filtres. Le signal qui
+    # separe copie-colle et couverture deliberee est SEMANTIQUE, pas textuel. Un signalement a
+    # ~50 % de precision porterait « l'autorite d'un chiffre » sur un jugement qu'il ne peut pas
+    # rendre : on nomme la limite ici plutot que d'ajouter un detecteur bruite.
     def raw_key(s):
         return "\n".join(re.sub(r"\s+", " ", t).strip().lower() for _kw, t in s["steps"])
 
@@ -494,6 +506,17 @@ def score_feature(path, declared_acs=None, source_text=None, profile="universal"
     if profile == "qaia":
         tag_audit["missing_priority_tag"] = no_priority
         tag_audit["technique_tag_violations"] = technique_hits
+        # #99 part 1: the tag audit is ADVISORY -- it is NOT in the /100 budget and NOT a penalty.
+        # Correcting the tags does not move the score (measured: 14 violations fixed -> same 86,0).
+        # A reader must be told so, or "N technique_tag_violations" reads as a scored defect and
+        # "fix the findings, the score rises" becomes a false promise. Said here, in the output.
+        if technique_hits or no_priority:
+            notes.append(
+                "tag audit is ADVISORY and does not affect the score: %d scenario(s) miss a "
+                "technique tag, %d miss a priority tag. A technique named in the design step but "
+                "not tagged is a traceability hint for the author, not a structural defect -- "
+                "fixing the tags will not change the number."
+                % (len(technique_hits), len(no_priority)))
 
     # --- deterministic /100 (explicit budget, like a real tg_scorer) ---
     readability = 25 * (len([s for s in scen if s["name"] and s["steps"]]) / n)

@@ -12,6 +12,9 @@
 as Claude Code plugins that run inside *your* session. No API key, no backend, no data leaving
 your session beyond what you already send to Claude.
 
+**▶ [Try it live](https://qaia-project.github.io/QAIA/try.html)** — paste a Gherkin test book and
+watch QAIA judge it. A high score can still fail; the demo shows why.
+
 ## The whole product in one screen
 
 One acceptance criterion from [`eval/gold-set/US-004-expense-approval.md`](eval/gold-set/US-004-expense-approval.md):
@@ -117,7 +120,7 @@ has ever run it end to end**, and what it produces for a real user is unmeasured
 ## Status and limits
 
 **Pre-alpha, in active development.** `qaia-core` 0.3.0 (17 skills), `qaia-playwright` 0.1.27
-(14 skills), `qaia-score` 0.3.0 (**1 skill**, `judge`), `qaia-testdata` 0.1.3 (1 skill) — **33 skills** — all
+(14 skills), `qaia-score` 0.3.1 (**1 skill**, `judge`), `qaia-testdata` 0.1.3 (1 skill) — **33 skills** — all
 validating `--strict`, proven end-to-end on two independent domains: healthcare
 ([`examples/medibook/`](examples/medibook), 26 tests / 32 executions, all green) and finance/HR
 ([`examples/expense-demo/`](examples/expense-demo), 56 green tests, real bugs found during

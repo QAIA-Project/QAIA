@@ -11,6 +11,9 @@ exécutables en sortie** — sous forme de plugins Claude Code qui tournent dans
 Pas de clé API, pas de backend, aucune donnée ne quitte votre session au-delà de ce que vous
 envoyez déjà à Claude.
 
+**▶ [Essayer en ligne](https://qaia-project.github.io/QAIA/try.html)** — colle un cahier Gherkin
+et regarde QAIA le juger. Un score élevé peut quand même échouer ; la démo montre pourquoi.
+
 ## Le produit entier en un écran
 
 Un critère d'acceptation, tiré de [`eval/gold-set/US-004-expense-approval.md`](eval/gold-set/US-004-expense-approval.md)
@@ -120,7 +123,7 @@ utilisateur reste non mesuré.
 ## État et limites
 
 **Pré-alpha, en développement actif.** `qaia-core` 0.3.0 (17 skills), `qaia-playwright` 0.1.27
-(14 skills), `qaia-score` 0.3.0 (**1 skill**, `judge`), `qaia-testdata` 0.1.3 (1 skill) — **33 skills** —
+(14 skills), `qaia-score` 0.3.1 (**1 skill**, `judge`), `qaia-testdata` 0.1.3 (1 skill) — **33 skills** —
 validant tous `--strict`, prouvés bout-en-bout sur deux domaines indépendants : santé
 ([`examples/medibook/`](examples/medibook), 26 tests / 32 exécutions, tous verts) et finance/RH
 ([`examples/expense-demo/`](examples/expense-demo), 56 tests verts, vrais bugs trouvés pendant
