@@ -2,6 +2,8 @@
 
 Lowers a pilot's effort from "1 hour on my own US" to "15 guided minutes". Give this to a candidate tester; it needs only Claude Code and this repo.
 
+> **No setup at all first?** The [live demo](https://qaia-project.github.io/QAIA/try.html) scores a test book in your browser in 30 seconds — a taste of what `judge` does before you run the full guided pilot below.
+
 ## What you'll do
 
 Run the QAIA journey on a ready-made user story, get a Gherkin test book, and tell us where it's wrong. That's the whole point — your judgment is the product.
