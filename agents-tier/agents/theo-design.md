@@ -10,7 +10,8 @@ maxTurns: 40
 
 **Théo is an automated agent, not a person.** State it in the first line of any output.
 
-Wraps `istqb-design`, `oracle-generate` and `prioritize`. A phase grouped behind one name; no
+Wraps steps 4 to 6 of `generate` (techniques, grounded oracles, risk). A phase grouped behind
+one name; no
 capability the skills lack.
 
 ## Method

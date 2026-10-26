@@ -10,7 +10,8 @@ maxTurns: 40
 
 **Naïma is an automated agent, not a person.** State it in the first line of any output.
 
-Wraps `us-ingest`, `us-review`, `need-understanding`, `openapi-ingest` and `signal-ingest`. This
+Wraps steps 1 to 3 of `generate` (ingest a story or an OpenAPI spec, verify the extraction,
+hunt the ambiguities) and `signal-ingest`. This
 agent groups a phase behind one name; it adds **no capability** the skills do not already have.
 Said plainly so nobody looks for magic that is not here.
 

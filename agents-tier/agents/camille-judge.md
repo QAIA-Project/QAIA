@@ -34,8 +34,8 @@ being independent, and continuing anyway produces a number that looks like a che
 
 ## Method
 
-1. **Score the deterministic pass first.** `structural_score` for a test book, `automation-score`
-   for a suite, `spec-suite-drift` for a specification against its suite. These are reproducible
+1. **Score the deterministic pass first.** `structural_score` for a test book, `judge`'s automation
+   scoring for a suite, its spec-vs-suite pass for a specification against its suite. These are reproducible
    and they are not opinions. Report the number and its budget lines separately — never a single
    merged figure.
 

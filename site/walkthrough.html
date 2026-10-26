@@ -81,7 +81,7 @@
 
   <div class="step">
     <h2><span class="n">1</span> Bring the story in</h2>
-    <p class="cmd"><code>us-ingest</code> → writes <code>state/US-004/00-source.md</code></p>
+    <p class="cmd"><code>generate</code>, step 1 → writes <code>state/US-004/00-source.md</code></p>
     <p>The source is captured verbatim, with the checks logged rather than assumed: redaction scan, control-character sanitisation, and an untrusted-input check — because a requirement document is data, not instructions.</p>
     <div class="lbl">Produced</div>
 <pre>- **Redaction scan**: no direct personal/sensitive data found (no real names,
@@ -96,7 +96,7 @@
 
   <div class="step">
     <h2><span class="n">2</span> Find what the story does not say</h2>
-    <p class="cmd"><code>need-understanding</code> → writes <code>state/US-004/02-understanding.md</code></p>
+    <p class="cmd"><code>generate</code>, step 3 → writes <code>state/US-004/02-understanding.md</code></p>
     <p>This is the step most generators skip, and the one that decides whether the suite is honest. Nine questions came out of eight acceptance criteria. Here is one, unedited:</p>
     <div class="lbl">Produced</div>
 <pre><strong>Q1 — AC2/AC6: threshold boundary at exactly €500 and exactly €5000.</strong>
@@ -115,7 +115,7 @@ implementations get wrong.</pre>
 
   <div class="step">
     <h2><span class="n">3</span> Choose techniques, and say why</h2>
-    <p class="cmd"><code>istqb-design</code> → writes <code>state/US-004/03-design.md</code></p>
+    <p class="cmd"><code>generate</code>, step 4 → writes <code>state/US-004/03-design.md</code></p>
     <p>One line per acceptance criterion. The justification is the deliverable — a technique named without a reason is decoration.</p>
     <div class="lbl">Produced</div>
 <pre>| AC2 | Boundary value analysis + Decision table | Three amount bands with two
@@ -133,13 +133,13 @@ implementations get wrong.</pre>
 
   <div class="step">
     <h2><span class="n">4</span> Rank by risk, and hand the arbitration back</h2>
-    <p class="cmd"><code>prioritize</code> → writes <code>state/US-004/04-priorities.md</code></p>
+    <p class="cmd"><code>generate</code>, step 6 → writes <code>state/US-004/04-priorities.md</code></p>
     <p>Probability × impact per condition, proposed. The tool ranks; a human decides. Every ambiguity is carried through with the question that produced it, so a P1 flagged <code>low (Q1)</code> stays visibly unresolved rather than quietly becoming a fact.</p>
   </div>
 
   <div class="step">
     <h2><span class="n">5</span> Write the test book</h2>
-    <p class="cmd"><code>testbook-generate</code> → writes <code>testbooks/US-004/*.feature</code> and <code>coverage-matrix.md</code></p>
+    <p class="cmd"><code>generate</code>, step 7 → writes <code>testbooks/US-004/*.feature</code> and <code>coverage-matrix.md</code></p>
     <p>38 scenarios from one story. Stable IDs so a regeneration diffs instead of overwriting, the technique on the tag line, the condition in a comment.</p>
     <div class="lbl">Produced — one scenario of 38</div>
 <pre>@QAIA-US-004-019 @AC4 @P2 @negative @boundary
@@ -179,7 +179,7 @@ Scenario: A line dated 91 days ago is blocked with an explanatory message
 
   <div class="step">
     <h2><span class="n">7</span> Scored by something that did not write it</h2>
-    <p class="cmd"><code>testbook-score</code>, <code>automation-score</code>, <code>aptitude-gate</code> — a separate, read-only plugin</p>
+    <p class="cmd"><code>qaia-score:judge</code> — a separate, read-only plugin</p>
     <p>No producer grades its own output. That rule has repeatedly caught defects the producing skill could not see in itself — including one where the generated code was perfectly faithful to a test book whose <code>Then</code> was too weak, so the tests passed against the very defect the requirement existed to forbid. A judge looking only at code-vs-book would have missed it too.</p>
   </div>
 

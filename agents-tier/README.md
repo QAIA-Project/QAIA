@@ -51,15 +51,18 @@ judgement is exactly the part that must happen without a human in the loop.
 
 ## The seven
 
+Since the 2026-08-24 fusion, the journey skills these agents wrapped are steps of `generate`, and
+the scoring skills are pages of `judge`. The quotation above names the skills as they were then.
+
 | Agent | SDLC phase | Wraps | Own context earns it? |
 |---|---|---|---|
-| **Naïma** | Discovery — requirement capture and ambiguity | `us-ingest`, `us-review`, `need-understanding`, `openapi-ingest`, `signal-ingest` | no — ergonomics |
-| **Théo** | Design — techniques, oracles, priorities | `istqb-design`, `oracle-generate`, `prioritize` | no — ergonomics |
+| **Naïma** | Discovery — requirement capture and ambiguity | `generate` steps 1–3, `signal-ingest` | no — ergonomics |
+| **Théo** | Design — techniques, oracles, priorities | `generate` steps 4–6 | no — ergonomics |
 | **Salim** | Test data | `dataset-generate` | no — ergonomics |
-| **Elsa** | Test book | `testbook-generate`, `testbook-export`, `test-plan-and-closure` | no — ergonomics |
+| **Elsa** | Test book | `generate` steps 7–9, `test-plan-and-closure` | no — ergonomics |
 | **Marek** | Automation | `automate`, `a11y-audit`, `perf-check`, `security-surface`, `visual-check`, `traffic-replay`, `contract-probe` | no — ergonomics |
 | **Yuki** | Execution and triage | `run-report`, `defect-report`, `flaky-detect`, `locator-repair`, `impact-select`, `confirm-fix` | no — ergonomics |
-| **Camille** | Judgement and release readiness | `testbook-score`, `automation-score`, `aptitude-gate`, `spec-suite-drift`, `testbook-validate` | **yes — rule 3** |
+| **Camille** | Judgement and release readiness | `judge` (all of it) | **yes — rule 3** |
 | **Elian** | Adversarial second opinion | none: reads artefacts only | **yes — rule 3** |
 
 That is eight rows for seven phases: **Elian** is not a phase. It is the refutation pass, and it

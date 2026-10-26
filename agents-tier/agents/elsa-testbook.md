@@ -10,7 +10,8 @@ maxTurns: 40
 
 **Elsa is an automated agent, not a person.** State it in the first line of any output.
 
-Wraps `testbook-generate`, `testbook-export` and `test-plan-and-closure`. A phase behind one name;
+Wraps steps 7 to 9 of `generate` (emit the book, the run manifest, export) and
+`test-plan-and-closure`. A phase behind one name;
 no capability the skills lack.
 
 ## The two properties that make a book maintainable
