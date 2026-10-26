@@ -1,5 +1,39 @@
 # QAIA — état du projet & prompt de reprise
 
+## Session du 2026-10-26 — Phase 3 exécutée : 24 → 7 skills
+
+**6 commits poussés sur `main`, CI verte à chaque push.** Décision au registre : D202.
+
+### Livré
+
+- **`generate`** (commit `d13bbb1`) : dix skills de parcours fondues en une, leurs corps déplacés
+  sous `generate/references/01-…` à `09-…`, **pas récrits**. `qaia-core` 0.4.0.
+- **Les suppressions** (commit `e2df967`, isolé pour un seul `git revert`) : **17 skills**, et non
+  18 comme le plan l'annonçait — sa propre table en liste 5+5+2+2+3. `qaia-testdata`, vidé de sa
+  seule skill, quitte le marketplace. `qaia-core` 0.5.0 (2 skills), `qaia-playwright` 0.2.0
+  (4 skills), `qaia-score` 0.3.1 (`judge`). **7 skills, 3 plugins.**
+- Le tier d'agents passe de 8 à 6 (Salim et Yuki n'enveloppaient plus que des skills supprimées).
+
+### Ce que les contrôles ont attrapé
+
+Chaque étape a cassé quatre à six contrôles, et chacun a nommé sa panne : boucles câblées vers des
+fichiers disparus, bibliothèque d'oracles introuvable, provenance des copies publiées, comptes,
+test du pont MCP. Le garde-fou `check_router_coverage`, arrivé en parallèle, a attrapé un nom mort
+que j'avais laissé dans le routeur. Puis il a été supprimé avec le routeur : un contrôle qui passe
+à vide est ce que ce dépôt refuse.
+
+### Ce qui reste, et où c'est suivi
+
+- **La fusion `probe`** (`contract-probe`, `traffic-replay`, `signal-ingest`, `defect-report`) :
+  [#118](https://github.com/QAIA-Project/QAIA/issues/118).
+- **Le sort d'`automate`** : [#111](https://github.com/QAIA-Project/QAIA/issues/111).
+- **Deux copies en ligne sur qaskills.sh** dont la source est supprimée (`accessibility-audit`,
+  `security-surface-checks`), déclarées `source_retired` : les retirer est un geste externe du
+  fondateur, [#110](https://github.com/QAIA-Project/QAIA/issues/110).
+- **Rien n'a été mesuré.** La refonte réduit une surface ; elle n'apporte aucun chiffre, et le
+  coût de `generate` d'un seul tenant n'a jamais été relevé
+  ([#96](https://github.com/QAIA-Project/QAIA/issues/96)).
+
 ## Session du 2026-08-11 — EPIC E5, sept relecteurs, cinq campagnes externes
 
 **24 commits, 8 CI vérifiées, 2 rouges attrapées et corrigées.** Décisions au registre : D197-D200.
