@@ -2,7 +2,13 @@
 
 **Date** 2026-08-24 · Suite de [la spec de refonte](2026-08-24-qaia-refonte-design.md), section 4.
 
-> **Ce document n'a pas été exécuté.** Il est le seul geste de la refonte qui soit **sortant et
+> **État au 2026-10-26.** Étape 1 (`judge`) faite, commit `e4fb308`. Étape 3 (`generate`) faite,
+> commit `d13bbb1`, CI verte : 24 skills. **Étape 2, les 18 suppressions, non exécutée** : elle
+> seule reste soumise au mot du fondateur, pour la raison ci-dessous. L'ordre suivi n'est donc pas
+> celui de la section 3. La fusion `generate` ne retire aucune capacité, mais elle retire bien dix
+> noms à qui a déjà installé le plugin.
+>
+> **Texte d'origine :** ce document n'a pas été exécuté. Il est le seul geste de la refonte qui soit **sortant et
 > difficile à défaire** : supprimer 18 skills publiées d'un plugin que quelqu'un peut avoir
 > installé. Tout le reste de la journée était réversible d'un `git revert` sans conséquence pour
 > un tiers ; ceci ne l'est pas. Il attend un mot du fondateur.
