@@ -6,11 +6,11 @@
       "directory": "qaskills.sh",
       "derived_from": [
         {
-          "path": "plugins/qaia-core/skills/need-understanding/SKILL.md",
-          "sha256": "66a29391d798f4a476e9e6e8b836e263a63dd25f044c5060cc1c5f881e422b02"
+          "path": "plugins/qaia-core/skills/generate/references/03-understanding-the-need.md",
+          "sha256": "ebd94c59b87131302fcb0ae7ad6f923cb54f429d29108a4e8e1bdae54bbba44b"
         },
         {
-          "path": "plugins/qaia-core/skills/need-understanding/references/ambiguity-passes.md",
+          "path": "plugins/qaia-core/skills/generate/references/ambiguity-passes.md",
           "sha256": "8473b82f34d5b39d35ce8f50442a894ee645c107af7fd123fdecd72c52d85d12"
         }
       ],
@@ -25,15 +25,15 @@
       "directory": "qaskills.sh",
       "derived_from": [
         {
-          "path": "plugins/qaia-core/skills/istqb-design/SKILL.md",
-          "sha256": "e655b26c23da883c8169b74501d86d5a9f077ac0a3db2a5fcd150a754413b501"
+          "path": "plugins/qaia-core/skills/generate/references/04-choosing-techniques.md",
+          "sha256": "6857f24f0819328901a6f4efcfb04d30d0453d6709aac0ca2054458d18733fd9"
         },
         {
-          "path": "plugins/qaia-core/skills/istqb-design/references/coverage-expansion.md",
+          "path": "plugins/qaia-core/skills/generate/references/coverage-expansion.md",
           "sha256": "10c6da666f08dff9b913bb223fd90d45f2f868acb3f2c0ecf55418093ad0a289"
         },
         {
-          "path": "plugins/qaia-core/skills/istqb-design/references/knowledge-conditions.md",
+          "path": "plugins/qaia-core/skills/generate/references/knowledge-conditions.md",
           "sha256": "d87ef13769eb3733d6cbb381803c2203e6edc19a1e37f32129c3f255c0d334f9"
         }
       ],
@@ -119,5 +119,6 @@
       "note": "never submitted — the copy exists here only"
     }
   ],
-  "_correction_2026_08_11": "This file previously carried `directory: qaskills.sh` on all seven copies, and its own header said 'skills PUBLISHED to external directories'. Four of the seven had never been submitted: they were prepared on 2026-08-08 (commit 6246999) after GO-LIVE.md deliberately recommended starting with three, and the manual submission never happened for the rest. The directory exposes a public API (qaskills.sh/api/skills) that made the claim checkable from day one, and nobody checked it. Two states are now distinguished, and a control verifies them."
+  "_correction_2026_08_11": "This file previously carried `directory: qaskills.sh` on all seven copies, and its own header said 'skills PUBLISHED to external directories'. Four of the seven had never been submitted: they were prepared on 2026-08-08 (commit 6246999) after GO-LIVE.md deliberately recommended starting with three, and the manual submission never happened for the rest. The directory exposes a public API (qaskills.sh/api/skills) that made the claim checkable from day one, and nobody checked it. Two states are now distinguished, and a control verifies them.",
+  "_correction_2026_08_24": "Les chemins sources ont suivi la fusion du 2026-08-24 : dix skills de `qaia-core` sont devenues des etapes de `generate`, et `testbook-validate` une etape de `judge`. Les empreintes ont ete reenregistrees parce que l'entete de provenance ajoute en tete de chaque page change le hachage sans changer ce que la page DIT -- et c'est cela que la copie publiee doit encore dire."
 }

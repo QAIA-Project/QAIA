@@ -1,7 +1,8 @@
----
-name: need-understanding
-description: Analyze a validated user story extraction - reformulate the need, detect ambiguities, contradictions and missing rules, ask the user targeted questions, and record answers or explicit assumptions. Use whenever a specification looks incomplete, contradictory or open to interpretation, when someone asks what to clarify with the product owner before testing, or before committing to test design on a story nobody has challenged yet. Third step of the QAIA journey.
----
+<!-- Absorbé le 2026-08-24 : cette page était la skill `need-understanding`.
+     Elle n'est plus une unité installable — elle est une étape de `generate`.
+     Le contenu est DÉPLACÉ, pas récrit : ce qui a été éprouvé le reste. -->
+
+> **Ce que cette étape fait.** Analyze a validated user story extraction - reformulate the need, detect ambiguities, contradictions and missing rules, ask the user targeted questions, and record answers or explicit assumptions. Use whenever a specification looks incomplete, contradictory or open to interpretation, when someone asks what to clarify with the product owner before testing, or before committing to test design on a story nobody has challenged yet. Third step of the QAIA journey.
 
 # need-understanding — ambiguity hunt
 

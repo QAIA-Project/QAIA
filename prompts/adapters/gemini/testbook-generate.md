@@ -2,7 +2,7 @@
 
 Origin: `#58`, Gemini external audit (2026-07-28) Part 2 recommendation — QAIA's skills are
 written as Markdown for Claude Code and assume Claude's instruction-following conventions.
-This is a reformulation of the core rule of `plugins/qaia-core/skills/testbook-generate/SKILL.md`
+This is a reformulation of the core rule of `plugins/qaia-core/skills/generate/references/07-emitting-the-test-book.md`
 (the ISTQB-technique-driven, ≥40%-negative-signal Gherkin generation step) using the structure
 the Gemini audit recommended: numbered `CRITICAL_RULE_N` sections instead of pseudo-XML tags,
 one embedded few-shot example, and an explicit 2-step chain-of-thought instruction.

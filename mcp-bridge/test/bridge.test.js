@@ -38,11 +38,13 @@ test('list_skills exposes every shipped skill, each with a name and description'
 
 test('get_skill_content reads a real skill end to end', async () => {
   const skills = await listSkills();
-  const target = skills.find((s) => s.id === 'qaia-core/istqb-design');
-  assert.ok(target, 'istqb-design should be listed');
+  // `istqb-design` was the target until 2026-08-24, when it became a step page of `generate`.
+  // get_skill_content serves a SKILL.md only, so the target follows the skill, not the page.
+  const target = skills.find((s) => s.id === 'qaia-core/generate');
+  assert.ok(target, 'generate should be listed');
   const content = await getSkillContent(target.id);
-  assert.match(content, /istqb-design/);
-  assert.match(content, /Domain Testing/); // D109 rename -- proves this reads the live file, not a cache
+  assert.match(content, /name: generate/);
+  assert.match(content, /Never grade your own output/); // proves this reads the live file, not a cache
 });
 
 test('get_skill_content refuses a path-traversal id', async () => {

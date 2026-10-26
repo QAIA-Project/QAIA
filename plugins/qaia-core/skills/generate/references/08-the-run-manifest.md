@@ -1,7 +1,8 @@
----
-name: report
-description: Project the QAIA journey into the standardized run manifest (.qaia/reports/<US-ID>/manifest.json) - the single machine-readable output contract every QAIA plugin shares, carrying normalized counts, coverage, confidence and provenance. Use after generating or exporting a test book, or when another plugin needs a uniform view of the run.
----
+<!-- Absorbé le 2026-08-24 : cette page était la skill `report`.
+     Elle n'est plus une unité installable — elle est une étape de `generate`.
+     Le contenu est DÉPLACÉ, pas récrit : ce qui a été éprouvé le reste. -->
+
+> **Ce que cette étape fait.** Project the QAIA journey into the standardized run manifest (.qaia/reports/<US-ID>/manifest.json) - the single machine-readable output contract every QAIA plugin shares, carrying normalized counts, coverage, confidence and provenance. Use after generating or exporting a test book, or when another plugin needs a uniform view of the run.
 
 # report — the standardized run manifest
 

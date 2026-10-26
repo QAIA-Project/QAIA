@@ -1,6 +1,6 @@
 # QAIA catalogue — I want to X, which skill?
 
-33 skills across 4 plugins.
+24 skills across 4 plugins.
 
 **Out of scope, deliberately** ([ADR 0004](../../docs/adr/0004-test-level-boundary.md)): unit and component tests, integration between internal components, and coverage-driven white-box testing. QAIA starts from a promise observable from the outside — a test written against a function is written against the implementation, which is the oracle it exists to avoid. This page exists because a cold read by four business personas found
 the boundary between three shift-right skills unreadable *without reading all three* — and a
@@ -14,23 +14,30 @@ routes you to the right step. This is for when you would rather look it up.
 
 ## The journey, in order
 
-Each step reads the previous one's checkpoint and writes its own, so the journey survives an
-interrupted session.
+Since 0.4.0 the journey is **one skill, `generate`**, and each step is a page of it. Each step
+reads the previous one's checkpoint and writes its own, so the journey survives an interrupted
+session.
+
+| I want to | `generate` step | Page under `skills/generate/references/` |
+|---|---|---|
+| Bring a user story in (paste, file, URL, Jira) | 1 | `01-ingesting-a-requirement.md` |
+| Bring a formal API contract in (OpenAPI, Swagger) | 1b | `01b-ingesting-an-api-spec.md` |
+| Check the extraction is faithful before building on it | 2 | `02-verifying-the-extraction.md` |
+| Find what the story does *not* say — ambiguities, contradictions | 3 | `03-understanding-the-need.md` |
+| Choose and justify ISTQB techniques per acceptance criterion | 4 | `04-choosing-techniques.md` |
+| Derive expected results from a known standard (ISO, RFC, OpenAPI…) | 5 | `05-grounded-oracles.md` |
+| Rank test conditions by risk, with a human arbitrating | 6 | `06-prioritising-by-risk.md` |
+| Produce the Gherkin test book with stable IDs and a coverage matrix | 7 | `07-emitting-the-test-book.md` |
+| Roll the whole journey into the standard run manifest | 8 | `08-the-run-manifest.md` |
+| Export it (`.feature`, XLSX, Xray/TestRail CSV) | 9 | `09-exporting.md` |
+
+Around the journey:
 
 | I want to | Skill | Plugin |
 |---|---|---|
-| Bring a user story in (paste, file, URL, Jira) | `us-ingest` | core |
-| Bring a formal API contract in (OpenAPI, Swagger) | `openapi-ingest` | core |
 | Write the plan a manager signs, or the closure report they read | `test-plan-and-closure` | core |
-| Check the extraction is faithful before building on it | `us-review` | core |
-| Find what the story does *not* say — ambiguities, contradictions | `need-understanding` | core |
 | Set up or enrich the team's shared knowledge base | `rag-build` | core |
-| Choose and justify ISTQB techniques per acceptance criterion | `istqb-design` | core |
-| Rank test conditions by risk, with a human arbitrating | `prioritize` | core |
-| Produce the Gherkin test book with stable IDs and a coverage matrix | `testbook-generate` | core |
-| Export it (`.feature`, XLSX, Xray/TestRail CSV) | `testbook-export` | core |
 | Turn my corrections into rules the tool applies next time | `feedback` | core |
-| Roll the whole journey into the standard run manifest | `report` | core |
 
 **Not part of the sequence, usable at any point:**
 
@@ -39,8 +46,7 @@ interrupted session.
 | Know where I am and what to do next | `qaia-help` | core |
 | Check my install and see what is available | `hello` | core |
 | Hand the whole thing to one conversational agent | `qaia` | core |
-| Audit a test book I did **not** generate with QAIA | `testbook-validate` | core |
-| Derive expected results from a known standard (ISO, RFC, OpenAPI…) | `oracle-generate` | core |
+| Audit a test book I did **not** generate with QAIA | `judge` | score |
 | Get a realistic synthetic dataset, never real data | `dataset-generate` | testdata |
 
 ## Turning a book into running tests
@@ -81,19 +87,21 @@ discipline it exists for, not a failure.
 
 ## Scoring, and who is allowed to do it
 
-No producer scores its own output. These three live in a separate, read-only plugin for that
-reason.
+No producer scores its own output. Judging lives in a separate, read-only plugin for that
+reason — one skill, `judge`, since 0.3.0.
 
-| I want to | Skill |
+| I want to | `judge` page |
 |---|---|
-| Score a test book against its source story (10-dimension ISTQB rubric) | `testbook-score` |
-| Score generated Playwright code (static pass + mutation pass, never summed) | `automation-score` |
-| Get a release verdict — PASS / CONCERNS / FAIL / WAIVED | `aptitude-gate` |
+| Audit any Gherkin test book, QAIA or not | the skill itself |
+| Score a test book against its source story (10-dimension ISTQB rubric) | `references/scoring-testbook.md` |
+| Score generated Playwright code (static pass + mutation pass, never summed) | `references/scoring-automation.md` |
+| Compare an OpenAPI spec with the suite that claims to cover it | `references/spec-vs-suite.md` |
+| Get a release verdict — PASS / CONCERNS / FAIL / WAIVED | `references/release-gate.md` |
 
 ## Two names that need explaining, which is itself a finding
 
 `hello` and `aptitude-gate` were both flagged in the same cold read: *a name that needs explaining,
-in a catalogue of thirty entries, will not be invoked.* Renaming them is a breaking change for
-existing journeys, so it has not been done — the cost was judged disproportionate to the benefit
-while the catalogue has no users. If that changes, they are the two to rename, and this line
-exists so the decision is inherited rather than rediscovered.
+in a catalogue of thirty entries, will not be invoked.* `aptitude-gate` no longer exists as a
+skill — it is `judge`'s release-gate page since 0.3.0. `hello` remains, and is the one to rename
+if the catalogue ever has users; this line exists so the decision is inherited rather than
+rediscovered.

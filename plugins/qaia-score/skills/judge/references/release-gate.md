@@ -16,7 +16,7 @@ what blocks it; it never edits a scenario (guardrails in `../README.md`).
 ## Prerequisite
 
 `.qaia/reports/<US-ID>/manifest.json` must **exist**. If the manifest itself is absent — no
-`report`/`run-report` has run yet — say so and offer to run `qaia-core:report` first instead of
+`report`/`run-report` has run yet — say so and offer to run `qaia-core:generate` (step 8, the run manifest) first instead of
 gating on nothing; do not invent a manifest or a verdict. If the manifest exists but
 `gate.score` is empty, that is a lesser gap: ideally `testbook-score` has already filled it; if
 not, run that first (or score inline using its rubric) — a verdict without a quality score is

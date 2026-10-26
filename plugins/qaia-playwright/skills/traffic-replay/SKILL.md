@@ -114,7 +114,7 @@ transparency, not as runtime code the plugin auto-executes.
 ## Not a test book — complementary to `testbook-generate` / `automate`
 
 This skill's output describes **what actually happened** on the routes the HAR captured — an
-evidentiary record, not a coverage claim. It does not replace `qaia-core:testbook-generate`
+evidentiary record, not a coverage claim. It does not replace `qaia-core:generate`
 (derives *what should be tested* from a user story's acceptance criteria) or
 `qaia-playwright:automate` (turns a test book into runnable tests). A route that never appears
 in the HAR is not "covered" by this skill in any sense — silence in the traffic is not evidence

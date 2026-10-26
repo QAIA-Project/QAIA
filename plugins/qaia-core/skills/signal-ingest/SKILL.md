@@ -7,8 +7,8 @@ description: Ingest an exported production signal - an access-log extract, an er
 
 Follow the shared contract in `../README.md`.
 
-`need-understanding` raises the ambiguities a requirement leaves open, and `openapi-ingest` raises
-the ones a specification leaves open: *is `limit` bounded?*, *which status does a duplicate
+`generate` raises the ambiguities a requirement leaves open (step 3, `references/03-understanding-the-need.md`)
+and the ones a specification leaves open (step 1b): *is `limit` bounded?*, *which status does a duplicate
 registration return?*. Both hand those questions to a human, who then arbitrates them blind — while
 the running system answers them a thousand times a day and nobody writes it down.
 

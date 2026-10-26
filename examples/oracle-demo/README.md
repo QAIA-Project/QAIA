@@ -17,7 +17,7 @@ See [`card-validation.feature`](card-validation.feature). Every oracle-derived s
 - **Negative-path coverage without fabrication** (ADR 0001): the oracle raises the refusal-path coverage with cases that are real, not padding.
 - **Human still arbitrates**: the oracle *proposes*; if the US contradicts the standard, the US wins and the discrepancy is surfaced as a finding.
 
-The oracle library is encoded (no network): Luhn, ISO 8601 dates, HTTP status semantics, RFC 5322 email, ISO 4217 currency, ISO 3166 country, IBAN mod-97 — see `plugins/qaia-core/skills/oracle-generate/oracles/library.md`.
+The oracle library is encoded (no network): Luhn, ISO 8601 dates, HTTP status semantics, RFC 5322 email, ISO 4217 currency, ISO 3166 country, IBAN mod-97 — see `plugins/qaia-core/skills/generate/oracles/library.md`.
 
 ## Project oracle — OpenAPI (issue #16, project-oracle half)
 
@@ -35,4 +35,4 @@ status:
 Rules stay strict: only the designated file is read (no live API, no external `$ref`), every case
 is tagged `@oracle:openapi` with a `# oracle:` citation, an **undocumented** error path stays
 `[open]` (never invented), and the US wins if the contract contradicts it. The extraction mapping
-lives in `plugins/qaia-core/skills/oracle-generate/oracles/openapi.md`.
+lives in `plugins/qaia-core/skills/generate/oracles/openapi.md`.

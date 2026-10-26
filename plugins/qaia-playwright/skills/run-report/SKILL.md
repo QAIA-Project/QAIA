@@ -42,7 +42,7 @@ The three reporting formats real QA toolchains actually ingest, plus requirement
    append this skill to `producers[]`, add the JUnit/Cucumber/HTML files to `artifacts[]`, and
    leave `design`, `gate` and a human-set `status` untouched (contract rule 2 — merge, never
    clobber). If no manifest exists yet, create one with just the shared header + `execution` and
-   note that `qaia-core:report` will fill `design`.
+   note that `qaia-core:generate` (step 8) will fill `design`.
 4. If a publication target is configured (Xray), offer to publish — with the user's go, in
    git-master mode (the repo is the source of truth).
 

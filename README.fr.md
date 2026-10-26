@@ -90,7 +90,7 @@ API, aucune interface, 32 scénarios. [La campagne entière, son protocole et se
 ```
 
 [`plugins/qaia-core/CATALOGUE.md`](plugins/qaia-core/CATALOGUE.md) est la carte « je veux faire X →
-utilise Y » des 33 skills. Des exemples complets avec leurs sorties réelles sont dans
+utilise Y » des 24 skills. Des exemples complets avec leurs sorties réelles sont dans
 [`examples/`](examples/).
 
 ## Ce qui distingue QAIA, et ce qui ne le distingue plus
@@ -122,8 +122,8 @@ utilisateur reste non mesuré.
 
 ## État et limites
 
-**Pré-alpha, en développement actif.** `qaia-core` 0.3.0 (17 skills), `qaia-playwright` 0.1.27
-(14 skills), `qaia-score` 0.3.1 (**1 skill**, `judge`), `qaia-testdata` 0.1.3 (1 skill) — **33 skills** —
+**Pré-alpha, en développement actif.** `qaia-core` 0.4.0 (8 skills), `qaia-playwright` 0.1.27
+(14 skills), `qaia-score` 0.3.1 (**1 skill**, `judge`), `qaia-testdata` 0.1.3 (1 skill) — **24 skills** —
 validant tous `--strict`, prouvés bout-en-bout sur deux domaines indépendants : santé
 ([`examples/medibook/`](examples/medibook), 26 tests / 32 exécutions, tous verts) et finance/RH
 ([`examples/expense-demo/`](examples/expense-demo), 56 tests verts, vrais bugs trouvés pendant
@@ -151,7 +151,7 @@ de 15 minutes sur une histoire toute prête, et la seule chose demandée en reto
 ## Les agents — un tier optionnel
 
 [`agents-tier/`](agents-tier) livre huit agents nommés. Il n'est **installé par aucun plugin** et
-n'est jamais un prérequis — les 33 skills fonctionnent sans lui. Seuls deux méritent leur propre
+n'est jamais un prérequis — les 24 skills fonctionnent sans lui. Seuls deux méritent leur propre
 fenêtre de contexte (`camille-judge`, `elian-refuter`), parce qu'un producteur ne note jamais sa
 propre sortie ; les six autres regroupent une phase derrière un nom — ergonomie réelle, aucune
 capacité nouvelle. Deux réserves que le README du tier documente au lieu de les cacher : `tools:`

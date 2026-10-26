@@ -1,7 +1,8 @@
----
-name: us-ingest
-description: Ingest a user story or requirement document (pasted text, file, URL, or a Jira issue via export or a bounded MCP fetch) and have the user validate the captured source. First step of the QAIA journey. Use when the user wants to start test design from a US, spec, ticket or document.
----
+<!-- Absorbé le 2026-08-24 : cette page était la skill `us-ingest`.
+     Elle n'est plus une unité installable — elle est une étape de `generate`.
+     Le contenu est DÉPLACÉ, pas récrit : ce qui a été éprouvé le reste. -->
+
+> **Ce que cette étape fait.** Ingest a user story or requirement document (pasted text, file, URL, or a Jira issue via export or a bounded MCP fetch) and have the user validate the captured source. First step of the QAIA journey. Use when the user wants to start test design from a US, spec, ticket or document.
 
 # us-ingest — capture and validate the source
 

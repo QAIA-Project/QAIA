@@ -205,12 +205,12 @@ producer — fix the source, re-project the manifest, never hand-edit the manife
 | Section | Owner | When |
 |---|---|---|
 | `contract`, `usId`, `title`, `base`, `producers[]`, `artifacts[]` | whichever skill runs (merge) | every write |
-| `design.*`, `openArbitrations` | `qaia-core:report` (from checkpoints + test book) | after generation/export |
+| `design.*`, `openArbitrations` | `qaia-core:generate`, step 8 (from checkpoints + test book) | after generation/export |
 | `execution.*` | `qaia-playwright:run-report` | after an automated run |
 | `gate` | `qaia-score:*` | when a book/run is scored |
 | `status` | the human-facing skill recording the sign-off | on validation |
 
-`qaia-core:report` is the canonical assembler for the `design` side; other producers merge
+`qaia-core:generate` (step 8) is the canonical assembler for the `design` side; other producers merge
 their own section in place and leave the rest untouched.
 
 ## Consuming the manifest

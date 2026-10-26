@@ -2,7 +2,7 @@
 
 QAIA core plugin: from user story to prioritized, traceable, atomic Gherkin test books.
 
-**Status: 0.3.0, 17 skills.** Proven end-to-end on two independent domains — a healthcare-*shaped*
+**Status: 0.4.0, 8 skills.** Proven end-to-end on two independent domains — a healthcare-*shaped*
 demo (`examples/medibook/`) and finance/HR (`examples/expense-demo/`) — plus a 24-case multi-model robustness corpus ([`eval/baselines/corpus-24-depth.md`](https://github.com/QAIA-Project/QAIA/blob/main/eval/baselines/corpus-24-depth.md)). See `eval/` at the repo root for the full evaluation trail.
 
 ## Install
@@ -21,27 +21,25 @@ From Claude Code:
 |---|---|---|
 | `/qaia-core:hello` | Installation check (read-only) | minimal (< 1k) |
 | `qaia-help` | "What now?" — journey status per US + recommended next step (read-only) | small |
-| `testbook-validate` | Audit any Gherkin test book (even non-QAIA) → scored report + PASS/CONCERNS/FAIL gate | medium |
+| `generate` | **The journey** — ingest a story or an OpenAPI spec, verify the extraction, hunt ambiguities, choose ISTQB techniques per AC, ground oracles, prioritise by risk, emit the atomic Gherkin book with stable IDs and a coverage matrix, project the run manifest, export (`.feature`, XLSX, Markdown, opt-in Xray/TestRail CSV). Nine steps, one skill; steps 2, 3 and 6 stop for a human | large |
 | `qaia` | The Test Architect — one conversational agent carrying the whole journey, step by step, with the human validating each one | varies |
-| `openapi-ingest` | Ingest an OpenAPI/Swagger spec as the requirement — derives partitions, boundaries, refusal paths and the four contradictions a spec carries | medium |
 | `signal-ingest` | Attach exported production evidence to the open questions a test book already carries — informs them, never answers them | small |
 | `test-plan-and-closure` | The two artefacts a test manager signs — plan derived from what the run will actually cover, and closure report | medium |
-| `us-ingest` | 1. Capture and validate the source | small |
-| `us-review` | 2. Extraction check, AC numbering | small |
-| `need-understanding` | 3. Ambiguity hunt, Q&A, assumptions | medium |
-| `rag-build` | 4. Team knowledge base (index + focused files) | small |
-| `istqb-design` | 5. Techniques chosen and justified per AC | medium |
-| `prioritize` | 6. Risk scores proposed, human arbitrated | small |
-| `testbook-generate` | 7. Atomic Gherkin book, stable IDs, matrix, ratio check; diff-based regeneration | large |
-| `testbook-export` | 8. `.feature` + XLSX + Markdown synthesis; opt-in Xray or TestRail CSV export (git-master, file-only — issue #35) | medium |
-| `feedback` | 9. Corrections captured, validated promotion to rules | small |
-| `oracle-generate` | Standards as generation oracles (Luhn, ISO 8601, HTTP, RFC 5322…) → grounded cases + expected results, tagged `@oracle:*` | small |
+| `rag-build` | Team knowledge base (index + focused files) | small |
+| `feedback` | Corrections captured, validated promotion to rules | small |
+
+**Where the ten journey skills went (0.4.0).** `us-ingest`, `openapi-ingest`, `us-review`,
+`need-understanding`, `istqb-design`, `oracle-generate`, `prioritize`, `testbook-generate`,
+`report` and `testbook-export` are now the steps of `generate`, one page each under
+`skills/generate/references/` (`01-…` to `09-…`), **moved rather than rewritten**. They were
+pipeline stages, not competences. Auditing a book (`testbook-validate`, 0.3.0) moved to
+`qaia-score:judge`.
 
 \* Orders of magnitude — never promises. The journey state lives in `.qaia/` (see `skills/README.md` for the full contract): every step checkpoints to disk, so an interrupted session resumes where it left off.
 
 ## Token budget — orders of magnitude
 
-**Version 0.2.35 — measured 2026-07-25, and partial.** The table covers **14 of the 18 skills**: `test-plan-and-closure`, `openapi-ingest`, `signal-ingest` and `qaia` carry **no published cost**. Calling this "fully instrumented" while four skills were unmeasured is exactly the class of claim this project exists to refuse. The 14 measured commands in the table below
+**Version 0.2.35 — measured 2026-07-25, and partial.** The command names below are those of 0.2.35; since 0.4.0 the journey commands are steps of `generate`, and these per-step figures were not re-measured as one skill. The table covers **14 of the 18 skills**: `test-plan-and-closure`, `openapi-ingest`, `signal-ingest` and `qaia` carry **no published cost**. Calling this "fully instrumented" while four skills were unmeasured is exactly the class of claim this project exists to refuse. The 14 measured commands in the table below
 carry a real measurement, taken by the method described here.
 
 **How they were measured.** Each command was applied faithfully, start to finish, by a dedicated

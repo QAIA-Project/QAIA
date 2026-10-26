@@ -2,7 +2,7 @@
 
 Shows `us-ingest` capturing a **Jira issue** as a QAIA source — portable-first, no API key, no
 backend. The connector mapping lives in
-`plugins/qaia-core/skills/us-ingest/connectors/jira.md`.
+`plugins/qaia-core/skills/generate/connectors/jira.md`.
 
 - [`PROJ-123.rest-v3.json`](PROJ-123.rest-v3.json) — a realistic Jira REST API v3 issue export
   (ADF description, an "Acceptance Criteria" section, a blocked-by link, an attachment, a

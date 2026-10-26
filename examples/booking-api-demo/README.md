@@ -65,7 +65,7 @@ La survivante n'est pas un trou. Sur la même requête, serveur muté et serveur
 même statut et nomment le même champ : deux clauses du schéma se recouvrent (un champ absent est
 aussi un champ qui n'est pas une chaîne). La seule différence porte sur un champ que la
 spécification ne déclare nulle part, et l'asserter serait précisément ce que
-[`api-steps.md`](../../plugins/qaia-core/skills/testbook-generate/references/api-steps.md) interdit.
+[`api-steps.md`](../../plugins/qaia-core/skills/generate/references/api-steps.md) interdit.
 Détail et sorties brutes : `evidence/mutation-run.txt`.
 
 **Compter 8/8 aurait été plus flatteur et faux. Compter 7/8 sans l'analyse aurait signalé un trou

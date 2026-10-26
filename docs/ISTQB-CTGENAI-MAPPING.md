@@ -4,7 +4,7 @@ Issue GitHub #38 (P2), née de la veille concurrentielle (`docs/COMPETITIVE-ANAL
 ISTQB a publié une certification spécialiste "Testing with Generative AI" (CT-GenAI) qui légitime
 les techniques de conception assistées par IA et la gestion des risques associés (hallucination,
 biais, non-déterminisme). QAIA cite déjà ISTQB pour ses techniques de conception
-(`plugins/qaia-core/skills/istqb-design/SKILL.md`, Foundation + Test Analyst) mais ne cite jamais
+(`plugins/qaia-core/skills/generate/references/04-choosing-techniques.md`, Foundation + Test Analyst) mais ne cite jamais
 ce référentiel spécifique. Ce document construit une correspondance vérifiée entre les skills QAIA
 et le contenu réel du syllabus CT-GenAI.
 

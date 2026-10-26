@@ -1,7 +1,8 @@
----
-name: oracle-generate
-description: Use known standards as test oracles to generate grounded test cases and their correct expected results - Luhn for card numbers, ISO 8601 dates, HTTP status codes, RFC 5322 email, ISO 4217 currencies, IBAN - plus an opt-in project oracle that derives endpoint conditions and expected statuses from a user-designated OpenAPI/Swagger or JSON Schema file. Feeds istqb-design and testbook-generate. Bounded, provenance-tagged. Use when a US touches a standardized domain or has an API contract.
----
+<!-- Absorbé le 2026-08-24 : cette page était la skill `oracle-generate`.
+     Elle n'est plus une unité installable — elle est une étape de `generate`.
+     Le contenu est DÉPLACÉ, pas récrit : ce qui a été éprouvé le reste. -->
+
+> **Ce que cette étape fait.** Use known standards as test oracles to generate grounded test cases and their correct expected results - Luhn for card numbers, ISO 8601 dates, HTTP status codes, RFC 5322 email, ISO 4217 currencies, IBAN - plus an opt-in project oracle that derives endpoint conditions and expected statuses from a user-designated OpenAPI/Swagger or JSON Schema file. Feeds istqb-design and testbook-generate. Bounded, provenance-tagged. Use when a US touches a standardized domain or has an API contract.
 
 # oracle-generate — standards as generation oracles
 

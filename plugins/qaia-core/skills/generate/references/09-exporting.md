@@ -1,7 +1,8 @@
----
-name: testbook-export
-description: Export the generated test book for human rework and reporting - .feature files as source of truth, a natural-language rendering readable without Gherkin (verified step by step against its source), plus an XLSX and Markdown synthesis with coverage matrix, review order and confidence scores, plus opt-in file-only Xray and TestRail CSV exports (git-master mode, no API key). Use when test cases must leave the repository - handed to a test manager, imported into Xray, TestRail or Jira, reviewed in a spreadsheet, or attached to a release report. Seventh step of the QAIA journey.
----
+<!-- Absorbé le 2026-08-24 : cette page était la skill `testbook-export`.
+     Elle n'est plus une unité installable — elle est une étape de `generate`.
+     Le contenu est DÉPLACÉ, pas récrit : ce qui a été éprouvé le reste. -->
+
+> **Ce que cette étape fait.** Export the generated test book for human rework and reporting - .feature files as source of truth, a natural-language rendering readable without Gherkin (verified step by step against its source), plus an XLSX and Markdown synthesis with coverage matrix, review order and confidence scores, plus opt-in file-only Xray and TestRail CSV exports (git-master mode, no API key). Use when test cases must leave the repository - handed to a test manager, imported into Xray, TestRail or Jira, reviewed in a spreadsheet, or attached to a release report. Seventh step of the QAIA journey.
 
 # testbook-export — hand the book to the humans
 

@@ -36,6 +36,6 @@ aptitude-gate    release readiness — PASS / CONCERNS / FAIL / WAIVED over scor
 
 ## Where the manifest comes from
 
-`qaia-score` consumes the envelope that `qaia-core:report` (design) and
+`qaia-score` consumes the envelope that `qaia-core:generate` (design, step 8) and
 `qaia-playwright:run-report` (execution) produced. If no manifest exists yet, the skills say
 so and offer to run `report` first — they never score against guessed counts.

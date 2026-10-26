@@ -1,7 +1,8 @@
----
-name: testbook-generate
-description: Generate the atomic Gherkin test book from prioritized test conditions - stable scenario IDs, coverage matrix, negative-ratio check, confidence marking - or regenerate by scenario-level diff when the US evolved, preserving human edits. Use when asked to write test cases or scenarios from a specification, to produce a test book or feature files, or to refresh an existing one after the requirement changed without losing hand-written edits. Sixth step of the QAIA journey.
----
+<!-- Absorbé le 2026-08-24 : cette page était la skill `testbook-generate`.
+     Elle n'est plus une unité installable — elle est une étape de `generate`.
+     Le contenu est DÉPLACÉ, pas récrit : ce qui a été éprouvé le reste. -->
+
+> **Ce que cette étape fait.** Generate the atomic Gherkin test book from prioritized test conditions - stable scenario IDs, coverage matrix, negative-ratio check, confidence marking - or regenerate by scenario-level diff when the US evolved, preserving human edits. Use when asked to write test cases or scenarios from a specification, to produce a test book or feature files, or to refresh an existing one after the requirement changed without losing hand-written edits. Sixth step of the QAIA journey.
 
 # testbook-generate — the test book
 

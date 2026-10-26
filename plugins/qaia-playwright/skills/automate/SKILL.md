@@ -16,7 +16,7 @@ Two architectural choices are fixed, not renegotiated per run:
 
 ## Prerequisites
 
-- A QAIA test book (`.feature` files with stable `@QAIA-<US-ID>-<NNN>` tags) — from `qaia-core:testbook-generate`.
+- A QAIA test book (`.feature` files with stable `@QAIA-<US-ID>-<NNN>` tags) — from `qaia-core:generate`.
 - A running target app the user designates (URL). Automation needs a real environment; say so if none is provided.
 
 ## Rules (non negotiable — from the medibook reference)
@@ -128,7 +128,7 @@ Two architectural choices are fixed, not renegotiated per run:
    three browsers each.
 
    An `@api` spec asserts the **status first**, then the body, then the headers, mirroring the
-   scenario's own order (`qaia-core:testbook-generate/references/api-steps.md`). A generated API
+   scenario's own order (`qaia-core:generate/references/api-steps.md`). A generated API
    test whose only assertion is on a body field passes on a 500 that happens to return JSON.
 5. **Self-review before writing** — a mechanical anti-sycophancy lint on the generator's own
    output, run before each spec reaches disk. It catches tautological comparisons, contentless

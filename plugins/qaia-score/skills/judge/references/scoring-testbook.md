@@ -25,7 +25,7 @@ in `../README.md`. It is the LLM-judge of the project, packaged as an installabl
 
 - A generated test book: `.feature` files, `synthesis.md`, `coverage-matrix.md` under
   `.qaia/testbooks/<US-ID>/`, and the source US (`00-source.md` / `01-extraction.md`).
-- Ideally `.qaia/reports/<US-ID>/manifest.json` (from `qaia-core:report`) for the normalized
+- Ideally `.qaia/reports/<US-ID>/manifest.json` (from `qaia-core:generate`, step 8) for the normalized
   counts. If absent, offer to run `report` first; do not score against guessed counts.
 
 ## Steps

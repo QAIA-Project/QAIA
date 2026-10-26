@@ -64,8 +64,8 @@ Portable skills implement the QAIA journey. Each skill reads the checkpoints of 
 The knowledge base is not decoration: it is the mechanism that lifts the honest recall ceiling
 (D38). Config-driven behavior, project thresholds, role matrices and past anomalies **do not
 live in a thin US** — they live in `knowledge/`, and a skill that does not read them regenerates
-the same generic book every time. Every knowledge-consuming skill (`need-understanding`,
-`istqb-design`, `oracle-generate`, `prioritize`, `testbook-generate`) follows the **same
+the same generic book every time. Every knowledge-consuming step of `generate` (understanding the need,
+choosing techniques, grounded oracles, prioritising, emitting the book) follows the **same
 retrieval protocol**, so "using the RAG" means one discipline, not per-skill improvisation:
 
 1. **Route through the index.** Read `knowledge/index.md` first (never scan the whole base).
@@ -100,7 +100,7 @@ machine-readable envelope**: `.qaia/reports/<US-ID>/manifest.json`, defined by
 a consumer (`qaia-score`, an export, a CI dashboard) reads one contract instead of N bespoke
 formats.
 
-- `qaia-core:report` assembles the `design` section (normalized scenario/coverage/confidence
+- `qaia-core:generate` (step 8) assembles the `design` section (normalized scenario/coverage/confidence
   counts) plus provenance and `openArbitrations`.
 - `qaia-playwright:run-report` merges the `execution` section.
 - `qaia-score` writes the `gate` verdict — **no producer ever scores itself** (rule 3).

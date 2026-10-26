@@ -1,7 +1,8 @@
----
-name: openapi-ingest
-description: Ingest an OpenAPI or Swagger specification as the requirement source and derive test conditions from it - equivalence partitions from enums, boundaries from schema constraints, refusal paths from required fields and declared error codes, and the contradictions the specification carries. Use when an API has a formal spec instead of a user story, before istqb-design and testbook-generate.
----
+<!-- Absorbé le 2026-08-24 : cette page était la skill `openapi-ingest`.
+     Elle n'est plus une unité installable — elle est une étape de `generate`.
+     Le contenu est DÉPLACÉ, pas récrit : ce qui a été éprouvé le reste. -->
+
+> **Ce que cette étape fait.** Ingest an OpenAPI or Swagger specification as the requirement source and derive test conditions from it - equivalence partitions from enums, boundaries from schema constraints, refusal paths from required fields and declared error codes, and the contradictions the specification carries. Use when an API has a formal spec instead of a user story, before istqb-design and testbook-generate.
 
 # openapi-ingest — the specification as requirement
 

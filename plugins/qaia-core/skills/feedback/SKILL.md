@@ -9,7 +9,7 @@ Follow the shared contract in `../README.md`. "Learning" here means enriching th
 
 ## Prerequisite
 
-A generated test book to compare against (`.qaia/testbooks/<US-ID>/`, from `testbook-generate`). If none exists — no checkpoint, no test book — say so and offer `us-ingest` to start the journey instead of asking for corrections that have nothing to be diffed against.
+A generated test book to compare against (`.qaia/testbooks/<US-ID>/`, from `generate`). If none exists — no checkpoint, no test book — say so and offer `generate` to start the journey instead of asking for corrections that have nothing to be diffed against.
 
 ## Steps
 

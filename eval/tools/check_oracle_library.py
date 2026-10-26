@@ -31,7 +31,7 @@ import sys
 
 NL = chr(10)
 
-LIB = os.path.join("plugins", "qaia-core", "skills", "oracle-generate", "oracles", "library.md")
+LIB = os.path.join("plugins", "qaia-core", "skills", "generate", "oracles", "library.md")
 
 
 def luhn_ok(number):

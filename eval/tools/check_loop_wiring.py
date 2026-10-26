@@ -43,10 +43,12 @@ LOOPS = [
      P("plugins", "qaia-core", "skills", "rag-build", "SKILL.md"),
      ["rag-build", "anomaly-history"], ["confirm-fix"]),
 
+    # `need-understanding` a ete absorbee par `generate` le 2026-08-24 : meme recablage que la
+    # boucle B, et `signal-ingest` nommait toujours la skill morte comme son autre moitie.
     ("A  signal de production -> question ouverte",
      P("plugins", "qaia-core", "skills", "signal-ingest", "SKILL.md"),
-     P("plugins", "qaia-core", "skills", "need-understanding", "SKILL.md"),
-     ["need-understanding"], ["signal-ingest"]),
+     P("plugins", "qaia-core", "skills", "generate", "references", "03-understanding-the-need.md"),
+     ["generate"], ["signal-ingest"]),
 ]
 
 
