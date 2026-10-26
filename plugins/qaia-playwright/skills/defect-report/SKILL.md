@@ -96,7 +96,7 @@ they know what you did *not* check.
 - **Guessing the fix.** Suggesting a patch means asserting a cause. If the cause is not observed,
   there is no fix to suggest.
 - **Reporting a flaky test as a defect.** A verdict that varies across runs of unchanged code is a
-  test problem until proven otherwise — hand it to `flaky-detect` first.
+  test problem until proven otherwise — re-run it on unchanged code and show the verdicts vary first.
 - **Merging several defects into one report.** One promise not kept, one report. A report that
   lists three problems gets closed when one is fixed.
 

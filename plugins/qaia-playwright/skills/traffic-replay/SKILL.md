@@ -5,8 +5,8 @@ description: Ingest a user-provided HAR file (or equivalent captured HTTP traffi
 
 # traffic-replay — captured traffic → non-regression conditions
 
-Shift-right gap this closes: `perf-check`/`security-surface`/`a11y-audit` are active checks run
-against a live app; nothing else in QAIA derives test conditions from **real traffic that already
+Shift-right gap this closes: `contract-probe` is an active check run against a live app;
+nothing else in QAIA derives test conditions from **real traffic that already
 happened**. It works the way every analysis skill in this plugin works: read an artifact the user
 already has and report only what it shows — the same anti-fabrication discipline as ingestion
 (honest recall beats fabricated recall: never assert more than the artifact supports), and the
@@ -85,8 +85,8 @@ transparency, not as runtime code the plugin auto-executes.
      never generalized to "this app lacks X."
    - **Timing**, only if the entry carries `time`/`timings`: the observed total ms as a single
      measured sample — explicitly not a p95/budget. A signature with N>1 samples reports each
-     observed time, never an average presented as a guarantee; point at `perf-check` for an
-     actual latency budget (needs repeated, controlled samples, not opportunistic capture).
+     observed time, never an average presented as a guarantee; an actual latency budget is
+     a performance test's job (needs repeated, controlled samples, not opportunistic capture).
    - **Sample count** and an explicit `singleSample: true/false`.
 5. **Honesty on N=1 (honest recall, applied to traffic).** A signature observed once is reported as
    "1 sample observed" and documents only what happened that one time — never implies the
@@ -101,7 +101,7 @@ transparency, not as runtime code the plugin auto-executes.
   flag).
 - `piiMasked`: `type -> placeholder -> count` summary for the whole HAR (no ledger).
 - **If a US-ID is given/confirmed**: merge into `.qaia/reports/<US-ID>/manifest.json` under a
-  new `trafficReplay` section — same discipline `flaky-detect` already applies (shared output
+  new `trafficReplay` section — same merge discipline as every producer (shared output
   contract, `../../OUTPUT-CONTRACT.md`, rule 2 — merge, never clobber):
   merge only this section, append to `producers[]`, extend `artifacts[]`, never touch
   `design`/`execution`/`gate`/`status`. **If no US-ID applies** (traffic spans routes from
@@ -158,6 +158,6 @@ generates nor runs that test itself.
     v1 — if the traffic is known to carry them, redact the HAR before handing it to this skill.
   - These gaps are reported in the findings output itself, not just here — never imply full PII
     coverage.
-- **HAR only, nothing ever contacted.** Mirrors `security-surface`/`perf-check`'s
+- **HAR only, nothing ever contacted.** Mirrors `contract-probe`'s
   "self-hosted/authorized targets only" rule in spirit; this skill goes one step further and contacts
   no target at all, live or otherwise.

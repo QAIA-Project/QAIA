@@ -1,7 +1,7 @@
 {
   "name": "qaia-core",
-  "version": "0.4.0",
-  "description": "QAIA core: US ingestion, need understanding, team knowledge base, ISTQB test design, prioritized atomic Gherkin test books with stable IDs and coverage matrix.",
+  "version": "0.5.0",
+  "description": "QAIA core: one skill, generate, from a user story or an OpenAPI spec to a prioritized, traceable, atomic Gherkin test book - ambiguities surfaced with IDs, ISTQB techniques justified per criterion, stable scenario IDs and a coverage matrix - plus signal-ingest for production evidence.",
   "author": {
     "name": "Cédric Moretti and QAIA contributors",
     "url": "https://github.com/QAIA-Project/QAIA"

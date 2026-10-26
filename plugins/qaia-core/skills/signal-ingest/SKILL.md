@@ -83,8 +83,8 @@ Three ways an observation misleads, to be stated whenever they apply:
    list is the real output: it is the set of things production cannot tell you, and it is where
    human arbitration is genuinely required.
 
-7. **Hand durable findings to `rag-build`.** A recurring observed behaviour is a candidate entry
-   for `knowledge/application-map.md`, with its provenance and its period. One-offs stay in the
+7. **Offer durable findings to the team's knowledge base.** A recurring observed behaviour is a
+   candidate entry for `knowledge/application-map.md` — the tester writes it, you propose it — with its provenance and its period. One-offs stay in the
    run.
 
 ## What this skill must refuse

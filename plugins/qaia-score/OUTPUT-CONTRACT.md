@@ -130,9 +130,9 @@ producer — fix the source, re-project the manifest, never hand-edit the manife
   wave A, 2026-07-31, pattern P1). Completing such a block with invented coverage/confidence
   numbers to satisfy the validator is the fabrication D38 forbids — remove the block instead.
 - **`artifacts[].kind`** is a closed enum: `feature`, `synthesis`, `matrix`, `validation`,
-  `execution`, `export`, `flakiness` (`flaky-detect`, D80 — read by `aptitude-gate` as a
-  CONCERNS signal), `trafficReplay` (`traffic-replay`, D88), `dataset` and `dataset-map`
-  (`qaia-testdata:dataset-generate`, D137/D142). All four of the last were emitted by real
+  `execution`, `export`, `flakiness` (`flaky-detect`, D80, retired 2026-10-26 — still read by
+  `judge`'s release gate as a CONCERNS signal when present), `trafficReplay` (`traffic-replay`, D88),
+  `dataset` and `dataset-map` (`qaia-testdata:dataset-generate`, D137/D142, retired 2026-10-26). All four of the last were emitted by real
   producers long before being declared here; a kind not in this list is an error, so a new
   producer must extend the enum **and** this line together. That this keeps happening is the
   argument for the CI job validating `eval/**` as well as `plugins/**`.
@@ -206,7 +206,7 @@ producer — fix the source, re-project the manifest, never hand-edit the manife
 |---|---|---|
 | `contract`, `usId`, `title`, `base`, `producers[]`, `artifacts[]` | whichever skill runs (merge) | every write |
 | `design.*`, `openArbitrations` | `qaia-core:generate`, step 8 (from checkpoints + test book) | after generation/export |
-| `execution.*` | `qaia-playwright:run-report` | after an automated run |
+| `execution.*` | `qaia-playwright:automate`, step 9 (`run-report` until 2026-10-26) | after an automated run |
 | `gate` | `qaia-score:*` | when a book/run is scored |
 | `status` | the human-facing skill recording the sign-off | on validation |
 

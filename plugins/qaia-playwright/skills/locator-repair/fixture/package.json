@@ -1,8 +1,0 @@
-{
-  "name": "qaia-locator-repair-fixture",
-  "private": true,
-  "description": "Minimal self-contained fixture used to validate the locator-repair skill -- not an example app, no relation to examples/medibook or examples/expense-demo.",
-  "devDependencies": {
-    "@playwright/test": "^1.62.0"
-  }
-}

@@ -80,7 +80,7 @@ The open questions this skill raises are the ones a human later has to arbitrate
    - **`[assumption]`** — the user accepts your proposed default, **or answers "not specified / I don't know" AND your default is a low-risk plausible behavior** → the default becomes a flagged working assumption;
    - **`[open]`** — no answer and the point is a genuine product decision (safety, money, compliance, user-visible policy) where any default would be a guess → stays open, caps confidence of affected scenarios.
    Record which of the three applies for every question; two skills executors must classify identically.
-7. **Knowledge capture.** If an answer states a reusable business rule, offer to add it to `knowledge/` via `rag-build` (do not write knowledge files yourself).
+7. **Knowledge capture.** If an answer states a reusable business rule, offer it as a `knowledge/` entry for the team to add (do not write knowledge files yourself).
 8. **Checkpoint.** Write `02-understanding.md`: reformulation, complete Q&A log with status (`answered` / `assumption` / `open`), **plus an explicit `## Adversarial pass (by AC type)` section and an explicit `## Triple-AC contradiction pass` section** — each stating either its findings or "not applicable, no matching pattern in this US" with a one-line reason. Update `journey.md`. Next step: `istqb-design`.
 
 ## Guardrails

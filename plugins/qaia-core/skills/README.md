@@ -74,7 +74,7 @@ retrieval protocol**, so "using the RAG" means one discipline, not per-skill imp
    "knowledge base absent" and proceed on the source alone (degraded mode, rule 8).
 2. **Cite what you used, by ID.** Every knowledge entry that shapes a question, a condition, a
    priority or a scenario is cited: `BR-KB-nnn` in the checkpoint that used it, and a
-   `# rule: BR-KB-nnn` comment on the resulting scenario (matching `feedback`/`rag-build`'s IDs).
+   `# rule: BR-KB-nnn` comment on the resulting scenario (the knowledge base's own IDs).
    An uncited knowledge influence is untraceable and counts as fabricated — provenance is
    mandatory both ways (rule 5 forbids raw PII; this forbids uncited rules).
 3. **Turn applicable rules into conditions, don't just read them.** In `istqb-design`, a matched
@@ -88,9 +88,10 @@ retrieval protocol**, so "using the RAG" means one discipline, not per-skill imp
    knowledge was in play, and a run with an empty set on a rich domain is a visible signal that
    the knowledge base is thin, not that the feature is simple.
 
-The learning loop closes through this protocol: `feedback` promotes a recurring correction to a
-`BR-KB-nnn` rule (`rag-build` stores it), and the **next** `istqb-design` run retrieves and
-applies it by ID — a measurable, cited change, not a hope that raw examples re-apply themselves.
+The knowledge base is plain, git-versioned Markdown the team maintains. A `BR-KB-nnn` rule added
+there is retrieved and applied by ID on the **next** run — a measurable, cited change, not a hope
+that raw examples re-apply themselves. (`feedback` and `rag-build`, which automated that loop, were
+retired on 2026-10-26: never once exercised by a real correction.)
 
 ## Standardized output — the run manifest (D39)
 
@@ -102,7 +103,7 @@ formats.
 
 - `qaia-core:generate` (step 8) assembles the `design` section (normalized scenario/coverage/confidence
   counts) plus provenance and `openArbitrations`.
-- `qaia-playwright:run-report` merges the `execution` section.
+- `qaia-playwright:automate` (step 9) merges the `execution` section.
 - `qaia-score` writes the `gate` verdict — **no producer ever scores itself** (rule 3).
 
 The manifest is a *projection*: counts must equal what the artifacts contain, it carries no

@@ -112,7 +112,7 @@ and testbook files; nothing is regenerated, and no new content is invented on th
    - **Xray** — version drift, Labels mapping, never tested against a live instance.
    - **TestRail** — Type and Priority are QAIA defaults to reconcile in the wizard, some
      scenarios legitimately produce an empty Steps field, never tested against a live instance.
-5. **Update `journey.md`.** Next steps: reporting, then `feedback` after the review.
+5. **Update `journey.md`.** Next steps: reporting, then the human review.
 
 ## Guardrails
 

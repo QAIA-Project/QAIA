@@ -1,6 +1,0 @@
-node_modules/
-test-results/
-results.xml
-playwright-report/
-package-lock.json
-npm.log

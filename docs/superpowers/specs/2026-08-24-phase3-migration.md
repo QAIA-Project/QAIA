@@ -3,10 +3,11 @@
 **Date** 2026-08-24 · Suite de [la spec de refonte](2026-08-24-qaia-refonte-design.md), section 4.
 
 > **État au 2026-10-26.** Étape 1 (`judge`) faite, commit `e4fb308`. Étape 3 (`generate`) faite,
-> commit `d13bbb1`, CI verte : 24 skills. **Étape 2, les 18 suppressions, non exécutée** : elle
-> seule reste soumise au mot du fondateur, pour la raison ci-dessous. L'ordre suivi n'est donc pas
-> celui de la section 3. La fusion `generate` ne retire aucune capacité, mais elle retire bien dix
-> noms à qui a déjà installé le plugin.
+> commit `d13bbb1`. Étape 2 faite ensuite, sur le mot du fondateur, en un commit isolé : **17**
+> suppressions et non 18 — la table de la section 2 en liste 5+5+2+2+3, le « 18 » était une erreur
+> de compte. `qaia-testdata`, vidé de sa seule skill, quitte le marketplace. **7 skills, 3
+> plugins.** Reste la fusion `probe` (`contract-probe`, `traffic-replay`, `signal-ingest`,
+> `defect-report`), que la section 3 n'ordonnait pas, et `automate` (#111).
 >
 > **Texte d'origine :** ce document n'a pas été exécuté. Il est le seul geste de la refonte qui soit **sortant et
 > difficile à défaire** : supprimer 18 skills publiées d'un plugin que quelqu'un peut avoir

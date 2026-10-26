@@ -38,10 +38,9 @@ LOOPS = [
      P("plugins", "qaia-playwright", "skills", "contract-probe", "SKILL.md"),
      ["contract-probe"], ["judge"]),
 
-    ("C  defaut -> connaissance",
-     P("plugins", "qaia-playwright", "skills", "confirm-fix", "SKILL.md"),
-     P("plugins", "qaia-core", "skills", "rag-build", "SKILL.md"),
-     ["rag-build", "anomaly-history"], ["confirm-fix"]),
+    # Boucle C (« defaut -> connaissance », `confirm-fix` -> `rag-build`) retiree le 2026-10-26 :
+    # ses DEUX bouts ont ete supprimes avec les 17 skills de la Phase 3. Une boucle sans aucune
+    # extremite n'est plus une boucle decablee, c'est une boucle qui n'existe plus.
 
     # `need-understanding` a ete absorbee par `generate` le 2026-08-24 : meme recablage que la
     # boucle B, et `signal-ingest` nommait toujours la skill morte comme son autre moitie.

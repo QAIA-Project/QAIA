@@ -48,7 +48,7 @@ business, and how fragile this part of the system really is: **the skill propose
    > **P1** — those we believe would hurt most — plus a scan of the titles of everything below — you are the only person who can spot a row we scored low that your business cannot afford. Reading the titles takes a minute; it is the minute this callout exists for.
 
    The user adjusts scores — their business knowledge overrides yours — or approves. Record each
-   override with the user's stated reason: that reason is knowledge (offer `rag-build` capture
+   override with the user's stated reason: that reason is knowledge (offer it as a `knowledge/` entry
    when reusable).
 
    **In a non-interactive context with no user available, do NOT treat auto-acceptance as

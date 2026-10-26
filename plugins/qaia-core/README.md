@@ -2,7 +2,7 @@
 
 QAIA core plugin: from user story to prioritized, traceable, atomic Gherkin test books.
 
-**Status: 0.4.0, 8 skills.** Proven end-to-end on two independent domains — a healthcare-*shaped*
+**Status: 0.5.0, 2 skills.** Proven end-to-end on two independent domains — a healthcare-*shaped*
 demo (`examples/medibook/`) and finance/HR (`examples/expense-demo/`) — plus a 24-case multi-model robustness corpus ([`eval/baselines/corpus-24-depth.md`](https://github.com/QAIA-Project/QAIA/blob/main/eval/baselines/corpus-24-depth.md)). See `eval/` at the repo root for the full evaluation trail.
 
 ## Install
@@ -19,27 +19,24 @@ From Claude Code:
 
 | Skill | Journey step | Indicative token budget* |
 |---|---|---|
-| `/qaia-core:hello` | Installation check (read-only) | minimal (< 1k) |
-| `qaia-help` | "What now?" — journey status per US + recommended next step (read-only) | small |
 | `generate` | **The journey** — ingest a story or an OpenAPI spec, verify the extraction, hunt ambiguities, choose ISTQB techniques per AC, ground oracles, prioritise by risk, emit the atomic Gherkin book with stable IDs and a coverage matrix, project the run manifest, export (`.feature`, XLSX, Markdown, opt-in Xray/TestRail CSV). Nine steps, one skill; steps 2, 3 and 6 stop for a human | large |
-| `qaia` | The Test Architect — one conversational agent carrying the whole journey, step by step, with the human validating each one | varies |
 | `signal-ingest` | Attach exported production evidence to the open questions a test book already carries — informs them, never answers them | small |
-| `test-plan-and-closure` | The two artefacts a test manager signs — plan derived from what the run will actually cover, and closure report | medium |
-| `rag-build` | Team knowledge base (index + focused files) | small |
-| `feedback` | Corrections captured, validated promotion to rules | small |
 
-**Where the ten journey skills went (0.4.0).** `us-ingest`, `openapi-ingest`, `us-review`,
-`need-understanding`, `istqb-design`, `oracle-generate`, `prioritize`, `testbook-generate`,
-`report` and `testbook-export` are now the steps of `generate`, one page each under
-`skills/generate/references/` (`01-…` to `09-…`), **moved rather than rewritten**. They were
-pipeline stages, not competences. Auditing a book (`testbook-validate`, 0.3.0) moved to
-`qaia-score:judge`.
+**Where the other skills went.** In 0.4.0 the ten journey skills (`us-ingest`, `openapi-ingest`,
+`us-review`, `need-understanding`, `istqb-design`, `oracle-generate`, `prioritize`,
+`testbook-generate`, `report`, `testbook-export`) became the steps of `generate`, one page each
+under `skills/generate/references/`, **moved rather than rewritten**. Auditing a book
+(`testbook-validate`, 0.3.0) moved to `qaia-score:judge`. In 0.5.0 six were **deleted**:
+`hello`, `qaia-help` and the `qaia` router (nothing left to route with one entry point),
+`rag-build` and `feedback` (the learning loop, never once exercised by a real correction — the
+`knowledge/` files they wrote are plain Markdown a team can keep by hand, and `generate` still
+reads them), and `test-plan-and-closure` (documents for a reader who does not exist yet).
 
 \* Orders of magnitude — never promises. The journey state lives in `.qaia/` (see `skills/README.md` for the full contract): every step checkpoints to disk, so an interrupted session resumes where it left off.
 
 ## Token budget — orders of magnitude
 
-**Version 0.2.35 — measured 2026-07-25, and partial.** The command names below are those of 0.2.35; since 0.4.0 the journey commands are steps of `generate`, and these per-step figures were not re-measured as one skill. The table covers **14 of the 18 skills**: `test-plan-and-closure`, `openapi-ingest`, `signal-ingest` and `qaia` carry **no published cost**. Calling this "fully instrumented" while four skills were unmeasured is exactly the class of claim this project exists to refuse. The 14 measured commands in the table below
+**Version 0.2.35 — measured 2026-07-25, and partial.** The command names below are those of 0.2.35; since 0.4.0 the journey commands are steps of `generate`, and these per-step figures were not re-measured as one skill; `hello`, `qaia-help`, `rag-build` and `feedback` were deleted in 0.5.0. The table covers **14 of the 18 skills**: `test-plan-and-closure`, `openapi-ingest`, `signal-ingest` and `qaia` carry **no published cost**. Calling this "fully instrumented" while four skills were unmeasured is exactly the class of claim this project exists to refuse. The 14 measured commands in the table below
 carry a real measurement, taken by the method described here.
 
 **How they were measured.** Each command was applied faithfully, start to finish, by a dedicated

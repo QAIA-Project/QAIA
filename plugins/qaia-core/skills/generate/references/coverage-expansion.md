@@ -191,15 +191,14 @@ recall; asserting an outcome the source never states is fabrication.
 ### And two the competitor covered that belong elsewhere
 
 Their output also carried performance-under-volume and keyboard/screen-reader accessibility.
-Those are **not** gaps in this file: `qaia-playwright:perf-check` and
-`qaia-playwright:a11y-audit` own them, with their own oracles. Listing them here would duplicate a
-skill and dilute this one.
+Those are **not** gaps in this file: performance and accessibility are disciplines with their own
+oracles, outside QAIA since 2026-10-26. Listing them here would dilute this file, not cover them.
 
 Two families are legitimately **not** inferable from a thin US and must not be invented:
 
 1. **Config or feature-flag-driven behavior** — what a button does when payments are off, a
    community is private, a custom field is enabled. This depends on the project's configuration
-   and belongs to the **knowledge base** (`rag-build`), not to guessing.
+   and belongs to the **knowledge base** (`knowledge/`), not to guessing.
 2. **Rich domain-specific interactions the US never mentions** — a merge request's inline diff
    comments, a Markdown preview. If the source does not imply them, generating them is
    fabrication, not coverage.

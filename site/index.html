@@ -165,11 +165,11 @@
 
   <section id="what">
     <h2>Markdown skills. Nothing runs by itself.</h2>
-    <p class="lede">QAIA ships no code into your repository and no API key. The 24 skills are Markdown, invoked on demand inside your own Claude Code session on your own model quota. Installing it does not register a hook, an agent, or an MCP server that executes on its own. <span class="mono" style="font-size:.9em">(Precisely: the plugins also carry 51 non-Markdown files — plugin manifests, CI templates you copy, test fixtures, and the four Python files, three of which are <code>qaia-score</code>'s scorers. None of them runs at install or on its own; the scorers run when <em>you</em> invoke the scoring skill, with your permissions, and you can read or pin them first. <a href="https://github.com/QAIA-Project/QAIA/tree/main/plugins">Check for yourself</a>.)</span></p>
+    <p class="lede">QAIA ships no code into your repository and no API key. The 7 skills are Markdown, invoked on demand inside your own Claude Code session on your own model quota. Installing it does not register a hook, an agent, or an MCP server that executes on its own. <span class="mono" style="font-size:.9em">(Precisely: the plugins also carry 51 non-Markdown files — plugin manifests, CI templates you copy, test fixtures, and the four Python files, three of which are <code>qaia-score</code>'s scorers. None of them runs at install or on its own; the scorers run when <em>you</em> invoke the scoring skill, with your permissions, and you can read or pin them first. <a href="https://github.com/QAIA-Project/QAIA/tree/main/plugins">Check for yourself</a>.)</span></p>
     <pre><span class="cmt"># in Claude Code</span>
 /plugin marketplace add https://github.com/QAIA-Project/QAIA
 /plugin install qaia-core@qaia          <span class="cmt"># user story → Gherkin test book</span>
-/plugin install qaia-playwright@qaia    <span class="cmt"># optional: runnable tests, a11y, perf, security</span></pre>
+/plugin install qaia-playwright@qaia    <span class="cmt"># optional: runnable tests, contract probing</span></pre>
     <p class="lede" style="margin-top:14px"><code>qaia-core</code> alone gets you from a user story to a test book. Then say <em>"work with QAIA on this user story"</em> — the <code>qaia</code> meta-skill routes to the right step and stops wherever a human has to decide.</p>
   </section>
 
@@ -319,7 +319,7 @@ Scenario: A line at exactly the receipt
     <p class="lede">The two questions a QA lead asks in the first sixty seconds, answered before you have to ask them.</p>
 
     <h3>Everything QAIA writes goes in one directory</h3>
-    <p class="lede">Everything lands under <code>.qaia/</code> — the team knowledge base, the journey checkpoints, the <code>.feature</code> files and coverage matrix, your corrections, and one <code>manifest.json</code> per run that all four plugins share. Plain files, meant to be committed and diffed. Nothing is written outside <code>.qaia/</code> and the test directories you point it at, and nothing in there executes. <a href="./walkthrough.html">The seven steps, and the artifact each one produces →</a></p>
+    <p class="lede">Everything lands under <code>.qaia/</code> — the team knowledge base, the journey checkpoints, the <code>.feature</code> files and coverage matrix, and one <code>manifest.json</code> per run that all three plugins share. Plain files, meant to be committed and diffed. Nothing is written outside <code>.qaia/</code> and the test directories you point it at, and nothing in there executes. <a href="./walkthrough.html">The seven steps, and the artifact each one produces →</a></p>
 
     <h3>Three things your security reviewer will ask</h3>
     <ul class="tight">
@@ -329,7 +329,7 @@ Scenario: A line at exactly the receipt
     </ul>
 
     <h3>The cost, in real measured numbers</h3>
-    <p class="lede">QAIA runs on your Claude subscription quota, not an API bill. Measured round-trip cost per command ranges from <strong>39k tokens</strong> (<code>hello</code>) to <strong>140k</strong> (the run-manifest step), with test-book emission at <strong>112k</strong>. Measured before the journey became one <code>generate</code> skill (2026-08-24), one run per step, so treat them as orders of magnitude, not averages.</p>
+    <p class="lede">QAIA runs on your Claude subscription quota, not an API bill. Measured round-trip cost per command ranges from <strong>40k tokens</strong> (choosing techniques) to <strong>140k</strong> (the run-manifest step), with test-book emission at <strong>112k</strong>. Measured before the journey became one <code>generate</code> skill (2026-08-24), one run per step, so treat them as orders of magnitude, not averages.</p>
     <p class="lede">The uncomfortable part, published rather than smoothed: <strong>13 of the 14 measured commands cost more than the project's own prior expert estimate</strong>, some by a factor of four. The estimates were wrong; the measurements replaced them instead of the other way round. <a href="https://github.com/QAIA-Project/QAIA/blob/main/plugins/qaia-core/README.md">The full 14-command table, the method behind the numbers, and what each tier buys →</a></p>
   </section>
 

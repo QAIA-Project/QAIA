@@ -7,7 +7,7 @@
       "derived_from": [
         {
           "path": "plugins/qaia-core/skills/generate/references/03-understanding-the-need.md",
-          "sha256": "ebd94c59b87131302fcb0ae7ad6f923cb54f429d29108a4e8e1bdae54bbba44b"
+          "sha256": "35cb105b1a50851e535b8f967b0e2570a6d6cbd6023741ce1848b5d094a946f2"
         },
         {
           "path": "plugins/qaia-core/skills/generate/references/ambiguity-passes.md",
@@ -30,7 +30,7 @@
         },
         {
           "path": "plugins/qaia-core/skills/generate/references/coverage-expansion.md",
-          "sha256": "10c6da666f08dff9b913bb223fd90d45f2f868acb3f2c0ecf55418093ad0a289"
+          "sha256": "a9d3e1c77a400bdb1ff37a280f38461fc40bdb160ab1263f5bb57afe22407c33"
         },
         {
           "path": "plugins/qaia-core/skills/generate/references/knowledge-conditions.md",
@@ -73,7 +73,8 @@
       "live_slug": "accessibility-audit-axe-core-plus-the-pass-axe-cannot-do",
       "live_since": "2026-08-08",
       "verified_by_directory": false,
-      "install_count_at_2026_08_11": 0
+      "install_count_at_2026_08_11": 0,
+      "source_retired": "2026-10-26"
     },
     {
       "copy": "docs/outreach/qaskills/security-surface-checks/SKILL.md",
@@ -92,33 +93,11 @@
       "live_slug": "security-surface-checks-passive-risk-ranked-with-the-mis-runs-named",
       "live_since": "2026-08-08",
       "verified_by_directory": false,
-      "install_count_at_2026_08_11": 0
-    },
-    {
-      "copy": "docs/outreach/qaskills/performance-check/SKILL.md",
-      "directory": "qaskills.sh",
-      "derived_from": [
-        {
-          "path": "plugins/qaia-playwright/skills/perf-check/SKILL.md",
-          "sha256": "f203a6892116ddf63cdadcfb1b1410c5791ea8cd5c66e925b75d76810652fcfe"
-        }
-      ],
-      "state": "prepared",
-      "note": "never submitted — the copy exists here only"
-    },
-    {
-      "copy": "docs/outreach/qaskills/visual-regression/SKILL.md",
-      "directory": "qaskills.sh",
-      "derived_from": [
-        {
-          "path": "plugins/qaia-playwright/skills/visual-check/SKILL.md",
-          "sha256": "754ba771e21236aa6a49760bdd583dd75e98e7ffd7fe79b98d3af89121d5d583"
-        }
-      ],
-      "state": "prepared",
-      "note": "never submitted — the copy exists here only"
+      "install_count_at_2026_08_11": 0,
+      "source_retired": "2026-10-26"
     }
   ],
   "_correction_2026_08_11": "This file previously carried `directory: qaskills.sh` on all seven copies, and its own header said 'skills PUBLISHED to external directories'. Four of the seven had never been submitted: they were prepared on 2026-08-08 (commit 6246999) after GO-LIVE.md deliberately recommended starting with three, and the manual submission never happened for the rest. The directory exposes a public API (qaskills.sh/api/skills) that made the claim checkable from day one, and nobody checked it. Two states are now distinguished, and a control verifies them.",
-  "_correction_2026_08_24": "Les chemins sources ont suivi la fusion du 2026-08-24 : dix skills de `qaia-core` sont devenues des etapes de `generate`, et `testbook-validate` une etape de `judge`. Les empreintes ont ete reenregistrees parce que l'entete de provenance ajoute en tete de chaque page change le hachage sans changer ce que la page DIT -- et c'est cela que la copie publiee doit encore dire."
+  "_correction_2026_08_24": "Les chemins sources ont suivi la fusion du 2026-08-24 : dix skills de `qaia-core` sont devenues des etapes de `generate`, et `testbook-validate` une etape de `judge`. Les empreintes ont ete reenregistrees parce que l'entete de provenance ajoute en tete de chaque page change le hachage sans changer ce que la page DIT -- et c'est cela que la copie publiee doit encore dire.",
+  "_correction_2026_10_26": "Quatre copies derivaient de skills supprimees le 2026-10-26 (a11y-audit, security-surface, perf-check, visual-check). Les deux jamais soumises ont ete supprimees avec leur source. Les deux EN LIGNE sur qaskills.sh restent declarees, marquees `source_retired` : les retirer de l'annuaire est un geste externe qui revient au fondateur, et tant qu'elles sont servies le depot doit dire qu'elles ne sont plus maintenues."
 }

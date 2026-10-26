@@ -16,7 +16,7 @@ what blocks it; it never edits a scenario (guardrails in `../README.md`).
 ## Prerequisite
 
 `.qaia/reports/<US-ID>/manifest.json` must **exist**. If the manifest itself is absent — no
-`report`/`run-report` has run yet — say so and offer to run `qaia-core:generate` (step 8, the run manifest) first instead of
+run manifest has been written yet — say so and offer to run `qaia-core:generate` (step 8, the run manifest) first instead of
 gating on nothing; do not invent a manifest or a verdict. If the manifest exists but
 `gate.score` is empty, that is a lesser gap: ideally `testbook-score` has already filled it; if
 not, run that first (or score inline using its rubric) — a verdict without a quality score is
@@ -48,7 +48,7 @@ Evaluate top to bottom; the **first** matching band is the verdict.
    - a dimension dropped ≥ 1 versus a provided baseline (regression signal);
    - execution present with `blocked > 0`, or automation coverage materially below the book
      (`traceability.scenariosAutomated` ≪ `scenariosTotal`) when a run was expected;
-   - a `flakiness` section (from `qaia-playwright:flaky-detect`) lists any `@P1` scenario
+   - a `flakiness` section (from a repeated-run analysis — `flaky-detect` until 2026-10-26) lists any `@P1` scenario
      whose verdict varied across runs — a P1 that sometimes fails isn't release-clean even if
      its last run was green. `@P2`/`@P3` flaky scenarios are named in `reasons` but don't by
      themselves force CONCERNS (report them; don't over-block on low-priority instability).

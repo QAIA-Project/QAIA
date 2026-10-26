@@ -1,8 +1,0 @@
-{
-  "name": "qaia-flaky-detect-fixture",
-  "private": true,
-  "description": "Minimal self-contained fixture used to validate the flaky-detect skill - not an example app, no relation to examples/medibook or examples/expense-demo beyond reusing their documented bug class.",
-  "devDependencies": {
-    "@playwright/test": "^1.62.0"
-  }
-}

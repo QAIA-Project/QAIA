@@ -25,8 +25,8 @@ e2e:
     - npm ci
   script:
     # Retry/quarantine policy (T2): 0 automatic retries -- masking instability would hide the
-    # exact signal qaia-playwright:flaky-detect exists to surface. A test tagged @quarantine
-    # by a human after a flaky-detect finding is excluded from this blocking job.
+    # exact signal a flakiness review exists to surface. A test tagged @quarantine
+    # by a human after a flakiness finding is excluded from this blocking job.
     - npx playwright test --grep-invert "@quarantine"
   artifacts:
     when: always

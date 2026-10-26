@@ -67,8 +67,17 @@ def main(argv):
     data = load()
     stale, missing = [], []
 
+    retired = []
     for entry in data["published"]:
         copy = entry["copy"]
+        # Une copie EN LIGNE dont la skill source a ete supprimee du depot (2026-10-26). Elle ne
+        # peut plus deriver de rien, et la retirer de l'annuaire est un geste externe que ce
+        # controle n'a pas a decider. Elle est donc ANNONCEE a chaque passage, jamais tue :
+        # « non maintenue » doit rester visible tant que la copie est servie.
+        if entry.get("source_retired"):
+            retired.append("%s -- source retiree le %s, copie non maintenue (%s)"
+                           % (copy, entry["source_retired"], entry.get("state")))
+            continue
         if not os.path.isfile(copy):
             missing.append("%s is declared in the manifest and does not exist" % copy)
             continue
@@ -86,6 +95,8 @@ def main(argv):
 
     for m in missing:
         print("::error::%s" % m)
+    for r in retired:
+        print("::warning::%s" % r)
 
     if update:
         io.open(MANIFEST, "w", encoding="utf-8", newline="\n").write(
@@ -110,8 +121,8 @@ def main(argv):
     if missing:
         return 2
 
-    print("OK: %d published copy/copies current with their sources"
-          % len(data["published"]))
+    print("OK: %d published copy/copies current with their sources, %d retired (unmaintained)"
+          % (len(data["published"]) - len(retired), len(retired)))
     return 0
 
 

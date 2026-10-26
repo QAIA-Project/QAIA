@@ -3,7 +3,7 @@
 **Read this before installing.** This is a standalone MCP server that lets a non-Claude MCP
 client (Cursor, GitHub Copilot, or any other MCP-capable assistant) read QAIA's skill content
 and call two of QAIA's deterministic scoring tools. It is **never** installed automatically by
-`qaia-core`, `qaia-playwright`, `qaia-score`, or `qaia-testdata`, is not listed in
+`qaia-core`, `qaia-playwright` or `qaia-score`, is not listed in
 `.claude-plugin/marketplace.json`, and CI explicitly forbids anything like it from living under
 `plugins/` (see `.github/workflows/ci.yml`). You choose to install and run this, or you don't.
 

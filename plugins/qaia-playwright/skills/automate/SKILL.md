@@ -34,10 +34,10 @@ Two architectural choices are fixed, not renegotiated per run:
 - **Retry policy: `retries: 0`, stated here rather than deferred to a document.** A rule that
   only promises "a policy is documented somewhere" is not a policy and leaves each run to invent
   its own. Generated `playwright.config.js` sets it explicitly, with a comment naming why:
-  masking instability behind automatic retries hides exactly the signal `flaky-detect` exists to
+  masking instability behind automatic retries hides exactly the signal a flakiness review exists to
   surface. This project chooses to see failures rather than paper over them.
-- **Quarantine** — tagging a scenario `@quarantine` once `flaky-detect` has flagged it *with
-  evidence*. Never silent, always a human decision recorded in the tag itself. CI templates
+- **Quarantine** — tagging a scenario `@quarantine` once repeated runs of unchanged code have shown it
+  unstable *with evidence*. Never silent, always a human decision recorded in the tag itself. CI templates
   exclude `@quarantine` from the blocking run (`--grep-invert "@quarantine"`) while still
   executing and reporting it in a separate non-blocking step, so a flagged-flaky test stays
   visible instead of disappearing from the suite.
@@ -149,7 +149,7 @@ Two architectural choices are fixed, not renegotiated per run:
    or every test fails at launch.
 7. **Run** the suite against the app; report pass/fail per scenario ID. Do not claim green without a real run. A scenario that cannot execute against the app is reported **blocked**, never passed.
 8. **Traceability report**: emit a table AC → scenario ID → test → result (see [`examples/medibook/traceability.md`](https://github.com/QAIA-Project/QAIA/blob/main/examples/medibook/traceability.md)); include any scenario left blocked-for-assertion by step 5, and any testability gap flagged by step 2.
-9. **Hand off to reporting.** Run `run-report` to merge the `execution` section into `.qaia/reports/<US-ID>/manifest.json` (the standardized output contract every QAIA plugin writes to, `../../OUTPUT-CONTRACT.md`) — pass/fail/blocked, `byType`, and `scenariosAutomated`/`scenariosTotal`. `qaia-score` then reads the same manifest to gate the run.
+9. **Hand off to reporting.** Merge the `execution` section into `.qaia/reports/<US-ID>/manifest.json` (the standardized output contract every QAIA plugin writes to, `../../OUTPUT-CONTRACT.md`) — pass/fail/blocked, `byType`, and `scenariosAutomated`/`scenariosTotal`. `qaia-score` then reads the same manifest to gate the run.
 
 ## Exit criterion — honest gate
 

@@ -74,7 +74,7 @@ and the one that made a gate read green over a promise nobody had verified.
 - **Chain two requests to reach one assertion.** Two requests means either a declarative `Given`
   is missing, or the scenario is verifying two promises — the atomicity rule already forbids the
   second.
-- **Assert on timing.** Latency budgets belong to `perf-check`, which has the instrument for them.
+- **Assert on timing.** Latency budgets belong to a performance test, which has the instrument for them.
   A `Then the response is fast` is unfalsifiable.
 
 ## Where the level comes from

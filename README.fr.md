@@ -79,18 +79,16 @@ API, aucune interface, 32 scénarios. [La campagne entière, son protocole et se
 /plugin install qaia-core@qaia
 ```
 
-`/qaia-core:hello` vérifie l'installation. Ensuite, décrire son besoin en langage naturel —
-« travaille avec QAIA sur cette user story » — suffit : la méta-skill `qaia` appelle les bonnes
-étapes et s'arrête à chaque décision humaine.
+Ensuite, décrire son besoin en langage naturel — « écris les tests de cette user story » —
+suffit : `generate` porte le parcours étape par étape et s'arrête à chaque décision humaine.
 
 ```
-/plugin install qaia-playwright@qaia      # tests Playwright exécutables, a11y, perf, sécurité, visuel
-/plugin install qaia-score@qaia           # score et gate de release
-/plugin install qaia-testdata@qaia        # jeux de données synthétiques
+/plugin install qaia-playwright@qaia      # tests Playwright exécutables, sonde de contrat, rapports d'anomalie
+/plugin install qaia-score@qaia           # judge : score et gate de release
 ```
 
 [`plugins/qaia-core/CATALOGUE.md`](plugins/qaia-core/CATALOGUE.md) est la carte « je veux faire X →
-utilise Y » des 24 skills. Des exemples complets avec leurs sorties réelles sont dans
+utilise Y » des 7 skills. Des exemples complets avec leurs sorties réelles sont dans
 [`examples/`](examples/).
 
 ## Ce qui distingue QAIA, et ce qui ne le distingue plus
@@ -122,8 +120,8 @@ utilisateur reste non mesuré.
 
 ## État et limites
 
-**Pré-alpha, en développement actif.** `qaia-core` 0.4.0 (8 skills), `qaia-playwright` 0.1.27
-(14 skills), `qaia-score` 0.3.1 (**1 skill**, `judge`), `qaia-testdata` 0.1.3 (1 skill) — **24 skills** —
+**Pré-alpha, en développement actif.** `qaia-core` 0.5.0 (2 skills), `qaia-playwright` 0.2.0
+(4 skills), `qaia-score` 0.3.1 (**1 skill**, `judge`) — **7 skills** —
 validant tous `--strict`, prouvés bout-en-bout sur deux domaines indépendants : santé
 ([`examples/medibook/`](examples/medibook), 26 tests / 32 exécutions, tous verts) et finance/RH
 ([`examples/expense-demo/`](examples/expense-demo), 56 tests verts, vrais bugs trouvés pendant
@@ -131,8 +129,8 @@ l'automatisation), plus un corpus de robustesse multi-modèles à 24 cas.
 
 - **L'outil consomme votre quota Claude.** Le coût par commande est publié, mesuré, et supérieur
   aux estimations du projet lui-même sur 13 des 14 commandes.
-- **« L'apprentissage » = des fichiers locaux.** Le feedback enrichit une base de connaissance
-  versionnée dans votre dépôt. Pas d'entraînement de modèle, pas de serveur central.
+- **Pas de boucle d'apprentissage.** `generate` lit une base de connaissance versionnée dans votre
+  dépôt, que votre équipe tient à la main. Pas d'entraînement de modèle, pas de serveur central.
 - **Web-first.** Le mobile signifie émulation navigateur, pas natif iOS/Android.
 - **Pas une revendication réglementaire.** Le cadrage d'origine « logiciel médical / environnements
   réglementés » a été retiré (D114) : QAIA ne cartographie aucun référentiel réel — ni IEC 62304,
@@ -150,10 +148,10 @@ de 15 minutes sur une histoire toute prête, et la seule chose demandée en reto
 
 ## Les agents — un tier optionnel
 
-[`agents-tier/`](agents-tier) livre huit agents nommés. Il n'est **installé par aucun plugin** et
-n'est jamais un prérequis — les 24 skills fonctionnent sans lui. Seuls deux méritent leur propre
+[`agents-tier/`](agents-tier) livre six agents nommés. Il n'est **installé par aucun plugin** et
+n'est jamais un prérequis — les 7 skills fonctionnent sans lui. Seuls deux méritent leur propre
 fenêtre de contexte (`camille-judge`, `elian-refuter`), parce qu'un producteur ne note jamais sa
-propre sortie ; les six autres regroupent une phase derrière un nom — ergonomie réelle, aucune
+propre sortie ; les quatre autres regroupent une phase derrière un nom — ergonomie réelle, aucune
 capacité nouvelle. Deux réserves que le README du tier documente au lieu de les cacher : `tools:`
 est une demande au harnais et non une frontière de capacité, et un agent délégué exécute les points
 de validation sans personne dans la pièce.
@@ -162,7 +160,7 @@ de validation sans personne dans la pièce.
 
 | Chemin | Contenu |
 |---|---|
-| [`plugins/`](plugins/) | Les quatre plugins — core, playwright, score, testdata |
+| [`plugins/`](plugins/) | Les trois plugins — core, playwright, score |
 | [`examples/`](examples/) | Sept exemples complets avec leurs sorties réelles |
 | [`eval/`](eval/) | Harnais d'évaluation : gold set, rubrique, baselines notées, campagnes |
 | [`docs/STATUS.md`](docs/STATUS.md) | **État honnête du projet** (à lire pour reprendre le travail) |

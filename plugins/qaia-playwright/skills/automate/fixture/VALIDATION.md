@@ -2,7 +2,7 @@
 
 Honest record of validating the step 5 self-review added to `../SKILL.md` against a
 purpose-built case, following the same fixture discipline as
-`../../flaky-detect/fixture/VALIDATION.md`.
+`flaky-detect`'s fixture (that skill was deleted on 2026-10-26; its record is in git history).
 
 ## What was built
 

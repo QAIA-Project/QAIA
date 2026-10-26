@@ -8,7 +8,7 @@
     {
       "name": "qaia-core",
       "source": "./plugins/qaia-core",
-      "description": "QAIA core: US ingestion, need understanding, team knowledge base, ISTQB test design, prioritized atomic Gherkin test books with stable IDs and coverage matrix.",
+      "description": "QAIA core: from a user story or an OpenAPI spec to a prioritized, traceable, atomic Gherkin test book with stable IDs and a coverage matrix - every assumption carries an ID.",
       "author": {
         "name": "Cédric Moretti and QAIA contributors"
       },
@@ -19,7 +19,7 @@
     {
       "name": "qaia-playwright",
       "source": "./plugins/qaia-playwright",
-      "description": "QAIA automation: Gherkin test book to native Playwright (POM as fixtures) with traceability, plus accessibility, performance and security-surface checks. Web-first.",
+      "description": "QAIA automation: Gherkin test book to native Playwright (POM as fixtures) with traceability, plus contract probing against the target's own documentation, captured-traffic regression and defect reports. Web-first.",
       "author": {
         "name": "Cédric Moretti and QAIA contributors"
       },
@@ -31,17 +31,6 @@
       "name": "qaia-score",
       "source": "./plugins/qaia-score",
       "description": "QAIA scoring: read-only quality scoring (ISTQB 10-dimension rubric, /20) and a PASS/CONCERNS/FAIL/WAIVED release-readiness gate over the standardized run manifest. Scores only - never edits test content.",
-      "author": {
-        "name": "Cédric Moretti and QAIA contributors"
-      },
-      "license": "MIT",
-      "category": "testing",
-      "homepage": "https://github.com/QAIA-Project/QAIA"
-    },
-    {
-      "name": "qaia-testdata",
-      "source": "./plugins/qaia-testdata",
-      "description": "QAIA test data: generates rich, business-coherent synthetic datasets (never real data or PII) from a QAIA user story or test book, covering boundary/edge cases and injectable as Playwright fixtures. Separate from qaia-core, which only ever generates inline examples.",
       "author": {
         "name": "Cédric Moretti and QAIA contributors"
       },

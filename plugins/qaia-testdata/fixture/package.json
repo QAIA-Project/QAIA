@@ -1,8 +1,0 @@
-{
-  "name": "qaia-testdata-fixture",
-  "private": true,
-  "description": "Minimal self-contained fixture proving qaia-testdata:dataset-generate output is real, coherent and injectable via a Playwright fixture (issue #15 acceptance criterion) - no relation to examples/medibook or examples/expense-demo beyond reusing the same POM-as-fixtures pattern (D34).",
-  "devDependencies": {
-    "@playwright/test": "^1.62.0"
-  }
-}

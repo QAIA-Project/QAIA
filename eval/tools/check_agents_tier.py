@@ -34,7 +34,7 @@ READ_ONLY = {"Read", "Glob", "Grep"}
 JUDGES = {"camille-judge", "elian-refuter"}
 # Un agent qui peut lancer un shell est un choix, pas un accident : la liste est explicite ici
 # pour qu'un ajout silencieux echoue.
-MAY_RUN_COMMANDS = {"marek-automation", "yuki-triage"}
+MAY_RUN_COMMANDS = {"marek-automation"}
 
 # Liste BLANCHE. Interdire au cas par cas laissait passer tout ce a quoi personne n'avait pense
 # -- notamment `Task`, qui lance un sous-agent avec un outillage arbitraire et rend donc toute

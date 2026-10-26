@@ -28,12 +28,11 @@ text, needs nothing running, and costs nothing — then probe what it leaves ope
    (a status code for a case, an invariant, a format guarantee). A vague marketing claim
    ("fast", "reliable") is not a checkable promise; skip it. Cite each promise's source
    (file/section) — never invent one the docs don't actually state.
-2. **Probe with bounded, non-destructive adversarial input (authorized-target posture, same as
-   `security-surface`).** For each promise, construct inputs designed to break it specifically:
+2. **Probe with bounded, non-destructive adversarial input (authorized-target posture).** For each promise, construct inputs designed to break it specifically:
    boundary/malformed values, unexpected types, extreme sizes, unusual encodings — the same
    adversarial mindset as ISTQB error-guessing, aimed at a documented promise rather than a
    generic crash. **Never**: a DoS-shaped load, destruction of real data, or any target not
-   self-hosted and authorized (identical guardrail to `security-surface`).
+   self-hosted and authorized.
 3. **Judge against the contract, not just "did it crash."** A 500 where the docs promise a 4xx
    is a defect even though the process kept running. A field silently dropped, a documented
    invariant silently violated, an error message that leaks more than promised — all defects,
@@ -47,7 +46,7 @@ text, needs nothing running, and costs nothing — then probe what it leaves ope
    one atomic Gherkin scenario reproducing the exact triggering input and the actual vs.
    promised behavior, tagged `@QAIA-CP-<NNN>` and `@negative`, with a `# contract:` comment
    citing the exact promise it violates (source + line, from step 1). **Never** patch the
-   target's code — same posture as `locator-repair`: propose evidence, a human decides
+   target's code: propose evidence, a human decides
    the fix. If the user wants automation, hand the scenario to `automate` afterward as normal.
 6. **Report.** One table per probed promise: promise → probe input → observed → verdict
    (kept/broken) → scenario ID if broken. A clean pass (no defect on a given promise) is
@@ -55,7 +54,7 @@ text, needs nothing running, and costs nothing — then probe what it leaves ope
 
 ## Guardrails
 
-- **Authorized targets only** (identical to `security-surface`). State in the report which
+- **Authorized targets only.** State in the report which
   authorization applies, in this order: (a) an in-repo app under `examples/` — self-hosted and owned
   by definition; (b) a target listed in `https://github.com/QAIA-Project/QAIA/blob/main/docs/DEMO-TARGETS.md` — cite its golden rule; (c) a third
   party whose own documentation or owner explicitly authorizes probing — quote that authorization

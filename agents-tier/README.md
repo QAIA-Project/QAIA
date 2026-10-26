@@ -1,7 +1,7 @@
 # QAIA agents — opt-in tier
 
-**Seven named agents, one per SDLC phase. Not installed by `qaia-core`, `qaia-playwright`,
-`qaia-score` or `qaia-testdata`, and never a prerequisite of any of them.**
+**Six named agents, five of them one per SDLC phase. Not installed by `qaia-core`,
+`qaia-playwright` or `qaia-score`, and never a prerequisite of any of them.**
 
 ## Why this lives outside `plugins/`
 
@@ -12,11 +12,11 @@ widen what the model may reach for once invoked, through its `tools:` list. That
 than a hook and it is not zero, so the tier stays separate and explicit rather than being smuggled
 into the core by re-reading a rule until it permits what we want.
 
-Install it because you decided to, or do not install it at all. The 37 skills work without it.
+Install it because you decided to, or do not install it at all. The skills work without it.
 
 ## The honest part, before the list
 
-**Only two of these seven have a genuine reason to be an agent.**
+**Only two of these six have a genuine reason to be an agent.**
 
 The design criterion is not importance, it is a **delegation boundary**: work that needs its own
 context window. By that test:
@@ -25,7 +25,7 @@ context window. By that test:
   output*, and a judge sharing the producer's context has already read the reasoning it is meant
   to check independently. A separate context is not decoration there — it is the whole point.
   A pilot run on 2026-08-09 failed for exactly this reason: the same party produced and graded.
-- **The other five are a convenience layer over skills that already work.** They group a phase
+- **The other four are a convenience layer over skills that already work.** They group a phase
   behind one name so you can say "ask Naïma" instead of remembering four skill names. That is a
   real ergonomic gain and it is *not* new capability. Said here so nobody discovers it later.
 
@@ -45,27 +45,27 @@ checkpoints the skills exist to force, and substitutes written disclaimers for t
 product whose most-repeated rule is *the tool proposes, the human arbitrates*, that is not a
 neutral trade.
 
-**Use the five phase agents for exploration and for reading a large artefact quickly. Use the
+**Use the four phase agents for exploration and for reading a large artefact quickly. Use the
 skills, interactively, when the output is going to be trusted.** Camille and Elian are unaffected:
 judgement is exactly the part that must happen without a human in the loop.
 
-## The seven
+## The six
 
 Since the 2026-08-24 fusion, the journey skills these agents wrapped are steps of `generate`, and
 the scoring skills are pages of `judge`. The quotation above names the skills as they were then.
+On 2026-10-26 seventeen skills were deleted, and with them **Salim** (test data) and **Yuki**
+(execution and triage), whose skills were all among them except `defect-report`, now Marek's.
 
 | Agent | SDLC phase | Wraps | Own context earns it? |
 |---|---|---|---|
 | **Naïma** | Discovery — requirement capture and ambiguity | `generate` steps 1–3, `signal-ingest` | no — ergonomics |
 | **Théo** | Design — techniques, oracles, priorities | `generate` steps 4–6 | no — ergonomics |
-| **Salim** | Test data | `dataset-generate` | no — ergonomics |
-| **Elsa** | Test book | `generate` steps 7–9, `test-plan-and-closure` | no — ergonomics |
-| **Marek** | Automation | `automate`, `a11y-audit`, `perf-check`, `security-surface`, `visual-check`, `traffic-replay`, `contract-probe` | no — ergonomics |
-| **Yuki** | Execution and triage | `run-report`, `defect-report`, `flaky-detect`, `locator-repair`, `impact-select`, `confirm-fix` | no — ergonomics |
+| **Elsa** | Test book | `generate` steps 7–9 | no — ergonomics |
+| **Marek** | Automation | `automate`, `contract-probe`, `traffic-replay`, `defect-report` | no — ergonomics |
 | **Camille** | Judgement and release readiness | `judge` (all of it) | **yes — rule 3** |
 | **Elian** | Adversarial second opinion | none: reads artefacts only | **yes — rule 3** |
 
-That is eight rows for seven phases: **Elian** is not a phase. It is the refutation pass, and it
+That is six rows for five phases: **Elian** is not a phase. It is the refutation pass, and it
 exists because a single judge that agrees with itself is not evidence.
 
 ## They are not people
@@ -80,8 +80,8 @@ No agent approves a release. They produce evidence and a proposed verdict; a hum
 ## Tool scoping — and what it is NOT
 
 The judges (**Camille**, **Elian**) declare `tools: Read, Glob, Grep`. The producers declare write
-access scoped to what they generate, and only **Marek** and **Yuki** declare `Bash`, because
-running a suite is their job.
+access scoped to what they generate, and only **Marek** declares `Bash`, because
+running a suite is its job.
 
 **`tools:` is a request to the harness, not a capability boundary.** This paragraph previously
 claimed the judges "cannot write a file, run a command or reach the network". That sentence was

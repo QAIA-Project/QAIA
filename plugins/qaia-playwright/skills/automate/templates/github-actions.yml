@@ -44,8 +44,8 @@ jobs:
       - run: npx playwright install --with-deps chromium
 
       # Retry/quarantine policy (T2): 0 automatic retries (masking instability would hide the
-      # exact signal qaia-playwright:flaky-detect exists to surface). A test tagged @quarantine
-      # by a human after a flaky-detect finding is excluded from the blocking run below but
+      # exact signal a flakiness review exists to surface). A test tagged @quarantine
+      # by a human after a flakiness finding is excluded from the blocking run below but
       # still executed and reported separately, so it stays visible instead of disappearing.
       # Les projets a moteur, nommes explicitement pour que le projet `api` ne soit pas rejoue
       # une seconde fois sous navigateur. `automate` ne garde ici QUE les projets que le
@@ -64,9 +64,9 @@ jobs:
       # Uploaded on failure too (`!cancelled()`), not only on green: the run you most need the
       # trace and screenshots for is the one that failed.
       # `cucumber.json` and `.qaia/reports/` are optional — they exist only if you enabled the
-      # Cucumber reporter or ran qaia-playwright:run-report. `if-no-files-found: warn` keeps
+      # Cucumber reporter. `if-no-files-found: warn` keeps
       # their absence a warning instead of turning a passing suite into a red build.
-      - name: Publish JUnit + Cucumber + HTML (qaia-playwright:run-report formats, T1)
+      - name: Publish JUnit + Cucumber + HTML (T1)
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
