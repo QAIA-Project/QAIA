@@ -383,6 +383,55 @@ jobs:
           # Une seule definition, dans le Makefile, appelee des deux endroits.
           make lint
 
+  shipped-suites:
+    # Les deux suites livrees le 2026-08-11 ne tournaient dans aucune CI : un `junit.xml` commite
+    # etait la seule trace qu'elles aient jamais tourne (#108). Elles demarrent leur propre
+    # serveur (`webServer`), rien a provisionner.
+    name: Shipped Playwright suites (booking-api-demo, site-qa)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2 (pinned by SHA, decision T15)
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4 (pinned by SHA, decision T15)
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: |
+            examples/booking-api-demo/tests/package-lock.json
+            site-qa/tests/package-lock.json
+
+      # 100 % @api (ADR 0008) : AUCUN navigateur n'est installe avant cette etape. Si la suite en
+      # reclamait un, elle echouerait ici -- c'est la demonstration du decoupage par niveau.
+      - name: booking-api-demo (api only, no browser installed)
+        working-directory: examples/booking-api-demo/tests
+        run: |
+          npm ci
+          npx playwright test
+
+      # Le site est assemble par le MEME script que `pages.yml`, puis servi tel quel (SITE_ROOT) :
+      # la suite teste l'arbre publie, pas une copie de sa regle d'assemblage.
+      - name: Assemble the site exactly as pages.yml publishes it
+        run: sh .github/scripts/assemble-site.sh _site
+
+      # Ordre du modele livre par `automate` (S39.4) : le projet `api` tourne AVANT l'installation
+      # du navigateur. Jamais exerce jusqu'ici sur une suite a deux niveaux.
+      - name: site-qa, api project (no browser yet)
+        working-directory: site-qa/tests
+        env:
+          SITE_ROOT: ${{ github.workspace }}/_site
+        run: |
+          npm ci
+          npx playwright test --project=api
+
+      - name: site-qa, e2e-desktop project
+        working-directory: site-qa/tests
+        env:
+          SITE_ROOT: ${{ github.workspace }}/_site
+        run: |
+          npx playwright install --with-deps chromium
+          npx playwright test --project=e2e-desktop
+
   dco:
     name: DCO sign-off
     if: github.event_name == 'pull_request'

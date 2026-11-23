@@ -4,8 +4,14 @@ const { test, expect } = require('@playwright/test');
 const fs = require('fs');
 const path = require('path');
 
-const SITE_DIR = path.resolve(__dirname, '..', '..', 'site');
-const DEMO_DIR = path.resolve(__dirname, '..', '..', 'examples', 'expense-demo', 'static-demo');
+// En CI, SITE_ROOT designe l'arbre assemble par le script de `pages.yml` (#108) : le scenario 004
+// compare alors le sitemap a ce qui est REELLEMENT publie, plus a une reconstruction de la regle.
+const SITE_DIR = process.env.SITE_ROOT
+  ? path.resolve(process.env.SITE_ROOT)
+  : path.resolve(__dirname, '..', '..', 'site');
+const DEMO_DIR = process.env.SITE_ROOT
+  ? path.join(SITE_DIR, 'demo')
+  : path.resolve(__dirname, '..', '..', 'examples', 'expense-demo', 'static-demo');
 
 const DECLARED = ['/', '/compare.html', '/walkthrough.html', '/demo/', '/llms.txt', '/robots.txt', '/sitemap.xml'];
 
@@ -47,7 +53,7 @@ test('@QAIA-US-SITE-001-004 @AC6 the sitemap lists exactly the published entry p
     .map((m) => new URL(m[1]).pathname.replace(/^\/QAIA/, '') || '/')
     .sort();
 
-  // Ce que le site publie reellement, lu sur le disque comme `pages.yml` l'assemble : les pages
+  // Ce que le site publie reellement, lu sur le disque (l'arbre assemble si SITE_ROOT) : les pages
   // HTML de premier niveau, plus `/demo/`. Defaut sur applique a la question ouverte Q2 -- les
   // fichiers destines aux machines (robots, sitemap, llms) ne s'indexent pas eux-memes.
   const published = fs

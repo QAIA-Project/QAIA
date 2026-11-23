@@ -20,10 +20,17 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..', '..');
-const MOUNTS = [
-  { prefix: '/demo/', dir: path.join(ROOT, 'examples', 'expense-demo', 'static-demo') },
-  { prefix: '/', dir: path.join(ROOT, 'site') },
-];
+// SITE_ROOT : un arbre DEJA assemble par `.github/scripts/assemble-site.sh`, le script que
+// `pages.yml` appelle pour publier. C'est ce que fait la CI (#108) : elle sert l'arbre publie
+// tel quel, et la duplication ci-dessous -- avec ses quatre contre-exemples -- ne joue plus. Sans
+// SITE_ROOT (poste local), les deux montages reproduisent l'assemblage, avec le trou decrit plus
+// haut.
+const MOUNTS = process.env.SITE_ROOT
+  ? [{ prefix: '/', dir: path.resolve(process.env.SITE_ROOT) }]
+  : [
+      { prefix: '/demo/', dir: path.join(ROOT, 'examples', 'expense-demo', 'static-demo') },
+      { prefix: '/', dir: path.join(ROOT, 'site') },
+    ];
 const PORT = Number(process.env.PORT || 4700);
 
 const TYPES = {

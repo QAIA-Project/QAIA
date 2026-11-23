@@ -22,6 +22,7 @@ on:
       - 'site/**'
       - 'examples/expense-demo/static-demo/**'
       - '.github/workflows/pages.yml'
+      - '.github/scripts/assemble-site.sh'
   workflow_dispatch:
 
 permissions:
@@ -43,16 +44,9 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2 (pinned by SHA, decision T15)
 
       - name: Assemble the published tree
-        run: |
-          set -euo pipefail
-          mkdir -p _site/demo
-          cp -r site/. _site/
-          cp -r examples/expense-demo/static-demo/. _site/demo/
-          test -f _site/index.html
-          test -f _site/demo/index.html
-          test -f _site/llms.txt
-          echo "--- published tree:"
-          find _site -type f | sort
+        # La regle d'assemblage vit dans ce script, et nulle part ailleurs : la CI (`ci.yml`, job
+        # `shipped-suites`) teste l'arbre que ce meme script produit (#108).
+        run: sh .github/scripts/assemble-site.sh _site
 
       - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
 
