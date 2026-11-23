@@ -28,7 +28,7 @@ terminée. La moitié « plan » n'a encore jamais servi.
 
 | Niveau | Couverture | Commentaire |
 |---|---|---|
-| Composant (unitaire) | **hors périmètre, décidé** | [ADR 0004](adr/0004-test-level-boundary.md) : QAIA part d'une promesse observable de l'extérieur. Un test unitaire s'écrit contre une fonction, donc contre l'implémentation — c'est abandonner l'oracle qui fait la valeur du reste. |
+| Composant (unitaire) | **hors périmètre, décidé** | [ADR 0004](../adr/0004-test-level-boundary.md) : QAIA part d'une promesse observable de l'extérieur. Un test unitaire s'écrit contre une fonction, donc contre l'implémentation — c'est abandonner l'oracle qui fait la valeur du reste. |
 | Intégration | **absente en tant que telle** | `contract-probe` en approche une partie par le contrat, sans jamais nommer l'intégration |
 | Système | **couverte** | c'est le cœur du produit |
 | Acceptation | partielle | on produit le cahier ; personne ne pilote une recette humaine |
@@ -74,8 +74,8 @@ un sujet d'exploitation.
 et s'arrête quand le déploiement commence.
 
 **Arbitré le 2026-08-08, puis retourné le même jour : Discovery et Run sont HORS PÉRIMÈTRE**
-([ADR 0007](adr/0007-scope-delivery-and-maintenance.md), qui remplace
-[ADR 0005](adr/0005-scope-discovery-and-run.md)). Ce ne sont donc ni des trous, ni des chantiers :
+([ADR 0007](../adr/0007-scope-delivery-and-maintenance.md), qui remplace
+[ADR 0005](../adr/0005-scope-discovery-and-run.md)). Ce ne sont donc ni des trous, ni des chantiers :
 ce sont des frontières. Les issues ouvertes par ADR 0005 sont fermées — [#85](https://github.com/QAIA-Project/QAIA/issues/85) (exigences non-fonctionnelles dérivées quand elles sont encore négociables), [#86](https://github.com/QAIA-Project/QAIA/issues/86) (incident de production → test de non-régression), [#87](https://github.com/QAIA-Project/QAIA/issues/87) (chaos, différé et argumenté).
 
 Deux précisions qui corrigent une lecture trop favorable :
@@ -88,7 +88,7 @@ Deux précisions qui corrigent une lecture trop favorable :
 - **Run.** `traffic-replay` rejoue un fichier HAR que l'utilisateur fournit. Ce n'est pas du
   monitoring de production. Sur les quatre pratiques du shift-right, la couverture est de **zéro**.
 
-Et une nuance sur notre propre décision : [ADR 0004](adr/0004-test-level-boundary.md) exclut le
+Et une nuance sur notre propre décision : [ADR 0004](../adr/0004-test-level-boundary.md) exclut le
 **niveau** unitaire, pas le **test statique**. La revue de code contre l'exigence part du même
 oracle que le reste de la chaîne — elle n'est ni couverte, ni interdite.
 
@@ -134,7 +134,7 @@ rate aucun (`eval/impact-select-2026-08-08/`).
 spécification, elle y a trouvé **les quatre classes de contradiction** qu'elle cherche
 (`eval/openapi-ingest-2026-08-08/`).
 
-**4. ~~Le niveau composant.~~** Tranché le 2026-08-08 : hors périmètre, [ADR 0004](adr/0004-test-level-boundary.md). Ce n'est plus un trou, c'est une frontière déclarée.
+**4. ~~Le niveau composant.~~** Tranché le 2026-08-08 : hors périmètre, [ADR 0004](../adr/0004-test-level-boundary.md). Ce n'est plus un trou, c'est une frontière déclarée.
 
 **5. ~~Le plan de test et le bilan.~~** **Comblé le 2026-08-08** — `test-plan-and-closure`, appliquée à une campagne *déjà terminée* pour qu'aucune section ne puisse être ajustée pour bien paraître (`eval/external-application-2026-08-08/closure-report.md`). *(Le test de confirmation, qui figurait aussi dans cette liste, est comblé : `confirm-fix`.)*
 

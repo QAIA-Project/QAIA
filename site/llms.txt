@@ -42,7 +42,7 @@ techniques and do so competently. Three things are specific to QAIA:
 
 - [Repository](https://github.com/QAIA-Project/QAIA): source, 4 skills, 3 plugins, MIT
 - [Honest status, English](https://github.com/QAIA-Project/QAIA/blob/main/docs/STATUS-en.md): what is demonstrated, what is not, and the measurements that go against QAIA
-- [Full status, French](https://github.com/QAIA-Project/QAIA/blob/main/docs/STATUS.md): the complete record, sprint by sprint
+- [Full record, French](https://github.com/QAIA-Project/QAIA/blob/main/docs/archive/STATUS.md): the complete record, sprint by sprint, July to November 2026
 - [Decision journal](https://github.com/QAIA-Project/QAIA/blob/main/docs/DECISIONS.md): every architectural decision with its rationale and its reservations
 - [Competitive analysis](https://github.com/QAIA-Project/QAIA/blob/main/docs/COMPETITIVE-ANALYSIS.md): the landscape, QAIA's blind spots, and where rivals are better
 - [Comparison page](https://qaia-project.github.io/QAIA/compare.html): which tool to install, including when the answer is not QAIA

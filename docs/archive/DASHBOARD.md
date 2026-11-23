@@ -3,7 +3,7 @@
 **Deux nombres. Tout le reste est du détail.**
 
 Ce fichier remplace `docs/STATUS.md` (1 316 lignes) comme état de référence du projet. Le
-raisonnement est dans [la spec de refonte](superpowers/specs/2026-08-24-qaia-refonte-design.md) :
+raisonnement est dans [la spec de refonte](../superpowers/specs/2026-08-24-qaia-refonte-design.md) :
 un dépôt qui tient un journal de 1 316 lignes et 201 décisions pour un produit sans utilisateur
 optimise le récit de son travail, pas son travail.
 
@@ -48,7 +48,7 @@ lead, relecture développeur — les ont trouvées, et ils ont trouvé des chose
 chiffres, l'arithmétique et les périmètres, la confiance.
 
 La mutation vérifie que les gardes gardent ce qu'elles gardent. Elle ne dit rien de ce que
-personne n'a pensé à garder. [Rapport complet →](../eval/refutation-2026-08-24/REPORT.md)
+personne n'a pensé à garder. [Rapport complet →](../../eval/refutation-2026-08-24/REPORT.md)
 
 Registre complet : `eval/mutation-guards-2026-08-11.txt` (une entrée par passe, datée du jour où
 elle a tourné). Une survivante ne se tolère pas par le code de sortie : elle s'annote et se

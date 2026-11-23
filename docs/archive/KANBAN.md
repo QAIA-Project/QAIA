@@ -36,7 +36,7 @@ mieux qu'une issue de plus.
 ## Campagnes externes — 2026-08-11 — **4 issues et 1 commentaire publiés en amont** 🟢
 
 Première fois depuis la campagne json-server du 2026-08-08 que le projet produit un effet hors
-de son dépôt. Synthèse : [`eval/CAMPAGNES-2026-08-11-SYNTHESE.md`](../eval/CAMPAGNES-2026-08-11-SYNTHESE.md).
+de son dépôt. Synthèse : [`eval/CAMPAGNES-2026-08-11-SYNTHESE.md`](../../eval/CAMPAGNES-2026-08-11-SYNTHESE.md).
 
 | Cible | Constat | Signalement |
 |---|---|---|
@@ -162,10 +162,10 @@ campagnes — 2 %, 26 %, 83 % de précision selon la nature de la règle, pas la
 
 ## Sprint 33 — la revue d'architecture retourne le sprint, et trois P0 apparaissent (2026-08-08, D165-D169) 🔵 OUVERT
 
-Ouvert sur deux arbitrages ([ADR 0005](adr/0005-scope-discovery-and-run.md),
-[ADR 0006](adr/0006-multi-agent-portability.md)) — puis **retourné le jour même** par une revue
+Ouvert sur deux arbitrages ([ADR 0005](../adr/0005-scope-discovery-and-run.md),
+[ADR 0006](../adr/0006-multi-agent-portability.md)) — puis **retourné le jour même** par une revue
 d'architecture menée sur le dépôt avec obligation de preuve.
-[ADR 0007](adr/0007-scope-delivery-and-maintenance.md) remplace ADR 0005 : le périmètre reste
+[ADR 0007](../adr/0007-scope-delivery-and-maintenance.md) remplace ADR 0005 : le périmètre reste
 *Delivery + Maintenance*. La portabilité (ADR 0006) tient et reste ouverte.
 
 **Le verdict de la revue : ne rien construire de neuf, rendre vrai ce qui est déjà écrit, publier
@@ -312,7 +312,7 @@ plus #58 : #49-#58 toutes closes).
 
 Absent de ce tableau jusqu'au 2026-08-09, alors qu'il porte l'une des rares preuves externes du
 projet. Relevé par la revue « chef de projet » ; le détail est dans
-[`STATUS.md`](STATUS.md#sprint-31--60-fermée--une-suite-générée-tourne-dans-une-vraie-ci-2026-08-01-d132--terminé).
+[`STATUS.md`](../STATUS.md#sprint-31--60-fermée--une-suite-générée-tourne-dans-une-vraie-ci-2026-08-01-d132--terminé).
 
 - **#60 fermée** — une suite générée par QAIA s'exécute sur un runner GitHub Actions, **sans
   session Claude ni skill chargée** : 8/8. C'est la démonstration que la sortie du produit vit

@@ -54,7 +54,7 @@ délibéré : c'est la seule face dont un inconnu peut se servir sans rien adopt
 le coût soit nul.
 
 Réduire le 2,9× de la face *générer* reste à faire, et c'est la cible ≤ 1,5× du
-[tableau de bord](../../docs/DASHBOARD.md).
+[tableau de bord](../../docs/archive/DASHBOARD.md).
 
 ## Reproduire
 

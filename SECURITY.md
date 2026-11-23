@@ -24,4 +24,4 @@ Reports are especially welcome on:
 
 ## Hardening commitments
 
-Branch protection on the default branch, 2FA for maintainers, pinned GitHub Actions, signed releases, and a second administrator able to revoke access **are being put in place as part of the M0 exit criteria** (see `docs/M0-CHECKLIST.md` for live status) — do not assume they are all active until that checklist says so.
+Branch protection on the default branch, 2FA for maintainers, pinned GitHub Actions, signed releases, and a second administrator able to revoke access **are being put in place as part of the M0 exit criteria** (the original checklist is archived in `docs/archive/M0-CHECKLIST.md`) — do not assume they are all active until that checklist says so.

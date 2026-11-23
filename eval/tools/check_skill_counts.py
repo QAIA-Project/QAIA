@@ -58,8 +58,8 @@ TOTAL_SCANNED = [
     # memes versions de plugin. L'inscrire ici au moment de la scission plutot qu'apres la
     # premiere derive : un fichier hors perimetre est un angle mort qu'on cree soi-meme.
     "README.fr.md",
-    "docs/TEST-COVERAGE-MAP.md",
-    "docs/ACTION-PLAN.md",
+    # docs/TEST-COVERAGE-MAP.md et docs/ACTION-PLAN.md archives le 2026-11-23 : un releve date
+    # n'a pas a suivre le compte courant, il doit pouvoir citer celui de son jour.
     "plugins/qaia-core/CATALOGUE.md",
     "site/index.html",
     "site/compare.html",

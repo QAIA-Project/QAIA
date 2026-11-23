@@ -1,7 +1,7 @@
 # Gap harness — 4 modes d'échec IATS sur cas durs réels (#24)
 
 *2026-07-24. Mesure de gap par skill × mode d'échec, sur du matériel **réel** (pas des
-fixtures fabriquées) — cf. la correction de `docs/IATS-RETROSPECTIVE.md` : les cas de démo
+fixtures fabriquées) — cf. la correction de `docs/archive/IATS-RETROSPECTIVE.md` : les cas de démo
 ont des AC propres, ce qui masque l'écart d'extraction. Ce harnais utilise deux cas réels
 sourcés sur le web (projets open source permissifs, catalogués comme dans
 `eval/groundtruth-corpus.md`), délibérément présentés à QAIA sous une forme **dure** (ticket

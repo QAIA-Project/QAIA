@@ -6,7 +6,7 @@
 
 ## Contexte
 
-La cartographie du 2026-08-08 (`docs/TEST-COVERAGE-MAP.md`) a croisé les skills du catalogue — 30 au moment où elle a été établie —
+La cartographie du 2026-08-08 (`docs/archive/TEST-COVERAGE-MAP.md`) a croisé les skills du catalogue — 30 au moment où elle a été établie —
 avec les niveaux de test ISTQB (CTFL ch. 2.2). Résultat mesuré, pas supposé :
 
 | Niveau | Skills |
@@ -67,7 +67,7 @@ logiciel tiers. Le problème n'est pas qu'elle couvre trop peu de niveaux.
 ## Conséquences
 
 - Le README et `CATALOGUE.md` portent une ligne « hors périmètre », visible, pas enfouie.
-- `docs/TEST-COVERAGE-MAP.md` requalifie la ligne « Composant » : **choix**, plus **trou**.
+- `docs/archive/TEST-COVERAGE-MAP.md` requalifie la ligne « Composant » : **choix**, plus **trou**.
 - Une demande de test unitaire est un refus explicite avec son motif, pas un silence.
 - **Ce que la décision n'interdit pas** : un test système *derivé* d'une règle métier calculable
   reste dans le périmètre — ce qui compte est l'interface par laquelle il s'exerce, pas la

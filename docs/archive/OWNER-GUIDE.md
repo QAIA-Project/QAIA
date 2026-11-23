@@ -37,7 +37,7 @@ Labels à créer : `P0 P1 P2 P3` · `type:skill type:connecteur type:automatisat
 
 Message prêt à coller ci-dessous (à retoucher). Cible : communautés QA (Ministry of Testing, CFTL, meetups QA FR, LinkedIn). Objectif : des testeurs qui s'engagent à dérouler un cahier réel sous 30 jours.
 
-> 💡 **Pour maximiser les réponses**, pointe les candidats vers [`docs/PILOT-KIT.md`](PILOT-KIT.md) : un parcours guidé « 15 min » (story prête, install, feedback structuré) qui abaisse l'effort perçu de « 1 h sur ma propre US » à « 15 min ». C'est le levier qui transforme un « peut-être » en « ok je teste ».
+> 💡 **Pour maximiser les réponses**, pointe les candidats vers [`docs/PILOT-KIT.md`](../PILOT-KIT.md) : un parcours guidé « 15 min » (story prête, install, feedback structuré) qui abaisse l'effort perçu de « 1 h sur ma propre US » à « 15 min ». C'est le levier qui transforme un « peut-être » en « ok je teste ».
 
 ---
 ### Message FR (LinkedIn / MoT)

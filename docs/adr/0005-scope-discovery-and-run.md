@@ -16,7 +16,7 @@
 
 ## Contexte
 
-La carte de couverture ([`../TEST-COVERAGE-MAP.md`](../TEST-COVERAGE-MAP.md) §3bis) a établi, le
+La carte de couverture ([`../archive/TEST-COVERAGE-MAP.md`](../archive/TEST-COVERAGE-MAP.md) §3bis) a établi, le
 2026-08-08, une phrase que le projet n'avait jamais écrite :
 
 > **QAIA vit entièrement dans Delivery et Maintenance.** Elle commence quand la discovery est

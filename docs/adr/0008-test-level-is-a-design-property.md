@@ -2,7 +2,7 @@
 
 - Statut : **Accepté**
 - Date : 2026-08-11
-- Ouvre : sprint S38 de [`EPIC-NIVEAUX-ET-LN.md`](../EPIC-NIVEAUX-ET-LN.md)
+- Ouvre : sprint S38 de [`EPIC-NIVEAUX-ET-LN.md`](../archive/EPIC-NIVEAUX-ET-LN.md)
 - Prolonge : [ADR 0004](0004-test-level-boundary.md), qui fixe la borne basse du périmètre
 
 ## Contexte

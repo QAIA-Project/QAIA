@@ -126,7 +126,7 @@ Trois consignes qui changent la portée :
 **Un point de vérité à corriger dans le texte avant de publier**, et je préfère le dire que le
 laisser passer : la version A dit « un panel de 13 personas ». Depuis, on a établi que **ce panel
 est auto-administré** — des agents jouant un cabinet fictif, pas des relecteurs extérieurs. Le
-site le dit maintenant. Le post doit le dire aussi, sinon quelqu'un ouvre `docs/KANBAN.md` et
+site le dit maintenant. Le post doit le dire aussi, sinon quelqu'un ouvre `docs/archive/KANBAN.md` et
 l'argument d'honnêteté s'effondre en un commentaire. Formulation proposée :
 
 > J'ai fait auditer mon projet open source par un panel de 13 personas — que j'ai fait tourner

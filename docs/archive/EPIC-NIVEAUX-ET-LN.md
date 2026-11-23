@@ -63,7 +63,7 @@ des deux qui ne demande à personne de mentir.
 ### Chantier A — Le niveau de test devient une donnée, décidée à la conception
 
 **Le principe** : le niveau se déduit de **l'interface par laquelle la promesse est observable**, ce
-qui est exactement le critère qu'[ADR 0004](adr/0004-test-level-boundary.md) a déjà posé pour
+qui est exactement le critère qu'[ADR 0004](../adr/0004-test-level-boundary.md) a déjà posé pour
 délimiter le périmètre (*« navigateur, HTTP, ou le contrat déclaré d'un service »*). On ne crée pas
 un critère : on rend explicite celui qui gouverne déjà.
 
@@ -102,7 +102,7 @@ d'interface utilisateur parce que c'est la seule forme que la skill montre.
   produisent des scénarios **`@api`** tracés jusqu'à la clause du contrat, pas seulement jusqu'à l'AC.
 - `automate` génère ces tests avec `APIRequestContext` (sans moteur de navigateur), et la CI générée
   déclare le projet `api` séparément.
-- La porte de refus d'[ADR 0001](adr/0001-negative-coverage-gate.md) s'applique **par niveau** :
+- La porte de refus d'[ADR 0001](../adr/0001-negative-coverage-gate.md) s'applique **par niveau** :
   un chemin de refus déclaré dans la spécification et couvert seulement par un scénario d'interface
   utilisateur n'est pas couvert au niveau API. Aujourd'hui, rien ne fait la différence.
 
@@ -245,7 +245,7 @@ Le fondateur a tranché deux points (périmètre : niveaux **et** double format 
 zéro nouvelle skill) puis a demandé de continuer sans interruption. Les six suivantes sont **les
 miennes** et n'ont été validées par personne :
 
-1. **Deux niveaux seulement, `@e2e` et `@api`** — pas de `@integration`, qu'[ADR 0004](adr/0004-test-level-boundary.md) place hors périmètre.
+1. **Deux niveaux seulement, `@e2e` et `@api`** — pas de `@integration`, qu'[ADR 0004](../adr/0004-test-level-boundary.md) place hors périmètre.
 2. **Une seule étiquette de niveau par scénario.** Un scénario qui en réclamerait deux est un
    scénario non atomique : c'est un défaut à corriger, pas une étiquette à ajouter.
 3. **Quatre sprints, numérotés S38-S41**, un chantier par sprint, la preuve fusionnée dans le dernier.

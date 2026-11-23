@@ -1,6 +1,6 @@
 # Audit d'indépendance des skills — chaque brique tient-elle hors pipeline ? (issue #22)
 
-*2026-07-25. Suite à l'auto-audit IATS (`docs/IATS-RETROSPECTIVE.md`, leçon #1 « outils
+*2026-07-25. Suite à l'auto-audit IATS (`docs/archive/IATS-RETROSPECTIVE.md`, leçon #1 « outils
 d'abord, pipelines ensuite »). 17 skills du parcours QAIA (15 `qaia-core` + 2 `qaia-score`)
 lisent/écrivent des checkpoints partagés dans `.qaia/state/` et `.qaia/reports/`. 6 sont déjà
 réellement autonomes et confirmés (`hello`, `qaia-help`, `testbook-validate`, `oracle-generate`,
