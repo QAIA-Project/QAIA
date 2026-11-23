@@ -11,18 +11,25 @@ keeps because neither depends on anything QAIA produced itself. Work order is in
 
 | | |
 |---|---:|
-| **PASS, default rubric** | **115 / 269 (42.8 %)** |
-| CONCERNS / FAIL / not scoreable | 76 / 63 / 15 |
-| corpus | the 15 repositories frozen on 2026-08-09, **replayed on 2026-11-23** |
-| spec reference | 101 / 244 on 2026-08-24, target ≥ 107 |
+| **PASS, default rubric** | **104 / 244 (42.6 %)** |
+| CONCERNS / FAIL / not scoreable | 72 / 58 / 10 |
+| corpus | the 15 repositories frozen on 2026-08-09, **each pinned to a commit**: 15 of 15 digests identical to the freeze |
+| spec reference, replayed on this corpus | 96 (the level of the `--third-party` opt-in); target: the default at least that high |
 
-**These two rows are not comparable.** Six of the fifteen repositories have moved since the
-freeze; the replayed corpus holds 269 files, not 244. Until the corpus is re-frozen, the target
-can be declared neither met nor missed ([#119](https://github.com/QAIA-Project/QAIA/issues/119)).
-On the nine stable repositories alone (145 files): 47 PASS.
+**Target met: 104 ≥ 96.** The former figures 101 and 107 were measured on a corpus that had
+already drifted (257 files); they do not describe this one
+([#119](https://github.com/QAIA-Project/QAIA/issues/119),
+[report](../eval/corpus-remeasure-2026-11-23/REPORT.md), French).
 
-Latest change: a docstring is no longer read as scenarios, PASS 109 → 115 on the same corpus
-([report](../eval/corpus-remeasure-2026-11-23/REPORT.md), French).
+Replay:
+
+```
+python eval/tools/fetch_corpus.py eval/gherkin-external-2026-08-09/corpus.json <dir>
+python eval/tools/score_corpus.py <dir>
+```
+
+Latest changes, on the frozen corpus: a docstring is no longer read as scenarios (98 → 104),
+after the two duplicate-detector fixes of 2026-08-24 (96 → 98).
 
 ## 2. Number of real users
 

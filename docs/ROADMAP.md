@@ -75,16 +75,19 @@ sortant ; **C** est le travail de décision du fondateur.
    `probe` comme liste de cibles autorisées), `COMPETITIVE-ANALYSIS` (lié depuis le README).
 3. ~~**#106**~~ **Fait** (`3dd1421`) : parseur à blocs en bibliothèque standard, les sept formes
    couvertes ou refusées explicitement, intitulés comparés.
-4. **Triage du backlog** — requalifier les issues écrites pour 37 skills.
+4. ~~**Triage du backlog**~~ **Fait le 2026-11-23** : #29, #90, #91, #95, #98, #101 fermées
+   (chacune avec sa raison en commentaire), #97 requalifiée. Deux issues ouvertes depuis la
+   mesure de #111 et livrées le jour même : #120 (`probe` compose les promesses voisines) et
+   #121 (`generate` ne prouve plus une mise à jour avec ce qui existe déjà).
 
 ### B — Mesurer ce que la refonte promettait
 
-1. **Les 6 PASS manquants** (101 → ≥ 107). *Fait en partie le 2026-11-23*
-   ([rapport](../eval/corpus-remeasure-2026-11-23/REPORT.md)) : un faux positif du noyau trouvé et
-   corrigé — le contenu des docstrings lu comme des scénarios — **PASS 109 → 115, FAIL 74 → 63**
-   sur le corpus rejoué, invariant I11. **Mais** 6 des 15 dépôts gelés ont bougé : le 101 de
-   référence n'est plus rejouable, et la cible ne peut pas être déclarée atteinte tant que le
-   corpus n'est pas re-figé (#119).
+1. ~~**Les 6 PASS manquants**~~ **Fait le 2026-11-23**
+   ([rapport](../eval/corpus-remeasure-2026-11-23/REPORT.md)) : un faux positif du noyau corrigé
+   (les docstrings lus comme des scénarios, invariant I11), puis le corpus **re-figé** (#119) —
+   chaque dépôt épinglé à un commit, 15 empreintes sur 15. Rejouée sur ce corpus, la référence
+   de la spec (le niveau de l'opt-in) vaut **96**, pas 107 : 101 et 107 avaient été mesurés sur
+   un corpus déjà dérivé. **Défaut actuel : 104 / 244.**
 2. **#111 — la mesure préalable.** *Faite le 2026-11-23*
    ([rapport](../eval/probe-vs-testbook-2026-11-23/REPORT.md)) : `probe` seul, mené à l'aveugle,
    trouve **1 des 2** défauts d'origine et **2 que le cahier avait manqués** — 3 défauts réels,

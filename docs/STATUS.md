@@ -11,15 +11,15 @@ novembre 2026) est archivé dans [`archive/STATUS.md`](archive/STATUS.md).
 
 | | |
 |---|---:|
-| **PASS, barème par défaut** | **115 / 269 (42,8 %)** |
-| CONCERNS / FAIL / non notables | 76 / 63 / 15 |
-| corpus | les 15 dépôts gelés le 2026-08-09, **rejoués le 2026-11-23** |
-| référence de la spec | 101 / 244 au 2026-08-24, cible ≥ 107 |
+| **PASS, barème par défaut** | **104 / 244 (42,6 %)** |
+| CONCERNS / FAIL / non notables | 72 / 58 / 10 |
+| corpus | les 15 dépôts gelés le 2026-08-09, **épinglés chacun à un commit** : 15 empreintes sur 15 identiques au gel |
+| référence de la spec, rejouée sur ce corpus | 96 (le niveau de l'opt-in `--third-party`) ; cible : le défaut au moins à ce niveau |
 
-**Ces deux lignes ne se comparent pas.** Six des quinze dépôts ont bougé depuis le gel ; le corpus
-rejoué compte 269 fichiers, pas 244. Tant que le corpus n'est pas re-figé, la cible ne peut être
-déclarée ni atteinte ni manquée ([#119](https://github.com/QAIA-Project/QAIA/issues/119)).
-Sur les neuf dépôts stables seuls (145 fichiers) : 47 PASS.
+**Cible atteinte : 104 ≥ 96.** Les anciens chiffres 101 et 107 avaient été mesurés sur un corpus
+qui avait déjà dérivé (257 fichiers) ; ils ne désignent pas celui-ci
+([#119](https://github.com/QAIA-Project/QAIA/issues/119),
+[rapport](../eval/corpus-remeasure-2026-11-23/REPORT.md#suite-le-même-jour--le-corpus-re-figé-et-la-référence-corrigée-119)).
 
 Rejouer :
 
@@ -28,8 +28,8 @@ python eval/tools/fetch_corpus.py eval/gherkin-external-2026-08-09/corpus.json <
 python eval/tools/score_corpus.py <dossier>
 ```
 
-Dernier mouvement : un docstring n'est plus lu comme des scénarios, PASS 109 → 115 sur le même
-corpus ([rapport](../eval/corpus-remeasure-2026-11-23/REPORT.md)).
+Derniers mouvements, sur le corpus figé : un docstring n'est plus lu comme des scénarios
+(98 → 104), après les deux corrections du détecteur de doublons du 2026-08-24 (96 → 98).
 
 ## 2. Le nombre d'utilisateurs réels
 

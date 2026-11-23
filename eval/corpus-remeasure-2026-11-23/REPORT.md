@@ -84,3 +84,44 @@ n'ont effectivement pas de résultat attendu.
 
 Rejouer : `python eval/tools/fetch_corpus.py eval/gherkin-external-2026-08-09/corpus.json <dir>`
 puis `python eval/tools/score_corpus.py <dir>`.
+
+## Suite, le même jour : le corpus re-figé, et la référence corrigée (#119)
+
+### Quinze commits, quinze empreintes
+
+`eval/tools/pin_corpus.py` cherche, pour chaque dépôt, le commit dont les premiers `.feature`
+redonnent l'empreinte du gel, et l'inscrit dans le manifeste (`commit`). `fetch_corpus.py` lit
+désormais ce commit, pas la branche. Résultat : **15 empreintes sur 15 identiques au gel,
+244 fichiers sur 244.** La métrique n°1 est de nouveau strictement rejouable par un tiers.
+
+En route, un défaut du fetcher : il prenait 25 fichiers par dépôt, alors que le champ `features`
+du manifeste donne le nombre **retenu** au gel (leur somme vaut exactement 244). Pour
+`brighton36/CoinPost`, 384 `.feature`, le gel n'en avait gardé que **12**. Le fetcher en prenait
+25 et annonçait « a bougé » sur un dépôt **sans aucun push depuis 2015**. Corrigé : il prend
+`min(25, features)`. Des six dépôts « ayant bougé » plus haut, cinq avaient vraiment bougé ;
+le sixième était ce défaut.
+
+### Ce qui change pour la référence
+
+Rejoué sur le corpus figé, chaque version du noyau :
+
+| noyau | PASS / 244 |
+|---|---:|
+| 2026-08-10 (`0fb509b`), option `--third-party` | **96** |
+| 2026-08-24 (`7178da1`), barème universel par défaut, phase 1 | **96** |
+| 2026-08-24 (`9f3302e`), après les deux corrections du détecteur de doublons | 98 |
+| 2026-11-23 (`8c68c2d`), après le correctif des docstrings | **104** |
+
+**Les chiffres 101 et 107 n'étaient pas mesurés sur le corpus gelé.** Le rapport du 2026-08-24
+le disait lui-même : il avait été mesuré sur 257 fichiers, trois dépôts ayant « bougé », dont
+CoinPost à tort. La cible de la spec (§7) se définissait comme **« le niveau que `--third-party`
+atteint déjà en opt-in »** ; sur le corpus gelé, ce niveau est **96**.
+
+**Cible restatée sur le corpus figé : ≥ 96, au sens de la spec. Mesuré : 104.** Elle est
+atteinte, et ce n'est pas le même énoncé que « ≥ 107 atteint » : le nombre 107 lui-même n'est
+plus un objectif, parce qu'il n'a jamais désigné ce corpus. La phase 1 avait bien fait ce
+qu'elle annonçait (le défaut égalait l'opt-in, 96 = 96) ; les +8 depuis viennent de deux
+corrections du noyau, chacune gardée par un invariant.
+
+Prochaine cible chiffrée, s'il en faut une : elle se fixe sur **ce** corpus, en nombre de PASS
+sur 244, et pas en écart à une référence d'un autre corpus.

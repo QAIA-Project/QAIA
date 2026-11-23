@@ -10,7 +10,8 @@ a l'autre -- il ne pouvait donc pas reconstruire deux fois le meme corpus.
 Ce script part du manifeste, pas d'une recherche : pour chacun des depots NOMMES, il reprend
 les N premiers `.feature` de la branche par defaut, dans l'ordre de l'arbre git. C'est
 reproductible tant que l'amont ne bouge pas, et quand l'amont bouge le script le DIT au lieu
-de rendre un corpus different sous le meme nom.
+de rendre un corpus different sous le meme nom. Un depot portant un champ `commit` (pose par
+`pin_corpus.py`, qui verifie l'empreinte avant d'epingler) est lu a ce commit : il ne derive plus.
 
 La metrique n1 du projet (taux de PASS sur du materiau que QAIA n'a pas ecrit) se mesure sur
 ce corpus : sans reconstruction possible, elle n'etait pas verifiable par un tiers.
@@ -88,7 +89,9 @@ def main():
             report["repos"].append({"repo": repo, "status": "unavailable",
                                     "detail": info["_err"]})
             continue
-        branch = info["default_branch"]
+        # Un depot epingle (`commit`, pose par pin_corpus.py apres verification de l'empreinte)
+        # est lu a ce commit, pas a la branche : c'est ce qui rend le corpus rejouable (#119).
+        branch = entry.get("commit") or info["default_branch"]
         tree = api("https://api.github.com/repos/%s/git/trees/%s?recursive=1" % (repo, branch))
         if "_err" in tree:
             print("  %-46s ARBRE INDISPONIBLE (%s)" % (repo[:44], tree["_err"]))
@@ -98,11 +101,12 @@ def main():
         feats = [t["path"] for t in tree.get("tree", [])
                  if t.get("type") == "blob" and t["path"].endswith(".feature")
                  and "node_modules" not in t["path"]]
-        # Le fetcher d'origine plafonnait a 25 fichiers par depot. Le manifeste enregistre le
-        # nombre TOTAL vu a l'epoque, pas le nombre recupere -- pour les depots au-dela de 25,
-        # `expected` et le nombre de fichiers du corpus ne coincident donc pas. On reprend le
-        # meme plafond pour reconstituer le meme corpus, et on nomme l'ecart.
-        take = feats[:25]
+        # Le champ `features` du manifeste est le nombre de fichiers RETENUS au gel : leur somme
+        # vaut exactement `_files` (244). Le fetcher d'origine plafonnait a 25 par depot, mais
+        # pas seulement -- le dernier depot (CoinPost, 384 `.feature`) n'en a garde que 12. Prendre
+        # 25 partout faisait annoncer « A BOUGE » sur un depot sans aucun push depuis 2015 ; avec
+        # les 12 premiers, l'empreinte concorde (verifie le 2026-11-23, #119).
+        take = feats[:min(25, expected)]
         outdir = os.path.join(dest, repo.replace("/", "_"))
         os.makedirs(outdir, exist_ok=True)
         texts, got = [], 0

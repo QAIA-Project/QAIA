@@ -7,77 +7,92 @@
   {
    "repo": "Arthy000/gherkin-testcafe",
    "features": 14,
-   "sha256": "47c890335e3929d8"
+   "sha256": "47c890335e3929d8",
+   "commit": "6baa979cbd89132e21f44eb31e5c3e2965e38519"
   },
   {
    "repo": "Automattic/wpcom-legacy-redirector",
    "features": 6,
-   "sha256": "cb453ad522f10aa2"
+   "sha256": "cb453ad522f10aa2",
+   "commit": "0b80e783d2f07b12676244de147fc1c951711d72"
   },
   {
    "repo": "IfcOpenShell/IfcOpenShell",
    "features": 25,
-   "sha256": "adf6c99cc5b69167"
+   "sha256": "adf6c99cc5b69167",
+   "commit": "3d15500976e4ffe67469dec03a7c15aea943aca4"
   },
   {
    "repo": "Jacobvu84/selenium-vietnam-training-course",
    "features": 7,
-   "sha256": "c7eb20b0b51ad7f7"
+   "sha256": "c7eb20b0b51ad7f7",
+   "commit": "05021917050e943576a5ab91aa8453ceca522c60"
   },
   {
    "repo": "LarsBerberich/Binokel_Score_Tracker_BDD",
    "features": 6,
-   "sha256": "92840bfd970fc08b"
+   "sha256": "92840bfd970fc08b",
+   "commit": "1a20e5539cdf1d09cfbfd076d85d76ea247b33a8"
   },
   {
    "repo": "Spidertracks/behave-parallel",
    "features": 25,
-   "sha256": "32ddf9b1ae67f605"
+   "sha256": "32ddf9b1ae67f605",
+   "commit": "7d508413dcc2fedbe0cd54d6fd4655d4b95ff712"
   },
   {
    "repo": "Xe/when-then-zen",
    "features": 9,
-   "sha256": "3de1ce7cab85a4df"
+   "sha256": "3de1ce7cab85a4df",
+   "commit": "32f5ad508c40ede25c0b9adb4499282693f77e6d"
   },
   {
    "repo": "alphagov/whitehall",
    "features": 25,
-   "sha256": "7ca8ce4aa7d6df9a"
+   "sha256": "7ca8ce4aa7d6df9a",
+   "commit": "592e42aebfdb7dc66ae09a5d18fb8216627a5324"
   },
   {
    "repo": "asok/projectile-rails",
    "features": 25,
-   "sha256": "b2c2cfe49add2447"
+   "sha256": "b2c2cfe49add2447",
+   "commit": "701784df7befe17b861f1b53fe9cbc59d0b94b9f"
   },
   {
    "repo": "backlogs/redmine_backlogs",
    "features": 25,
-   "sha256": "f4ef026d98d7e031"
+   "sha256": "f4ef026d98d7e031",
+   "commit": "2b6011e1a027f8e6bc33043a1a580a6f434117c7"
   },
   {
    "repo": "badges/badgerbadgerbadger",
    "features": 13,
-   "sha256": "7b0bea70b2d8317c"
+   "sha256": "7b0bea70b2d8317c",
+   "commit": "9fe8c1aae0841589a2076b8d09794b7191d0685d"
   },
   {
    "repo": "behave-contrib/try-behave",
    "features": 5,
-   "sha256": "357b54521e747236"
+   "sha256": "357b54521e747236",
+   "commit": "3779d5177805b6eecdfa22e75c492a692a5fb3a5"
   },
   {
    "repo": "behave/behave",
    "features": 25,
-   "sha256": "5d60921fef048ad4"
+   "sha256": "5d60921fef048ad4",
+   "commit": "4387315f12299d4b0b2ec5bf0b399e2366a99f5e"
   },
   {
    "repo": "behave/behave.example",
    "features": 22,
-   "sha256": "22593e0703c6f27a"
+   "sha256": "22593e0703c6f27a",
+   "commit": "44fe34357aa60dd6078558221b2b5a869bcc8de0"
   },
   {
    "repo": "brighton36/CoinPost",
    "features": 12,
-   "sha256": "7945423b55b340de"
+   "sha256": "7945423b55b340de",
+   "commit": "2e95a17ce2bafe478763f8956abd0577aa0f9a90"
   }
  ]
 }
