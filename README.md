@@ -117,7 +117,7 @@ has ever run it end to end**, and what it produces for a real user is unmeasured
 
 ## Status and limits
 
-**Pre-alpha, in active development.** `qaia-core` 0.6.1 (1 skill, `generate`), `qaia-playwright` 0.3.1
+**Pre-alpha, in active development.** `qaia-core` 0.6.2 (1 skill, `generate`), `qaia-playwright` 0.3.1
 (2 skills, `automate` and `probe`), `qaia-score` 0.3.2 (**1 skill**, `judge`) — **4 skills** — all
 validating `--strict`, proven end-to-end on two independent domains: healthcare
 ([`examples/medibook/`](examples/medibook), 26 tests / 32 executions, all green) and finance/HR

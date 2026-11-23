@@ -81,6 +81,14 @@ MUTATIONS = [
     # defaut qui a coute le plus cher au projet (0 PASS sur 244 cahiers etrangers) et que les
     # 25 controles existants n'ont jamais pu voir. `check_universal_default.py` est son propre
     # selfcheck : il MESURE la propriete sur des cahiers reels au lieu de relire une regle.
+    ("eval/tools/check_level_discharge.py", "eval/tools/selfcheck_level_discharge.py",
+     "niveau : un refus api est de nouveau acquitte par un ecran (#107)",
+     'elif any("@negative" in s[1] and "@" + c["level"] in s[1] for s in linked):',
+     'elif any("@negative" in s[1] for s in linked):'),
+    ("eval/tools/check_level_discharge.py", "eval/tools/selfcheck_level_discharge.py",
+     "niveau : « Pas [req-neg] » compte de nouveau comme une marque (#107)",
+     "reqneg = bool(REQNEG_MARK.search(line)) and not NEGATED_REQNEG.search(line)",
+     "reqneg = bool(REQNEG_MARK.search(line))"),
     ("eval/tools/automation_score.py", "eval/tools/selfcheck_automation_score.py",
      "attentes fixes : la discipline temporelle ne pese plus rien (#112)",
      '"timing_discipline": 1.0 - pct(tests_with_forbidden_wait, tests_total),',

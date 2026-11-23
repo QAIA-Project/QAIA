@@ -175,8 +175,13 @@ two sit actions no criterion mentions because no author thinks to write them dow
   entity** implies it.
 - **Text-field content the author never pictured** — Unicode beyond Latin-1, right-to-left text,
   a string carrying markup or SQL-like syntax. The expected result is almost always *"stored and
-  rendered as data, never interpreted"*, which is precisely what makes it a **refusal-path**
-  condition rather than a decorative one.
+  rendered as data, never interpreted"* — a **robustness** condition with its own scenario, not a
+  decorative one. It is `[req-neg]` **only when the expected result is a refusal** (the input is
+  rejected, with a message). "Rendered as data" is not a refusal under the closed definition of
+  [`negative-ratio.md`](negative-ratio.md), and that definition wins: it is what the tooling counts.
+  Until 2026-11-23 this bullet said the opposite, and a design that followed both pages had to
+  mark the condition `[req-neg]` while leaving its scenario without `@negative`
+  (`eval/reverse-engineering-2026-08-11/`, SD03-C13) — found by `check_level_discharge.py` (#107).
 - **A dependency removed mid-session** — the attachment deleted while the approval is pending, the
   referenced entity gone between reading and writing. The CRUD pattern above asks *how* a delete
   cascades; this asks what happens to whoever was already holding the thing.

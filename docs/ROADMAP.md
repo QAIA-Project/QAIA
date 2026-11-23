@@ -96,6 +96,25 @@ sortant ; **C** est le travail de décision du fondateur.
 3. **#96 — le coût** de `generate` d'un seul tenant contre un prompt direct, même protocole que
    le benchmark du 2026-07-28.
 
+### D — Le développement du produit, repris le 2026-11-23
+
+Ordonné par ce qui rend une promesse du produit vérifiable par un tiers.
+
+1. ~~**#120 / #121** — les leçons de #111.~~ **Fait** (`801c1eb`) : `probe` sonde la composition
+   des promesses voisines ; `generate` ne prouve plus une mise à jour avec ce qui existe déjà.
+2. ~~**#108** — les deux suites livrées en CI.~~ **Fait** (`e8155c1`) : job `shipped-suites`, site
+   testé tel que `pages.yml` le publie (script d'assemblage unique), régression injectée vue rouge.
+3. ~~**#112** — un barème d'automatisation plus riche.~~ **Fait** (`b2a79cb`) : discipline
+   temporelle, dimension universelle mesurée sur six suites étrangères ; « assertions toutes
+   faibles » essayée et refusée (faux positif).
+4. ~~**#107** — la porte des refus, par niveau.~~ **Fait** : `check_level_discharge.py` apparie
+   chaque condition `[req-neg]` au scénario qui l'acquitte à son niveau. Premier passage : une
+   contradiction entre deux pages de `generate` trouvée et levée. **Limite** : seules deux paires
+   du dépôt déclarent leurs niveaux et lient leurs scénarios ; la règle d'émission n° 8 l'exige
+   désormais de tout nouveau cahier.
+5. **#96** — l'économie de contexte de `generate`, mesurée avant/après. Coûte des tokens.
+6. **#97** — la langue de sortie, après un premier pilote.
+
 ### C — Gestes réservés au fondateur
 
 | Geste | Issue | Pourquoi il ne peut pas être fait par un agent |
