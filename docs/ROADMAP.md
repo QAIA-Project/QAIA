@@ -121,6 +121,14 @@ Ordonné par ce qui rend une promesse du produit vérifiable par un tiers.
    désormais de tout nouveau cahier.
 5. **#96** — l'économie de contexte de `generate`, mesurée avant/après. Coûte des tokens.
 6. **#97** — la langue de sortie, après un premier pilote.
+7. **#123** — discipline temporelle : la dimension proportionnelle livrée (`realworld` 100 → 98)
+   contre la déduction plafonnée d'une branche restée hors de `main` (100 → 84), trancher sur
+   mesure.
+8. **#122** — le pont MCP ne sert que les `SKILL.md`, donc aucune page des skills fusionnées.
+
+*Le 2026-11-23, en fin de journée : relecture de toute la documentation et `CHANGELOG.md`
+(`e18511a`), fusion puis suppression de toutes les branches (`1027163`, `0070833`), tag
+`v0.2.0-prealpha`.*
 
 ### C — Gestes réservés au fondateur
 
@@ -131,6 +139,7 @@ Ordonné par ce qui rend une promesse du produit vérifiable par un tiers.
 | Trouver un premier pilote humain | #89 | seul levier sur la métrique d'adoption |
 | Trancher `automate` | #111 | décision de périmètre ; la mesure préalable (B2) est faite |
 | Adopter ou non le paquet proposé par le mainteneur du linter Gherkin | #115 | choix d'approvisionnement : faire entrer le code d'un tiers dans la CI |
+| Protéger `main`, signer les releases | #124 | réglages du dépôt qui changent la façon de travailler de tous, agents compris |
 
 ## 3. Comment ce fichier reste vrai
 
