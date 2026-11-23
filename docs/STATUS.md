@@ -44,5 +44,5 @@ d'un tiers ([#89](https://github.com/QAIA-Project/QAIA/issues/89)). Le kit pilot
 
 ## Ce que le produit est aujourd'hui
 
-**4 skills, 3 plugins** : `qaia-core` 0.6.0 (`generate`), `qaia-playwright` 0.3.0 (`automate`,
+**4 skills, 3 plugins** : `qaia-core` 0.6.1 (`generate`), `qaia-playwright` 0.3.1 (`automate`,
 `probe`), `qaia-score` 0.3.1 (`judge`). Pré-alpha.

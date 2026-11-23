@@ -74,6 +74,16 @@ and the one that made a gate read green over a promise nobody had verified.
 - **Chain two requests to reach one assertion.** Two requests means either a declarative `Given`
   is missing, or the scenario is verifying two promises — the atomicity rule already forbids the
   second.
+- **Prove a partial update with what the resource already carries.** Patching a field that
+  already exists, then asserting only that field, cannot tell "merged" from "wrapped". Measured
+  (`eval/probe-vs-testbook-2026-11-23/`): a scenario patched `name: "changed"` and checked
+  `name`; the server answered `{"item":{"name":"typicode"},"name":"changed"}` — old content
+  nested, assertion green, defect shipped. Add a field the resource **does not** carry, and assert
+  that a field you did **not** touch keeps its place and value.
+- **Treat a server-owned field as only server-generated.** For an id, a timestamp or any field
+  the server assigns, "supplied by the client, of another type" is an equivalence class of its own
+  (`POST {"id": 3}` stored a number, then `GET /posts/3` answered 404 — same measurement). The
+  generated value being a string proves nothing about a supplied one.
 - **Assert on timing.** Latency budgets belong to a performance test, which has the instrument for them.
   A `Then the response is fast` is unfalsifiable.
 

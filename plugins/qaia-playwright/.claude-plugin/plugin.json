@@ -1,6 +1,6 @@
 {
   "name": "qaia-playwright",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "QAIA automation: turn a Gherkin test book into native Playwright tests (Page Object Model as fixtures) with requirement traceability, plus probe: an app's documented contract against its real behaviour - adversarial probing, captured-traffic regression conditions, production signals as evidence, and evidence-bounded defect reports. Web-first.",
   "author": {
     "name": "Cédric Moretti and QAIA contributors",

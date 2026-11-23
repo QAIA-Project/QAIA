@@ -34,6 +34,15 @@ text, needs nothing running, and costs nothing — then probe what it leaves ope
    adversarial mindset as ISTQB error-guessing, aimed at a documented promise rather than a
    generic crash. **Never**: a DoS-shaped load, destruction of real data, or any target not
    self-hosted and authorized.
+
+   **Then probe neighbouring promises together, not only one by one.** When two promises bear on
+   the same object — two operators on one field, two parameters of one request, two operations
+   in sequence on one resource — probe their **composition**. Documentation lists features side
+   by side and rarely shows them combined; the defect lives in the combination. Measured
+   (`eval/probe-vs-testbook-2026-11-23/`): probing `_gt` and `_lt` separately found nothing,
+   while `views_gt=150&views_lt=300` returned both posts instead of one — a real defect that this
+   page, read literally, missed. Bounded: **pairs** of neighbouring promises, not exhaustive
+   combinatorics.
 3. **Judge against the contract, not just "did it crash."** A 500 where the docs promise a 4xx
    is a defect even though the process kept running. A field silently dropped, a documented
    invariant silently violated, an error message that leaks more than promised — all defects,
@@ -51,7 +60,8 @@ text, needs nothing running, and costs nothing — then probe what it leaves ope
    the fix. If the user wants automation, hand the scenario to `automate` afterward as normal.
 6. **Report.** One table per probed promise: promise → probe input → observed → verdict
    (kept/broken) → scenario ID if broken. A clean pass (no defect on a given promise) is
-   reported as such, not omitted.
+   reported as such, not omitted. List the compositions probed in step 2 as rows of their own,
+   naming both promises.
 
 ## Guardrails
 
