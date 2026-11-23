@@ -133,7 +133,8 @@ substance and rejected by the linter** — every cause was a convention this fil
 8. **Every scenario names the conditions it covers**, in one comment line directly above its tags:
    `# condition: AC2-C3` (or `# condition: AC2-C3, AC2-C4`), the IDs exactly as `03-design.md`
    writes them. This is the only link from a `[req-neg]` condition to the scenario that discharges
-   it, and `eval/tools/check_level_discharge.py` reads it to verify the per-level gate (ADR 0008):
+   it, and the repository's [`check_level_discharge.py`](https://github.com/QAIA-Project/QAIA/blob/main/eval/tools/check_level_discharge.py)
+   reads it to verify the per-level gate (ADR 0008):
    a `[level: api]` refusal must be covered by an `@api @negative` scenario. A scenario without the
    comment leaves its conditions **unlinked** — reported, never counted as covered.
 
