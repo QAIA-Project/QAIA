@@ -40,12 +40,21 @@ import sys
 
 TAG_RE = re.compile(r"^\s*@")
 ID_RE = re.compile(r"@(QAIA-[A-Za-z0-9-]+)")
-SCENARIO_RE = re.compile(r"^\s*(Scenario Outline|Scenario)\s*:\s*(.*)$")
+# `Example` et `Scenario Template` sont des synonymes anglais de `Scenario` / `Scenario Outline`
+# (dialecte `en` du Gherkin officiel), `Scenarios` un synonyme d'`Examples`.
+SCENARIO_RE = re.compile(r"^\s*(Scenario Outline|Scenario Template|Scenario|Example)\s*:\s*(.*)$")
 STEP_RE = re.compile(r"^\s*(Given|When|Then|And|But|\*)\s+(.*)$")
 BACKGROUND_RE = re.compile(r"^\s*Background\s*:")
-EXAMPLES_RE = re.compile(r"^\s*Examples\s*:")
+RULE_RE = re.compile(r"^\s*Rule\s*:")
+EXAMPLES_RE = re.compile(r"^\s*(Examples|Scenarios)\s*:")
 TABLE_RE = re.compile(r"^\s*\|(.*)\|\s*$")
-FEATURE_RE = re.compile(r"^Feature\s*:")
+FEATURE_RE = re.compile(r"^\s*Feature\s*:")
+DOCSTRING_RE = re.compile(r'^\s*("""|```)')
+LANGUAGE_RE = re.compile(r"^\s*#\s*language\s*:\s*([A-Za-z-]+)\s*$")
+
+# Categorie de chaque etape, deduite de son mot-cle. `And`, `But` et `*` heritent de l'etape
+# precedente -- c'est la semantique du Gherkin, et c'est ce que le rendu doit respecter.
+CATEGORY = {"Given": "pre", "When": "act", "Then": "exp"}
 
 # Intitules acceptes, par langue. Liste FERMEE : un intitule libre rendrait la verification
 # impossible, et c'est la verification qui justifie l'existence du rendu.
@@ -56,70 +65,149 @@ LABELS = {
 
 BLOCK_HEADER_RE = re.compile(r"^###\s+(QAIA-[A-Za-z0-9-]+)\s+·\s+(.*)$")
 STEP_LINE_RE = re.compile(r"^\s*\d+\.\s+(.*)$")
+LABEL_LINE_RE = re.compile(r"^\s*\*\*(.+?)\*\*\s*$")
 
 
-def parse_feature(path):
-    """Return [(scenario_id, title, [step_text, ...])], Outlines already expanded."""
+def parse_feature(path, problems=None):
+    """Return [(scenario_id, title, [step_text, ...], [category, ...])], Outlines expanded.
+
+    Le parseur suit les blocs du Gherkin (Feature, Rule, Background, Scenario, Examples,
+    docstring) au lieu de lire chaque ligne isolement : un scanner sans etat lisait le contenu
+    d'un docstring comme des etapes, fusionnait deux blocs `Examples`, faisait heriter les tags de
+    `Feature:` au premier scenario, et sortait vert a vide sur un dialecte qu'il ne connaissait
+    pas (#106). Ce que le rendu en langage naturel ne sait pas exprimer -- un docstring, une
+    table de donnees de pas -- est SIGNALE dans `problems`, jamais ignore : un controle qui ne
+    sait pas doit le dire.
+    """
+    if problems is None:
+        problems = []
+    name = os.path.basename(path)
     lines = io.open(path, encoding="utf-8").read().splitlines()
-    background, scenarios = [], []
-    current = None      # dict(id, title, steps, outline, headers, rows)
+
+    for line in lines[:5]:
+        match = LANGUAGE_RE.match(line)
+        if match and match.group(1).lower() not in ("en", "en-us", "en-gb"):
+            problems.append("%s : dialecte Gherkin `%s` non pris en charge -- seul l'anglais "
+                            "est lu ; aucun scenario ne serait reconnu et le controle sortirait "
+                            "vert a vide" % (name, match.group(1)))
+            return []
+
+    state = {"feature_bg": [], "rule_bg": None}
+    scenarios = []
+    current = None      # dict(id, title, steps, cats, outline, rows)
     in_background = False
     pending_tags = []
     in_examples = False
+    headers = None      # en-tete du bloc `Examples` en cours ; None = la prochaine ligne en est un
+    in_docstring = None
+    last_category = None
+    content_lines = 0
+
+    def active_background():
+        return state["rule_bg"] if state["rule_bg"] is not None else state["feature_bg"]
 
     def flush():
         if current is None:
             return
+        bg_steps = [s for s, _ in active_background()]
+        bg_cats = [c for _, c in active_background()]
         if current["outline"] and current["rows"]:
-            for index, row in enumerate(current["rows"], start=1):
-                mapping = dict(zip(current["headers"], row))
+            for index, mapping in enumerate(current["rows"], start=1):
                 steps = [substitute(s, mapping) for s in current["steps"]]
                 scenarios.append(("%s-e%d" % (current["id"], index),
                                   substitute(current["title"], mapping),
-                                  background + steps))
+                                  bg_steps + steps, bg_cats + current["cats"]))
+        elif current["outline"]:
+            problems.append("%s : %s est un `Scenario Outline` sans aucune ligne d'`Examples` "
+                            "-- rien a projeter, et ses `<parametres>` resteraient litteraux"
+                            % (name, current["id"]))
         else:
-            scenarios.append((current["id"], current["title"], background + current["steps"]))
+            scenarios.append((current["id"], current["title"], bg_steps + current["steps"],
+                              bg_cats + current["cats"]))
 
     for line in lines:
+        if in_docstring:
+            if line.strip().startswith(in_docstring):
+                in_docstring = None
+            continue
+        docstring = DOCSTRING_RE.match(line)
+        if docstring:
+            in_docstring = docstring.group(1)
+            owner = current["id"] if current is not None else "Background"
+            problems.append("%s : %s porte un docstring -- le rendu en langage naturel ne sait "
+                            "pas l'exprimer, son contenu ne serait verifie contre rien"
+                            % (name, owner))
+            continue
+        stripped = line.strip()
+        if stripped and not stripped.startswith("#"):
+            content_lines += 1
         if FEATURE_RE.match(line):
+            # Les tags de `Feature:` portent sur la feature, pas sur le premier scenario.
+            pending_tags = []
             in_background = False
+            continue
+        if RULE_RE.match(line):
+            flush()
+            current, in_background, in_examples = None, False, False
+            state["rule_bg"] = list(state["feature_bg"])
+            pending_tags = []
             continue
         if BACKGROUND_RE.match(line):
             flush()
             current, in_background, in_examples = None, True, False
+            last_category = None
             continue
         scenario = SCENARIO_RE.match(line)
         if scenario:
             flush()
             in_background, in_examples = False, False
+            last_category = None
             ids = [i for tag in pending_tags for i in ID_RE.findall(tag)]
             current = {"id": ids[0] if ids else None, "title": scenario.group(2).strip(),
-                       "steps": [], "outline": scenario.group(1) == "Scenario Outline",
-                       "headers": [], "rows": []}
+                       "steps": [], "cats": [],
+                       "outline": scenario.group(1) in ("Scenario Outline", "Scenario Template"),
+                       "rows": []}
             pending_tags = []
             continue
         if TAG_RE.match(line):
             pending_tags.append(line)
             continue
         if EXAMPLES_RE.match(line):
-            in_examples = True
+            # Chaque bloc `Examples` a son propre en-tete : un second bloc ne prolonge pas le
+            # premier, et sa ligne d'en-tete n'est pas une donnee.
+            in_examples, headers = True, None
             continue
         table = TABLE_RE.match(line)
-        if table and in_examples and current is not None:
+        if table:
             cells = [c.strip() for c in table.group(1).split("|")]
-            if not current["headers"]:
-                current["headers"] = cells
+            if in_examples and current is not None:
+                if headers is None:
+                    headers = cells
+                else:
+                    current["rows"].append(dict(zip(headers, cells)))
             else:
-                current["rows"].append(cells)
+                owner = current["id"] if current is not None else "Background"
+                problems.append("%s : %s porte une table de donnees de pas -- le rendu en "
+                                "langage naturel ne sait pas l'exprimer, son contenu pourrait "
+                                "etre omis ou inverse sans que rien ne le voie" % (name, owner))
             continue
         step = STEP_RE.match(line)
         if step:
-            text = step.group(2).strip()
+            in_examples = False
+            keyword, text = step.group(1), step.group(2).strip()
+            category = CATEGORY.get(keyword, last_category or "pre")
+            last_category = category
             if in_background:
-                background.append(text)
+                active_background().append((text, category))
             elif current is not None:
                 current["steps"].append(text)
+                current["cats"].append(category)
     flush()
+
+    if not scenarios and content_lines and not problems:
+        problems.append("%s : aucun scenario reconnu dans un fichier non vide -- mot-cle ou "
+                        "dialecte inconnu ; un controle qui ne lit rien ne peut pas sortir vert"
+                        % name)
     return scenarios
 
 
@@ -130,7 +218,7 @@ def substitute(text, mapping):
 
 
 def parse_projection(path):
-    """Return ([(scenario_id, title, [step_text, ...])], language)."""
+    """Return ([(scenario_id, title, [step_text, ...], [label, ...])], language)."""
     raw = io.open(path, encoding="utf-8").read().splitlines()
     language = None
     for line in raw[:12]:
@@ -139,17 +227,23 @@ def parse_projection(path):
             language = match.group(1)
             break
 
-    blocks, current = [], None
+    blocks, current, label = [], None, None
     for line in raw:
         header = BLOCK_HEADER_RE.match(line)
         if header:
             if current:
                 blocks.append(current)
-            current = (header.group(1), header.group(2).strip(), [])
+            current = (header.group(1), header.group(2).strip(), [], [])
+            label = None
+            continue
+        heading = LABEL_LINE_RE.match(line)
+        if heading and current:
+            label = heading.group(1).strip()
             continue
         step = STEP_LINE_RE.match(line)
         if step and current:
             current[2].append(step.group(1).strip())
+            current[3].append(label)
     if current:
         blocks.append(current)
     return blocks, language
@@ -164,7 +258,7 @@ def check_pair(feature_paths, projection_path):
     problems = []
     expected = []
     for path in feature_paths:
-        expected.extend(parse_feature(path))
+        expected.extend(parse_feature(path, problems))
     blocks, language = parse_projection(projection_path)
 
     if language not in LABELS:
@@ -184,7 +278,8 @@ def check_pair(feature_paths, projection_path):
             problems.append("le rendu porte %s, que le Gherkin ne contient pas" % scenario_id)
 
     by_id = {b[0]: b for b in blocks}
-    for scenario_id, title, steps in expected:
+    labels = LABELS.get(language, {})
+    for scenario_id, title, steps, categories in expected:
         block = by_id.get(scenario_id)
         if block is None:
             continue
@@ -201,6 +296,15 @@ def check_pair(feature_paths, projection_path):
                                 % (scenario_id, missing[:3]))
             if not extra and not missing:
                 problems.append("%s : memes etapes, ordre different" % scenario_id)
+        elif labels:
+            # Les etapes sont les bonnes : encore faut-il qu'elles soient rangees sous le bon
+            # intitule. Un `Then` sous « Preconditions » se lit comme un etat de depart.
+            for index, (category, label) in enumerate(zip(categories, block[3]), start=1):
+                if label != labels[category]:
+                    problems.append("%s : etape %d rangee sous %r, son mot-cle Gherkin la "
+                                    "place sous %r" % (scenario_id, index, label,
+                                                       labels[category]))
+                    break
     return problems, len(expected)
 
 

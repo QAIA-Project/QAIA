@@ -52,6 +52,131 @@ CASES = [
     ("divergence-langue.md", "language"),
 ]
 
+# Les sept formes Gherkin valides que l'ancien scanner ligne a ligne lisait de travers (#106).
+# Ecrites a l'execution dans un dossier temporaire plutot que versionnees sous fixtures/ : elles
+# n'ont pas de rendu, et le perimetre de `make lint` balaie tout `.feature` du depot.
+# (nom, contenu, verification) -- verification(scenarios, problems) rend None ou un message.
+FORMS = [
+    ("docstring", (
+        "Feature: F\n"
+        "  @QAIA-X-001\n"
+        "  Scenario: A docstring\n"
+        "    Given a payload:\n"
+        '      """\n'
+        "      When the moon is full\n"
+        "      Then nothing happens\n"
+        '      """\n'
+        "    Then it works\n"),
+     lambda s, p: None if (any("docstring" in x for x in p)
+                           and all("moon" not in step for sc in s for step in sc[2]))
+     else "le contenu du docstring est lu comme des etapes, ou le docstring n'est pas signale"),
+    ("table de pas", (
+        "Feature: F\n"
+        "  @QAIA-X-002\n"
+        "  Scenario: A data table\n"
+        "    Given these users:\n"
+        "      | name  |\n"
+        "      | alice |\n"
+        "    Then they exist\n"),
+     lambda s, p: None if any("table de donnees" in x for x in p)
+     else "une table de donnees de pas est perdue en silence"),
+    ("deux blocs Examples", (
+        "Feature: F\n"
+        "  @QAIA-X-003\n"
+        "  Scenario Outline: Size <size>\n"
+        "    When they send size <size>\n"
+        "    Then status is <code>\n"
+        "    Examples:\n"
+        "      | size | code |\n"
+        "      | 0    | 400  |\n"
+        "    Examples:\n"
+        "      | code | size |\n"
+        "      | 201  | 5    |\n"),
+     lambda s, p: None if ([sc[0] for sc in s] == ["QAIA-X-003-e1", "QAIA-X-003-e2"]
+                           and s[1][2] == ["they send size 5", "status is 201"])
+     else "le second bloc `Examples` est fusionne au premier : %r" % [sc[:3] for sc in s]),
+    ("Outline sans Examples", (
+        "Feature: F\n"
+        "  @QAIA-X-004\n"
+        "  Scenario Outline: Size <size>\n"
+        "    When they send size <size>\n"
+        "    Then it is refused\n"),
+     lambda s, p: None if any("sans aucune ligne" in x for x in p)
+     else "un Outline sans Examples passe, `<size>` exige litteralement"),
+    ("tags de Feature", (
+        "@QAIA-FEATURE-999\n"
+        "Feature: F\n"
+        "  Scenario: Untagged\n"
+        "    Then it works\n"),
+     lambda s, p: None if s and s[0][0] is None
+     else "le premier scenario non tague herite des tags de Feature : %r" % [sc[0] for sc in s]),
+    ("Rule et Background multiples", (
+        "Feature: F\n"
+        "  Background:\n"
+        "    Given the system is up\n"
+        "  Rule: one\n"
+        "    Background:\n"
+        "      Given rule one context\n"
+        "    @QAIA-X-006\n"
+        "    Scenario: In one\n"
+        "      Then a\n"
+        "  Rule: two\n"
+        "    Background:\n"
+        "      Given rule two context\n"
+        "    @QAIA-X-007\n"
+        "    Scenario: In two\n"
+        "      Then b\n"),
+     lambda s, p: None if (len(s) == 2 and s[1][2] == ["the system is up", "rule two context", "b"])
+     else "le Background d'une Rule fuit dans la suivante : %r" % [sc[2] for sc in s]),
+    ("dialecte francais", (
+        "# language: fr\n"
+        "Fonctionnalité: F\n"
+        "  @QAIA-X-008\n"
+        "  Scénario: Un cas\n"
+        "    Alors ça marche\n"),
+     lambda s, p: None if any("dialecte" in x for x in p)
+     else "un dialecte non lu sort vert a vide"),
+    ("mot-cle inconnu sans en-tete de langue", (
+        "Fonctionnalité: F\n"
+        "  Scénario: Un cas\n"
+        "    Alors ça marche\n"),
+     lambda s, p: None if any("aucun scenario reconnu" in x for x in p)
+     else "un fichier dont rien n'est reconnu sort vert a vide"),
+]
+
+
+def check_forms():
+    import tempfile
+    failures = []
+    with tempfile.TemporaryDirectory() as tmp:
+        for name, content, verify in FORMS:
+            path = os.path.join(tmp, "form.feature")
+            with open(path, "w", encoding="utf-8") as handle:
+                handle.write(content)
+            problems = []
+            scenarios = C.parse_feature(path, problems)
+            verdict = verify(scenarios, problems)
+            if verdict:
+                failures.append("forme %s : %s" % (name, verdict))
+    return failures
+
+
+def check_labels():
+    """Un `Then` range sous « Preconditions » : memes etapes, meme ordre, mauvais intitule."""
+    import tempfile
+    text = open(os.path.join(FIXTURES, "conforme.md"), encoding="utf-8").read()
+    swapped = text.replace("**Expected result**", "**Preconditions**", 1)
+    if swapped == text:
+        return ["la fixture conforme ne porte plus d'intitule **Expected result** a deplacer"]
+    with tempfile.TemporaryDirectory() as tmp:
+        path = os.path.join(tmp, "labels.md")
+        with open(path, "w", encoding="utf-8") as handle:
+            handle.write(swapped)
+        problems, _ = C.check_pair(FEATURE, path)
+    if not any("rangee sous" in p for p in problems):
+        return ["intitules : un `Then` range sous Preconditions passe vert : %r" % problems]
+    return []
+
 
 def main():
     if not os.path.exists(FEATURE):
@@ -79,6 +204,9 @@ def main():
         elif not any(fragment in p for p in problems):
             failures.append("%s : detectee, mais aucun message ne porte %r ; obtenu %r"
                             % (name, fragment, problems[:2]))
+
+    failures.extend(check_forms())
+    failures.extend(check_labels())
 
     # Les fixtures rouges doivent rester HORS du perimetre du controle lui-meme, sinon `make check`
     # serait rouge en permanence et la preuve deviendrait une panne.
@@ -115,8 +243,9 @@ def main():
             print("  " + line)
         return 1
 
-    print("OK: les 8 divergences injectees sont detectees, le rendu conforme reste silencieux, "
-          "et les fixtures sont hors perimetre du controle.")
+    print("OK: les 8 divergences injectees et les %d formes Gherkin de #106 sont detectees, un "
+          "intitule faux est signale, le rendu conforme reste silencieux, et les fixtures sont "
+          "hors perimetre du controle." % len(FORMS))
     return 0
 
 
