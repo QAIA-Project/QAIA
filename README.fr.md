@@ -143,18 +143,8 @@ l'automatisation), plus un corpus de robustesse multi-modèles à 24 cas.
 
 **Envie d'être le premier pilote ?** [`docs/PILOT-KIT.md`](docs/PILOT-KIT.md) est un parcours guidé
 de 15 minutes sur une histoire toute prête, et la seule chose demandée en retour, c'est de dire où
-ça a raté. État honnête : [`docs/STATUS.md`](docs/STATUS.md) (le relevé complet) ·
-[`docs/STATUS-en.md`](docs/STATUS-en.md) (résumé anglais).
-
-## Les agents — un tier optionnel
-
-[`agents-tier/`](agents-tier) livre six agents nommés. Il n'est **installé par aucun plugin** et
-n'est jamais un prérequis — les 4 skills fonctionnent sans lui. Seuls deux méritent leur propre
-fenêtre de contexte (`camille-judge`, `elian-refuter`), parce qu'un producteur ne note jamais sa
-propre sortie ; les quatre autres regroupent une phase derrière un nom — ergonomie réelle, aucune
-capacité nouvelle. Deux réserves que le README du tier documente au lieu de les cacher : `tools:`
-est une demande au harnais et non une frontière de capacité, et un agent délégué exécute les points
-de validation sans personne dans la pièce.
+ça a raté. État honnête : [`docs/STATUS.md`](docs/STATUS.md) (deux nombres qui ne dépendent pas de la production de QAIA) ·
+[`docs/archive/STATUS.md`](docs/archive/STATUS.md) (le relevé complet, juillet à novembre 2026).
 
 ## Carte du dépôt
 
@@ -163,8 +153,9 @@ de validation sans personne dans la pièce.
 | [`plugins/`](plugins/) | Les trois plugins — core, playwright, score |
 | [`examples/`](examples/) | Sept exemples complets avec leurs sorties réelles |
 | [`eval/`](eval/) | Harnais d'évaluation : gold set, rubrique, baselines notées, campagnes |
-| [`docs/STATUS.md`](docs/STATUS.md) | **État honnête du projet** (à lire pour reprendre le travail) |
-| [`docs/DECISIONS.md`](docs/DECISIONS.md) | Chaque décision d'architecture avec sa raison et ses réserves |
+| [`docs/STATUS.md`](docs/STATUS.md) | **Tableau de bord** — taux de PASS sur cahiers étrangers, nombre d'utilisateurs réels |
+| [`docs/ROADMAP.md`](docs/ROADMAP.md) | **Ordre des travaux** (à lire pour reprendre le travail) |
+| [`docs/DECISIONS.md`](docs/DECISIONS.md) | Chaque décision d'architecture jusqu'à D203, avec sa raison et ses réserves — gelé depuis le 2026-11-23 |
 | [`docs/adr/`](docs/adr/) | Les sept ADR qui fixent les frontières de périmètre |
 | [`docs/COMPETITIVE-ANALYSIS.md`](docs/COMPETITIVE-ANALYSIS.md) | Revue du paysage et angles morts de QAIA |
 | [`docs/OUTPUT-CONTRACT.md`](docs/OUTPUT-CONTRACT.md) | Le manifeste de run partagé par tous les plugins |

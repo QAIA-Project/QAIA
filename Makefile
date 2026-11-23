@@ -12,7 +12,6 @@ setup: ## Installe les dependances de la demo et de ses tests
 check: ## Lance tous les controles que la CI lance (skills, provenance, outillage)
 	python eval/tools/lint_skills.py
 	python eval/tools/check_skill_counts.py
-	python eval/tools/check_decision_register.py
 	python eval/tools/check_open_work_issue.py
 	python eval/tools/selfcheck_open_work_issue.py
 	python eval/tools/check_schema_matches_validator.py
@@ -22,7 +21,6 @@ check: ## Lance tous les controles que la CI lance (skills, provenance, outillag
 	python eval/tools/selfcheck_spec_suite_drift.py
 	python eval/tools/check_loop_wiring.py
 	python eval/tools/check_oracle_library.py
-	python eval/tools/check_agents_tier.py
 	python eval/tools/check_retired_framing.py
 	python eval/tools/selfcheck_markdown_shell_hook.py
 	python eval/tools/selfcheck_gherkin_dialect.py

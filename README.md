@@ -139,16 +139,7 @@ automation), plus a 24-case multi-model robustness corpus.
 
 **Willing to be the first pilot?** [`docs/PILOT-KIT.md`](docs/PILOT-KIT.md) is a 15-minute guided
 run on a ready-made story, and the only thing asked in return is where it went wrong.
-Honest state: [`docs/STATUS-en.md`](docs/STATUS-en.md) (English) · [`docs/STATUS.md`](docs/STATUS.md) (full French record).
-
-## Agents — an opt-in tier
-
-[`agents-tier/`](agents-tier) ships six named agents. It is **not installed by any plugin** and
-is never a prerequisite — the 4 skills work without it. Only two earn their own context window
-(`camille-judge`, `elian-refuter`), because a producer never grades its own output; the other four
-group a phase behind one name — real ergonomics, no new capability. Two caveats the tier's own
-README documents rather than hides: `tools:` is a request to the harness, not a capability
-boundary, and a delegated agent runs the validation checkpoints with nobody in the room.
+Honest state: [`docs/STATUS-en.md`](docs/STATUS-en.md) (two numbers that do not depend on QAIA's own output) · [`docs/archive/STATUS.md`](docs/archive/STATUS.md) (the full French record, July to November 2026).
 
 ## Repository map
 
@@ -157,8 +148,9 @@ boundary, and a delegated agent runs the validation checkpoints with nobody in t
 | [`plugins/`](plugins/) | The three plugins — core, playwright, score |
 | [`examples/`](examples/) | Seven worked end-to-end examples with their real output |
 | [`eval/`](eval/) | Evaluation harness: gold set, rubric, scored baselines, robustness campaigns |
-| [`docs/STATUS.md`](docs/STATUS.md) | **Honest project state** (start here to continue the work) |
-| [`docs/DECISIONS.md`](docs/DECISIONS.md) | Every architectural decision with its rationale and reservations |
+| [`docs/STATUS.md`](docs/STATUS.md) | **Dashboard** — PASS rate on foreign test books, number of real users |
+| [`docs/ROADMAP.md`](docs/ROADMAP.md) | **Work order** (start here to continue the work) |
+| [`docs/DECISIONS.md`](docs/DECISIONS.md) | Every architectural decision up to D203, with its rationale and reservations — frozen since 2026-11-23 |
 | [`docs/adr/`](docs/adr/) | The seven ADRs that fix the scope boundaries |
 | [`docs/COMPETITIVE-ANALYSIS.md`](docs/COMPETITIVE-ANALYSIS.md) | Landscape review and QAIA's blind spots |
 | [`docs/OUTPUT-CONTRACT.md`](docs/OUTPUT-CONTRACT.md) | The run manifest every plugin shares |

@@ -1,5 +1,11 @@
 # Décisions de discovery — QAIA
 
+> **Registre gelé le 2026-11-23, à D203** (spec de refonte, §5). Il reste la mémoire de 203
+> décisions et se lit comme une archive : on le cite, on ne l'alimente plus. Une décision vit
+> désormais dans l'issue ou le commit qui la porte, et l'ordre des travaux dans
+> [`ROADMAP.md`](ROADMAP.md). Le contrôle `check_decision_register.py`, qui exigeait qu'un commit
+> nommant un `D#` l'y inscrive, est retiré avec le gel.
+
 Journal des décisions actées avec le fondateur (mode question/réponse, 8 salves, 2026-07-23). Chaque décision référence sa question dans `DISCOVERY.md` v2. ⚠️ = réserve argumentée de l'agent, maintenue pour mémoire.
 
 ## Décisions actées (réponses du fondateur)

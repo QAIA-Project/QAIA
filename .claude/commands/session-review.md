@@ -26,7 +26,7 @@ You are running the **QAIA end-of-session review**. Produce a faithful review of
 
 ## 5. Update project management — the GitHub board must reflect reality
 - **Standing rule (founder's instruction): file findings as GitHub issues *as they are discovered*, not only at review time.** Every new gap, defect class, or idea uncovered mid-work gets its own issue when found — the board, not just the docs, is the source of truth for what remains. Docs (`DECISIONS.md`, `eval/baselines/`) record *what was decided/measured*; issues track *what is open*. If this review finds work that was tracked only in docs, backfill the missing issues now.
-- Sync `docs/KANBAN.md` (add/close the session's sprint), `docs/DECISIONS.md` (any new D#/T#), `docs/STATUS.md` (versions, state, next levers, resume prompt).
+- Sync `docs/ROADMAP.md` (tick what shipped, with its commit; say why anything slipped) and `docs/STATUS.md` (the two numbers, only when re-measured). `docs/DECISIONS.md` is frozen since 2026-11-23: a decision now lives in the issue or the commit that carries it.
 - Sync GitHub issues: close what's genuinely delivered (with a one-line proof + the attribution footer), update in-progress ones, open issues for every new gap found. Be frugal with comment noise, not with issue coverage.
 
 ## 6. Deliver the branch

@@ -64,9 +64,15 @@ sortant ; **C** est le travail de décision du fondateur.
 ### A — Finir la refonte (en cours)
 
 1. ~~**#118 — fusion `probe`** (4 → 1).~~ **Fait** (`f45c004`, D203) : **4 skills, 3 plugins.**
-2. **Alléger l'appareil, comme décidé en §5** : `docs/` → archive, `STATUS.md` → tableau de bord
-   à deux nombres, retrait des contrôles qui gardent des objets supprimés, `agents-tier/`.
-   Un commit par geste, pour qu'un `revert` les défasse un à un.
+2. **Alléger l'appareil, comme décidé en §5.** *Fait le 2026-11-23* : 20 documents de pilotage
+   sous `docs/archive/` (dont l'ancien `STATUS`), `STATUS.md` devenu un tableau de bord à deux
+   nombres, `agents-tier/` supprimé, `DECISIONS.md` gelé à D203. **Écart assumé avec la spec** :
+   elle retirait 8 contrôles, 2 seulement sont partis (`check_agents_tier`,
+   `check_decision_register`) — les 6 autres gardent des objets qui existent toujours (copies
+   publiées sur qaskills.sh, bibliothèque d'oracles, boucles A/B de `probe`, comptes affichés,
+   commits déclarant du travail ouvert). Trois documents que la spec archivait restent en place
+   parce qu'ils servent dehors : `PILOT-KIT` (le tunnel du site, #89), `DEMO-TARGETS` (cité par
+   `probe` comme liste de cibles autorisées), `COMPETITIVE-ANALYSIS` (lié depuis le README).
 3. ~~**#106**~~ **Fait** (`3dd1421`) : parseur à blocs en bibliothèque standard, les sept formes
    couvertes ou refusées explicitement, intitulés comparés.
 4. **Triage du backlog** — requalifier les issues écrites pour 37 skills.

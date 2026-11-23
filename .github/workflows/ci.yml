@@ -88,17 +88,6 @@ jobs:
           # readability debt, tracked deliberately, not correctness defects.
           python eval/tools/lint_skills.py
 
-      - name: A commit that names a decision must register it
-        run: |
-          set -e
-          # Same defect three times in one day (2026-08-08): decisions labelled in commit messages
-          # and absent from docs/DECISIONS.md. Found, filled, and explained in a commit saying
-          # "commit messages are not the project's memory" — then repeated four hours later, and
-          # again the same evening. A rule that survives being written down twice and still comes
-          # back is not enforceable by intention.
-          # Reads the HEAD commit message only: works on a shallow clone, and fires when the
-          # omission happens rather than accumulating a backlog nobody reconciles.
-          python eval/tools/check_decision_register.py
 
       - name: A commit that declares open work must cite an issue
         run: |
@@ -246,17 +235,6 @@ jobs:
           # comparer a `producers[]`. Un manifeste ou le generateur se notait passait sans un mot.
           python eval/tools/selfcheck_rule3.py
 
-      - name: opt-in agents tier stays opt-in
-        run: |
-          set -e
-          # Three promises in agents-tier/README.md, all of the kind that erodes on the first
-          # rewrite: the tier stays OUT of plugins/ (the supply-chain guard was written against
-          # auto-executed shell, and an agent widens the tool surface even without carrying any);
-          # the judges are READ-ONLY, because a judge that can edit what it grades is not one and
-          # rule 3 only holds if the tooling enforces it; and no agent presents itself as a human,
-          # because a quality verdict signed with a person's name on a regulated product would
-          # read as a signature. Six injected faults, six refusals.
-          python eval/tools/check_agents_tier.py
 
       # Trouve le 2026-08-10 par le premier dogfood reel : `/qaia-core:hello`, execute depuis le
       # plugin installe, a affiche a l'utilisateur que QAIA etait prouve sur un domaine
