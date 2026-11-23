@@ -11,7 +11,7 @@ avait ete ecrite entre les deux.
 Ce controle ne relit pas une regle : il MESURE la propriete, en prenant un cahier reel et en lui
 retirant les conventions de ce projet.
 
-DIX invariants, chacun tombant sur un defaut REELLEMENT SURVENU -- aucun n'est hypothetique, et
+ONZE invariants, chacun tombant sur un defaut REELLEMENT SURVENU -- aucun n'est hypothetique, et
 sept ont ete ajoutes le jour meme ou trois relecteurs en contexte vierge ont trouve ce que les
 trois premiers laissaient passer.
 
@@ -50,7 +50,10 @@ trois premiers laissaient passer.
       signalee sans penalite, et un doublon strict reste penalise.
       (Le detecteur facturait jusqu'a 15 points ce que la profession enseigne d'ecrire.)
 
-Exit 0 si les dix tiennent, 1 sinon.
+  I11. Le contenu d'un docstring est une donnee, jamais un scenario du fichier.
+      (`behave/behave` embarque des features en docstring : 11 fichiers etrangers FAIL a tort.)
+
+Exit 0 si les onze tiennent, 1 sinon.
 """
 import os
 import re
@@ -450,6 +453,37 @@ def main():
     except ImportError as exc:
         failures.append("I9 : automation_score introuvable, l'accord des deux motifs n'est pas "
                         "verifie -- %s" % exc)
+
+    # I11 -- le contenu d'un docstring est une DONNEE, pas un scenario du fichier.
+    # `behave/behave` embarque des features entieres en docstring pour se tester. Chaque
+    # `Scenario:` imbrique devenait un scenario sans `Then` -- 140 faux « no expected result » et
+    # 17 faux paradoxes du pesticide sur le corpus etranger, 11 fichiers FAIL a tort. Le cahier
+    # ci-dessous porte un scenario reel et complet ; le docstring en imite un, sans `Then`.
+    nested = (
+        "Feature: Running a nested feature\n\n"
+        "  Scenario: The nested feature is executed\n"
+        "    Given a file named \"features/alice.feature\" with:\n"
+        "      \"\"\"\n"
+        "      Feature: Alice\n"
+        "        Scenario: A1\n"
+        "          Given a step passes\n"
+        "          When another step passes\n"
+        "      \"\"\"\n"
+        "    When I run \"behave features/alice.feature\"\n"
+        "    Then the command output should contain \"1 scenario passed\"\n"
+    )
+    scenarios = structural_score.parse_scenarios(nested)
+    names = [s["name"] for s in scenarios]
+    if names != ["The nested feature is executed"]:
+        failures.append(
+            "I11 : le contenu d'un docstring est lu comme du Gherkin -- scenarios vus : %r. Un "
+            "scenario imbrique, coupe de son contexte, est note « sans resultat attendu » a la "
+            "place du fichier qui le cite." % names)
+    elif any("no expected result" in f for f in score(nested).get("findings", [])):
+        failures.append("I11 : un docstring fait encore perdre « no expected result » a un "
+                        "scenario complet.")
+    else:
+        print("  ok I11 : un docstring reste une donnee, jamais un scenario")
 
     # Le profil `qaia`, lui, DOIT continuer a dire ces constats : sinon la surcouche opt-in ne
     # sert plus a rien et la correction aurait supprime la regle au lieu de la deplacer.

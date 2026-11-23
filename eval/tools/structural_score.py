@@ -189,8 +189,22 @@ def parse_scenarios(text):
     in_examples = False
     background = []      # les pas d'un `Background:` valent pour chaque scenario du fichier
     in_background = False
+    in_docstring = None
     for raw in text.splitlines():
         line = raw.strip()
+        # Un docstring (`"""` ou ```` ``` ````) est une DONNEE attachee au pas qui le precede.
+        # Son contenu n'etait pas distingue du reste : chez `behave/behave`, dont les features
+        # embarquent d'autres features en docstring pour se tester, chaque `Scenario:` imbrique
+        # devenait un scenario du fichier -- sans `Then` puisque coupe de son contexte -- et le
+        # fichier prenait un FAIL « no expected result » pour un test qu'il n'avait pas ecrit.
+        # Meme defaut que le parseur de check_nl_projection (#106), un etage plus bas.
+        if in_docstring:
+            if line.startswith(in_docstring):
+                in_docstring = None
+            continue
+        if line.startswith('"""') or line.startswith("```"):
+            in_docstring = line[:3]
+            continue
         if line.startswith("@"):
             tags_pending += line.split()
             continue

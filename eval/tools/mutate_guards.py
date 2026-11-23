@@ -82,6 +82,10 @@ MUTATIONS = [
     # 25 controles existants n'ont jamais pu voir. `check_universal_default.py` est son propre
     # selfcheck : il MESURE la propriete sur des cahiers reels au lieu de relire une regle.
     ("eval/tools/structural_score.py", "eval/tools/check_universal_default.py",
+     "docstring : son contenu est de nouveau lu comme des scenarios (I11)",
+     "in_docstring = line[:3]",
+     "in_docstring = None"),
+    ("eval/tools/structural_score.py", "eval/tools/check_universal_default.py",
      "tracabilite : la dimension est de nouveau NOTEE ZERO au lieu d'etre retiree",
      "        raw = rescaled\n        traceability = None",
      "        raw = readability + completeness + coherence\n        traceability = 0.0"),

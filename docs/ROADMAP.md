@@ -63,20 +63,22 @@ sortant ; **C** est le travail de décision du fondateur.
 
 ### A — Finir la refonte (en cours)
 
-1. **#118 — fusion `probe`** (4 → 1). Même méthode que `judge` et `generate` : déplacé, pas récrit.
-   Ferme la phase 3 côté structure. *Commencé le 2026-11-23.*
+1. ~~**#118 — fusion `probe`** (4 → 1).~~ **Fait** (`f45c004`, D203) : **4 skills, 3 plugins.**
 2. **Alléger l'appareil, comme décidé en §5** : `docs/` → archive, `STATUS.md` → tableau de bord
    à deux nombres, retrait des contrôles qui gardent des objets supprimés, `agents-tier/`.
    Un commit par geste, pour qu'un `revert` les défasse un à un.
-3. **#106** — remplacer le parseur maison par `@cucumber/gherkin` (déjà dans l'arbre via
-   `gherkin-lint`), ou à défaut poser les deux garde-fous proposés dans l'issue.
+3. ~~**#106**~~ **Fait** (`3dd1421`) : parseur à blocs en bibliothèque standard, les sept formes
+   couvertes ou refusées explicitement, intitulés comparés.
 4. **Triage du backlog** — requalifier les issues écrites pour 37 skills.
 
 ### B — Mesurer ce que la refonte promettait
 
-1. **Les 6 PASS manquants** (101 → ≥ 107) : relire les 90 FAIL du corpus gelé, séparer les vrais
-   défauts des faux positifs de l'outil, corriger ces derniers avec un invariant dans
-   `check_universal_default.py`.
+1. **Les 6 PASS manquants** (101 → ≥ 107). *Fait en partie le 2026-11-23*
+   ([rapport](../eval/corpus-remeasure-2026-11-23/REPORT.md)) : un faux positif du noyau trouvé et
+   corrigé — le contenu des docstrings lu comme des scénarios — **PASS 109 → 115, FAIL 74 → 63**
+   sur le corpus rejoué, invariant I11. **Mais** 6 des 15 dépôts gelés ont bougé : le 101 de
+   référence n'est plus rejouable, et la cible ne peut pas être déclarée atteinte tant que le
+   corpus n'est pas re-figé (#119).
 2. **#111 — la mesure préalable** : combien des constats `json-server` la face `probe` seule
    aurait-elle atteints ? C'est ce qui permet au fondateur de trancher `automate`.
 3. **#96 — le coût** de `generate` d'un seul tenant contre un prompt direct, même protocole que
