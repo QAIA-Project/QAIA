@@ -81,6 +81,14 @@ MUTATIONS = [
     # defaut qui a coute le plus cher au projet (0 PASS sur 244 cahiers etrangers) et que les
     # 25 controles existants n'ont jamais pu voir. `check_universal_default.py` est son propre
     # selfcheck : il MESURE la propriete sur des cahiers reels au lieu de relire une regle.
+    ("eval/tools/automation_score.py", "eval/tools/selfcheck_automation_score.py",
+     "attentes fixes : la discipline temporelle ne pese plus rien (#112)",
+     '"timing_discipline": 1.0 - pct(tests_with_forbidden_wait, tests_total),',
+     '"timing_discipline": 1.0,'),
+    ("eval/tools/automation_score.py", "eval/tools/selfcheck_automation_score.py",
+     "attentes fixes : un hook n'atteint plus les tests de son fichier (#112)",
+     "wait_outside = any(not any(s <= w < e for _t, s, e in blocks) for w in wait_lines)",
+     "wait_outside = False"),
     ("eval/tools/structural_score.py", "eval/tools/check_universal_default.py",
      "docstring : son contenu est de nouveau lu comme des scenarios (I11)",
      "in_docstring = line[:3]",
@@ -107,9 +115,9 @@ MUTATIONS = [
     # a l'identique le lendemain. Deux outils, deux jours, une lecon ecrite entre les deux.
     ("eval/tools/automation_score.py", "eval/tools/selfcheck_automation_score.py",
      "budget : les quatre dimensions redeviennent inconditionnelles",
-     'applicable = {"substantive_assertions": True}',
-     'applicable = {"substantive_assertions": True, "robust_selectors": True,\n'
-     '                  "pom_as_fixtures": True, "traceability": True}'),
+     'applicable = {"substantive_assertions": True, "timing_discipline": True}',
+     'applicable = {"substantive_assertions": True, "timing_discipline": True,\n'
+     '                  "robust_selectors": True, "pom_as_fixtures": True, "traceability": True}'),
     ("eval/tools/automation_score.py", "eval/tools/selfcheck_automation_score.py",
      "tracabilite : la detection revient a n'accepter que la convention maison",
      "            ref = tag or REQ_REF.search(title)", "            ref = tag"),

@@ -397,7 +397,7 @@ try:
           sorted(r["scoreScope"]["excluded"]),
           ["pom_as_fixtures", "robust_selectors", "traceability"])
     check("...et il ne les note pas zero : elles sont absentes du budget",
-          sorted(r["budget"]), ["substantive_assertions"])
+          sorted(r["budget"]), ["substantive_assertions", "timing_discipline"])
     check("aucun constat ne reproche a la suite de n'avoir pas nos conventions",
           [f["kind"] for f in r["findings"]
            if f["kind"] in ("fragile-selector", "untraceable-test", "pom-missing")], [])
@@ -410,7 +410,9 @@ try:
     # Le profil `qaia` doit continuer a les imposer : sinon la regle a ete supprimee, pas
     # deplacee.
     q = A.static_track(specs, [], _tmp4, set(), profile="qaia")
-    check("le profil qaia impose toujours les quatre dimensions", len(q["budget"]), 4)
+    check("le profil qaia impose toujours ses quatre dimensions, plus les deux universelles",
+          sorted(q["budget"]), ["pom_as_fixtures", "robust_selectors", "substantive_assertions",
+                                "timing_discipline", "traceability"])
     check("...et redit les constats de convention",
           any(f["kind"] in ("fragile-selector", "untraceable-test", "pom-missing")
               for f in q["findings"]), True)
@@ -427,6 +429,51 @@ try:
           "traceability" in t["budget"], True)
 finally:
     shutil.rmtree(_tmp4, ignore_errors=True)
+
+# --- discipline temporelle (#112) ---------------------------------------------------------
+# `realworld` obtenait 100,0 avec ses attentes fixes au compteur. Une attente fixe est une
+# fragilite universelle : elle doit peser, dans le corps d'un test comme dans un hook, qui touche
+# alors chaque test du fichier -- et seulement les tests de CE fichier.
+WAIT_IN_TEST = "\n".join([
+    "import { test, expect } from '@playwright/test';",
+    "test('a', async ({ page }) => {",
+    "  await page.waitForTimeout(500);",
+    "  await expect(page.locator('#x')).toHaveText('1');",
+    "});",
+    "test('b', async ({ page }) => {",
+    "  await expect(page.locator('#y')).toHaveText('2');",
+    "});",
+])
+WAIT_IN_HOOK = "\n".join([
+    "import { test, expect } from '@playwright/test';",
+    "test.beforeEach(async ({ page }) => { await page.waitForLoadState('networkidle'); });",
+    "test('c', async ({ page }) => {",
+    "  await expect(page.locator('#z')).toHaveText('3');",
+    "});",
+    "test('d', async ({ page }) => {",
+    "  await expect(page.locator('#w')).toHaveText('4');",
+    "});",
+])
+_tmp5 = tempfile.mkdtemp()
+try:
+    with open(os.path.join(_tmp5, "body.spec.ts"), "w", encoding="utf-8") as fh:
+        fh.write(WAIT_IN_TEST)
+    specs, _ = A.find_spec_files(_tmp5)
+    w = A.static_track(specs, [], _tmp5, set())
+    check("une attente fixe dans un test touche ce test, pas son voisin",
+          w["counts"]["tests_with_forbidden_wait"], 1)
+    check("...et la discipline temporelle tombe a la moitie de son poids",
+          w["budget"]["timing_discipline"] < 0.6 * 15.0 * 100.0 / 45.0, True)
+    check("...si bien qu'une suite a attente fixe ne peut plus afficher 100",
+          w["score"] < 100.0, True)
+    with open(os.path.join(_tmp5, "hook.spec.ts"), "w", encoding="utf-8") as fh:
+        fh.write(WAIT_IN_HOOK)
+    specs, _ = A.find_spec_files(_tmp5)
+    h = A.static_track(specs, [], _tmp5, set())
+    check("une attente fixe dans un hook touche chaque test de son fichier, et lui seul",
+          h["counts"]["tests_with_forbidden_wait"], 3)
+finally:
+    shutil.rmtree(_tmp5, ignore_errors=True)
 
 # --- 9. deux verdicts qu'il ne faut jamais rendre ---------------------------------------------
 #

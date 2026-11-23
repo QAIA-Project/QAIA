@@ -411,6 +411,7 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
     findings = []
     tests_total = 0
     tests_with_real_assertion = 0
+    tests_with_forbidden_wait = 0
     selector_role = 0
     selector_raw = 0
     if third_party is not None:
@@ -465,6 +466,7 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
         lines = text.split("\n")
         rel = os.path.relpath(path, tests_dir)
         blocks = split_tests(text)
+        wait_lines = []
 
         for i, line in enumerate(lines, start=1):
             for cm in CITATION.finditer(line):
@@ -483,6 +485,7 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
             # en commentaire etait signale comme attente interdite (B16).
             wait = first_match(FORBIDDEN_WAITS, code_of(line))
             if wait:
+                wait_lines.append(i)
                 findings.append({"kind": "forbidden-wait", "file": rel, "line": i,
                                  "detail": wait, "blocking": False})
             if TAUTOLOGICAL.search(code_of(line)):
@@ -507,6 +510,13 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
                      "detail": line.strip()[:160], "blocking": False})
             if ROLE_SELECTOR.search(code_of(line)):
                 selector_role += 1
+
+        # Discipline temporelle (#112) : une attente fixe hors de tout test -- dans un hook
+        # `beforeEach` ou un helper du fichier -- touche chacun des tests du fichier.
+        wait_outside = any(not any(s <= w < e for _t, s, e in blocks) for w in wait_lines)
+        for title, start, end in blocks:
+            if wait_outside or any(start <= w < end for w in wait_lines):
+                tests_with_forbidden_wait += 1
 
         for title, start, end in blocks:
             tests_total += 1
@@ -539,6 +549,10 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
             ])
             # Verification held by a throwing wait or by a page object counts: it fails the test.
             real_assertions += len([1 for ln in body_lines if INDIRECT_ASSERTION.search(code_of(ln))])
+            # Essaye et RETIRE le 2026-11-23 (#112) : ne pas crediter un test dont toutes les
+            # assertions sont faibles (`toBeTruthy()`...). Mesure sur les six suites etrangeres :
+            # un seul cas, et c'est un faux positif -- `expect(response.ok()).toBeTruthy()` vaut
+            # `toBe(true)` sur un booleen. Une regle lexicale qui punit un idiome n'entre pas.
             if real_assertions:
                 tests_with_real_assertion += 1
             elif declared_placeholder:
@@ -728,9 +742,15 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
     # Desormais chaque ligne porte sa condition d'applicabilite, et le budget se remet a
     # l'echelle sur celles qui s'appliquent. Une dimension exclue est NOMMEE, jamais notee zero.
     WEIGHTS = {"substantive_assertions": 30.0, "robust_selectors": 25.0,
-               "pom_as_fixtures": 20.0, "traceability": 25.0}
+               "pom_as_fixtures": 20.0, "traceability": 25.0,
+               "timing_discipline": 15.0}
 
-    applicable = {"substantive_assertions": True}
+    # `timing_discipline` est, avec `substantive_assertions`, la seconde dimension TOUJOURS
+    # applicable : une attente fixe (`waitForTimeout`, `networkidle`) est une fragilite chez tout
+    # le monde, independamment de toute convention de ce projet -- la documentation de Playwright
+    # la deconseille elle-meme. Avant elle, `realworld` obtenait 100,0 avec ses attentes fixes au
+    # compteur : une seule dimension notee, parfaite, lue comme une suite parfaite (#112).
+    applicable = {"substantive_assertions": True, "timing_discipline": True}
     excluded = {}
 
     # Selecteurs : notes seulement si la suite emploie des localisateurs par role QUELQUE PART.
@@ -788,6 +808,8 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
         # dix tests partageant un meme identifiant pendant n'etaient penalises qu'une fois.
         # On penalise les tests concernes (B14).
         "traceability": pct(max(0, tagged_tests - tests_with_dangling_id), tests_total),
+        # Part des tests qu'aucune attente fixe ne touche, ni dans leur corps ni dans un hook.
+        "timing_discipline": 1.0 - pct(tests_with_forbidden_wait, tests_total),
     }
 
     total_weight = sum(WEIGHTS[k] for k in applicable) or 1.0
@@ -830,6 +852,7 @@ def static_track(spec_files, support_files, tests_dir, feature_ids, flagged_ids=
             "spec_files": len(spec_files),
             "tests": tests_total,
             "tests_with_real_assertion": tests_with_real_assertion,
+            "tests_with_forbidden_wait": tests_with_forbidden_wait,
             "role_selectors": selector_role,
             "raw_selectors": selector_raw,
             "tagged_tests": tagged_tests,

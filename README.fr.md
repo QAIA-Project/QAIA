@@ -121,7 +121,7 @@ utilisateur reste non mesuré.
 ## État et limites
 
 **Pré-alpha, en développement actif.** `qaia-core` 0.6.1 (1 skill, `generate`), `qaia-playwright` 0.3.1
-(2 skills, `automate` et `probe`), `qaia-score` 0.3.1 (**1 skill**, `judge`) — **4 skills** —
+(2 skills, `automate` et `probe`), `qaia-score` 0.3.2 (**1 skill**, `judge`) — **4 skills** —
 validant tous `--strict`, prouvés bout-en-bout sur deux domaines indépendants : santé
 ([`examples/medibook/`](examples/medibook), 26 tests / 32 exécutions, tous verts) et finance/RH
 ([`examples/expense-demo/`](examples/expense-demo), 56 tests verts, vrais bugs trouvés pendant

@@ -78,12 +78,19 @@ estimate, not the scorer's verdict**.
 
 **Budget /100:**
 
-| Component | Points | Measured as |
-|---|---:|---|
-| Substantive assertions | 30 | share of tests containing at least one assertion on real SUT state |
-| Robust selectors | 25 | `getByRole`/`getByTestId` versus raw CSS/XPath selectors |
-| POM-as-fixtures | 20 | specs import the fixtures rather than driving `page` directly |
-| Traceability | 25 | tests carrying a `@QAIA-<US>-<NNN>` tag, and test book scenarios having a test |
+| Component | Weight | Assessed when | Measured as |
+|---|---:|---|---|
+| Substantive assertions | 30 | always | share of tests containing at least one assertion on real SUT state |
+| Timing discipline | 15 | always | share of tests no fixed wait (`waitForTimeout`, `networkidle`) touches, in their body or in a hook of their file |
+| Robust selectors | 25 | the suite uses a role locator somewhere | `getByRole`/`getByTestId` versus raw CSS/XPath selectors |
+| POM-as-fixtures | 20 | the suite shows a page-object structure | specs import the fixtures rather than driving `page` directly |
+| Traceability | 25 | at least one test carries a requirement reference | tests carrying a resolvable reference, and test book scenarios having a test |
+
+The weights are **rescaled to 100 over the dimensions assessed**. A dimension not assessed is
+named in `scoreScope.excluded` and in `notes`, never scored zero; `--profile qaia` assesses all
+five. Read `scoreScope` before the number: a score over two dimensions is narrow, and says so.
+Timing discipline joined the two always-assessed dimensions on 2026-11-23 (#112): before it, a
+foreign suite with fixed waits on the meter could display 100.0.
 
 **Findings that are blocking regardless of score:**
 
@@ -92,7 +99,6 @@ estimate, not the scorer's verdict**.
   itself);
 - `.toBeDefined()` / `.not.toBeNull()` on a locator handle — always truthy, since locators are
   lazy;
-- a forbidden fixed wait (`waitForTimeout`) standing in for a real condition;
 - **a scenario the test book flagged as resting on an open question (`@low-confidence`,
   `# open: Q…`) whose test carries no trace of the flag.** The severity is not in the code, it is
   in what happens the day that test goes red: the reader cannot tell *the open question just got
@@ -109,6 +115,8 @@ read:
   a test that asserts `not.toBe(200)` and then reads the error body has the attributable evidence.
 - **a comment or report citing a file that does not exist**: a citation looks authoritative
   precisely because nobody follows it.
+- **a fixed wait** (`waitForTimeout`, `networkidle`) standing in for a real condition. Not
+  blocking — a suite can be correct and slow — but it weighs on *Timing discipline* above.
 
 Report `scenarios_without_test` separately: a scenario the book demanded and the code never
 automated is a coverage gap, not a code-quality one, and blending them hides it.
