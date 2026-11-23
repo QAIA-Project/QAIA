@@ -66,6 +66,15 @@ npm start   # or point your MCP client at src/server.js directly, per the config
   Code reads, but how faithfully a different model follows it is untested and unverified by
   this project (see `docs/adr/0003-mcp-bridge-scoping.md` for the honest scope of that claim).
 
+## Known gap since the skills were merged (2026-11-23)
+
+`get_skill_content` serves a `SKILL.md` and nothing else. Since the merges of 2026-08-24 to
+2026-11-23, `generate`, `judge` and `probe` keep their steps in `references/` pages that the
+`SKILL.md` tells the model to read before each step. **Through this bridge, a client receives the
+table of contents but none of the pages**, so it cannot follow the journey as written. Tracked in
+[#122](https://github.com/QAIA-Project/QAIA/issues/122); until it is fixed, treat the bridge as a way to read the four skills'
+entry points, not to run them.
+
 ## Development
 
 ```

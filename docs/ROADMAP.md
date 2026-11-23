@@ -7,6 +7,9 @@ décrivent l'architecture d'avant la refonte. La référence de fond reste
 
 ## 1. Audit
 
+*Instantané pris à la reprise, le matin du 2026-11-23, gardé tel quel. Chaque ligne résolue
+depuis porte un renvoi ; l'état courant est en section 2 et dans [`STATUS.md`](STATUS.md).*
+
 ### Santé technique — bonne
 
 | | |
@@ -20,20 +23,20 @@ décrivent l'architecture d'avant la refonte. La référence de fond reste
 
 | Phase | Spec | Réalité | Écart |
 |---|---|---|---|
-| 1 — inverser le défaut | PASS par défaut sur corpus étranger **≥ 107** | **101** (0 avant) — `eval/universal-default-2026-08-24/REPORT.md` | **6 PASS manquants**, jamais réexaminés depuis |
+| 1 — inverser le défaut | PASS par défaut sur corpus étranger **≥ 107** | **101** (0 avant) — `eval/universal-default-2026-08-24/REPORT.md` | **6 PASS manquants**, jamais réexaminés depuis → *résolu (B1) : la cible rejouée sur un corpus figé vaut 96, le défaut fait 104* |
 | 2 — pointer les outils ailleurs | tous les outils du noyau éprouvés sur du matériau étranger | `drift-external`, `refutation`, suites Playwright étrangères ; aucun décompte tenu | métrique non suivie |
-| 3 — 37 → 3 lecteurs | 3 lecteurs (+ `automate` en suspens) | `judge` et `generate` faits, 17 suppressions faites ; **7 skills** | `probe` à faire (#118) |
+| 3 — 37 → 3 lecteurs | 3 lecteurs (+ `automate` en suspens) | `judge` et `generate` faits, 17 suppressions faites ; **7 skills** | `probe` à faire (#118) → *fait (A1) : 4 skills* |
 | 4 — trancher `automate` | mesure préalable, puis décision | rien | #111, bloqué sur la mesure |
-| Coût d'une génération | **≤ 1,5×** un prompt direct | 2,9× au dernier relevé, **jamais remesuré** après la fusion | #96 |
+| Coût d'une génération | **≤ 1,5×** un prompt direct | 2,9× au dernier relevé, **jamais remesuré** après la fusion | #96 (B3) |
 
 ### Dette que la spec avait décidée et qui n'a pas été faite (§4, §5)
 
-- **`docs/` : 24 → 5 fichiers visés, 32 aujourd'hui.** Aucun `docs/archive/`.
-- **`docs/STATUS.md` : 1 350 lignes**, censé devenir un tableau de bord de deux nombres.
+- **`docs/` : 24 → 5 fichiers visés, 32 aujourd'hui.** Aucun `docs/archive/`. → *A2 : 20 documents archivés.*
+- **`docs/STATUS.md` : 1 350 lignes**, censé devenir un tableau de bord de deux nombres. → *A2 : fait.*
 - **`make check` : 26 contrôles, ~8 visés.** Plusieurs gardent des objets que la refonte supprime
   (`check_loop_wiring`, `check_agents_tier`, `check_skill_counts`…).
-- **`agents-tier/` : 6 agents, suppression visée.**
-- **`DECISIONS.md` toujours alimenté** (D202), censé être gelé en archive.
+- **`agents-tier/` : 6 agents, suppression visée.** → *A2 : supprimé.*
+- **`DECISIONS.md` toujours alimenté** (D202), censé être gelé en archive. → *A2 : gelé à D203.*
 
 Ces cinq points ne sont pas des oublis de détail : la spec en fait une condition de la thèse
 (« le noyau est le produit »), et ils sont réversibles d'un `git revert`.
@@ -41,9 +44,10 @@ Ces cinq points ne sont pas des oublis de détail : la spec en fait une conditio
 ### Outillage
 
 - #106 — le parseur Gherkin maison de `check_nl_projection.py` lit de travers 7 formes valides,
-  dont le dialecte français, où il sort **vert à vide**. Toujours ouvert.
-- #108 — deux suites Playwright livrées ne tournent dans aucune CI.
-- #115 — le linter Gherkin n'est pas épinglé.
+  dont le dialecte français, où il sort **vert à vide**. Toujours ouvert. → *A3 : fermé (`3dd1421`).*
+- #108 — deux suites Playwright livrées ne tournent dans aucune CI. → *D2 : fermé (`e8155c1`).*
+- #115 — le linter Gherkin n'est pas épinglé. → *en attente du fondateur (section C) : le mainteneur
+  du linter propose d'adopter son propre paquet, une décision d'approvisionnement.*
 
 ### Adoption — le mur, inchangé
 
@@ -54,7 +58,8 @@ elle dépend de #89 (un tiers qui mène le parcours) et des gestes de distributi
 ### Backlog
 
 22 issues ouvertes. Plusieurs ont été écrites pour l'architecture d'avant : #93 parle de « 18
-skills d'un bloc » (il y en a 7). Celles-là sont à requalifier, pas à laisser vieillir.
+skills d'un bloc » (il y en a 7). Celles-là sont à requalifier, pas à laisser vieillir. → *A4 :
+six fermées, une requalifiée.*
 
 ## 2. Feuille de route
 
@@ -94,7 +99,9 @@ sortant ; **C** est le travail de décision du fondateur.
    tous corrigés depuis par le mainteneur. Les deux défauts d'origine venaient du cahier, pas de
    Playwright. La décision reste au fondateur (section C).
 3. **#96 — le coût** de `generate` d'un seul tenant contre un prompt direct, même protocole que
-   le benchmark du 2026-07-28.
+   le benchmark du 2026-07-28. **Ouvert.** Le découpage en étapes chargées à la demande que
+   l'issue réclamait est déjà fait par la fusion (`SKILL.md` de 819 mots, une page par étape) ;
+   reste la mesure, qui coûte deux exécutions complètes.
 
 ### D — Le développement du produit, repris le 2026-11-23
 
@@ -122,7 +129,8 @@ Ordonné par ce qui rend une promesse du produit vérifiable par un tiers.
 | Retirer les deux copies orphelines de qaskills.sh | #110 | publication externe |
 | Re-soumettre une skill étroite à un marketplace | #114 | publication externe |
 | Trouver un premier pilote humain | #89 | seul levier sur la métrique d'adoption |
-| Trancher `automate` | #111 | décision de périmètre, après B2 |
+| Trancher `automate` | #111 | décision de périmètre ; la mesure préalable (B2) est faite |
+| Adopter ou non le paquet proposé par le mainteneur du linter Gherkin | #115 | choix d'approvisionnement : faire entrer le code d'un tiers dans la CI |
 
 ## 3. Comment ce fichier reste vrai
 

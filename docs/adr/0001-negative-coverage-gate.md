@@ -3,6 +3,10 @@
 - Status: **Accepted**
 - Date: 2026-07-23
 - Closes: #4 · Supersedes the hard part of decision D20
+- *Since 2026-10-26 the two skills named below are steps of `qaia-core:generate` (`testbook-generate`
+  → step 7, `references/07-emitting-the-test-book.md`; `istqb-design` → step 4,
+  `references/04-choosing-techniques.md`). The decision is unchanged; since 2026-11-23 it is also
+  checked per test level by `eval/tools/check_level_discharge.py` (#107).*
 
 ## Context
 

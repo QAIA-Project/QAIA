@@ -20,9 +20,6 @@ Portable skills implement the QAIA journey. Each skill reads the checkpoints of 
 │   ├── *.feature             # Gherkin, English keywords (D11), stable IDs (D18)
 │   ├── synthesis.md          # review aid: by-technique summary, risk order, confidence (D31)
 │   └── coverage-matrix.md    # AC → scenarios → status (D18)
-├── feedback/
-│   ├── examples/             # raw corrections captured by the feedback skill
-│   └── rules.md              # rules promoted after human validation (D22)
 └── reports/<US-ID>/
     └── manifest.json         # STANDARDIZED run manifest — the one output contract every
                               # QAIA plugin shares (D39, ../OUTPUT-CONTRACT.md)
@@ -36,7 +33,7 @@ Portable skills implement the QAIA journey. Each skill reads the checkpoints of 
 2. **Prerequisite missing → offer, don't fail.** If the previous step's checkpoint is absent, say so and offer to run that step (or accept user-provided equivalents).
 3. **The user validates; the skill never self-validates.** Every ⚠ VALIDATION point in a skill requires an explicit user answer recorded in the checkpoint.
 
-   **Non-interactive execution** (evaluation harness, batch, cron) — *this is the single arbitration; `qaia` §Non-interactive mode restates it and no skill may contradict it (settled 2026-07-31, skill-eval wave A pattern P3)*:
+   **Non-interactive execution** (evaluation harness, batch, cron) — *this is the single arbitration, and no step of any skill may contradict it (settled 2026-07-31, skill-eval wave A pattern P3)*:
 
    **Recording is not accepting.** A `simulated` entry is a ledger line saying "a default was applied and no human saw it". It is never an acceptance, and it never satisfies the control the gate exists to impose. Conflating the two is what produced the `simulated: accepted-as-is` bypass D125 removed — and D125 removed the phrase without settling the rule, leaving `us-review` ("stop"), `prioritize` ("continue") and this file ("record and continue") mutually contradictory.
 
@@ -77,7 +74,7 @@ retrieval protocol**, so "using the RAG" means one discipline, not per-skill imp
    `# rule: BR-KB-nnn` comment on the resulting scenario (the knowledge base's own IDs).
    An uncited knowledge influence is untraceable and counts as fabricated — provenance is
    mandatory both ways (rule 5 forbids raw PII; this forbids uncited rules).
-3. **Turn applicable rules into conditions, don't just read them.** In `istqb-design`, a matched
+3. **Turn applicable rules into conditions, don't just read them.** At `generate` step 4, a matched
    `business-rules.md` entry that constrains the AC (a role that may not act, a config that
    changes an outcome, a threshold the US left implicit) becomes a **derived test condition**
    tagged with its rule ID — this is exactly the config-driven coverage the US alone cannot
@@ -108,12 +105,12 @@ formats.
 
 The manifest is a *projection*: counts must equal what the artifacts contain, it carries no
 secrets or PII, and it is additive and versioned. Producers **merge** their own section and
-append to `producers[]`; they never clobber another plugin's contribution. Run `report` after
-generation/export so downstream tooling always has a current envelope.
+append to `producers[]`; they never clobber another plugin's contribution. Run `generate` step 8
+after generation/export so downstream tooling always has a current envelope.
 
 ## Deliverable contract — `synthesis.md` (review aid, D31)
 
-Owned by this shared contract (produced by `testbook-generate`, re-projected by `testbook-export`):
+Owned by this shared contract (produced at `generate` step 7, re-projected at step 9):
 - Header: US-ID, date, counts (scenarios, per-priority), **negative-path coverage** (required-negative conditions covered / total, ADR 0001) with the raw negative ratio reported as a bias signal, open ambiguities count — **with the full numbered question list inline** (the reviewer only sees the book, never the state files).
 - **Ratio explainer (when the negative ratio is below ~40 % but coverage passes):** one line naming which ACs actually carry refusal/error paths — so a reviewer understands a low ratio on a complete book (e.g. "the headline AC is a calculation with no refusal path; refusals live in AC1/AC3"). A passing coverage gate + a low ratio is normal, not a defect.
 - **Out-of-slice dependencies:** list any `[out-of-slice]` questions and the sibling stories that likely hold their answers (from `00-source.md` `dependencies:`) — the book is complete *for the ingested slice*, and this makes its boundaries explicit.

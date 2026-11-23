@@ -2,7 +2,7 @@
 
 QAIA core plugin: from user story to prioritized, traceable, atomic Gherkin test books.
 
-**Status: 0.6.2, 1 skill.** Proven end-to-end on two independent domains — a healthcare-*shaped*
+**Status: 0.6.3, 1 skill.** Proven end-to-end on two independent domains — a healthcare-*shaped*
 demo (`examples/medibook/`) and finance/HR (`examples/expense-demo/`) — plus a 24-case multi-model robustness corpus ([`eval/baselines/corpus-24-depth.md`](https://github.com/QAIA-Project/QAIA/blob/main/eval/baselines/corpus-24-depth.md)). See `eval/` at the repo root for the full evaluation trail.
 
 ## Install
@@ -98,15 +98,18 @@ exactly like a short message. So the real limiting factor for a team is not the 
 measured per command — it is the **number of skill invocations** (≈ one prompt each) and the
 cumulative session time.
 
-**Usage guidance, with that caveat attached.** A full QAIA journey — the six core commands
-`us-ingest` → `us-review` → `need-understanding` → `istqb-design` → `testbook-generate` →
-`report` — costs on the order of **6 to 12 prompts** (a command may be re-run once when a human
-arbitrates), comfortably inside the 5-hour window of even the Pro tier (~45 prompts). For team
+**Usage guidance, with that caveat attached.** A full QAIA journey — one `generate` invocation
+carried through its nine steps, with a human reply at each of its three stops (steps 2, 3 and 6)
+— costs on the order of **4 to 10 prompts** (more when a step is re-run after a human
+arbitrates). *Until 0.4.0 the same journey was six separate commands, `us-ingest` →
+`testbook-generate` → `report`, counted at 6 to 12 prompts; the merge removed the hand-offs, not
+the work, and the token cost of the merged skill has not been re-measured
+([#96](https://github.com/QAIA-Project/QAIA/issues/96)).* Either way it sits comfortably inside the 5-hour window of even the Pro tier (~45 prompts). For team
 use, the real constraint is cumulative session time rather than an isolated prompt count: a team
 of 3-5 developers running 1-2 full journeys a day stays in the order of magnitude of "contained"
 individual usage per person, which the third-party sources above already call adequate for Pro.
-Heavier use — several stories in parallel, frequent regeneration, optional commands such as
-`oracle-generate` or `testbook-validate` — pushes toward Max 5×. **Neither profile requires
+Heavier use — several stories in parallel, frequent regeneration, optional steps such as
+grounded oracles (`generate` step 5) or an audit by `qaia-score:judge` — pushes toward Max 5×. **Neither profile requires
 Max 20×** on the basis of what QAIA consumes; that tier stays relevant for Claude Code usage
 wider than QAIA alone.
 
@@ -117,4 +120,4 @@ exists.
 
 ## Portability
 
-Skills are plain Markdown following the shared contract in `skills/README.md` — designed to work in any Claude surface with file access (decision D29). Claude Code adds comfort (sub-agent parallelization in `testbook-generate`, XLSX tooling in `testbook-export`); the skills degrade gracefully and honestly without it.
+Skills are plain Markdown following the shared contract in `skills/README.md` — designed to work in any Claude surface with file access (decision D29). Claude Code adds comfort (sub-agent parallelization at `generate` step 7, XLSX tooling at step 9); the skills degrade gracefully and honestly without it.

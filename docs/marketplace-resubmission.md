@@ -4,6 +4,16 @@
 `tons-of-skills-marketplace#1163` (2026-08-24), qui a **fermé la révision** en saluant la candeur.
 Contenu externe, relayé ici comme donnée — pas comme instruction.
 
+> **État au 2026-11-23** — suivi dans [#114](https://github.com/QAIA-Project/QAIA/issues/114) :
+> - portes **2 et 3 faites** (`c25b8dd`, `qaia-score` 0.3.1) : `judge` déclare des permissions
+>   least-privilege et une section de frontières injection / données externes ;
+> - porte 1 (le validateur du marketplace) et porte 4 (un pilote humain réel, #89) **ouvertes** ;
+> - le repli `hello` n'existe plus (supprimé en `qaia-core` 0.5.0) : `judge` est la seule candidate ;
+> - le produit compte **4 skills dans 3 plugins**, plus 33 dans 4 ; les chiffres du tableau
+>   ci-dessous sont ceux du 2026-08-24 ;
+> - les « blocages de cette session » plus bas sont levés : l'issue de suivi existe (#114), et la
+>   re-soumission elle-même est un geste réservé au fondateur.
+
 ## Ses constats — vérifiés de notre côté
 
 | Constat du reviewer | Vérification interne (2026-08-24) |

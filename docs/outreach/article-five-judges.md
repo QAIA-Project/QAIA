@@ -159,7 +159,8 @@ the one worth taking away.
 
 *Everything above is in the open, including the parts that go against the tool: the five judge
 reports, the rubric with its nineteen corrections, the benchmark where a plain direct prompt costs
-2.9× fewer tokens and matches it on ambiguity recall. It is called
+2.9× fewer tokens and matches it on ambiguity recall (measured in July 2026, before the journey
+became a single skill; not re-measured since). It is called
 [QAIA](https://github.com/QAIA-Project/QAIA), it is MIT, it is pre-alpha, and no human pilot has
 run it end to end — which is currently the largest unknown in the project and the reason I would
 rather have an issue telling me where it disappointed you than a star.*

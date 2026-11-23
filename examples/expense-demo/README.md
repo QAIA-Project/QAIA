@@ -1,5 +1,16 @@
 # Example — ExpenseFlow: full QAIA chain against a real running app (non-medical)
 
+> **Read with the current names (note added 2026-11-23).** This example was produced when each step
+> was a separate skill, and its text keeps the names of the time. Since then the journey skills
+> (`us-ingest`, `us-review`, `need-understanding`, `istqb-design`, `oracle-generate`,
+> `openapi-ingest`, `prioritize`, `testbook-generate`, `report`, `testbook-export`) are the steps of
+> `qaia-core:generate`; the scorers (`testbook-validate`, `testbook-score`, `automation-score`,
+> `spec-suite-drift`, `aptitude-gate`) are pages of `qaia-score:judge`; `contract-probe`,
+> `traffic-replay`, `signal-ingest` and `defect-report` are pages of `qaia-playwright:probe`.
+> `rag-build`, `feedback`, `run-report`, `a11y-audit`, `security-surface`, `perf-check`,
+> `visual-check`, `usability-heuristic-review` and `flaky-detect` were deleted on 2026-10-26. The
+> artifacts below are kept exactly as they were produced. Map: [`CATALOGUE.md`](../../plugins/qaia-core/CATALOGUE.md).
+
 This is a second **end-to-end worked example**, mirroring `examples/medibook` (Sprint 5,
 US-001, medical) on a deliberately **non-medical** domain: a small but real finance/HR
 expense-report approval workflow (the SUT — System Under Test), the QAIA-designed test book,

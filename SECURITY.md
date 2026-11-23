@@ -24,4 +24,14 @@ Reports are especially welcome on:
 
 ## Hardening commitments
 
-Branch protection on the default branch, 2FA for maintainers, pinned GitHub Actions, signed releases, and a second administrator able to revoke access **are being put in place as part of the M0 exit criteria** (the original checklist is archived in `docs/archive/M0-CHECKLIST.md`) — do not assume they are all active until that checklist says so.
+State as of 2026-11-23, checked against the repository rather than copied from a plan (the original M0 checklist is archived in `docs/archive/M0-CHECKLIST.md`):
+
+| Commitment | State |
+|---|---|
+| GitHub Actions pinned by commit SHA | **active** — every `uses:` in `.github/workflows/` |
+| Scorers shipped as readable, pinned Python, identical to their tested source | **active** — checked in CI |
+| Branch protection on `main` | **not active** (the API answers "Branch not protected") |
+| Signed releases | **not active** — one unsigned pre-release tag, `v0.1.0-prealpha` |
+| 2FA for maintainers, a second administrator able to revoke access | not verifiable from the repository; do not assume them |
+
+Do not assume a commitment marked "not active" protects you. Activating them is a decision for the maintainer, tracked in [#124](https://github.com/QAIA-Project/QAIA/issues/124).

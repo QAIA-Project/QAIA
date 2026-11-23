@@ -1,5 +1,13 @@
 # Go-live — ce qui t'attend, dans l'ordre, avec le texte déjà écrit
 
+> **État au 2026-11-23.** Ce plan date du 2026-08-08. Les gestes de publication restent les tiens et
+> sont suivis par issue : retirer les copies orphelines de qaskills.sh (#110), re-soumettre une skill
+> étroite (#114, voir [`../marketplace-resubmission.md`](../marketplace-resubmission.md)), trouver un
+> premier pilote (#89). La démo est en ligne (vérifié le 2026-11-23). Les textes prêts à coller
+> ([`show-hn-and-reddit.md`](show-hn-and-reddit.md), [`linkedin-post-fr.md`](linkedin-post-fr.md),
+> [`article-five-judges.md`](article-five-judges.md)) ont été relus le même jour : le produit y est
+> décrit à 4 skills et 3 plugins.
+
 Tout ce qui suit demande **ton nom** : soit un clic dans une interface où je ne peux pas
 m'authentifier, soit une prise de parole publique qu'un agent n'a pas à faire à ta place. Rien
 ici ne demande de rédaction : les textes existent, les liens sont vérifiés, l'ordre est réfléchi.
@@ -164,9 +172,11 @@ que le kit promet ; il faut le tenir.
 **Ce que je ne peux pas faire** : l'auteur des encarts ne peut pas juger si les encarts sont
 clairs (règle 3). Il faut un vrai PM ou PO qui n'a pas travaillé sur QAIA.
 
-**Ce qui est prêt** : l'encart existe dans **six skills**, identique, à citer verbatim —
+**Ce qui est prêt** : l'encart existait dans **six skills**, identique, à citer verbatim —
 `need-understanding`, `prioritize`, `feedback`, `oracle-generate`, `aptitude-gate`,
-`dataset-generate`.
+`dataset-generate`. *(Depuis le 2026-10-26, quatre de ces textes vivent dans les pages de
+`generate` et de `judge` ; `feedback` et `dataset-generate` ont été supprimées. Le texte de
+l'encart est inchangé.)*
 
 Le protocole de relecture tient en un message à envoyer à la personne :
 

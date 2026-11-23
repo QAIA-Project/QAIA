@@ -43,15 +43,15 @@ producer — fix the source, re-project the manifest, never hand-edit the manife
   "base": ".qaia",                          // configurable output root (shared rule 9)
 
   "producers": [                            // provenance chain, append-only
-    { "plugin": "qaia-core", "version": "0.2.3", "skill": "testbook-generate", "at": "2026-07-23T09:58:00Z" },
-    { "plugin": "qaia-playwright", "version": "0.1.1", "skill": "run-report", "at": "2026-07-23T10:00:00Z" }
+    { "plugin": "qaia-core", "version": "0.6.2", "skill": "generate", "at": "2026-07-23T09:58:00Z" },
+    { "plugin": "qaia-playwright", "version": "0.3.1", "skill": "automate", "at": "2026-07-23T10:00:00Z" }
   ],
 
   "artifacts": [                            // pointers to the human-facing outputs
     { "kind": "feature",   "format": "gherkin",  "path": "testbooks/US-001/booking.feature" },
     { "kind": "synthesis", "format": "markdown", "path": "testbooks/US-001/synthesis.md" },
     { "kind": "matrix",    "format": "markdown", "path": "testbooks/US-001/coverage-matrix.md" },
-    { "kind": "validation","format": "markdown", "path": "reports/US-001/testbook-validate-report.md" },
+    { "kind": "validation","format": "markdown", "path": "reports/US-001/judge-audit-report.md" },
     { "kind": "execution", "format": "junit",    "path": "reports/US-001/junit.xml" }
   ],
 
@@ -59,10 +59,10 @@ producer — fix the source, re-project the manifest, never hand-edit the manife
     "scenarios": { "total": 22, "byPriority": { "P1": 9, "P2": 8, "P3": 5 },
                    "negative": 9, "smoke": 1, "outlines": 3 },
     // `total` = les CAS EXECUTABLES : un `Scenario Outline` a N lignes d'`Examples` en vaut N,
-    // ce qu'un lanceur executera et ce que `testbook-export` projette deja en N lignes.
+    // ce qu'un lanceur executera et ce que l'export (etape 9 de `generate`) projette deja en N lignes.
     // `outlines` = le nombre de blocs `Scenario Outline`, non eclates.
     // La convention est nommee ici parce qu'elle ne l'etait pas : le scoreur comptait les blocs,
-    // l'export comptait les cas, et `aptitude-gate` decidait d'une release sur le premier des
+    // l'export comptait les cas, et la porte de release (`aptitude-gate`, aujourd'hui `judge`) decidait d'une release sur le premier des
     // deux sans que rien ne dise lequel (2026-08-10). Un cahier de 10 Outlines a 6 exemples fait
     // 60 et non 10 ; tout ratio (negatif, confiance) se calcule sur ce denominateur.
     "byLevel": { "e2e": 14, "api": 8 },     // 1.1 — ADR 0008, the level DESIGNED per scenario
@@ -119,7 +119,7 @@ producer — fix the source, re-project the manifest, never hand-edit the manife
 - **`design.coverage.reqNegCovered / reqNegTotal`** is the ADR 0001 negative-path gate (the
   one that blocks). **`negativeRatio`** is the D20 signal — reported, never a threshold.
 - **`design.byLevel`** (1.1, [ADR 0008](https://github.com/QAIA-Project/QAIA/blob/main/docs/adr/0008-test-level-is-a-design-property.md)) carries the level **decided at design time** by
-  `istqb-design` and tagged by `testbook-generate` — closed keys `e2e` / `api`, summing to
+  `generate` step 4 (choosing techniques) and tagged at step 7 (emission) — closed keys `e2e` / `api`, summing to
   `design.scenarios.total`. It is the design-side counterpart of `execution.byType`: comparing the
   two is what makes "12 API conditions designed, 4 automated" sayable, which no QAIA artifact could
   say before. **Optional**, so 1.0 manifests stay valid; when present it must be complete and
@@ -131,7 +131,7 @@ producer — fix the source, re-project the manifest, never hand-edit the manife
   numbers to satisfy the validator is the fabrication D38 forbids — remove the block instead.
 - **`artifacts[].kind`** is a closed enum: `feature`, `synthesis`, `matrix`, `validation`,
   `execution`, `export`, `flakiness` (`flaky-detect`, D80, retired 2026-10-26 — still read by
-  `judge`'s release gate as a CONCERNS signal when present), `trafficReplay` (`traffic-replay`, D88),
+  `judge`'s release gate as a CONCERNS signal when present), `trafficReplay` (`traffic-replay`, D88, now `probe`'s page `02-replaying-captured-traffic.md`),
   `dataset` and `dataset-map` (`qaia-testdata:dataset-generate`, D137/D142, retired 2026-10-26). All four of the last were emitted by real
   producers long before being declared here; a kind not in this list is an error, so a new
   producer must extend the enum **and** this line together. That this keeps happening is the
@@ -149,8 +149,11 @@ producer — fix the source, re-project the manifest, never hand-edit the manife
   which is why an agent broke it without being at fault (#67).
 
 - **A `gate` block may legitimately be partial.** Two skills fill it, in order:
-  `qaia-score:testbook-score` writes `score`/`dimensions`/`max`, then `qaia-score:aptitude-gate`
-  writes `verdict`/`reasons`/`waiver`. Between them sits a real intermediate state — a scored,
+  `judge`'s scoring page (`references/scoring-testbook.md`, formerly the `testbook-score` skill)
+  writes `score`/`dimensions`/`max`, then its release-gate page (`references/release-gate.md`,
+  formerly `aptitude-gate`) writes `verdict`/`reasons`/`waiver`. Both still sign `scoredBy` with
+  the former name of their step (`qaia-score/testbook-score`, `qaia-score/aptitude-gate`), which
+  says which half filled the block; `qaia-score:judge` is accepted too. Between them sits a real intermediate state — a scored,
   not-yet-gated candidate — and a `gate` without `verdict` is **valid**. Requiring one there
   would force the only honest producer of that state either to fabricate a verdict it must not
   own (no producer scores itself) or to fail validation for obeying this contract. A `verdict`
@@ -163,13 +166,13 @@ producer — fix the source, re-project the manifest, never hand-edit the manife
   distinction is real but is carried in prose rather than in the enum, because a fourth kind
   would ripple through every producer and consumer for a case the `about` field already
   expresses. (Such an item is also a signal worth chasing upstream: it usually means content
-  entered the capture that `us-ingest`'s source-fidelity rule forbids.)
+  entered the capture that `generate`'s source-fidelity rule (step 1) forbids.)
 - **`artifacts[].path`** must resolve to a file that really exists. `validate_manifest.py`
   checks this under `--check-paths <root>`; it is opt-in because a manifest is often validated
   away from the tree it describes, where a missing file would be a false alarm rather than a
   finding.
 - **`design.confidence.*`** — operational definitions, so two conforming runs cannot report
-  different numbers for the same book (the ambiguity wave A raised against `report`):
+  different numbers for the same book (the ambiguity wave A raised against the former `report` skill, now `generate` step 8):
   - `openQuestions` — count of distinct `[open]` markers in the checkpoints, i.e. questions
     put to a human and **not** answered. A question answered before generation is not counted.
   - `assumptions` — count of distinct `[assumption]` markers: a gap the journey closed itself
@@ -233,7 +236,7 @@ it needs. Recommended reads:
   in 1.0 with an `api` key that nothing on the design side ever produced — the contract described a
   split the chain never decided.
 
-Changes are logged here and in [`docs/DECISIONS.md`](https://github.com/QAIA-Project/QAIA/blob/main/docs/DECISIONS.md). A consumer that needs a field a producer
+Changes are logged here (and, until it was frozen on 2026-11-23, in [`docs/DECISIONS.md`](https://github.com/QAIA-Project/QAIA/blob/main/docs/DECISIONS.md)). A consumer that needs a field a producer
 did not write treats it as absent (degraded mode, shared contract rule 8), never as an error.
 
 ## Programmatic validation

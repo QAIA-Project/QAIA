@@ -1,18 +1,18 @@
 # Soumissions aux annuaires — état et textes prêts
 
-Suivi de #69 et #73. Mis à jour le 2026-08-08.
+Suivi de #69 et #73. Mis à jour le 2026-08-08 ; **états revérifiés contre l'API GitHub le 2026-11-23**.
 
 | Annuaire | ★ | État | Action |
 |---|---|---|---|
-| [jeremylongshore/claude-code-plugins-plus-skills](https://github.com/jeremylongshore/claude-code-plugins-plus-skills) | 2 608 | **PR ouverte — [#1163](https://github.com/jeremylongshore/claude-code-plugins-plus-skills/pull/1163)** | rien à faire, attendre la revue |
-| [hesreallyhim/awesome-claude-code](https://github.com/hesreallyhim/awesome-claude-code) | 51 858 | **soumise le 2026-08-08 — [#2466](https://github.com/hesreallyhim/awesome-claude-code/issues/2466), validation automatique passée** | attendre la revue humaine, ne pas relancer |
+| [jeremylongshore/claude-code-plugins-plus-skills](https://github.com/jeremylongshore/claude-code-plugins-plus-skills) | 2 608 | **PR fermée sans fusion le 2026-09-01 — [#1163](https://github.com/jeremylongshore/claude-code-plugins-plus-skills/pull/1163)** | voir [`../marketplace-resubmission.md`](../marketplace-resubmission.md) et #114 : re-soumettre une skill étroite, après un pilote |
+| [hesreallyhim/awesome-claude-code](https://github.com/hesreallyhim/awesome-claude-code) | 51 858 | **soumise le 2026-08-08 — [#2466](https://github.com/hesreallyhim/awesome-claude-code/issues/2466), validation automatique passée ; toujours ouverte au 2026-11-23** | attendre la revue humaine, ne pas relancer |
 | QASkills.sh | — | compte à créer | voir #73 |
 | claudemarketplaces.com | — | à explorer | |
 | claudepluginhub.com | — | à explorer | |
 | aitmpl.com | — | à explorer | |
 | SkillsMP / ClawHub / skills.sh / Smithery | — | à explorer | |
-| [mxschmitt/awesome-playwright](https://github.com/mxschmitt/awesome-playwright) | 1 547 | **PR ouverte — [#177](https://github.com/mxschmitt/awesome-playwright/pull/177)** | attendre |
-| [TheJambo/awesome-testing](https://github.com/TheJambo/awesome-testing) | 2 329 | **PR ouverte — [#201](https://github.com/TheJambo/awesome-testing/pull/201)** | attendre |
+| [mxschmitt/awesome-playwright](https://github.com/mxschmitt/awesome-playwright) | 1 547 | **PR fermée sans fusion le 2026-08-12 — [#177](https://github.com/mxschmitt/awesome-playwright/pull/177)** | geste du fondateur s'il veut retenter |
+| [TheJambo/awesome-testing](https://github.com/TheJambo/awesome-testing) | 2 329 | **PR fermée sans fusion le 2026-08-22 — [#201](https://github.com/TheJambo/awesome-testing/pull/201)** | geste du fondateur s'il veut retenter |
 | [naodeng/awesome-qa-skills](https://github.com/naodeng/awesome-qa-skills) | 151 | **écarté volontairement** | voir §4 |
 
 ---

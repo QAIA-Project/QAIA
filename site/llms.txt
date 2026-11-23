@@ -68,7 +68,8 @@ optional.
 
 A head-to-head against a single direct prompt on the same ticket
 ([benchmark](https://github.com/QAIA-Project/QAIA/blob/main/eval/baselines/qaia-vs-direct-prompt-benchmark-2026-07-28.md),
-N=1 per arm): QAIA cost **~2.9× more tokens** (133,100 vs 46,548), scored better structurally on
+N=1 per arm, measured in July 2026 on the six-skill journey before it became one skill, not
+re-measured since): QAIA cost **~2.9× more tokens** (133,100 vs 46,548), scored better structurally on
 average (72 vs 47/100) but still failed the structural gate on 2 of 7 files, and **the direct
 prompt matched or slightly beat it on strict recall of the planted ambiguities**. The one clean
 separation: the direct prompt silently invented four business rules; the QAIA arm invented none

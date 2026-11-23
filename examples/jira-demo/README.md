@@ -1,5 +1,16 @@
 # Jira connector demo (issue #9, D9 v1 source)
 
+> **Read with the current names (note added 2026-11-23).** This example was produced when each step
+> was a separate skill, and its text keeps the names of the time. Since then the journey skills
+> (`us-ingest`, `us-review`, `need-understanding`, `istqb-design`, `oracle-generate`,
+> `openapi-ingest`, `prioritize`, `testbook-generate`, `report`, `testbook-export`) are the steps of
+> `qaia-core:generate`; the scorers (`testbook-validate`, `testbook-score`, `automation-score`,
+> `spec-suite-drift`, `aptitude-gate`) are pages of `qaia-score:judge`; `contract-probe`,
+> `traffic-replay`, `signal-ingest` and `defect-report` are pages of `qaia-playwright:probe`.
+> `rag-build`, `feedback`, `run-report`, `a11y-audit`, `security-surface`, `perf-check`,
+> `visual-check`, `usability-heuristic-review` and `flaky-detect` were deleted on 2026-10-26. The
+> artifacts below are kept exactly as they were produced. Map: [`CATALOGUE.md`](../../plugins/qaia-core/CATALOGUE.md).
+
 Shows `us-ingest` capturing a **Jira issue** as a QAIA source — portable-first, no API key, no
 backend. The connector mapping lives in
 `plugins/qaia-core/skills/generate/connectors/jira.md`.

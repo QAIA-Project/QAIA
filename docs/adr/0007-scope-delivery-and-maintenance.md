@@ -4,6 +4,12 @@
 - Date : 2026-08-08
 - Décidé par : le fondateur, après une revue d'architecture menée sur le dépôt
 - **Remplace [ADR 0005](0005-scope-discovery-and-run.md)**
+- *État au 2026-11-23 : la borne reste vraie, mais le produit couvre bien moins que ce périmètre.
+  Les skills de Maintenance (`locator-repair`, `flaky-detect`, `confirm-fix`, `impact-select`,
+  `run-report`) ont été supprimées le 2026-10-26 par la
+  [refonte](../superpowers/specs/2026-08-24-qaia-refonte-design.md) : de l'outillage de CI qui
+  appartient à qui possède le lanceur. Il reste 4 skills ; la Maintenance n'est plus servie que par
+  `probe` (rapport d'anomalie, rejeu de trafic capturé).*
 
 ## Contexte, et le fait qu'il faut écrire en premier
 

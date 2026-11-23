@@ -20,7 +20,8 @@ commentaire, pas le lien, qui décide du sort du fil.
 ```
 Author here.
 
-QAIA is four Claude Code plugins (30 Markdown skills, MIT) that take a user story
+QAIA is three Claude Code plugins (4 Markdown skills plus readable, pinned Python
+scorers, MIT) that take a user story
 to a Gherkin test book with stable scenario IDs and a requirement coverage matrix,
 then to native Playwright tests. No API key, no backend, nothing installed into
 your repo that executes on its own — it runs inside your own Claude session on

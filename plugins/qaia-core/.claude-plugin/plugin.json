@@ -1,6 +1,6 @@
 {
   "name": "qaia-core",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "QAIA core: one skill, generate, from a user story or an OpenAPI spec to a prioritized, traceable, atomic Gherkin test book - ambiguities surfaced with IDs, ISTQB techniques justified per criterion, stable scenario IDs and a coverage matrix.",
   "author": {
     "name": "Cédric Moretti and QAIA contributors",

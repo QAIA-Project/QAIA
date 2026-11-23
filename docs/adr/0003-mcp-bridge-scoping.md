@@ -1,5 +1,8 @@
 # ADR 0003 — Note de cadrage : bridge MCP optionnel pour Cursor/Copilot (#42)
 
+- *État au 2026-11-23 : `mcp-bridge/` existe toujours, mais il ne sert que les `SKILL.md`, alors
+  que les quatre skills fusionnées gardent leurs étapes dans `references/` : un client du pont
+  reçoit le sommaire sans les pages (voir `mcp-bridge/README.md`, « Known gap », et #122).*
 - **Statut : accepté (D116, 2026-07-28) — option "Go, Option A+B, construit maintenant".** Le
   fondateur a explicitement levé la réserve post-pilote pour ce chantier précis (contrairement
   à #29/#30). Livré : `mcp-bridge/`. Voir D116 pour le détail complet.

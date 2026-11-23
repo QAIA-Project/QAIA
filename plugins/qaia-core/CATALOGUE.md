@@ -77,6 +77,6 @@ by external evidence. Locator repair, flakiness detection, run reports, fix conf
 impact selection: CI tooling that belongs to whoever owns the runner. The knowledge-base builder
 and the feedback loop: never once exercised by a real correction. The test plan and closure
 report, the synthetic dataset generator: documents for a reader who does not exist yet. The
-`qaia` router, `qaia-help` and `hello`: nothing left to route with three named entry points.
+`qaia` router, `qaia-help` and `hello`: nothing left to route with four named entry points.
 
 **No capability comes back without being measured on material QAIA did not write.**

@@ -109,7 +109,9 @@ QAIA, all verifiable by a stranger in five minutes:
 - **The failures are published too.** A generated suite runs on a GitHub Actions runner with **no
   Claude session and no skill loaded** ([run 30702503888](https://github.com/QAIA-Project/QAIA/actions/runs/30702503888));
   every number cited as measured points at the raw file it came from — including a benchmark that
-  concludes QAIA costs ~2.9× a direct prompt and does not find more.
+  concludes QAIA costs ~2.9× a direct prompt and does not find more (measured in July 2026 on the
+  six-skill journey, before it became one skill; not yet re-measured —
+  [#96](https://github.com/QAIA-Project/QAIA/issues/96)).
 
 **The honest counterweight:** QAIA is younger and far less used than any of them, **no human pilot
 has ever run it end to end**, and what it produces for a real user is unmeasured.
@@ -117,15 +119,17 @@ has ever run it end to end**, and what it produces for a real user is unmeasured
 
 ## Status and limits
 
-**Pre-alpha, in active development.** `qaia-core` 0.6.2 (1 skill, `generate`), `qaia-playwright` 0.3.1
-(2 skills, `automate` and `probe`), `qaia-score` 0.3.2 (**1 skill**, `judge`) — **4 skills** — all
+**Pre-alpha, in active development.** `qaia-core` 0.6.3 (1 skill, `generate`), `qaia-playwright` 0.3.2
+(2 skills, `automate` and `probe`), `qaia-score` 0.3.3 (**1 skill**, `judge`) — **4 skills** — all
 validating `--strict`, proven end-to-end on two independent domains: healthcare
 ([`examples/medibook/`](examples/medibook), 26 tests / 32 executions, all green) and finance/HR
 ([`examples/expense-demo/`](examples/expense-demo), 56 green tests, real bugs found during
 automation), plus a 24-case multi-model robustness corpus.
 
 - **It runs on your Claude quota.** Per-command cost is published per plugin, measured, and higher
-  than this project's own prior estimates on 13 of 14 commands.
+  than this project's own prior estimates on 13 of 14 commands — measured on the 0.2.35 commands,
+  before the journey became one skill; the merged skills have not been re-measured yet
+  ([#96](https://github.com/QAIA-Project/QAIA/issues/96)).
 - **No learning loop.** `generate` reads a git-versioned knowledge base in your repo, which your
   team keeps by hand. No model training, no central server.
 - **Web-first.** Mobile coverage means browser emulation, not native iOS/Android.
@@ -151,7 +155,8 @@ Honest state: [`docs/STATUS-en.md`](docs/STATUS-en.md) (two numbers that do not 
 | [`docs/STATUS.md`](docs/STATUS.md) | **Dashboard** — PASS rate on foreign test books, number of real users |
 | [`docs/ROADMAP.md`](docs/ROADMAP.md) | **Work order** (start here to continue the work) |
 | [`docs/DECISIONS.md`](docs/DECISIONS.md) | Every architectural decision up to D203, with its rationale and reservations — frozen since 2026-11-23 |
-| [`docs/adr/`](docs/adr/) | The seven ADRs that fix the scope boundaries |
+| [`docs/adr/`](docs/adr/) | The eight ADRs that fix the scope boundaries |
+| [`CHANGELOG.md`](CHANGELOG.md) | What changed in each plugin version |
 | [`docs/COMPETITIVE-ANALYSIS.md`](docs/COMPETITIVE-ANALYSIS.md) | Landscape review and QAIA's blind spots |
 | [`docs/OUTPUT-CONTRACT.md`](docs/OUTPUT-CONTRACT.md) | The run manifest every plugin shares |
 | [`docs/PILOT-KIT.md`](docs/PILOT-KIT.md) | 15-minute guided walkthrough for pilot testers |

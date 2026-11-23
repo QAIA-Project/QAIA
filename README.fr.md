@@ -1,6 +1,8 @@
 # QAIA — plateforme QA agentique, open source
 
 [![CI](https://github.com/QAIA-Project/QAIA/actions/workflows/ci.yml/badge.svg)](https://github.com/QAIA-Project/QAIA/actions/workflows/ci.yml)
+[![Generated suite in CI](https://github.com/QAIA-Project/QAIA/actions/workflows/generated-suite.yml/badge.svg)](https://github.com/QAIA-Project/QAIA/actions/workflows/generated-suite.yml)
+[![Release](https://img.shields.io/github/v/release/QAIA-Project/QAIA?include_prereleases&label=release)](https://github.com/QAIA-Project/QAIA/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Site](https://img.shields.io/badge/site-qaia--project.github.io-3b5bdb)](https://qaia-project.github.io/QAIA/)
 
@@ -111,7 +113,9 @@ le distinguent réellement, toutes vérifiables par un inconnu en cinq minutes :
   **sans session Claude ni skill chargée**
   ([run 30702503888](https://github.com/QAIA-Project/QAIA/actions/runs/30702503888)) ; chaque
   chiffre annoncé comme mesuré pointe vers le fichier brut dont il vient — y compris un benchmark
-  qui conclut que QAIA coûte ~2,9× un prompt direct et n'en trouve pas plus.
+  qui conclut que QAIA coûte ~2,9× un prompt direct et n'en trouve pas plus (mesuré en juillet
+  2026 sur le parcours à six skills, avant qu'il ne devienne une seule skill ; pas encore remesuré
+  — [#96](https://github.com/QAIA-Project/QAIA/issues/96)).
 
 **Le contrepoids honnête :** QAIA est plus jeune et bien moins utilisée que chacun d'eux, **aucun
 pilote humain ne l'a jamais menée de bout en bout**, et ce qu'elle produit pour un vrai
@@ -120,15 +124,17 @@ utilisateur reste non mesuré.
 
 ## État et limites
 
-**Pré-alpha, en développement actif.** `qaia-core` 0.6.2 (1 skill, `generate`), `qaia-playwright` 0.3.1
-(2 skills, `automate` et `probe`), `qaia-score` 0.3.2 (**1 skill**, `judge`) — **4 skills** —
+**Pré-alpha, en développement actif.** `qaia-core` 0.6.3 (1 skill, `generate`), `qaia-playwright` 0.3.2
+(2 skills, `automate` et `probe`), `qaia-score` 0.3.3 (**1 skill**, `judge`) — **4 skills** —
 validant tous `--strict`, prouvés bout-en-bout sur deux domaines indépendants : santé
 ([`examples/medibook/`](examples/medibook), 26 tests / 32 exécutions, tous verts) et finance/RH
 ([`examples/expense-demo/`](examples/expense-demo), 56 tests verts, vrais bugs trouvés pendant
 l'automatisation), plus un corpus de robustesse multi-modèles à 24 cas.
 
 - **L'outil consomme votre quota Claude.** Le coût par commande est publié, mesuré, et supérieur
-  aux estimations du projet lui-même sur 13 des 14 commandes.
+  aux estimations du projet lui-même sur 13 des 14 commandes — mesuré sur les commandes de la
+  0.2.35, avant que le parcours ne devienne une seule skill ; les skills fusionnées n'ont pas
+  encore été remesurées ([#96](https://github.com/QAIA-Project/QAIA/issues/96)).
 - **Pas de boucle d'apprentissage.** `generate` lit une base de connaissance versionnée dans votre
   dépôt, que votre équipe tient à la main. Pas d'entraînement de modèle, pas de serveur central.
 - **Web-first.** Le mobile signifie émulation navigateur, pas natif iOS/Android.
@@ -156,7 +162,8 @@ de 15 minutes sur une histoire toute prête, et la seule chose demandée en reto
 | [`docs/STATUS.md`](docs/STATUS.md) | **Tableau de bord** — taux de PASS sur cahiers étrangers, nombre d'utilisateurs réels |
 | [`docs/ROADMAP.md`](docs/ROADMAP.md) | **Ordre des travaux** (à lire pour reprendre le travail) |
 | [`docs/DECISIONS.md`](docs/DECISIONS.md) | Chaque décision d'architecture jusqu'à D203, avec sa raison et ses réserves — gelé depuis le 2026-11-23 |
-| [`docs/adr/`](docs/adr/) | Les sept ADR qui fixent les frontières de périmètre |
+| [`docs/adr/`](docs/adr/) | Les huit ADR qui fixent les frontières de périmètre |
+| [`CHANGELOG.md`](CHANGELOG.md) | Ce qui a changé à chaque version des plugins |
 | [`docs/COMPETITIVE-ANALYSIS.md`](docs/COMPETITIVE-ANALYSIS.md) | Revue du paysage et angles morts de QAIA |
 | [`docs/OUTPUT-CONTRACT.md`](docs/OUTPUT-CONTRACT.md) | Le manifeste de run partagé par tous les plugins |
 | [`docs/PILOT-KIT.md`](docs/PILOT-KIT.md) | Parcours guidé de 15 minutes pour pilotes |

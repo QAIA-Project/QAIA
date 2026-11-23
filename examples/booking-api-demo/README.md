@@ -1,5 +1,17 @@
 # booking-api-demo — le niveau API, de la clause du contrat au résultat d'exécution
 
+> **À lire avec les noms actuels (note ajoutée le 2026-11-23).** Cet exemple a été produit quand
+> chaque étape était une skill distincte, et son texte garde les noms de l'époque. Depuis, les
+> skills du parcours (`us-ingest`, `us-review`, `need-understanding`, `istqb-design`,
+> `oracle-generate`, `openapi-ingest`, `prioritize`, `testbook-generate`, `report`,
+> `testbook-export`) sont les étapes de `qaia-core:generate` ; les juges (`testbook-validate`,
+> `testbook-score`, `automation-score`, `spec-suite-drift`, `aptitude-gate`) sont des pages de
+> `qaia-score:judge` ; `contract-probe`, `traffic-replay`, `signal-ingest` et `defect-report` sont
+> des pages de `qaia-playwright:probe`. `rag-build`, `feedback`, `run-report` et les skills
+> d'accessibilité, sécurité, performance, visuel et utilisabilité ont été supprimées le
+> 2026-10-26. Les artefacts sont gardés tels qu'ils ont été produits. Carte :
+> [`CATALOGUE.md`](../../plugins/qaia-core/CATALOGUE.md).
+
 Cette démonstration existe pour une raison précise : jusqu'au 2026-08-11, QAIA produisait des tests
 d'API **sans jamais avoir décidé** qu'elle en produisait. Le niveau était deviné par `automate` au
 moment d'écrire le code ([ADR 0008](../../docs/adr/0008-test-level-is-a-design-property.md)). Ici, il
@@ -40,6 +52,9 @@ avant le serveur qui l'implémente. Le cahier a été dérivé de ce document et
 cd tests && npm install && npx playwright test
 23 passed (707ms)
 ```
+
+Depuis le 2026-11-23 (#108), cette suite tourne aussi à chaque push, dans le job `shipped-suites`
+de `.github/workflows/ci.yml`.
 
 **Aucun navigateur n'est lancé ni installé.** Le projet `api` est déclaré sans `browserName` et sans
 descripteur d'appareil, parce que le niveau du cahier l'impose : un moteur de rendu ne peut pas

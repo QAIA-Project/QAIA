@@ -88,6 +88,10 @@ CHECKER_SKILLS = {
     "spec-suite-drift",
     "aptitude-gate",
     "us-review",
+    # `judge` a absorbe les cinq skills de controle ci-dessus le 2026-08-24. Ses pages ecrivent
+    # encore le nom de la sous-etape (`testbook-score`, `aptitude-gate`) ; un manifeste signe du
+    # nom de la skill elle-meme est aussi legitime, et etait refuse avant cette ligne (2026-11-23).
+    "judge",
 }
 
 

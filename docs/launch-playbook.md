@@ -67,15 +67,17 @@ La démo sert les trois d'un coup. Tout post ramène à elle.
 >
 > Essaie : [lien /try.html]. #QualityAssurance #AI #testing
 
-## Ce qu'il faut pour que la démo soit *live*
+## La démo est *live*
 
-La page existe et est vérifiée, mais elle se déploie depuis `main` (GitHub Pages). Tant qu'elle
-n'est pas fusionnée dans `main`, l'URL `qaia-project.github.io/QAIA/try.html` ne répond pas.
-Merger la branche (ou ouvrir une PR) est le seul geste restant avant de poster.
+Vérifié le 2026-11-23 : `qaia-project.github.io/QAIA/try.html` et `/demo/` répondent (HTTP 200).
+Le site se déploie depuis `main` par `.github/workflows/pages.yml`, et depuis le même jour la CI
+teste l'arbre exactement tel qu'il est publié (job `shipped-suites`, script unique
+`.github/scripts/assemble-site.sh`). Plus rien ne bloque le premier post côté technique ; le geste
+de publication reste celui du fondateur.
 
 ## Checklist avant le premier post
 
-- [ ] La démo est live (`/try.html` répond).
+- [x] La démo est live (`/try.html` répond — vérifié le 2026-11-23).
 - [ ] Le lien du post pointe vers la démo, pas le README.
 - [ ] Aucune métrique inventée ; « pre-alpha » assumé.
 - [ ] Un appel clair à des **testeurs pilotes** (c'est le vrai besoin, gate G2).

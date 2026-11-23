@@ -1,8 +1,8 @@
 # qaia-score
 
-QAIA scoring plugin: **read-only** quality scoring and release-readiness gating of a QAIA test book or run. Applies the ISTQB-grounded 10-dimension rubric and a PASS/CONCERNS/FAIL/WAIVED aptitude gate over the standardized run manifest (`./OUTPUT-CONTRACT.md`, D39). Scores only — never generates or edits test content (no producer scores itself, rule 3).
+QAIA scoring plugin: **read-only** quality scoring and release-readiness gating of a QAIA test book or run. Applies the ISTQB-grounded 10-dimension rubric and a PASS/CONCERNS/FAIL/WAIVED release gate over the standardized run manifest (`./OUTPUT-CONTRACT.md`, D39). Scores only — never generates or edits test content (no producer scores itself, rule 3).
 
-**Status: 0.3.2, 1 skill.** Read-only over content: the only file these skills write is `.qaia/reports/<US-ID>/manifest.json`, and only its `gate` block.
+**Status: 0.3.3, 1 skill.** Read-only over content: the only file `judge` writes is `.qaia/reports/<US-ID>/manifest.json`, and only its `structural` and `gate` blocks.
 
 ## Install
 
@@ -37,9 +37,9 @@ See [`skills/README.md`](skills/README.md) for the full shared guardrails (read-
 ## Design commitments
 
 - **No self-scoring** (rule 3): a producer plugin never grades its own output — judgment lives here, separate from `qaia-core`/`qaia-playwright`.
-- **The universal scale is the default, and this is the plugin's whole point.** Judging books this project did not write is first-class, not a mode. Pointed at 257 Gherkin books written elsewhere, the old default returned **0 PASS** because 493 of its 666 findings were about conventions that do not exist in Gherkin; the universal default returns **102 PASS, median 77, 150 findings** on the same corpus. `--profile qaia` is the opt-in overlay, for books that carry `@QAIA-*` tags.
+- **The universal scale is the default, and this is the plugin's whole point.** Judging books this project did not write is first-class, not a mode. Pointed at Gherkin books written elsewhere (2026-08-24, 257 files), the old default returned **0 PASS** because 493 of its 666 findings were about conventions that do not exist in Gherkin. On the corpus as frozen and pinned since (244 files from 15 repositories, each pinned to a commit so anyone can replay it), the universal default returns **104 PASS** today ([dashboard](https://github.com/QAIA-Project/QAIA/blob/main/docs/STATUS-en.md)). `--profile qaia` is the opt-in overlay, for books that carry `@QAIA-*` tags.
 - **Deterministic score, separate from the LLM judge**: `judge` step 1 is a reproducible structural pass (readability, completeness, coherence, traceability, anti-fabrication sniffer, hollow/vague `Then` detectors) — never confused with the semantic LLM verdict.
 - **Human owns WAIVED**: a gate is never self-waived; only a recorded human decision (`by`/`reason`/`at`) turns CONCERNS/FAIL into WAIVED.
-- **Portable**: no network, no API key, no runtime — reads Markdown/JSON, writes JSON.
+- **Portable**: no network, no API key, no server — reads Markdown/JSON, writes JSON; the deterministic passes are the pinned Python scorers in [`scripts/`](scripts/), run in your session only when you invoke `judge`.
 
 See [`examples/scoring-demo/`](../../examples/scoring-demo) for a worked example.

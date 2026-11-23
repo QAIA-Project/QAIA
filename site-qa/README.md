@@ -59,11 +59,15 @@ fait échouer la CI. Le rendu n'est pas une reformulation, c'est une projection 
 cd site-qa/tests && npm install && npx playwright test
 ```
 
-Le serveur (`serve.js`) assemble `_site` comme le fait le workflow Pages : `site/` à la racine,
-`examples/expense-demo/static-demo/` sous `/demo/`. **C'est une duplication de règle assumée** —
-on ne peut pas appeler un workflow depuis un test. Ce qui la garde honnête est le scénario
-`QAIA-US-SITE-001-004` : si les deux assemblages cessent de coïncider, le sitemap et l'ensemble
-publié divergent, et le test le dit.
+**En CI, depuis le 2026-11-23 (#108)**, le job `shipped-suites` de `.github/workflows/ci.yml`
+assemble le site avec `.github/scripts/assemble-site.sh` — le même script que `pages.yml` utilise
+pour publier — puis lance les deux projets avec `SITE_ROOT` pointé sur cet arbre : ce qui est testé
+est exactement ce qui est publié.
+
+**En local, sans `SITE_ROOT`**, le serveur (`serve.js`) refait l'assemblage lui-même : `site/` à la
+racine, `examples/expense-demo/static-demo/` sous `/demo/`. C'est une duplication de règle, limitée
+au poste du développeur ; le scénario `QAIA-US-SITE-001-004` la garde honnête (si les deux
+assemblages divergent, le sitemap et l'ensemble servi divergent, et le test le dit).
 
 ## Les trois questions ouvertes, non tranchées
 

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>QAIA — Agentic QA for Claude Code: user story → Gherkin test book → Playwright tests</title>
-<meta name="description" content="Open-source Claude Code plugins that turn a user story into a traceable Gherkin test book and runnable Playwright tests. Markdown skills only — no API key, no backend, no code shipped into your repo.">
+<meta name="description" content="Open-source Claude Code plugins that turn a user story into a traceable Gherkin test book and runnable Playwright tests. Markdown skills and readable, pinned scorers — no API key, no backend, no code shipped into your repo.">
 <link rel="canonical" href="https://qaia-project.github.io/QAIA/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="QAIA — Agentic QA for Claude Code">
@@ -165,12 +165,13 @@
 
   <section id="what">
     <h2>Markdown skills. Nothing runs by itself.</h2>
-    <p class="lede">QAIA ships no code into your repository and no API key. The 4 skills are Markdown, invoked on demand inside your own Claude Code session on your own model quota. Installing it does not register a hook, an agent, or an MCP server that executes on its own. <span class="mono" style="font-size:.9em">(Precisely: the plugins also carry 51 non-Markdown files — plugin manifests, CI templates you copy, test fixtures, and the four Python files, three of which are <code>qaia-score</code>'s scorers. None of them runs at install or on its own; the scorers run when <em>you</em> invoke the scoring skill, with your permissions, and you can read or pin them first. <a href="https://github.com/QAIA-Project/QAIA/tree/main/plugins">Check for yourself</a>.)</span></p>
+    <p class="lede">QAIA ships no code into your repository and no API key. The 4 skills are Markdown, invoked on demand inside your own Claude Code session on your own model quota. Installing it does not register a hook, an agent, or an MCP server that executes on its own. <span class="mono" style="font-size:.9em">(Precisely: the plugins also carry 19 non-Markdown files — plugin manifests, CI templates you copy, test fixtures, and the four Python files, three of which are <code>qaia-score</code>'s scorers. None of them runs at install or on its own; the scorers run when <em>you</em> invoke the scoring skill, with your permissions, and you can read or pin them first. <a href="https://github.com/QAIA-Project/QAIA/tree/main/plugins">Check for yourself</a>.)</span></p>
     <pre><span class="cmt"># in Claude Code</span>
 /plugin marketplace add https://github.com/QAIA-Project/QAIA
 /plugin install qaia-core@qaia          <span class="cmt"># user story → Gherkin test book</span>
-/plugin install qaia-playwright@qaia    <span class="cmt"># optional: runnable tests, contract probing</span></pre>
-    <p class="lede" style="margin-top:14px"><code>qaia-core</code> alone gets you from a user story to a test book. Then say <em>"work with QAIA on this user story"</em> — the <code>qaia</code> meta-skill routes to the right step and stops wherever a human has to decide.</p>
+/plugin install qaia-playwright@qaia    <span class="cmt"># optional: runnable tests, contract probing</span>
+/plugin install qaia-score@qaia         <span class="cmt"># optional: judge any test book or suite, release gate</span></pre>
+    <p class="lede" style="margin-top:14px"><code>qaia-core</code> alone gets you from a user story to a test book. Then say <em>"write the tests for this user story"</em> — the <code>generate</code> skill carries the journey step by step and stops wherever a human has to decide.</p>
   </section>
 
   <section id="how">
@@ -309,6 +310,7 @@ Scenario: A line at exactly the receipt
       <li>On strict recall of the planted ambiguities, <strong>the direct prompt matched or slightly beat QAIA on that run.</strong> "It finds more" is not a claim this benchmark supports.</li>
       <li>What did separate them: the direct prompt silently invented 4 business rules and mixed them into the output. The QAIA arm invented none, and every assumption it made is traceable to a numbered question.</li>
       <li>Honest limit, stated in the file: <strong>N=1 per arm.</strong> One run is not an average.</li>
+      <li>And a second one: it was measured in July 2026 on the journey as <strong>six separate skills</strong>. It is one skill now, and <strong>its cost has not been re-measured yet</strong> (<a href="https://github.com/QAIA-Project/QAIA/issues/96">#96</a>). Until it is, 2.9× is the only number we have.</li>
     </ul>
     <p class="lede" style="margin-top:14px">So the value proposition is narrow and worth stating as such: <em>structure and verifiability, at roughly three times the token cost.</em> If that trade is wrong for your work, a direct prompt is a legitimate answer and this page would rather you knew.
     <br><a href="https://github.com/QAIA-Project/QAIA/blob/main/eval/baselines/qaia-vs-direct-prompt-benchmark-2026-07-28.md">Read the full benchmark, including its verdict against us →</a></p>
@@ -344,7 +346,7 @@ Scenario: A line at exactly the receipt
       <li><strong>"Learning" means local files.</strong> Feedback enriches a git-versioned knowledge base in your repo. No model training, no central server, nothing leaves your session beyond what you already send to Claude.</li>
       <li><strong>Web-first.</strong> Mobile coverage means browser emulation, not native iOS/Android.</li>
       <li><strong>Not a regulatory claim.</strong> The healthcare-shaped example proves traceability on a healthcare-<em>shaped</em> domain. It maps no actual framework — not IEC&nbsp;62304, not 21&nbsp;CFR&nbsp;Part&nbsp;11, not ISO&nbsp;13485.</li>
-      <li><strong>Zero adoption.</strong> At the time of writing: no stars, no forks, single-digit unique visitors. Its neighbours have between 11 and 2,994 stars. You would be early, with everything that implies. If you want a better prompt today, one of those alternatives is one command away and it works — <a href="./compare.html">we say which, and when</a>.</li>
+      <li><strong>Zero adoption.</strong> At the time of writing (23 November 2026): no stars, one fork, single-digit unique visitors. Its neighbours have between 11 and 2,994 stars. You would be early, with everything that implies. If you want a better prompt today, one of those alternatives is one command away and it works — <a href="./compare.html">we say which, and when</a>.</li>
     </ul>
   </section>
 

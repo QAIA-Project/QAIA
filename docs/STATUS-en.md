@@ -44,5 +44,5 @@ The number that matters most, and the only one no commit can move: it depends on
 
 ## What the product is today
 
-**4 skills, 3 plugins**: `qaia-core` 0.6.2 (`generate`), `qaia-playwright` 0.3.1 (`automate`,
-`probe`), `qaia-score` 0.3.2 (`judge`). Pre-alpha.
+**4 skills, 3 plugins**: `qaia-core` 0.6.3 (`generate`), `qaia-playwright` 0.3.2 (`automate`,
+`probe`), `qaia-score` 0.3.3 (`judge`). Pre-alpha.

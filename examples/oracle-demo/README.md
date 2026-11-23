@@ -1,5 +1,16 @@
 # Oracle demo — standards as test-case generators
 
+> **Read with the current names (note added 2026-11-23).** This example was produced when each step
+> was a separate skill, and its text keeps the names of the time. Since then the journey skills
+> (`us-ingest`, `us-review`, `need-understanding`, `istqb-design`, `oracle-generate`,
+> `openapi-ingest`, `prioritize`, `testbook-generate`, `report`, `testbook-export`) are the steps of
+> `qaia-core:generate`; the scorers (`testbook-validate`, `testbook-score`, `automation-score`,
+> `spec-suite-drift`, `aptitude-gate`) are pages of `qaia-score:judge`; `contract-probe`,
+> `traffic-replay`, `signal-ingest` and `defect-report` are pages of `qaia-playwright:probe`.
+> `rag-build`, `feedback`, `run-report`, `a11y-audit`, `security-surface`, `perf-check`,
+> `visual-check`, `usability-heuristic-review` and `flaky-detect` were deleted on 2026-10-26. The
+> artifacts below are kept exactly as they were produced. Map: [`CATALOGUE.md`](../../plugins/qaia-core/CATALOGUE.md).
+
 Demonstrates `qaia-core:oracle-generate` (issue #16, founder's idea): when a US touches a standardized domain, an **oracle** supplies grounded test cases *and* their correct expected results — instead of guessing.
 
 Here the US only said "validate the card number". The **Luhn** oracle (ISO/IEC 7812) supplied:

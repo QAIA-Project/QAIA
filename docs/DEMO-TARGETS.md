@@ -1,10 +1,10 @@
 # Demo & practice targets for QAIA
 
-Vetted catalog of public apps and GitHub lists to exercise QAIA on real software. **Golden rule:** *explore* on shared public demos; run *security scans and load tests only on self-hosted* instances (Docker/npm/VPS) — shared demos forbid them, and offline CI can't reach them. Self-hosting (a VPS such as **OVH**, Docker, or a local server) lifts both limits.
+Vetted catalog of public apps and GitHub lists to exercise QAIA on real software. `probe` cites this file as its list of authorised targets. The Security, Perf, A11y and Visual columns date from the 37-skill catalogue: those disciplines left the product on 2026-10-26, and the columns stay as information on what each target permits. **Golden rule:** *explore* on shared public demos; run *security scans and load tests only on self-hosted* instances (Docker/npm/VPS) — shared demos forbid them, and offline CI can't reach them. Self-hosting (a VPS such as **OVH**, Docker, or a local server) lifts both limits.
 
 ## Recommended pairing
 
-- **Medical (project niche): OpenEMR** — GPL-3.0, very active (release 8.2.0, Jul 2026). Rich clinical UI, **REST + FHIR R4 API with Swagger**, multi-role demo creds (`admin`/`pass`), official Docker for self-host. Demos: `one.openemr.io/d/openemr` (reset daily 08:30 UTC). Medical US ideas: appointment booking, prescription with allergy check, FHIR Patient/Observation OAuth2 flow — test data = synthetic patients (Synthea-style), never real.
+- **Healthcare-shaped: OpenEMR** — GPL-3.0, very active (release 8.2.0, Jul 2026). Rich clinical UI, **REST + FHIR R4 API with Swagger**, multi-role demo creds (`admin`/`pass`), official Docker for self-host. Demos: `one.openemr.io/d/openemr` (reset daily 08:30 UTC). Medical US ideas: appointment booking, prescription with allergy check, FHIR Patient/Observation OAuth2 flow — test data = synthetic patients (Synthea-style), never real.
 - **Generalist: Practice Software Testing (Toolshop)** — modern Angular SPA + Swagger API + a deliberately buggy variant. UI `practicesoftwaretesting.com`, API `api.practicesoftwaretesting.com`. ⚠ repo license is now restrictive for self-hosting — verify before hosting.
 
 ## Coverage matrix (verified via project READMEs, 2026-07)
@@ -59,4 +59,4 @@ Already in the verified catalog above under different names: SauceDemo, DemoBlaz
 - **Targets under test**: a VPS (OVH, etc.), Docker, or Codespaces for a full app with backend/API — required for security & load testing.
 - **A public QAIA showcase/doc**: GitHub Pages (static) suffices; GitHub Actions runs the CI + Playwright suite; GitHub itself does not host a persistent backend.
 
-See `examples/medibook/` for a fully worked, executable example (local self-hosted app + POM automation, 24 tests green).
+See `examples/medibook/` for a fully worked, executable example (local self-hosted app + POM automation, 26 tests / 32 executions, all green).

@@ -1,5 +1,16 @@
 # Scoring demo — the output contract and `qaia-score` end to end
 
+> **Read with the current names (note added 2026-11-23).** This example was produced when each step
+> was a separate skill, and its text keeps the names of the time. Since then the journey skills
+> (`us-ingest`, `us-review`, `need-understanding`, `istqb-design`, `oracle-generate`,
+> `openapi-ingest`, `prioritize`, `testbook-generate`, `report`, `testbook-export`) are the steps of
+> `qaia-core:generate`; the scorers (`testbook-validate`, `testbook-score`, `automation-score`,
+> `spec-suite-drift`, `aptitude-gate`) are pages of `qaia-score:judge`; `contract-probe`,
+> `traffic-replay`, `signal-ingest` and `defect-report` are pages of `qaia-playwright:probe`.
+> `rag-build`, `feedback`, `run-report`, `a11y-audit`, `security-surface`, `perf-check`,
+> `visual-check`, `usability-heuristic-review` and `flaky-detect` were deleted on 2026-10-26. The
+> artifacts below are kept exactly as they were produced. Map: [`CATALOGUE.md`](../../plugins/qaia-core/CATALOGUE.md).
+
 An **illustrative** walk-through of the standardized run manifest (`docs/OUTPUT-CONTRACT.md`,
 D39) and the `qaia-score` plugin (D40). The numbers here are representative, not a fresh
 measurement of a specific run — they exist to show the shape of the contract and how the two

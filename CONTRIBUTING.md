@@ -18,7 +18,7 @@ Skills are prompts that drive the user's Claude session with the user's permissi
 - the **evaluation harness (`eval/`) must be green before merge** for any change to generation skills — not merely before release. What lands on the default branch is what installers get;
 - it must not introduce network calls, external fetch targets, or instructions to run commands unrelated to the stated purpose;
 - **hooks, MCP servers, and agent definitions are not accepted in the core plugins** (CI enforces this on `plugins/**`): they auto-execute code in installers' environments. Per **ADR 0002 / D42**, they are not banned outright — they belong in a **separate opt-in tier** (its own package, never installed by the core, disabled by default, documenting exactly what it executes), each component carrying the traced adversarial review above, and only **after the core is pilot-proven** (founding lesson #2: unknown public). Propose them in an issue first.
-- **In-session Python is welcome** (ADR 0002 / D42): a skill may materialize and run a throwaway script in the user's session (their permissions, their eyes) to get deterministic results — e.g. the structural scorer. This ships **no** code (the plugin stays 100% Markdown), so it is not a hook/MCP/agent and the supply-chain guard is unaffected.
+- **Pinned Python that runs only when invoked is accepted** (ADR 0002 / D42): since 2026-08-09, `qaia-score` ships its deterministic scorers as readable Python under `plugins/qaia-score/scripts/`, run in the user's session (their permissions, their eyes) only when they invoke `judge`. These files are copies of `eval/tools/`, kept identical by `eval/tools/ship_scorers.py` and checked in CI; change the `eval/tools/` source and re-run the sync, never edit the shipped copy. Nothing runs at install or on its own, so this is not a hook/MCP/agent.
 
 ## Contributing elsewhere
 
@@ -29,7 +29,7 @@ Docs, translations, gold set user stories, rubric improvements, bug reports and 
 The GitHub **board is the source of truth for open work** — keep it in sync with reality *as you go*, not only at the end:
 
 - **File an issue the moment you discover a gap, defect class, or idea** — mid-work, not at review time. A finding that lives only in a commit message or a doc is a finding that will be lost.
-- Docs record *decisions and measurements* (`docs/DECISIONS.md`, `eval/baselines/`); **issues track what remains open**. Both, always.
+- Docs record *measurements* (`eval/<campaign>/REPORT.md`, `eval/baselines/`) and the *work order* (`docs/ROADMAP.md`); **issues track what remains open**. Both, always. `docs/DECISIONS.md` is frozen since 2026-11-23 (D203): a decision now lives in the issue or the commit that carries it.
 - Close an issue only with a one-line proof of delivery; if its exit criterion routes through a human gate (pilots), mark it "build-complete, pending &lt;gate&gt;", never "done".
 - Run `/session-review` at the end of a working session to verify, measure, sync the board, and deliver the branch.
 
@@ -41,4 +41,6 @@ The GitHub **board is the source of truth for open work** — keep it in sync wi
 
 ## Releases
 
-Skills are versioned per plugin (SemVer — bump `plugin.json`'s `version`, it is the value installers see). The evaluation harness runs green **before merging** any generation-skill change; a release additionally records the scores as the new baseline in `eval/baselines/`.
+Skills are versioned per plugin (SemVer — bump `plugin.json`'s `version`, it is the value installers see). A version bump also updates the version claims in the plugin's README, the root READMEs and `docs/STATUS.md` (`eval/tools/check_skill_counts.py` fails otherwise) and adds an entry to [`CHANGELOG.md`](CHANGELOG.md). The evaluation harness runs green **before merging** any generation-skill change; a release additionally records the scores as the new baseline in `eval/baselines/`.
+
+Before pushing, run `make check` (the deterministic checks the CI runs; on a machine without `make`, run the `python` lines of the `check` target one by one).

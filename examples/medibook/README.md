@@ -1,6 +1,6 @@
 # Example — MediBook: full QAIA chain against a real running app
 
-This is an **end-to-end worked example** (Sprint 5): a small but real teleconsultation booking app (the SUT — System Under Test), the QAIA-designed test book, and the executable Playwright automation that runs against it — proving requirement → scenario → automated test traceability on live software, not just on paper.
+This is an **end-to-end worked example** (Sprint 5, July 2026): a small but real teleconsultation booking app (the SUT — System Under Test), the QAIA-designed test book, and the executable Playwright automation that runs against it — proving requirement → scenario → automated test traceability on live software, not just on paper.
 
 The SUT implements the acceptance criteria of `eval/gold-set/US-001-appointment-booking.md`, so the generated Gherkin scenarios (`@QAIA-US-001-xxx`) map to real, executable behavior.
 
@@ -16,7 +16,7 @@ cd app && node server.js          # http://localhost:4400
 
 # 2. in another shell, run the automation
 cd tests && npm install
-npx playwright test               # 24 tests: e2e desktop + mobile, api, a11y, visual
+npx playwright test               # 26 tests, 32 executions: e2e desktop + mobile, api, security, perf, a11y, visual
 ```
 
 ## What it demonstrates
@@ -27,6 +27,8 @@ npx playwright test               # 24 tests: e2e desktop + mobile, api, a11y, v
 | API | `tests/api.booking.spec.js` | REST-level AC checks (filters, 2h/4h/3-cap boundaries, race → 409, minor rules, auth, audit) |
 | Accessibility | `tests/a11y.booking.spec.js` | axe-core, WCAG 2 A/AA, zero serious/critical violations |
 | Visual | `tests/visual.booking.spec.js` | Screenshot baselines (login, booking) |
+| Security surface | `tests/security.booking.spec.js` | Missing / forged token → 401, IDOR on cancellation, malformed body does not 500, no user enumeration at login |
+| Performance | `tests/perf.slots.spec.js` | p95 latency budget on `GET /slots`, consistency of concurrent bookings — self-hosted only |
 | Mobile | `e2e-mobile` project | Browser emulation (Pixel 7) — **native iOS/Android is out of scope, honest per decision D100** |
 
 ## Design notes
@@ -39,4 +41,4 @@ npx playwright test               # 24 tests: e2e desktop + mobile, api, a11y, v
 
 1. **Flaky test → shared-state race**: the booking test failed intermittently (desktop, then mobile). Root cause was not the app but the **test infra**: parallel workers hitting one SUT with global in-memory state, each `/api/reset` stomping another test. Fix: `workers: 1` (serialize) — documented in `playwright.config.js`. Lesson: a mutable shared SUT requires serial execution or per-test isolation.
 2. **Browser version pinning**: the preinstalled Chromium (build 1194) mismatched the freshly installed Playwright's expectation → `executablePath` pinned in config.
-3. After both fixes: **24/24 green, deterministic across repeated runs.**
+3. After both fixes: **24/24 green, deterministic across repeated runs** (the count at the time; the security and performance files were added later, bringing the suite to 26 tests and 32 executions).

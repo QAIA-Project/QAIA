@@ -1,5 +1,20 @@
 # Veille concurrentielle — QAIA (2026-07-25)
 
+> **Ce document est un journal de veille : chaque section porte sa date et décrit QAIA tel qu'il
+> était ce jour-là.** Depuis, la [refonte du 2026-08-24](superpowers/specs/2026-08-24-qaia-refonte-design.md)
+> a changé le produit ; là où une section datée dit autre chose, ceci l'emporte (état au
+> 2026-11-23) :
+>
+> - **4 skills, 3 plugins** (`generate` ; `automate`, `probe` ; `judge`), pas 23, 30 ou 37 ; trois
+>   commandes d'installation, pas quatre. Accessibilité, sécurité, performance, utilisabilité et
+>   régression visuelle ont quitté le produit le 2026-10-26.
+> - **Pas « 100 % Markdown »** : depuis le 2026-08-09, `qaia-score` livre ses scoreurs en Python
+>   lisible et épinglé, qui ne s'exécute que lorsque l'utilisateur invoque `judge`. Rien ne
+>   s'exécute à l'installation ; aucun hook, agent ou serveur MCP.
+> - **Le coût** (~2,9× un prompt direct) a été mesuré sur le parcours à six skills, avant la
+>   fusion ; il n'a pas été remesuré ([#96](https://github.com/QAIA-Project/QAIA/issues/96)).
+> - **Toujours 0 étoile et 0 pilote** ([`STATUS.md`](STATUS.md)).
+
 Demande fondateur (D67, mandat élargi post-M0) : regarder ce qui existe déjà sur le marché
 dans l'espace "IA agentic pour le test logiciel" avant de remodeler le backlog. Recherche web
 réelle (WebSearch/WebFetch, ~10 sources), pas de mémoire — le terrain évolue vite.

@@ -19,8 +19,9 @@ Run the QAIA journey on a ready-made user story, get a Gherkin test book, and te
 /plugin marketplace add QAIA-Project/QAIA
 /plugin install qaia-core@qaia
 /reload-plugins
-/qaia-core:hello        # should confirm it's installed
 ```
+
+`/plugin` then lists `qaia-core` among the installed plugins; its one skill is `generate`.
 
 ## Step 2 — Pick a story (1 min)
 
@@ -33,7 +34,9 @@ Two ways:
 
 In Claude Code, just say:
 
-> Use the QAIA `us-ingest` skill on `docs/pilot/US-001-appointment-booking.md`, then walk me through the journey.
+> Use QAIA's `generate` skill on `docs/pilot/US-001-appointment-booking.md` and walk me through the journey.
+
+(Or simply: *"write the tests for the user story in `docs/pilot/US-001-appointment-booking.md`"* — `generate` is the skill that answers that.)
 
 > **Why this copy and not the gold-set file.** The original carries a `## Judge reference`
 > section that **lists the ambiguities planted on purpose**. Ingesting it would hand you the answer
@@ -45,7 +48,7 @@ In Claude Code, just say:
 
 The tool will, step by step, ask you to validate each stage: the captured source, the extraction, the ambiguities it found (answer or say "not specified"), the ISTQB techniques, the priorities, and finally generate the test book. **Say yes/no/correct as a real reviewer would** — that's exactly the conversational path we need to validate.
 
-You end with `.qaia/testbooks/US-001/` containing `.feature` files, a coverage matrix, and a synthesis.
+You end with `.qaia/testbooks/US-001/` containing `.feature` files, a coverage matrix, and a synthesis, plus the run manifest in `.qaia/reports/US-001/manifest.json`. The step-by-step checkpoints are in `.qaia/state/US-001/`, so an interrupted session can resume where it stopped.
 
 ## Step 4 — Tell us what's wrong (2 min)
 

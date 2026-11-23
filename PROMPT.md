@@ -1,6 +1,12 @@
 # Prompt — QAIA : plateforme QA agentic open source
 
-> Prompt fondateur du projet. Copiable tel quel dans une session Claude (ou tout autre agent) pour cadrer le projet. Les décisions actées en discovery sont dans `docs/DECISIONS.md`.
+> Prompt fondateur du projet, **gardé tel qu'il a été écrit en juillet 2026**. Les décisions actées en discovery sont dans `docs/DECISIONS.md` (gelé depuis le 2026-11-23).
+>
+> **Ce qui a changé depuis, et qui l'emporte sur ce texte** :
+> - la niche « logiciel médical / environnements réglementés » (§3) a été retirée (D114) : QAIA ne cartographie aucun référentiel réglementaire ;
+> - le parcours en neuf étapes (§4) n'est plus une suite de skills : c'est une seule skill, `generate`, dont chaque étape est une page ; la construction du RAG et le mode feedback (étapes 4 et 9) ont été supprimés le 2026-10-26, faute d'avoir jamais été exercés par une vraie correction ;
+> - « autant d'agents que nécessaire » (§3) a donné 37 skills, ramenées à 4 par la [refonte du 2026-08-24](docs/superpowers/specs/2026-08-24-qaia-refonte-design.md) ; performance, sécurité et accessibilité ont été retirées du produit ;
+> - l'ordre des travaux est dans [`docs/ROADMAP.md`](docs/ROADMAP.md), l'état dans [`docs/STATUS.md`](docs/STATUS.md).
 
 ---
 
