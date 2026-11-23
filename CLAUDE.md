@@ -51,7 +51,13 @@ supprime l'occasion.
 ```bash
 python eval/tools/gh_comment.py --file corps.md --issue 88
 python eval/tools/gh_comment.py --file corps.md --comment-id 5228083941
+python eval/tools/gh_comment.py --file corps.md --new-issue --title-file titre.txt
 ```
+
+**Le titre aussi passe par un fichier** (trouvé le 2026-11-23) : trois titres accentués passés en
+`--title` depuis Git Bash sont arrivés sur GitHub encodés deux fois (« reÃ§oit »), sans que la
+vérification le voie — elle comparait au même argument déjà abîmé. L'outil refuse désormais un
+titre qui porte cette signature ; `--title-file` l'évite à la source.
 
 L'outil relit le commentaire **depuis l'API** après publication et le compare au fichier : si quoi
 que ce soit a été mangé en route, il échoue en montrant la première ligne divergente, au moment où

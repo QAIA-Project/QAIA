@@ -27,6 +27,13 @@ Le second point est le plus important : c'est la regle que ce depot applique par
     python eval/tools/gh_comment.py --file corps.md --issue 88
     python eval/tools/gh_comment.py --file corps.md --comment-id 5228083941
     python eval/tools/gh_comment.py --file corps.md --new-issue --title "..." --repo owner/nom
+    python eval/tools/gh_comment.py --file corps.md --new-issue --title-file titre.txt
+
+`--title-file` est la forme sure pour un titre accentue. Trouve le 2026-11-23 : trois titres passes
+en `--title` depuis Git Bash sous Windows sont arrives a GitHub encodes deux fois (« reÃ§oit »),
+et la verification ne l'a pas vu, parce qu'elle comparait le titre publie a l'argument -- deja
+abime avant d'entrer dans Python. Le titre lu d'un fichier UTF-8 ne traverse pas le shell ; et un
+titre qui porte la signature d'un double encodage est maintenant refuse avant tout envoi.
 
 `--repo` vise un depot tiers. La verification apres coup compte double la-bas : une issue ouverte
 chez quelqu'un d'autre ne se corrige pas discretement, elle arrive deja dans sa boite mail.
@@ -50,6 +57,20 @@ CR, LF = chr(13), chr(10)
 def norm(t):
     """GitHub renvoie du CRLF ; le fichier peut etre en LF. Comparer le texte, pas les octets."""
     return t.replace(CR + LF, LF).replace(CR, LF).strip()
+
+
+def looks_double_encoded(t):
+    """Du UTF-8 relu comme cp1252 (« reÃ§oit » pour « reçoit »).
+
+    Le texte est reencode en cp1252 puis redecode en UTF-8 : si les deux reussissent et que le
+    texte change, c'etait un double encodage. Un titre sain (accents, fleches) echoue a l'une des
+    deux etapes, ou revient identique, et passe.
+    """
+    try:
+        fixed = t.encode("cp1252").decode("utf-8")
+    except (UnicodeEncodeError, UnicodeDecodeError):
+        return False
+    return fixed != t
 
 
 def call(url, payload=None, method=None):
@@ -78,13 +99,23 @@ def main():
     g.add_argument("--issue", type=int, help="numero d'issue : cree un commentaire")
     g.add_argument("--comment-id", type=int, help="identifiant de commentaire : le remplace")
     g.add_argument("--new-issue", action="store_true", help="cree une issue (exige --title)")
-    ap.add_argument("--title", help="titre, obligatoire avec --new-issue")
+    ap.add_argument("--title", help="titre (ou --title-file), obligatoire avec --new-issue")
+    ap.add_argument("--title-file", help="fichier UTF-8 dont la premiere ligne est le titre")
     ap.add_argument("--repo", help="depot cible owner/nom (defaut : QAIA-Project/QAIA)")
     args = ap.parse_args()
 
     api = "https://api.github.com/repos/" + (args.repo or REPO)
+    if args.title_file:
+        if not os.path.isfile(args.title_file):
+            print("BROKEN: fichier de titre introuvable : %s" % args.title_file)
+            return 2
+        args.title = io.open(args.title_file, encoding="utf-8").read().strip().splitlines()[0].strip()
     if args.new_issue and not args.title:
-        print("BROKEN: --new-issue exige --title.")
+        print("BROKEN: --new-issue exige --title ou --title-file.")
+        return 2
+    if args.title and looks_double_encoded(args.title):
+        print("BROKEN: le titre porte la signature d'un double encodage UTF-8 (%r) ; "
+              "passer le titre par --title-file." % args.title)
         return 2
 
     if not os.path.isfile(args.file):
