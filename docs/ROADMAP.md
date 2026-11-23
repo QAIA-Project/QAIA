@@ -85,8 +85,11 @@ sortant ; **C** est le travail de décision du fondateur.
    sur le corpus rejoué, invariant I11. **Mais** 6 des 15 dépôts gelés ont bougé : le 101 de
    référence n'est plus rejouable, et la cible ne peut pas être déclarée atteinte tant que le
    corpus n'est pas re-figé (#119).
-2. **#111 — la mesure préalable** : combien des constats `json-server` la face `probe` seule
-   aurait-elle atteints ? C'est ce qui permet au fondateur de trancher `automate`.
+2. **#111 — la mesure préalable.** *Faite le 2026-11-23*
+   ([rapport](../eval/probe-vs-testbook-2026-11-23/REPORT.md)) : `probe` seul, mené à l'aveugle,
+   trouve **1 des 2** défauts d'origine et **2 que le cahier avait manqués** — 3 défauts réels,
+   tous corrigés depuis par le mainteneur. Les deux défauts d'origine venaient du cahier, pas de
+   Playwright. La décision reste au fondateur (section C).
 3. **#96 — le coût** de `generate` d'un seul tenant contre un prompt direct, même protocole que
    le benchmark du 2026-07-28.
 
