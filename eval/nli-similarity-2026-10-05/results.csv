@@ -1,0 +1,131 @@
+partie,id,texte_a,texte_b,metrique,valeur,publie_ou_attendu,ecart_ou_delta
+A,C1-V1,"Trajet confortable pour les enfants, avec un changement à Paris.",Voyage adapté aux familles avec correspondance parisienne.,lev,0.234375,0.25,-0.015625
+A,C1-V1,"Trajet confortable pour les enfants, avec un changement à Paris.",Voyage adapté aux familles avec correspondance parisienne.,tfidf,0.06804963087832473,0.068,4.9630878324727346e-05
+A,C1-V1,"Trajet confortable pour les enfants, avec un changement à Paris.",Voyage adapté aux familles avec correspondance parisienne.,emb,0.7792590260505676,0.761,0.018259026050567617
+A,C1-V1,"Trajet confortable pour les enfants, avec un changement à Paris.",Voyage adapté aux familles avec correspondance parisienne.,lev_indel_diagnostic,0.42622950819672134,,
+A,C1-V2,"Trajet confortable pour les enfants, avec un changement à Paris.","Un trajet idéal pour les familles, avec une correspondance à Paris-Montparnasse.",lev,0.42500000000000004,0.425,5.551115123125783e-17
+A,C1-V2,"Trajet confortable pour les enfants, avec un changement à Paris.","Un trajet idéal pour les familles, avec une correspondance à Paris-Montparnasse.",tfidf,0.4360379885513016,0.436,3.798855130160428e-05
+A,C1-V2,"Trajet confortable pour les enfants, avec un changement à Paris.","Un trajet idéal pour les familles, avec une correspondance à Paris-Montparnasse.",emb,0.6734215617179871,0.647,0.02642156171798704
+A,C1-V2,"Trajet confortable pour les enfants, avec un changement à Paris.","Un trajet idéal pour les familles, avec une correspondance à Paris-Montparnasse.",lev_indel_diagnostic,0.6111111111111112,,
+A,C1-V3,"Trajet confortable pour les enfants, avec un changement à Paris.",Réservez votre billet de train pour la Normandie dès maintenant.,lev,0.15625,0.172,-0.015749999999999986
+A,C1-V3,"Trajet confortable pour les enfants, avec un changement à Paris.",Réservez votre billet de train pour la Normandie dès maintenant.,tfidf,0.05629715757507138,0.056,0.0002971575750713787
+A,C1-V3,"Trajet confortable pour les enfants, avec un changement à Paris.",Réservez votre billet de train pour la Normandie dès maintenant.,emb,0.38766855001449585,0.428,-0.04033144998550414
+A,C1-V3,"Trajet confortable pour les enfants, avec un changement à Paris.",Réservez votre billet de train pour la Normandie dès maintenant.,lev_indel_diagnostic,0.421875,,
+A,C2-V1,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Établissement tranquille au cœur de Coutances, avec vue mer et formule petit-déjeuner.",lev,0.2558139534883721,0.264,-0.008186046511627909
+A,C2-V1,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Établissement tranquille au cœur de Coutances, avec vue mer et formule petit-déjeuner.",tfidf,0.19261467065293905,0.193,-0.0003853293470609531
+A,C2-V1,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Établissement tranquille au cœur de Coutances, avec vue mer et formule petit-déjeuner.",emb,0.6756795644760132,0.479,0.1966795644760132
+A,C2-V1,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Établissement tranquille au cœur de Coutances, avec vue mer et formule petit-déjeuner.",lev_indel_diagnostic,0.43137254901960786,,
+A,C2-V2,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Hôtel situé en plein centre, paisible, avec panorama sur l'océan et buffet matinal.",lev,0.3614457831325302,0.361,0.0004457831325301864
+A,C2-V2,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Hôtel situé en plein centre, paisible, avec panorama sur l'océan et buffet matinal.",tfidf,0.19261467065293908,0.193,-0.00038532934706092536
+A,C2-V2,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Hôtel situé en plein centre, paisible, avec panorama sur l'océan et buffet matinal.",emb,0.88399338722229,0.859,0.024993387222290053
+A,C2-V2,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Hôtel situé en plein centre, paisible, avec panorama sur l'océan et buffet matinal.",lev_indel_diagnostic,0.4933333333333333,,
+A,C2-V3,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Parking gratuit, accès autoroute, idéal pour les voyageurs d'affaires.",lev,0.17142857142857137,0.186,-0.014571428571428624
+A,C2-V3,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Parking gratuit, accès autoroute, idéal pour les voyageurs d'affaires.",tfidf,0.0,0.0,0.0
+A,C2-V3,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Parking gratuit, accès autoroute, idéal pour les voyageurs d'affaires.",emb,0.4034808278083801,0.425,-0.021519172191619862
+A,C2-V3,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Parking gratuit, accès autoroute, idéal pour les voyageurs d'affaires.",lev_indel_diagnostic,0.37956204379562036,,
+A,C3,Le patient ne présente aucune contre-indication au traitement.,Le patient présente plusieurs contre-indications au traitement.,lev,0.8253968253968254,0.825,0.0003968253968253954
+A,C3,Le patient ne présente aucune contre-indication au traitement.,Le patient présente plusieurs contre-indications au traitement.,tfidf,0.5507796339456278,0.551,-0.00022036605437225631
+A,C3,Le patient ne présente aucune contre-indication au traitement.,Le patient présente plusieurs contre-indications au traitement.,emb,0.4554344415664673,0.456,-0.0005655584335327313
+A,C3,Le patient ne présente aucune contre-indication au traitement.,Le patient présente plusieurs contre-indications au traitement.,lev_indel_diagnostic,0.88,,
+B,B1 C2-V1 sans « de Coutances »,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Établissement tranquille au cœur de la ville, avec vue mer et formule petit-déjeuner.",emb,0.8049454689025879,,0.1292659044265747
+B,B2a C2-V1 Coutances→Cherbourg,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Établissement tranquille au cœur de Cherbourg, avec vue mer et formule petit-déjeuner.",emb,0.7304362058639526,,0.05475664138793945
+B,B2b C2-V1 Coutances→Lyon,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Établissement tranquille au cœur de Lyon, avec vue mer et formule petit-déjeuner.",emb,0.685304582118988,,0.009625017642974854
+B,B3 C1-V2 sans « -Montparnasse »,"Trajet confortable pour les enfants, avec un changement à Paris.","Un trajet idéal pour les familles, avec une correspondance à Paris.",emb,0.7623463273048401,,0.08892476558685303
+C,C1-V1,"Trajet confortable pour les enfants, avec un changement à Paris.",Voyage adapté aux familles avec correspondance parisienne.,nli_A→B_entailment,0.98486328125,,
+C,C1-V1,"Trajet confortable pour les enfants, avec un changement à Paris.",Voyage adapté aux familles avec correspondance parisienne.,nli_A→B_neutral,0.0099945068359375,,
+C,C1-V1,"Trajet confortable pour les enfants, avec un changement à Paris.",Voyage adapté aux familles avec correspondance parisienne.,nli_A→B_contradiction,0.00511932373046875,,
+C,C1-V1,"Trajet confortable pour les enfants, avec un changement à Paris.",Voyage adapté aux familles avec correspondance parisienne.,nli_B→A_entailment,0.9716796875,,
+C,C1-V1,"Trajet confortable pour les enfants, avec un changement à Paris.",Voyage adapté aux familles avec correspondance parisienne.,nli_B→A_neutral,0.024261474609375,,
+C,C1-V1,"Trajet confortable pour les enfants, avec un changement à Paris.",Voyage adapté aux familles avec correspondance parisienne.,nli_B→A_contradiction,0.004291534423828125,,
+C,C1-V1,"Trajet confortable pour les enfants, avec un changement à Paris.",Voyage adapté aux familles avec correspondance parisienne.,verdict_regle,équivalent,équivalent,OK
+C,C1-V2,"Trajet confortable pour les enfants, avec un changement à Paris.","Un trajet idéal pour les familles, avec une correspondance à Paris-Montparnasse.",nli_A→B_entailment,0.025970458984375,,
+C,C1-V2,"Trajet confortable pour les enfants, avec un changement à Paris.","Un trajet idéal pour les familles, avec une correspondance à Paris-Montparnasse.",nli_A→B_neutral,0.96533203125,,
+C,C1-V2,"Trajet confortable pour les enfants, avec un changement à Paris.","Un trajet idéal pour les familles, avec une correspondance à Paris-Montparnasse.",nli_A→B_contradiction,0.008941650390625,,
+C,C1-V2,"Trajet confortable pour les enfants, avec un changement à Paris.","Un trajet idéal pour les familles, avec une correspondance à Paris-Montparnasse.",nli_B→A_entailment,0.95458984375,,
+C,C1-V2,"Trajet confortable pour les enfants, avec un changement à Paris.","Un trajet idéal pour les familles, avec une correspondance à Paris-Montparnasse.",nli_B→A_neutral,0.0430908203125,,
+C,C1-V2,"Trajet confortable pour les enfants, avec un changement à Paris.","Un trajet idéal pour les familles, avec une correspondance à Paris-Montparnasse.",nli_B→A_contradiction,0.0024547576904296875,,
+C,C1-V2,"Trajet confortable pour les enfants, avec un changement à Paris.","Un trajet idéal pour les familles, avec une correspondance à Paris-Montparnasse.",verdict_regle,revue humaine,revue humaine,OK
+C,C1-V3,"Trajet confortable pour les enfants, avec un changement à Paris.",Réservez votre billet de train pour la Normandie dès maintenant.,nli_A→B_entailment,0.0311431884765625,,
+C,C1-V3,"Trajet confortable pour les enfants, avec un changement à Paris.",Réservez votre billet de train pour la Normandie dès maintenant.,nli_A→B_neutral,0.8173828125,,
+C,C1-V3,"Trajet confortable pour les enfants, avec un changement à Paris.",Réservez votre billet de train pour la Normandie dès maintenant.,nli_A→B_contradiction,0.1514892578125,,
+C,C1-V3,"Trajet confortable pour les enfants, avec un changement à Paris.",Réservez votre billet de train pour la Normandie dès maintenant.,nli_B→A_entailment,0.0013637542724609375,,
+C,C1-V3,"Trajet confortable pour les enfants, avec un changement à Paris.",Réservez votre billet de train pour la Normandie dès maintenant.,nli_B→A_neutral,0.98828125,,
+C,C1-V3,"Trajet confortable pour les enfants, avec un changement à Paris.",Réservez votre billet de train pour la Normandie dès maintenant.,nli_B→A_contradiction,0.01013946533203125,,
+C,C1-V3,"Trajet confortable pour les enfants, avec un changement à Paris.",Réservez votre billet de train pour la Normandie dès maintenant.,verdict_regle,revue humaine,revue humaine,OK
+C,C2-V1,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Établissement tranquille au cœur de Coutances, avec vue mer et formule petit-déjeuner.",nli_A→B_entailment,0.09576416015625,,
+C,C2-V1,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Établissement tranquille au cœur de Coutances, avec vue mer et formule petit-déjeuner.",nli_A→B_neutral,0.9033203125,,
+C,C2-V1,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Établissement tranquille au cœur de Coutances, avec vue mer et formule petit-déjeuner.",nli_A→B_contradiction,0.0006895065307617188,,
+C,C2-V1,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Établissement tranquille au cœur de Coutances, avec vue mer et formule petit-déjeuner.",nli_B→A_entailment,0.99853515625,,
+C,C2-V1,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Établissement tranquille au cœur de Coutances, avec vue mer et formule petit-déjeuner.",nli_B→A_neutral,0.0011749267578125,,
+C,C2-V1,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Établissement tranquille au cœur de Coutances, avec vue mer et formule petit-déjeuner.",nli_B→A_contradiction,0.00013458728790283203,,
+C,C2-V1,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Établissement tranquille au cœur de Coutances, avec vue mer et formule petit-déjeuner.",verdict_regle,revue humaine,revue humaine,OK
+C,C2-V2,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Hôtel situé en plein centre, paisible, avec panorama sur l'océan et buffet matinal.",nli_A→B_entailment,0.998046875,,
+C,C2-V2,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Hôtel situé en plein centre, paisible, avec panorama sur l'océan et buffet matinal.",nli_A→B_neutral,0.0016069412231445312,,
+C,C2-V2,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Hôtel situé en plein centre, paisible, avec panorama sur l'océan et buffet matinal.",nli_A→B_contradiction,0.00014340877532958984,,
+C,C2-V2,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Hôtel situé en plein centre, paisible, avec panorama sur l'océan et buffet matinal.",nli_B→A_entailment,0.9990234375,,
+C,C2-V2,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Hôtel situé en plein centre, paisible, avec panorama sur l'océan et buffet matinal.",nli_B→A_neutral,0.0008220672607421875,,
+C,C2-V2,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Hôtel situé en plein centre, paisible, avec panorama sur l'océan et buffet matinal.",nli_B→A_contradiction,0.00015616416931152344,,
+C,C2-V2,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Hôtel situé en plein centre, paisible, avec panorama sur l'océan et buffet matinal.",verdict_regle,équivalent,équivalent,OK
+C,C2-V3,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Parking gratuit, accès autoroute, idéal pour les voyageurs d'affaires.",nli_A→B_entailment,0.0008196830749511719,,
+C,C2-V3,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Parking gratuit, accès autoroute, idéal pour les voyageurs d'affaires.",nli_A→B_neutral,0.99658203125,,
+C,C2-V3,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Parking gratuit, accès autoroute, idéal pour les voyageurs d'affaires.",nli_A→B_contradiction,0.002376556396484375,,
+C,C2-V3,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Parking gratuit, accès autoroute, idéal pour les voyageurs d'affaires.",nli_B→A_entailment,0.0012989044189453125,,
+C,C2-V3,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Parking gratuit, accès autoroute, idéal pour les voyageurs d'affaires.",nli_B→A_neutral,0.99609375,,
+C,C2-V3,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Parking gratuit, accès autoroute, idéal pour les voyageurs d'affaires.",nli_B→A_contradiction,0.0024967193603515625,,
+C,C2-V3,"Hôtel calme en centre-ville, petit-déjeuner inclus, vue sur la mer.","Parking gratuit, accès autoroute, idéal pour les voyageurs d'affaires.",verdict_regle,revue humaine,revue humaine,OK
+C,C3,Le patient ne présente aucune contre-indication au traitement.,Le patient présente plusieurs contre-indications au traitement.,nli_A→B_entailment,0.00015485286712646484,,
+C,C3,Le patient ne présente aucune contre-indication au traitement.,Le patient présente plusieurs contre-indications au traitement.,nli_A→B_neutral,0.0014333724975585938,,
+C,C3,Le patient ne présente aucune contre-indication au traitement.,Le patient présente plusieurs contre-indications au traitement.,nli_A→B_contradiction,0.99853515625,,
+C,C3,Le patient ne présente aucune contre-indication au traitement.,Le patient présente plusieurs contre-indications au traitement.,nli_B→A_entailment,0.0005884170532226562,,
+C,C3,Le patient ne présente aucune contre-indication au traitement.,Le patient présente plusieurs contre-indications au traitement.,nli_B→A_neutral,0.0017194747924804688,,
+C,C3,Le patient ne présente aucune contre-indication au traitement.,Le patient présente plusieurs contre-indications au traitement.,nli_B→A_contradiction,0.99755859375,,
+C,C3,Le patient ne présente aucune contre-indication au traitement.,Le patient présente plusieurs contre-indications au traitement.,verdict_regle,revue humaine,revue humaine,OK
+C,P1 dose,La dose maximale est de 500 mg par jour.,La dose maximale est de 1000 mg par jour.,nli_A→B_entailment,0.0015134811401367188,,
+C,P1 dose,La dose maximale est de 500 mg par jour.,La dose maximale est de 1000 mg par jour.,nli_A→B_neutral,0.0035190582275390625,,
+C,P1 dose,La dose maximale est de 500 mg par jour.,La dose maximale est de 1000 mg par jour.,nli_A→B_contradiction,0.9951171875,,
+C,P1 dose,La dose maximale est de 500 mg par jour.,La dose maximale est de 1000 mg par jour.,nli_B→A_entailment,0.00319671630859375,,
+C,P1 dose,La dose maximale est de 500 mg par jour.,La dose maximale est de 1000 mg par jour.,nli_B→A_neutral,0.006305694580078125,,
+C,P1 dose,La dose maximale est de 500 mg par jour.,La dose maximale est de 1000 mg par jour.,nli_B→A_contradiction,0.99072265625,,
+C,P1 dose,La dose maximale est de 500 mg par jour.,La dose maximale est de 1000 mg par jour.,verdict_regle,revue humaine,revue humaine,OK
+C,P2 consentement,Le consentement du patient est obligatoire.,Le consentement du patient est facultatif.,nli_A→B_entailment,0.0004858970642089844,,
+C,P2 consentement,Le consentement du patient est obligatoire.,Le consentement du patient est facultatif.,nli_A→B_neutral,0.00803375244140625,,
+C,P2 consentement,Le consentement du patient est obligatoire.,Le consentement du patient est facultatif.,nli_A→B_contradiction,0.99169921875,,
+C,P2 consentement,Le consentement du patient est obligatoire.,Le consentement du patient est facultatif.,nli_B→A_entailment,0.0004372596740722656,,
+C,P2 consentement,Le consentement du patient est obligatoire.,Le consentement du patient est facultatif.,nli_B→A_neutral,0.00983428955078125,,
+C,P2 consentement,Le consentement du patient est obligatoire.,Le consentement du patient est facultatif.,nli_B→A_contradiction,0.98974609375,,
+C,P2 consentement,Le consentement du patient est obligatoire.,Le consentement du patient est facultatif.,verdict_regle,revue humaine,revue humaine,OK
+C,P3 à jeun,Le médicament doit être pris à jeun.,Le médicament peut être pris pendant les repas.,nli_A→B_entailment,0.2235107421875,,
+C,P3 à jeun,Le médicament doit être pris à jeun.,Le médicament peut être pris pendant les repas.,nli_A→B_neutral,0.0226593017578125,,
+C,P3 à jeun,Le médicament doit être pris à jeun.,Le médicament peut être pris pendant les repas.,nli_A→B_contradiction,0.75390625,,
+C,P3 à jeun,Le médicament doit être pris à jeun.,Le médicament peut être pris pendant les repas.,nli_B→A_entailment,0.1024169921875,,
+C,P3 à jeun,Le médicament doit être pris à jeun.,Le médicament peut être pris pendant les repas.,nli_B→A_neutral,0.06927490234375,,
+C,P3 à jeun,Le médicament doit être pris à jeun.,Le médicament peut être pris pendant les repas.,nli_B→A_contradiction,0.828125,,
+C,P3 à jeun,Le médicament doit être pris à jeun.,Le médicament peut être pris pendant les repas.,verdict_regle,revue humaine,revue humaine,OK
+C,M1 grossesse,Ce médicament est contre-indiqué chez la femme enceinte.,Les femmes enceintes ne doivent pas prendre ce médicament.,nli_A→B_entailment,0.99755859375,,
+C,M1 grossesse,Ce médicament est contre-indiqué chez la femme enceinte.,Les femmes enceintes ne doivent pas prendre ce médicament.,nli_A→B_neutral,0.0011081695556640625,,
+C,M1 grossesse,Ce médicament est contre-indiqué chez la femme enceinte.,Les femmes enceintes ne doivent pas prendre ce médicament.,nli_A→B_contradiction,0.0012025833129882812,,
+C,M1 grossesse,Ce médicament est contre-indiqué chez la femme enceinte.,Les femmes enceintes ne doivent pas prendre ce médicament.,nli_B→A_entailment,0.91748046875,,
+C,M1 grossesse,Ce médicament est contre-indiqué chez la femme enceinte.,Les femmes enceintes ne doivent pas prendre ce médicament.,nli_B→A_neutral,0.08099365234375,,
+C,M1 grossesse,Ce médicament est contre-indiqué chez la femme enceinte.,Les femmes enceintes ne doivent pas prendre ce médicament.,nli_B→A_contradiction,0.0016765594482421875,,
+C,M1 grossesse,Ce médicament est contre-indiqué chez la femme enceinte.,Les femmes enceintes ne doivent pas prendre ce médicament.,verdict_regle,équivalent,équivalent,OK
+C,M2 rétractation,Le délai de rétractation est de quatorze jours.,Le consommateur dispose de quatorze jours pour se rétracter.,nli_A→B_entailment,0.9560546875,,
+C,M2 rétractation,Le délai de rétractation est de quatorze jours.,Le consommateur dispose de quatorze jours pour se rétracter.,nli_A→B_neutral,0.043670654296875,,
+C,M2 rétractation,Le délai de rétractation est de quatorze jours.,Le consommateur dispose de quatorze jours pour se rétracter.,nli_A→B_contradiction,0.0003521442413330078,,
+C,M2 rétractation,Le délai de rétractation est de quatorze jours.,Le consommateur dispose de quatorze jours pour se rétracter.,nli_B→A_entailment,0.998046875,,
+C,M2 rétractation,Le délai de rétractation est de quatorze jours.,Le consommateur dispose de quatorze jours pour se rétracter.,nli_B→A_neutral,0.0018510818481445312,,
+C,M2 rétractation,Le délai de rétractation est de quatorze jours.,Le consommateur dispose de quatorze jours pour se rétracter.,nli_B→A_contradiction,0.00031638145446777344,,
+C,M2 rétractation,Le délai de rétractation est de quatorze jours.,Le consommateur dispose de quatorze jours pour se rétracter.,verdict_regle,équivalent,équivalent,OK
+C,M3 résiliation,Le contrat peut être résilié à tout moment.,Le contrat ne peut pas être résilié avant son terme.,nli_A→B_entailment,0.007221221923828125,,
+C,M3 résiliation,Le contrat peut être résilié à tout moment.,Le contrat ne peut pas être résilié avant son terme.,nli_A→B_neutral,0.0281982421875,,
+C,M3 résiliation,Le contrat peut être résilié à tout moment.,Le contrat ne peut pas être résilié avant son terme.,nli_A→B_contradiction,0.96435546875,,
+C,M3 résiliation,Le contrat peut être résilié à tout moment.,Le contrat ne peut pas être résilié avant son terme.,nli_B→A_entailment,0.0128631591796875,,
+C,M3 résiliation,Le contrat peut être résilié à tout moment.,Le contrat ne peut pas être résilié avant son terme.,nli_B→A_neutral,0.008331298828125,,
+C,M3 résiliation,Le contrat peut être résilié à tout moment.,Le contrat ne peut pas être résilié avant son terme.,nli_B→A_contradiction,0.97900390625,,
+C,M3 résiliation,Le contrat peut être résilié à tout moment.,Le contrat ne peut pas être résilié avant son terme.,verdict_regle,revue humaine,revue humaine,OK
+C,M4 remboursement,Ce dispositif est remboursé par l'Assurance maladie.,Ce dispositif n'est plus remboursé par l'Assurance maladie.,nli_A→B_entailment,0.004917144775390625,,
+C,M4 remboursement,Ce dispositif est remboursé par l'Assurance maladie.,Ce dispositif n'est plus remboursé par l'Assurance maladie.,nli_A→B_neutral,0.00225830078125,,
+C,M4 remboursement,Ce dispositif est remboursé par l'Assurance maladie.,Ce dispositif n'est plus remboursé par l'Assurance maladie.,nli_A→B_contradiction,0.99267578125,,
+C,M4 remboursement,Ce dispositif est remboursé par l'Assurance maladie.,Ce dispositif n'est plus remboursé par l'Assurance maladie.,nli_B→A_entailment,0.00832366943359375,,
+C,M4 remboursement,Ce dispositif est remboursé par l'Assurance maladie.,Ce dispositif n'est plus remboursé par l'Assurance maladie.,nli_B→A_neutral,0.0048980712890625,,
+C,M4 remboursement,Ce dispositif est remboursé par l'Assurance maladie.,Ce dispositif n'est plus remboursé par l'Assurance maladie.,nli_B→A_contradiction,0.98681640625,,
+C,M4 remboursement,Ce dispositif est remboursé par l'Assurance maladie.,Ce dispositif n'est plus remboursé par l'Assurance maladie.,verdict_regle,revue humaine,revue humaine,OK
