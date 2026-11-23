@@ -1,6 +1,6 @@
 # Validation — contract-probe on `fixture/taskapi/` (2026-07-26)
 
-Worked example following `../SKILL.md` step by step against a small, purpose-built fixture SUT
+Worked example following `../../references/01-probing-a-live-app.md` step by step against a small, purpose-built fixture SUT
 (`fixture/taskapi/`) with one defect injected on purpose (see `server.js`'s own comment) — a
 minimal but real running app, not a hypothetical.
 

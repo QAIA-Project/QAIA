@@ -1,13 +1,13 @@
 # QAIA catalogue — I want to X, which skill?
 
-7 skills across 3 plugins.
+4 skills across 3 plugins.
 
 **Out of scope, deliberately** ([ADR 0004](../../docs/adr/0004-test-level-boundary.md)): unit and component tests, integration between internal components, and coverage-driven white-box testing. QAIA starts from a promise observable from the outside — a test written against a function is written against the implementation, which is the oracle it exists to avoid.
 
 QAIA is an engine for the gap between **a promise** and **what claims to keep it**. Its skills
 follow three faces of that gap: write the tests a promise calls for (`generate`), judge tests that
 already exist (`judge`), and confront a running system with its own documentation
-(`contract-probe`).
+(`probe`).
 
 ---
 
@@ -29,31 +29,30 @@ and writes its own, so the journey survives an interrupted session.
 | Roll the whole journey into the standard run manifest | 8 | `08-the-run-manifest.md` |
 | Export it (`.feature`, XLSX, Xray/TestRail CSV) | 9 | `09-exporting.md` |
 
-| I want to | Skill | Plugin |
-|---|---|---|
-| Attach production evidence (logs, error rates, HAR) to the open questions a book carries | `signal-ingest` | core |
-
 ## Turning a book into running tests (qaia-playwright)
 
 | I want to | Skill |
 |---|---|
 | Generate native Playwright tests from the book, and merge their results into the run manifest | `automate` |
-| Turn a red test into something a developer can act on | `defect-report` |
+| Turn a red test into something a developer can act on | `probe` — page `references/defect-report.md` |
 
-## Checking a running application (qaia-playwright)
+## Checking a running application — `probe` (qaia-playwright)
+
+One skill since 0.3.0; each row is a page of it, under `skills/probe/references/`.
 
 **The distinction is not the tool, it is what plays the role of the oracle** — what each skill
 compares observed behaviour *against*.
 
-| I want to check | Skill | Its oracle is | Needs |
+| I want to check | `probe` page | Its oracle is | Needs |
 |---|---|---|---|
-| That the app does what **its own documentation promises** | `contract-probe` | the target's written contract (README, API docs, acceptance criteria) — archived verbatim before probing | a self-hosted or explicitly authorised target |
-| That **today's responses still match yesterday's**, on real captured traffic | `traffic-replay` | a HAR file *you* recorded | a captured traffic export |
+| That the app does what **its own documentation promises** | `01-probing-a-live-app.md` | the target's written contract (README, API docs, acceptance criteria) — archived verbatim before probing | a self-hosted or explicitly authorised target |
+| That **today's responses still match yesterday's**, on real captured traffic | `02-replaying-captured-traffic.md` | a HAR file *you* recorded | a captured traffic export |
+| What production actually does, attached to the open questions a book carries | `signals.md` | an exported signal (logs, error rates, status breakdown, APM) — it informs a question, never answers it | an export you produced |
 
-A defect `contract-probe` reports is a broken promise; one `traffic-replay` reports is a change
+A defect the probing page reports is a broken promise; one the traffic page reports is a change
 since your capture, which may well be intended.
 
-Corollary worth stating: **`contract-probe` can only find a defect the documentation makes
+Corollary worth stating: **`probe` can only find a defect the documentation makes
 findable.** If the target documents nothing, it correctly reports nothing — and that is the
 discipline it exists for, not a failure.
 

@@ -1,7 +1,8 @@
----
-name: traffic-replay
-description: Ingest a user-provided HAR file (or equivalent captured HTTP traffic export) and derive non-regression test conditions -- observed status, response shape, significant headers, timing -- from real request/response pairs, with mandatory PII/secret masking before any write. Never captures live traffic, never runs a proxy, never sends a network request itself. Use when the user has a HAR export and wants what actually happened turned into regression conditions, not a coverage test book.
----
+<!-- Absorbé le 2026-11-23 : cette page était la skill `traffic-replay`.
+     Elle n'est plus une unité installable — elle est une page de `probe`.
+     Le contenu est DÉPLACÉ, pas récrit : ce qui a été éprouvé le reste. -->
+
+> **Ce que cette page fait.** Ingest a user-provided HAR file (or equivalent captured HTTP traffic export) and derive non-regression test conditions -- observed status, response shape, significant headers, timing -- from real request/response pairs, with mandatory PII/secret masking before any write. Never captures live traffic, never runs a proxy, never sends a network request itself. Use when the user has a HAR export and wants what actually happened turned into regression conditions, not a coverage test book.
 
 # traffic-replay — captured traffic → non-regression conditions
 
@@ -12,12 +13,12 @@ already has and report only what it shows — the same anti-fabrication discipli
 (honest recall beats fabricated recall: never assert more than the artifact supports), and the
 same mask-before-write discipline, extended here from user-story text to HTTP traffic.
 
-Reference fixture: `fixture/` in this skill folder — a fully **synthetic** HAR
+Reference fixture: `fixtures/traffic/` in this skill folder — a fully **synthetic** HAR
 (`demo-traffic.har`) for a fictional app ("TaskFlow"), hand-built for this validation, never
 real production data (the issue's own acceptance criterion). It deliberately contains an
 `Authorization` header, a session cookie, a query-string token, an email, a phone number, a
 full name and a card number, so the masking step has real sensitive-shaped values to catch.
-See `fixture/VALIDATION.md` for the worked example and the grep proof that none of the
+See `fixtures/traffic/VALIDATION.md` for the worked example and the grep proof that none of the
 injected values leak into the output artifacts.
 
 ## Input
@@ -36,7 +37,7 @@ injected values leak into the output artifacts.
 Applied to **every** request and response in the HAR before any finding, table, or JSON file
 is written — never after the fact, never partially. This parses naturally as a short-lived,
 in-session script (skills ship no runtime code: executable code is generated and run in the
-user's session, thrown away, never distributed in the plugin) that deterministically applies the rules below; `fixture/build-findings.py`
+user's session, thrown away, never distributed in the plugin) that deterministically applies the rules below; `fixtures/traffic/build-findings.py`
 is the actual script used to produce this skill's own validation evidence, kept here for
 transparency, not as runtime code the plugin auto-executes.
 

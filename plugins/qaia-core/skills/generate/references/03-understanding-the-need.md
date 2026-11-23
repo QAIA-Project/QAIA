@@ -8,7 +8,7 @@
 
 Follow the shared contract in `../README.md`. Prerequisite: `01-extraction.md` (else offer `us-review`). Load relevant knowledge via `knowledge/index.md` — project rules may already answer some questions.
 
-The open questions this skill raises are the ones a human later has to arbitrate, often blind. When production data for the same feature exists, `signal-ingest` attaches observed evidence to those questions — it never answers them, but it stops the arbitration from being a guess. Raise the question here regardless: a question that waits for evidence is still a question, and one never written down is never informed.
+The open questions this skill raises are the ones a human later has to arbitrate, often blind. When production data for the same feature exists, `qaia-playwright:probe` (its signals page) attaches observed evidence to those questions — it never answers them, but it stops the arbitration from being a guess. Raise the question here regardless: a question that waits for evidence is still a question, and one never written down is never informed.
 
 ## Steps
 

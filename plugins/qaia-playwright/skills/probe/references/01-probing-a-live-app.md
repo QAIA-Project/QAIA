@@ -1,12 +1,13 @@
----
-name: contract-probe
-description: Probe a self-hosted or explicitly authorized app's real behavior against its own documented contract (README, help text, spec) with bounded, non-destructive adversarial inputs, judging deviation from what is promised rather than only crash-vs-no-crash - convert each confirmed defect into a tagged Gherkin regression scenario. Never applies a fix. Use for shift-right coverage complementary to the spec-first journey.
----
+<!-- Absorbé le 2026-11-23 : cette page était la skill `contract-probe`.
+     Elle n'est plus une unité installable — elle est une page de `probe`.
+     Le contenu est DÉPLACÉ, pas récrit : ce qui a été éprouvé le reste. -->
+
+> **Ce que cette page fait.** Probe a self-hosted or explicitly authorized app's real behavior against its own documented contract (README, help text, spec) with bounded, non-destructive adversarial inputs, judging deviation from what is promised rather than only crash-vs-no-crash - convert each confirmed defect into a tagged Gherkin regression scenario. Never applies a fix. Use for shift-right coverage complementary to the spec-first journey.
 
 # contract-probe — adversarial contract probing
 
-Reference: `fixture/taskapi/` (a deliberately defective toy API + its own README as the
-"documented contract") — see `fixture/VALIDATION.md` for the worked example.
+Reference: `fixtures/contract/taskapi/` (a deliberately defective toy API + its own README as the
+"documented contract") — see `fixtures/contract/VALIDATION.md` for the worked example.
 
 **Direction.** The rest of QAIA's journey is spec-first: US → AC → Gherkin → automation,
 generated *before* the app necessarily exists in its final form. This skill runs the other way: a

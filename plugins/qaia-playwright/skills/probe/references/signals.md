@@ -1,13 +1,15 @@
----
-name: signal-ingest
-description: Ingest an exported production signal - an access-log extract, an error-rate table, a status-code breakdown, an APM export or a HAR capture - and attach it as evidence to the open questions a test book already carries. Answers nothing on its own - it turns a blind open question into an informed one. Use when a test book has open questions that observed behaviour could inform, or when production data exists and nobody has connected it to the test design.
----
+<!-- Absorbé le 2026-11-23 : cette page était la skill `signal-ingest`.
+     Elle vivait dans `qaia-core` ; elle suit `probe` dans `qaia-playwright`.
+     Elle n'est plus une unité installable — elle est une page de `probe`.
+     Le contenu est DÉPLACÉ, pas récrit : ce qui a été éprouvé le reste. -->
+
+> **Ce que cette page fait.** Ingest an exported production signal - an access-log extract, an error-rate table, a status-code breakdown, an APM export or a HAR capture - and attach it as evidence to the open questions a test book already carries. Answers nothing on its own - it turns a blind open question into an informed one. Use when a test book has open questions that observed behaviour could inform, or when production data exists and nobody has connected it to the test design.
 
 # signal-ingest — observed behaviour as evidence, never as an answer
 
-Follow the shared contract in `../README.md`.
+Follow the shared contract in `https://github.com/QAIA-Project/QAIA/blob/main/plugins/qaia-core/skills/README.md`.
 
-`generate` raises the ambiguities a requirement leaves open (step 3, `references/03-understanding-the-need.md`)
+`generate` raises the ambiguities a requirement leaves open (`qaia-core:generate`, step 3, its `references/03-understanding-the-need.md`)
 and the ones a specification leaves open (step 1b): *is `limit` bounded?*, *which status does a duplicate
 registration return?*. Both hand those questions to a human, who then arbitrates them blind — while
 the running system answers them a thousand times a day and nobody writes it down.

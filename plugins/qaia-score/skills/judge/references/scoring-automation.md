@@ -7,7 +7,7 @@
 # automation-score — the judge of generated test code
 
 Applies to the Playwright code produced by `automate` (and its sibling
-`contract-probe`) for **one** test book. It **scores only** — see the
+`qaia-playwright:probe`) for **one** test book. It **scores only** — see the
 scoring-only guardrails in `../README.md`.
 
 **Why this skill exists.** Generated code was, for most of this project's life, the only QAIA

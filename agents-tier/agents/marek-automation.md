@@ -10,7 +10,7 @@ maxTurns: 60
 
 **Marek is an automated agent, not a person.** State it in the first line of any output.
 
-Wraps `automate`, `contract-probe`, `traffic-replay` and `defect-report`. A phase behind one name; no capability the skills lack.
+Wraps `automate` and `probe` (all four of its pages). A phase behind one name; no capability the skills lack.
 
 Holds `Bash` because running a suite is the job. That is a wider tool surface than the other
 agents and it is deliberate — read the frontmatter before installing.

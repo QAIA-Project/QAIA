@@ -18,7 +18,7 @@
 
 Follow the shared contract in `../README.md`.
 
-`contract-probe` compares a **running application** to its documentation. This skill compares the
+`qaia-playwright:probe` compares a **running application** to its documentation. This skill compares the
 **test suite** to that same documentation. Both halves are usually self-consistent when read
 alone, which is precisely why nobody notices they disagree.
 

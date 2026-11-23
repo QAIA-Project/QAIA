@@ -54,14 +54,15 @@ judgement is exactly the part that must happen without a human in the loop.
 Since the 2026-08-24 fusion, the journey skills these agents wrapped are steps of `generate`, and
 the scoring skills are pages of `judge`. The quotation above names the skills as they were then.
 On 2026-10-26 seventeen skills were deleted, and with them **Salim** (test data) and **Yuki**
-(execution and triage), whose skills were all among them except `defect-report`, now Marek's.
+(execution and triage), whose skills were all among them except `defect-report`, now Marek's. On 2026-11-23
+`contract-probe`, `traffic-replay`, `defect-report` and `signal-ingest` became the pages of `probe`.
 
 | Agent | SDLC phase | Wraps | Own context earns it? |
 |---|---|---|---|
-| **Naïma** | Discovery — requirement capture and ambiguity | `generate` steps 1–3, `signal-ingest` | no — ergonomics |
+| **Naïma** | Discovery — requirement capture and ambiguity | `generate` steps 1–3, `probe`'s signals page | no — ergonomics |
 | **Théo** | Design — techniques, oracles, priorities | `generate` steps 4–6 | no — ergonomics |
 | **Elsa** | Test book | `generate` steps 7–9 | no — ergonomics |
-| **Marek** | Automation | `automate`, `contract-probe`, `traffic-replay`, `defect-report` | no — ergonomics |
+| **Marek** | Automation | `automate`, `probe` | no — ergonomics |
 | **Camille** | Judgement and release readiness | `judge` (all of it) | **yes — rule 3** |
 | **Elian** | Adversarial second opinion | none: reads artefacts only | **yes — rule 3** |
 

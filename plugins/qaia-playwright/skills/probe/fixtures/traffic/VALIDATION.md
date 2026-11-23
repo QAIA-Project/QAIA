@@ -1,6 +1,6 @@
 # traffic-replay validation — real run, synthetic data (2026-07-25)
 
-Honest record of validating `../SKILL.md` against a purpose-built fixture, per issue #39's own
+Honest record of validating `../../references/02-replaying-captured-traffic.md` against a purpose-built fixture, per issue #39's own
 acceptance criterion: a demo HAR, **entirely synthetic**, never real production traffic.
 
 ## What was built

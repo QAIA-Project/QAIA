@@ -27,7 +27,7 @@ paid on prose, and it is why this skill exists.
 
 **A specification is a promise, not a fact.** It describes what the API is supposed to do; it is
 routinely out of date with what it does. Every condition derived here is of the form *"the spec
-promises X"* — never *"the API does X"*. Confirming or refuting is `contract-probe`'s job, and
+promises X"* — never *"the API does X"*. Confirming or refuting is `qaia-playwright:probe`'s job, and
 mixing the two is how a specification becomes a rubber stamp.
 
 ## What is derived, and from what

@@ -2,7 +2,7 @@
 
 QAIA core plugin: from user story to prioritized, traceable, atomic Gherkin test books.
 
-**Status: 0.5.0, 2 skills.** Proven end-to-end on two independent domains — a healthcare-*shaped*
+**Status: 0.6.0, 1 skill.** Proven end-to-end on two independent domains — a healthcare-*shaped*
 demo (`examples/medibook/`) and finance/HR (`examples/expense-demo/`) — plus a 24-case multi-model robustness corpus ([`eval/baselines/corpus-24-depth.md`](https://github.com/QAIA-Project/QAIA/blob/main/eval/baselines/corpus-24-depth.md)). See `eval/` at the repo root for the full evaluation trail.
 
 ## Install
@@ -20,7 +20,6 @@ From Claude Code:
 | Skill | Journey step | Indicative token budget* |
 |---|---|---|
 | `generate` | **The journey** — ingest a story or an OpenAPI spec, verify the extraction, hunt ambiguities, choose ISTQB techniques per AC, ground oracles, prioritise by risk, emit the atomic Gherkin book with stable IDs and a coverage matrix, project the run manifest, export (`.feature`, XLSX, Markdown, opt-in Xray/TestRail CSV). Nine steps, one skill; steps 2, 3 and 6 stop for a human | large |
-| `signal-ingest` | Attach exported production evidence to the open questions a test book already carries — informs them, never answers them | small |
 
 **Where the other skills went.** In 0.4.0 the ten journey skills (`us-ingest`, `openapi-ingest`,
 `us-review`, `need-understanding`, `istqb-design`, `oracle-generate`, `prioritize`,
@@ -30,7 +29,9 @@ under `skills/generate/references/`, **moved rather than rewritten**. Auditing a
 `hello`, `qaia-help` and the `qaia` router (nothing left to route with one entry point),
 `rag-build` and `feedback` (the learning loop, never once exercised by a real correction — the
 `knowledge/` files they wrote are plain Markdown a team can keep by hand, and `generate` still
-reads them), and `test-plan-and-closure` (documents for a reader who does not exist yet).
+reads them), and `test-plan-and-closure` (documents for a reader who does not exist yet). In
+0.6.0 `signal-ingest` moved to `qaia-playwright:probe`, as one of its pages: production evidence is
+the running software answering back, which is that face's question.
 
 \* Orders of magnitude — never promises. The journey state lives in `.qaia/` (see `skills/README.md` for the full contract): every step checkpoints to disk, so an interrupted session resumes where it left off.
 

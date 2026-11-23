@@ -1,7 +1,8 @@
----
-name: defect-report
-description: Turn a failing test into a defect report a developer can act on - minimal reproduction, expected vs actual traced to its requirement, evidence-bounded severity, and the scenario ID that found it. Use when a run is red and someone has to fix it, when a finding must reach a tracker (GitHub, Jira, Azure DevOps), or when asked to write up an anomaly.
----
+<!-- Absorbé le 2026-11-23 : cette page était la skill `defect-report`.
+     Elle n'est plus une unité installable — elle est une page de `probe`.
+     Le contenu est DÉPLACÉ, pas récrit : ce qui a été éprouvé le reste. -->
+
+> **Ce que cette page fait.** Turn a failing test into a defect report a developer can act on - minimal reproduction, expected vs actual traced to its requirement, evidence-bounded severity, and the scenario ID that found it. Use when a run is red and someone has to fix it, when a finding must reach a tracker (GitHub, Jira, Azure DevOps), or when asked to write up an anomaly.
 
 # defect-report — the anomaly, written so it can be acted on
 

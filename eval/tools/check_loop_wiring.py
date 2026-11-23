@@ -35,8 +35,9 @@ LOOPS = [
     # fichier disparu ne verifie plus la boucle : il annonce sa propre panne.
     ("B  suite -> specification",
      P("plugins", "qaia-score", "skills", "judge", "references", "spec-vs-suite.md"),
-     P("plugins", "qaia-playwright", "skills", "contract-probe", "SKILL.md"),
-     ["contract-probe"], ["judge"]),
+     # `contract-probe` a ete absorbee par `probe` le 2026-11-23 : la cible devient sa page.
+     P("plugins", "qaia-playwright", "skills", "probe", "references", "01-probing-a-live-app.md"),
+     ["probe"], ["judge"]),
 
     # Boucle C (« defaut -> connaissance », `confirm-fix` -> `rag-build`) retiree le 2026-10-26 :
     # ses DEUX bouts ont ete supprimes avec les 17 skills de la Phase 3. Une boucle sans aucune
@@ -45,9 +46,10 @@ LOOPS = [
     # `need-understanding` a ete absorbee par `generate` le 2026-08-24 : meme recablage que la
     # boucle B, et `signal-ingest` nommait toujours la skill morte comme son autre moitie.
     ("A  signal de production -> question ouverte",
-     P("plugins", "qaia-core", "skills", "signal-ingest", "SKILL.md"),
+     # `signal-ingest` a ete absorbee par `probe` le 2026-11-23, et a change de plugin.
+     P("plugins", "qaia-playwright", "skills", "probe", "references", "signals.md"),
      P("plugins", "qaia-core", "skills", "generate", "references", "03-understanding-the-need.md"),
-     ["generate"], ["signal-ingest"]),
+     ["generate"], ["probe"]),
 ]
 
 

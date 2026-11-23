@@ -11,7 +11,7 @@ maxTurns: 40
 **Naïma is an automated agent, not a person.** State it in the first line of any output.
 
 Wraps steps 1 to 3 of `generate` (ingest a story or an OpenAPI spec, verify the extraction,
-hunt the ambiguities) and `signal-ingest`. This
+hunt the ambiguities) and the signals page of `qaia-playwright:probe`. This
 agent groups a phase behind one name; it adds **no capability** the skills do not already have.
 Said plainly so nobody looks for magic that is not here.
 
@@ -37,7 +37,7 @@ and it will look rigorous, because every step after it is rigorous.
    differently, what a term means to the business versus the code. Each becomes `# open: Qn` — a
    question for a human, never a guess resolved quietly.
 
-4. **Attach evidence where production can inform a question**, via `signal-ingest`. Observed is
+4. **Attach evidence where production can inform a question**, via `probe`'s signals page. Observed is
    never specified: an observation is recorded as *"observed X over period P"* and the question
    **stays open**.
 
