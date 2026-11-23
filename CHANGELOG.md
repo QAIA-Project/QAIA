@@ -10,7 +10,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Thi
 written on 2026-11-23 and reconstructed from the git history for earlier versions; versions before
 the redesign of 2026-08-24 are summarised rather than itemised.
 
-## 2026-11-23 — documentation pass · `qaia-core` 0.6.3 · `qaia-playwright` 0.3.2 · `qaia-score` 0.3.3
+## 2026-11-23 — tag `v0.2.0-prealpha` · `qaia-core` 0.6.3 · `qaia-playwright` 0.3.2 · `qaia-score` 0.3.3
+
+The second tag of the repository, and the first since the redesign: 4 skills in 3 plugins.
 
 No behaviour change in any skill. Every document of the repository was re-read against the
 product as it stands; what had gone stale was corrected or marked as dated.
@@ -44,6 +46,14 @@ product as it stands; what had gone stale was corrected or marked as dated.
 - New issues from the pass: #122 (the bridge), #123 (timing discipline, proportion against a
   capped deduction), #124 (branch protection and signed releases, a maintainer decision).
 - This changelog.
+
+### Repository
+- The two branches that had never reached `main` are merged and every branch is deleted.
+  `claude/iats-open-source-prompt-hf5d2j` was a second implementation of #112 (a capped
+  deduction): its code was **not** kept, because the two rules merged without conflict and would
+  have counted each wait twice; its report is kept as a trace and the choice is open in #123.
+  `claude/ai-content-similarity-test-n9qghq` was an experiment unrelated to QAIA (similarity and
+  NLI on AI-generated French text), moved to `eval/nli-similarity-2026-10-05/`.
 
 ## 2026-11-23 — product development resumes
 
@@ -134,4 +144,4 @@ the detail.
   `qaia-score` 0.1.1–0.1.4** — first public version, three plugins and 23 skills (`ec0529e`);
   then Xray and TestRail exports, `flaky-detect`, `locator-repair`, `traffic-replay`,
   `contract-probe`.
-- **2026-08-07** — tag `v0.1.0-prealpha`, the only release published so far.
+- **2026-08-07** — tag `v0.1.0-prealpha`, the first tag, published as a GitHub pre-release.

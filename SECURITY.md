@@ -31,7 +31,7 @@ State as of 2026-11-23, checked against the repository rather than copied from a
 | GitHub Actions pinned by commit SHA | **active** — every `uses:` in `.github/workflows/` |
 | Scorers shipped as readable, pinned Python, identical to their tested source | **active** — checked in CI |
 | Branch protection on `main` | **not active** (the API answers "Branch not protected") |
-| Signed releases | **not active** — one unsigned pre-release tag, `v0.1.0-prealpha` |
+| Signed releases | **not active** — the tags (`v0.1.0-prealpha`, `v0.2.0-prealpha`) are annotated but not signed |
 | 2FA for maintainers, a second administrator able to revoke access | not verifiable from the repository; do not assume them |
 
 Do not assume a commitment marked "not active" protects you. Activating them is a decision for the maintainer, tracked in [#124](https://github.com/QAIA-Project/QAIA/issues/124).
